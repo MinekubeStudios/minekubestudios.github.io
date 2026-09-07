@@ -1,0 +1,6 @@
+{
+  "name": "minekube-fps-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minekube FPS modpack website with direct GitHub Pages downloads"
+}
