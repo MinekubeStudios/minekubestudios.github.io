@@ -13709,3 +13709,289 @@ body.store-transitioning footer {
   .store-cyber-pulse.store-main-style-pulse { display:none!important; }
   .mk-page-transition.is-store-transition * { animation-duration:.001ms!important;animation-iteration-count:1!important; }
 }
+
+/* =========================================================
+   ODEBRANÉ CELOPLOŠNÉ ANIMACE // bezpečnostní pojistka
+   Úvodní loader i portálový přechod jsou odstraněné z HTML.
+   Pravidlo zaručí, že se nikdy nemohou znovu zobrazit.
+   ========================================================= */
+.future-loader,
+.mk-page-transition,
+.mk-section-entry-sweep,
+.store-cyber-pulse {
+  display: none !important;
+}
+
+body.future-loading,
+body.mk-transitioning,
+body.store-transitioning {
+  overflow: auto !important;
+}
+
+/* =========================================================
+   PŘEPÍNAČ JAZYKA // vedle tlačítka motivu
+   ========================================================= */
+.lang-switcher {
+  position: relative;
+}
+
+.lang-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: auto;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 11px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  color: var(--text);
+}
+
+.lang-button span {
+  line-height: 1;
+}
+
+.lang-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 1300;
+  min-width: 196px;
+  padding: 6px;
+  display: grid;
+  gap: 2px;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(.98);
+  transform-origin: top right;
+  transition: opacity .18s ease, transform .18s ease, visibility .18s;
+}
+
+.lang-switcher.open .lang-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+
+.lang-option:hover {
+  background: var(--surface-2);
+}
+
+.lang-option svg {
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  color: var(--green);
+}
+
+.lang-option.is-selected svg,
+.lang-option[aria-selected="true"] svg {
+  opacity: 1;
+}
+
+.lang-code {
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .05em;
+}
+
+.lang-option.is-selected .lang-code,
+.lang-option[aria-selected="true"] .lang-code {
+  color: var(--green-light);
+  border-color: var(--green-glow);
+}
+
+/* =========================================================
+   SERVER // sekce s jediným tlačítkem
+   ========================================================= */
+.server-section {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.server-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  overflow: hidden;
+  text-align: center;
+  padding: 72px 48px;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 174, 0, .10), transparent 26rem),
+    radial-gradient(circle at 85% 100%, rgba(200, 60, 255, .10), transparent 24rem),
+    var(--surface);
+}
+
+.server-ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.server-ambient i {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: .5;
+}
+
+.server-ambient i:first-child {
+  left: -90px;
+  top: -110px;
+  background: rgba(255, 174, 0, .16);
+}
+
+.server-ambient i:last-child {
+  right: -90px;
+  bottom: -120px;
+  background: rgba(200, 60, 255, .16);
+}
+
+.server-card h2 {
+  position: relative;
+  margin: 10px 0 0;
+  max-width: 720px;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+
+.server-card > p {
+  position: relative;
+  margin: 0;
+  max-width: 640px;
+  color: var(--muted);
+  font-size: 15.5px;
+}
+
+.server-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.server-button {
+  min-width: 250px;
+  min-height: 54px;
+  font-size: 15px;
+}
+
+.server-ip {
+  padding: 14px 20px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  cursor: pointer;
+  transition: border-color .18s ease, transform .18s ease;
+}
+
+.server-ip:hover {
+  border-color: var(--green);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   O PROJEKTU // sloučený obsah (projekt + výkon + instalace)
+   ========================================================= */
+.about-stack {
+  display: grid;
+  gap: 26px;
+}
+
+.about-lead {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.about-subsection {
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.benchmark-section.about-subsection {
+  padding: 64px 0;
+}
+
+.install-section.about-subsection {
+  padding: 64px 0;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(200, 60, 255, .07), transparent 26rem),
+    var(--surface);
+}
+
+@media (max-width: 640px) {
+  .server-card {
+    padding: 48px 26px;
+  }
+
+  .server-button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .server-ip {
+    width: 100%;
+    text-align: center;
+  }
+
+  .benchmark-section.about-subsection,
+  .install-section.about-subsection {
+    padding: 44px 0;
+  }
+}

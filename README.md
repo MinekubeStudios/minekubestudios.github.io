@@ -1,21 +1,31 @@
-# Minekube Web – Portal + Section Arrival
+# Minekube Web – Modpacky / Server / O projektu
 
-Tato verze zachovává celoplošnou Minekube portálovou animaci při přepínání hlavních sekcí.
+Jednoduchá verze bez celoplošných animací (žádný boot loader, žádný portálový
+přechod mezi sekcemi). Navigace pouze plynule scrolluje.
 
-Nově po dokončení portálu cílová sekce rychle a plynule vyjede, její hlavní obsah se odhalí ve dvou krátkých navazujících krocích a přes stránku proběhne jemná zlato-fialová energetická vlna.
+## Struktura stránky
 
-Animace se opakuje při každém přechodu na Domů, Modpacky, Výkon, Instalaci a O projektu. Stejný nájezd se použije také po úvodní boot animaci stránky.
+- **Modpacky** – katalog výkonových profilů s filtry, vyhledáváním a řazením
+- **Server** – sekce s jediným tlačítkem pro zkopírování IP serveru
+  (`play.minekube.eu` – konstanta `SERVER_IP` v `app.js`)
+- **O projektu** – sloučený obsah: představení projektu, výkon (benchmarky)
+  a instalace
 
-Funkce webu, modpacky, filtry, Store a přímé stahování zůstaly beze změny.
+Sekce Domů byla odstraněna. Staré odkazy na `#home` se automaticky přesměrují
+na začátek stránky.
 
+## Přepínač jazyka
 
-## Úprava této verze
+V hlavičce vedle přepnutí motivu je přepínač jazyka stránky:
 
-U sekce Domů je odstraněna energetická vstupní vlna, aby se nepřekrývala s ostatními úvodními animacemi. Rychlý nájezd Domů i kompletní přechody ostatních sekcí zůstávají zachované.
+- Čeština (výchozí)
+- Slovenština
+- English
 
+Volba se ukládá do `localStorage` (`minekube-lang`) a překládá celou stránku
+včetně karet modpacků, dialogů a oznámení. Slovník je v `app.js` (`I18N`).
 
-## Oprava blikání sekce Domů
-- Domů už po úvodní boot animaci nespouští druhý souběžný stránkový nájezd.
-- Energetická vstupní vlna je pro Domů zablokovaná v JavaScriptu i CSS.
-- Při návratu přes navigaci zůstává pouze jeden čistý nájezd celé sekce, bez animování jejích vnitřních částí podruhé.
-- Ostatní sekce a jejich vlny zůstaly beze změny.
+## Funkce webu
+
+Modpacky, filtry, oblíbené, Store, přímé stahování z GitHub Release
+a světlý/tmavý motiv zůstaly beze změny.

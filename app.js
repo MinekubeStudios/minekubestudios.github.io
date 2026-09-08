@@ -18,6 +18,505 @@ const safeStorage = {
   }
 };
 
+/* =========================================================
+   I18N // ČEŠTINA / SLOVENŠTINA / ENGLISH
+   ========================================================= */
+const SUPPORTED_LANGS = ["cs", "sk", "en"];
+const LANG_LOCALES = { cs: "cs-CZ", sk: "sk-SK", en: "en-US" };
+const LANG_CODES = { cs: "CZ", sk: "SK", en: "EN" };
+
+const I18N = {
+  cs: {
+    "meta.title": "Minekube FPS — Minecraft Performance Modpacks",
+    "meta.desc": "Minekube FPS modpacky – rychlejší, plynulejší a stabilnější Minecraft.",
+    "a11y.brand": "Minekube Studios – domovská stránka",
+    "a11y.nav": "Hlavní navigace",
+    "a11y.mobileNav": "Mobilní navigace",
+    "a11y.theme": "Přepnout motiv",
+    "a11y.lang": "Změnit jazyk",
+    "a11y.langMenu": "Výběr jazyka",
+    "a11y.store": "Otevřít Minekube Store",
+    "a11y.menu": "Otevřít menu",
+    "a11y.filters": "Filtry modpacků",
+    "a11y.sort": "Řazení modpacků",
+    "a11y.benchmarks": "Výkon",
+    "a11y.benchmarkBoard": "Animované porovnání výkonu Vanilla a Ultra Performance",
+    "a11y.install": "Instalace",
+    "a11y.discord": "Discord – doplň vlastní odkaz",
+    "a11y.github": "GitHub – doplň vlastní odkaz",
+    "nav.modpacks": "Modpacky",
+    "nav.server": "Server",
+    "nav.about": "O projektu",
+    "catalog.kicker": "KATALOG",
+    "catalog.title": "Vyber si správný výkonový profil",
+    "catalog.text": "Každý modpack cílí na jiný hardware a styl hraní. Filtry ti pomohou najít přesně ten tvůj.",
+    "filters.kicker": "NAJDI SVŮJ BUILD",
+    "filters.title": "Filtry",
+    "filters.reset": "Resetovat",
+    "search.placeholder": "Hledat modpack...",
+    "legend.version": "Verze Minecraftu",
+    "legend.loader": "Mod loader",
+    "legend.focus": "Zaměření",
+    "verified.title": "Bezpečné sestavení",
+    "verified.text": "Každý release lze doplnit kontrolním součtem a seznamem změn.",
+    "toolbar.filters": "Filtry",
+    "sort.label": "Řadit podle",
+    "sort.current": "AKTUÁLNÍ ŘAZENÍ",
+    "sort.featured": "Doporučené",
+    "sort.downloads": "Nejstahovanější",
+    "sort.fps": "Nejvyšší FPS",
+    "sort.newest": "Nejnovější",
+    "sort.name": "Název A–Z",
+    "results.oneReleased": "profil · 1 vydaný",
+    "results.onePending": "profil · připravujeme",
+    "results.many": "{n} profilů · {r} vydaný",
+    "empty.title": "Žádný modpack neodpovídá filtrům",
+    "empty.text": "Zkus upravit hledaný výraz nebo některý filtr vypnout.",
+    "empty.reset": "Vymazat filtry",
+    "pack.download": "Stáhnout Modpack",
+    "pack.unreleased": "Zatím nevydáno",
+    "pack.details": "Detail modpacku",
+    "pack.detailsAria": "Zobrazit detail {name}",
+    "pack.favAdd": "Přidat do oblíbených",
+    "pack.favRemove": "Odebrat z oblíbených",
+    "pack.perf": "VÝKON",
+    "pack.mods": "MODŮ",
+    "pack.maxfps": "MAX FPS",
+    "pack.minecraft": "MINECRAFT",
+    "pack.live": "LIVE BUILD",
+    "pack.indev": "IN DEVELOPMENT",
+    "pack.engine": "FPS ENGINE",
+    "pack.soon": "COMING SOON",
+    "pack.perfTitle": "Celkový výkon",
+    "pack.modsTitle": "Počet modů",
+    "pack.fpsTitle": "Maximální FPS",
+    "pack.core": "PERFORMANCE CORE",
+    "modal.verified": "MINEKUBE VERIFIED BUILD",
+    "modal.stable": "Stabilní release",
+    "modal.client": "Optimalizováno pro klienta",
+    "modal.gameVersion": "VERZE HRY",
+    "modal.content": "OBSAH BALÍČKU",
+    "modal.contentValue": "{n} optimalizačních modů",
+    "modal.size": "VELIKOST",
+    "modal.perfProfile": "VÝKONOVÝ PROFIL",
+    "modal.perfValue": "{p} · Maximum FPS",
+    "modal.proven": "PROVĚŘENÁ KONFIGURACE",
+    "modal.provenText": "Nastavení je připravené tak, aby poskytovalo vysoký výkon, rychlé načítání a stabilní průběh hry bez zbytečného nastavování.",
+    "modal.advKicker": "HLAVNÍ VÝHODY",
+    "modal.advTitle": "Co balíček nabízí",
+    "modal.reqKicker": "RYCHLÝ START",
+    "modal.reqTitle": "Požadavky a doporučení",
+    "modal.release": "AKTUÁLNÍ RELEASE",
+    "modal.releaseMeta": "{loader} build · {size} · připraveno ke stažení",
+    "modal.downloadZip": "Stáhnout ZIP",
+    "modal.unavailable": "Zatím nedostupné",
+    "modal.demo": "DEMONSTRAČNÍ OBSAH",
+    "modal.demoText": "Tento text uprav podle skutečného projektu.",
+    "modal.close": "Zavřít",
+    "modal.closeAria": "Zavřít detail",
+    "info.methodologyTitle": "Metodika měření výkonu",
+    "info.methodologyText": "Pro důvěryhodné srovnání používej stejný svět, seed, pozici hráče, render distance, rozlišení, verzi Javy i ovladače. Každý test spusť několikrát, první průchod nepočítej a uváděj nejen průměrné FPS, ale také 1% low a frametime.",
+    "info.changelogTitle": "Changelog",
+    "info.changelogText": "Tady může být seznam verzí, datum vydání, přidané a odebrané mody, změny konfigurace, známé chyby a pokyny pro bezpečný update.",
+    "info.compatibilityTitle": "Kompatibilita",
+    "info.compatibilityText": "Tady můžeš popsat podporované verze Minecraftu, loadery, doporučené verze Javy, kompatibilitu se shadery, resource packy a známé konflikty.",
+    "info.licenseTitle": "Licence a upozornění",
+    "info.licenseText": "Před zveřejněním doplň vlastní licenční podmínky a zkontroluj oprávnění jednotlivých autorů modů k distribuci v modpacku.",
+    "toast.favAdd": "Modpack byl uložen do oblíbených.",
+    "toast.favRemove": "Modpack byl odebrán z oblíbených.",
+    "toast.themeLight": "Zapnut světlý motiv.",
+    "toast.themeDark": "Zapnut tmavý motiv.",
+    "toast.dlStart": "Navazuji bezpečné spojení…",
+    "toast.dlOk": "Stahování bylo úspěšně zahájeno",
+    "toast.dlNone": "Soubor ke stažení zatím není nastavený.",
+    "toast.unreleased": "Tento modpack zatím není vydaný.",
+    "toast.serverCopied": "IP serveru zkopírována do schránky.",
+    "toast.langSwitched": "Jazyk přepnut: Čeština.",
+    "kicker.transfer": "PŘIPRAVUJI PŘENOS",
+    "kicker.download": "MINEKUBE DOWNLOAD",
+    "kicker.warn": "UPOZORNĚNÍ",
+    "kicker.fav": "OBLÍBENÉ",
+    "kicker.ui": "ROZHRANÍ",
+    "kicker.lang": "JAZYK",
+    "kicker.sys": "MINEKUBE SYSTEM",
+    "bench.kicker": "MĚŘITELNÝ ROZDÍL",
+    "bench.title": "Ne marketing. Výkon, který můžeš změřit.",
+    "bench.text": "Připravený prostor pro reálné výsledky tvých testů — stejný seed, stejné místo, stejné nastavení a několik opakovaných měření.",
+    "bench.li1": "Oddělené profily pro low-end, mid-range a high-end PC",
+    "bench.li2": "Přehled použité verze Javy, ovladačů a nastavení",
+    "bench.li3": "Hodnoty FPS, 1% low, frametime, RAM a času načítání",
+    "bench.how": "Jak správně měřit výkon",
+    "bench.sub": "1080p / 8 chunks / bez shaderů",
+    "bench.vanillaSub": "bez optimalizací",
+    "bench.perf": "VÝKON",
+    "bench.ram": "📟 PAMĚŤ RAM",
+    "bench.load": "🔃 DOBA NAČÍTÁNÍ",
+    "install.kicker": "RYCHLÝ START",
+    "install.title": "Od stažení ke hraní za pár minut",
+    "install.text": "Jednoduchý postup vhodný pro Modrinth App i další launchery podporující formát .mrpack.",
+    "step1.title": "Stáhni balíček",
+    "step1.text": "Vyber kompatibilní verzi Minecraftu a stáhni soubor modpacku.",
+    "step2.title": "Importuj do launcheru",
+    "step2.text": "V Modrinth App nebo Prism Launcheru zvol import existujícího balíčku.",
+    "step3.title": "Spusť a hraj",
+    "step3.text": "Launcher automaticky připraví správné mody, knihovny i doporučené nastavení.",
+    "about.title": "Výkon bez zničení původního Minecraftu",
+    "about.lead": "Minekube Studios propojuje výkonné modpacky, komunitní Minecraft server, Store a moderní open-source projekty do jednoho československého ekosystému — bez paywallu a zcela zdarma.",
+    "about.text": "Smyslem projektu je zachovat známý vanilla pocit, ale odstranit zbytečné propady FPS, dlouhé načítání a mikrosekání. Každý mod má mít jasný důvod, žádná výplň a žádné náhodné experimenty v produkčním vydání.",
+    "about.tag1": "Vanilla friendly",
+    "about.tag2": "Bezpečné aktualizace",
+    "about.tag3": "Čistá konfigurace",
+    "about.tag4": "Transparentní changelog",
+    "server.kicker": "COMMUNITY SERVER",
+    "server.title": "Připoj se na náš Minecraft server",
+    "server.text": "Server Minekube Studios je otevřený všem hráčům z Česka i Slovenska. Zkopíruj IP adresu a přidej si server do hry.",
+    "server.button": "Zkopírovat IP serveru",
+    "cta.title": "Dej Minecraftu výkon, který si zaslouží.",
+    "cta.text": "Vyber si profil podle svého počítače a začni hrát plynuleji.",
+    "cta.button": "Procházet modpacky",
+    "footer.desc": "Nezávislý demonstrační web pro Minecraft performance modpacky.",
+    "footer.project": "Projekt",
+    "footer.info": "Informace",
+    "footer.compat": "Kompatibilita",
+    "footer.license": "Licence",
+    "footer.community": "Komunita",
+    "footer.rights": "Minekube FPS. Demo web.",
+    "footer.tm": "Minecraft je ochranná známka společnosti Mojang Studios."
+  },
+  sk: {
+    "meta.title": "Minekube FPS — Minecraft Performance Modpacks",
+    "meta.desc": "Minekube FPS modpacky – rýchlejší, plynulejší a stabilnejší Minecraft.",
+    "a11y.brand": "Minekube Studios – domovská stránka",
+    "a11y.nav": "Hlavná navigácia",
+    "a11y.mobileNav": "Mobilná navigácia",
+    "a11y.theme": "Prepnúť motív",
+    "a11y.lang": "Zmeniť jazyk",
+    "a11y.langMenu": "Výber jazyka",
+    "a11y.store": "Otvoriť Minekube Store",
+    "a11y.menu": "Otvoriť menu",
+    "a11y.filters": "Filtre modpackov",
+    "a11y.sort": "Radenie modpackov",
+    "a11y.benchmarks": "Výkon",
+    "a11y.benchmarkBoard": "Animované porovnanie výkonu Vanilla a Ultra Performance",
+    "a11y.install": "Inštalácia",
+    "a11y.discord": "Discord – doplň vlastný odkaz",
+    "a11y.github": "GitHub – doplň vlastný odkaz",
+    "nav.modpacks": "Modpacky",
+    "nav.server": "Server",
+    "nav.about": "O projekte",
+    "catalog.kicker": "KATALÓG",
+    "catalog.title": "Vyber si správny výkonový profil",
+    "catalog.text": "Každý modpack cieli na iný hardvér a štýl hrania. Filtre ti pomôžu nájsť presne ten tvoj.",
+    "filters.kicker": "NÁJDI SVOJ BUILD",
+    "filters.title": "Filtre",
+    "filters.reset": "Resetovať",
+    "search.placeholder": "Hľadať modpack...",
+    "legend.version": "Verzia Minecraftu",
+    "legend.loader": "Mod loader",
+    "legend.focus": "Zameranie",
+    "verified.title": "Bezpečné zostavenie",
+    "verified.text": "Každý release je možné doplniť kontrolným súčtom a zoznamom zmien.",
+    "toolbar.filters": "Filtre",
+    "sort.label": "Zoradiť podľa",
+    "sort.current": "AKTUÁLNE RADENIE",
+    "sort.featured": "Odporúčané",
+    "sort.downloads": "Najsťahovanejšie",
+    "sort.fps": "Najvyššie FPS",
+    "sort.newest": "Najnovšie",
+    "sort.name": "Názov A–Z",
+    "results.oneReleased": "profil · 1 vydaný",
+    "results.onePending": "profil · pripravujeme",
+    "results.many": "{n} profilov · {r} vydaný",
+    "empty.title": "Žiadny modpack nezodpovedá filtrom",
+    "empty.text": "Skús upraviť hľadaný výraz alebo niektorý filter vypnúť.",
+    "empty.reset": "Vymazať filtre",
+    "pack.download": "Stiahnuť Modpack",
+    "pack.unreleased": "Zatiaľ nevydané",
+    "pack.details": "Detail modpacku",
+    "pack.detailsAria": "Zobraziť detail {name}",
+    "pack.favAdd": "Pridať do obľúbených",
+    "pack.favRemove": "Odobrať z obľúbených",
+    "pack.perf": "VÝKON",
+    "pack.mods": "MODOV",
+    "pack.maxfps": "MAX FPS",
+    "pack.minecraft": "MINECRAFT",
+    "pack.live": "LIVE BUILD",
+    "pack.indev": "IN DEVELOPMENT",
+    "pack.engine": "FPS ENGINE",
+    "pack.soon": "COMING SOON",
+    "pack.perfTitle": "Celkový výkon",
+    "pack.modsTitle": "Počet modov",
+    "pack.fpsTitle": "Maximálne FPS",
+    "pack.core": "PERFORMANCE CORE",
+    "modal.verified": "MINEKUBE VERIFIED BUILD",
+    "modal.stable": "Stabilný release",
+    "modal.client": "Optimalizované pre klienta",
+    "modal.gameVersion": "VERZIA HRY",
+    "modal.content": "OBSAH BALÍČKA",
+    "modal.contentValue": "{n} optimalizačných modov",
+    "modal.size": "VEĽKOSŤ",
+    "modal.perfProfile": "VÝKONNOSTNÝ PROFIL",
+    "modal.perfValue": "{p} · Maximum FPS",
+    "modal.proven": "OVERENÁ KONFIGURÁCIA",
+    "modal.provenText": "Nastavenia sú pripravené tak, aby poskytovali vysoký výkon, rýchle načítanie a stabilný priebeh hry bez zbytočného nastavovania.",
+    "modal.advKicker": "HLAVNÉ VÝHODY",
+    "modal.advTitle": "Čo balíček ponúka",
+    "modal.reqKicker": "RÝCHLY ŠTART",
+    "modal.reqTitle": "Požiadavky a odporúčania",
+    "modal.release": "AKTUÁLNY RELEASE",
+    "modal.releaseMeta": "{loader} build · {size} · pripravené na stiahnutie",
+    "modal.downloadZip": "Stiahnuť ZIP",
+    "modal.unavailable": "Zatiaľ nedostupné",
+    "modal.demo": "DEMONŠTRAČNÝ OBSAH",
+    "modal.demoText": "Tento text uprav podľa skutočného projektu.",
+    "modal.close": "Zavrieť",
+    "modal.closeAria": "Zavrieť detail",
+    "info.methodologyTitle": "Metodika merania výkonu",
+    "info.methodologyText": "Pre dôveryhodné porovnanie používaj rovnaký svet, seed, pozíciu hráča, render distance, rozlíšenie, verziu Javy aj ovládače. Každý test spusti niekoľkokrát, prvý priechod nepočítaj a uvádzaj nielen priemerné FPS, ale aj 1% low a frametime.",
+    "info.changelogTitle": "Changelog",
+    "info.changelogText": "Tu môže byť zoznam verzií, dátum vydania, pridané a odobrané mody, zmeny konfigurácie, známe chyby a pokyny pre bezpečný update.",
+    "info.compatibilityTitle": "Kompatibilita",
+    "info.compatibilityText": "Tu môžeš popísať podporované verzie Minecraftu, loadery, odporúčané verzie Javy, kompatibilitu so shadermi, resource packy a známe konflikty.",
+    "info.licenseTitle": "Licencia a upozornenie",
+    "info.licenseText": "Pred zverejnením doplň vlastné licenčné podmienky a skontroluj oprávnenia jednotlivých autorov modov na distribúciu v modpacku.",
+    "toast.favAdd": "Modpack bol uložený do obľúbených.",
+    "toast.favRemove": "Modpack bol odobraný z obľúbených.",
+    "toast.themeLight": "Zapnutý svetlý motív.",
+    "toast.themeDark": "Zapnutý tmavý motív.",
+    "toast.dlStart": "Nadväzujem bezpečné spojenie…",
+    "toast.dlOk": "Sťahovanie bolo úspešne zahájené",
+    "toast.dlNone": "Súbor na stiahnutie zatiaľ nie je nastavený.",
+    "toast.unreleased": "Tento modpack zatiaľ nie je vydaný.",
+    "toast.serverCopied": "IP servera skopírovaná do schránky.",
+    "toast.langSwitched": "Jazyk prepnutý: Slovenština.",
+    "kicker.transfer": "PRIPRAVUJEM PRENOS",
+    "kicker.download": "MINEKUBE DOWNLOAD",
+    "kicker.warn": "UPOZORNENIE",
+    "kicker.fav": "OBĽÚBENÉ",
+    "kicker.ui": "ROZHRANIE",
+    "kicker.lang": "JAZYK",
+    "kicker.sys": "MINEKUBE SYSTEM",
+    "bench.kicker": "MERATEĽNÝ ROZDIEL",
+    "bench.title": "Nie marketing. Výkon, ktorý môžeš zmerať.",
+    "bench.text": "Pripravený priestor pre reálne výsledky tvojich testov — rovnaký seed, rovnaké miesto, rovnaké nastavenia a niekoľko opakovaných meraní.",
+    "bench.li1": "Oddelené profily pre low-end, mid-range a high-end PC",
+    "bench.li2": "Prehľad použitej verzie Javy, ovládačov a nastavení",
+    "bench.li3": "Hodnoty FPS, 1% low, frametime, RAM a času načítania",
+    "bench.how": "Ako správne merať výkon",
+    "bench.sub": "1080p / 8 chunkov / bez shaderov",
+    "bench.vanillaSub": "bez optimalizácií",
+    "bench.perf": "VÝKON",
+    "bench.ram": "📟 PAMÄŤ RAM",
+    "bench.load": "🔃 DOBA NAČÍTANIA",
+    "install.kicker": "RÝCHLY ŠTART",
+    "install.title": "Od stiahnutia k hraniu za pár minút",
+    "install.text": "Jednoduchý postup vhodný pre Modrinth App aj ďalšie launchery podporujúce formát .mrpack.",
+    "step1.title": "Stiahni balíček",
+    "step1.text": "Vyber kompatibilnú verziu Minecraftu a stiahni súbor modpacku.",
+    "step2.title": "Importuj do launchera",
+    "step2.text": "V Modrinth App alebo Prism Launcheri zvoľ import existujúceho balíčka.",
+    "step3.title": "Spusti a hraj",
+    "step3.text": "Launcher automaticky pripraví správne mody, knižnice aj odporúčané nastavenia.",
+    "about.title": "Výkon bez zničenia pôvodného Minecraftu",
+    "about.lead": "Minekube Studios prepája výkonné modpacky, komunitný Minecraft server, Store a moderné open-source projekty do jedného československého ekosystému — bez paywallu a úplne zadarmo.",
+    "about.text": "Zmyslom projektu je zachovať známy vanilla pocit, ale odstrániť zbytočné prepady FPS, dlhé načítanie a mikrosekánie. Každý mod má mať jasný dôvod, žiadna výplň a žiadne náhodné experimenty v produkčnom vydaní.",
+    "about.tag1": "Vanilla friendly",
+    "about.tag2": "Bezpečné aktualizácie",
+    "about.tag3": "Čistá konfigurácia",
+    "about.tag4": "Transparentný changelog",
+    "server.kicker": "COMMUNITY SERVER",
+    "server.title": "Pripoj sa na náš Minecraft server",
+    "server.text": "Server Minekube Studios je otvorený všetkým hráčom z Česka aj Slovenska. Skopíruj IP adresu a pridaj si server do hry.",
+    "server.button": "Skopírovať IP servera",
+    "cta.title": "Daj Minecraftu výkon, ktorý si zaslúži.",
+    "cta.text": "Vyber si profil podľa svojho počítača a začni hrať plynulejšie.",
+    "cta.button": "Prechádzať modpacky",
+    "footer.desc": "Nezávislý demonštračný web pre Minecraft performance modpacky.",
+    "footer.project": "Projekt",
+    "footer.info": "Informácie",
+    "footer.compat": "Kompatibilita",
+    "footer.license": "Licencia",
+    "footer.community": "Komunita",
+    "footer.rights": "Minekube FPS. Demo web.",
+    "footer.tm": "Minecraft je ochranná známka spoločnosti Mojang Studios."
+  },
+  en: {
+    "meta.title": "Minekube FPS — Minecraft Performance Modpacks",
+    "meta.desc": "Minekube FPS modpacks – a faster, smoother and more stable Minecraft.",
+    "a11y.brand": "Minekube Studios – home page",
+    "a11y.nav": "Main navigation",
+    "a11y.mobileNav": "Mobile navigation",
+    "a11y.theme": "Toggle theme",
+    "a11y.lang": "Change language",
+    "a11y.langMenu": "Language selection",
+    "a11y.store": "Open Minekube Store",
+    "a11y.menu": "Open menu",
+    "a11y.filters": "Modpack filters",
+    "a11y.sort": "Modpack sorting",
+    "a11y.benchmarks": "Performance",
+    "a11y.benchmarkBoard": "Animated Vanilla vs Ultra Performance comparison",
+    "a11y.install": "Installation",
+    "a11y.discord": "Discord – add your own link",
+    "a11y.github": "GitHub – add your own link",
+    "nav.modpacks": "Modpacks",
+    "nav.server": "Server",
+    "nav.about": "About",
+    "catalog.kicker": "CATALOG",
+    "catalog.title": "Choose the right performance profile",
+    "catalog.text": "Each modpack targets different hardware and playstyle. Filters will help you find yours.",
+    "filters.kicker": "FIND YOUR BUILD",
+    "filters.title": "Filters",
+    "filters.reset": "Reset",
+    "search.placeholder": "Search modpacks...",
+    "legend.version": "Minecraft version",
+    "legend.loader": "Mod loader",
+    "legend.focus": "Focus",
+    "verified.title": "Safe build",
+    "verified.text": "Each release can include a checksum and changelog.",
+    "toolbar.filters": "Filters",
+    "sort.label": "Sort by",
+    "sort.current": "CURRENT SORTING",
+    "sort.featured": "Featured",
+    "sort.downloads": "Most downloaded",
+    "sort.fps": "Highest FPS",
+    "sort.newest": "Newest",
+    "sort.name": "Name A–Z",
+    "results.oneReleased": "profile · 1 released",
+    "results.onePending": "profile · coming soon",
+    "results.many": "{n} profiles · {r} released",
+    "empty.title": "No modpack matches the filters",
+    "empty.text": "Try adjusting your search or disabling a filter.",
+    "empty.reset": "Clear filters",
+    "pack.download": "Download Modpack",
+    "pack.unreleased": "Not released yet",
+    "pack.details": "Modpack details",
+    "pack.detailsAria": "Show details for {name}",
+    "pack.favAdd": "Add to favorites",
+    "pack.favRemove": "Remove from favorites",
+    "pack.perf": "PERFORMANCE",
+    "pack.mods": "MODS",
+    "pack.maxfps": "MAX FPS",
+    "pack.minecraft": "MINECRAFT",
+    "pack.live": "LIVE BUILD",
+    "pack.indev": "IN DEVELOPMENT",
+    "pack.engine": "FPS ENGINE",
+    "pack.soon": "COMING SOON",
+    "pack.perfTitle": "Overall performance",
+    "pack.modsTitle": "Number of mods",
+    "pack.fpsTitle": "Maximum FPS",
+    "pack.core": "PERFORMANCE CORE",
+    "modal.verified": "MINEKUBE VERIFIED BUILD",
+    "modal.stable": "Stable release",
+    "modal.client": "Optimized for client",
+    "modal.gameVersion": "GAME VERSION",
+    "modal.content": "PACKAGE CONTENTS",
+    "modal.contentValue": "{n} optimization mods",
+    "modal.size": "SIZE",
+    "modal.perfProfile": "PERFORMANCE PROFILE",
+    "modal.perfValue": "{p} · Maximum FPS",
+    "modal.proven": "PROVEN CONFIGURATION",
+    "modal.provenText": "The settings are tuned for high performance, fast loading and stable gameplay with no extra setup.",
+    "modal.advKicker": "KEY BENEFITS",
+    "modal.advTitle": "What the pack offers",
+    "modal.reqKicker": "QUICK START",
+    "modal.reqTitle": "Requirements & recommendations",
+    "modal.release": "CURRENT RELEASE",
+    "modal.releaseMeta": "{loader} build · {size} · ready to download",
+    "modal.downloadZip": "Download ZIP",
+    "modal.unavailable": "Not available yet",
+    "modal.demo": "DEMO CONTENT",
+    "modal.demoText": "Edit this text to match the real project.",
+    "modal.close": "Close",
+    "modal.closeAria": "Close details",
+    "info.methodologyTitle": "Performance testing methodology",
+    "info.methodologyText": "For a fair comparison, use the same world, seed, player position, render distance, resolution, Java version and drivers. Run each test several times, discard the first run and report not only average FPS but also 1% lows and frametime.",
+    "info.changelogTitle": "Changelog",
+    "info.changelogText": "This can hold the version list, release dates, added and removed mods, config changes, known issues and safe-update instructions.",
+    "info.compatibilityTitle": "Compatibility",
+    "info.compatibilityText": "Describe supported Minecraft versions, loaders, recommended Java versions, shader and resource-pack compatibility and known conflicts here.",
+    "info.licenseTitle": "License & notice",
+    "info.licenseText": "Before publishing, add your own license terms and check each mod author's permission for modpack distribution.",
+    "toast.favAdd": "Modpack saved to favorites.",
+    "toast.favRemove": "Modpack removed from favorites.",
+    "toast.themeLight": "Light theme enabled.",
+    "toast.themeDark": "Dark theme enabled.",
+    "toast.dlStart": "Establishing secure connection…",
+    "toast.dlOk": "Download started successfully",
+    "toast.dlNone": "No download file is set yet.",
+    "toast.unreleased": "This modpack is not released yet.",
+    "toast.serverCopied": "Server IP copied to clipboard.",
+    "toast.langSwitched": "Language switched: English.",
+    "kicker.transfer": "PREPARING TRANSFER",
+    "kicker.download": "MINEKUBE DOWNLOAD",
+    "kicker.warn": "WARNING",
+    "kicker.fav": "FAVORITES",
+    "kicker.ui": "INTERFACE",
+    "kicker.lang": "LANGUAGE",
+    "kicker.sys": "MINEKUBE SYSTEM",
+    "bench.kicker": "MEASURABLE DIFFERENCE",
+    "bench.title": "Not marketing. Performance you can measure.",
+    "bench.text": "A dedicated space for your real test results — same seed, same spot, same settings and several repeated runs.",
+    "bench.li1": "Separate profiles for low-end, mid-range and high-end PCs",
+    "bench.li2": "Overview of the Java version, drivers and settings used",
+    "bench.li3": "FPS, 1% low, frametime, RAM and load-time values",
+    "bench.how": "How to measure performance correctly",
+    "bench.sub": "1080p / 8 chunks / no shaders",
+    "bench.vanillaSub": "no optimizations",
+    "bench.perf": "PERFORMANCE",
+    "bench.ram": "📟 RAM USAGE",
+    "bench.load": "🔃 LOAD TIME",
+    "install.kicker": "QUICK START",
+    "install.title": "From download to playing in minutes",
+    "install.text": "A simple process for Modrinth App and other launchers supporting the .mrpack format.",
+    "step1.title": "Download the pack",
+    "step1.text": "Pick a compatible Minecraft version and download the modpack file.",
+    "step2.title": "Import into your launcher",
+    "step2.text": "In Modrinth App or Prism Launcher, choose to import an existing pack.",
+    "step3.title": "Launch and play",
+    "step3.text": "The launcher automatically prepares the right mods, libraries and recommended settings.",
+    "about.title": "Performance without ruining vanilla Minecraft",
+    "about.lead": "Minekube Studios connects powerful modpacks, a community Minecraft server, the Store and modern open-source projects into one Czechoslovak ecosystem — no paywall, completely free.",
+    "about.text": "The goal is to keep the familiar vanilla feel while removing unnecessary FPS drops, long loading times and micro-stutter. Every mod must have a clear purpose — no filler and no random experiments in production releases.",
+    "about.tag1": "Vanilla friendly",
+    "about.tag2": "Safe updates",
+    "about.tag3": "Clean configuration",
+    "about.tag4": "Transparent changelog",
+    "server.kicker": "COMMUNITY SERVER",
+    "server.title": "Join our Minecraft server",
+    "server.text": "The Minekube Studios server is open to all players from Czechia and Slovakia. Copy the IP address and add the server in-game.",
+    "server.button": "Copy server IP",
+    "cta.title": "Give Minecraft the performance it deserves.",
+    "cta.text": "Pick a profile for your PC and start playing smoother.",
+    "cta.button": "Browse modpacks",
+    "footer.desc": "An independent demo site for Minecraft performance modpacks.",
+    "footer.project": "Project",
+    "footer.info": "Information",
+    "footer.compat": "Compatibility",
+    "footer.license": "License",
+    "footer.community": "Community",
+    "footer.rights": "Minekube FPS. Demo site.",
+    "footer.tm": "Minecraft is a trademark of Mojang Studios."
+  }
+};
+
+const storedLang = safeStorage.get("minekube-lang", "cs");
+const initialLang = SUPPORTED_LANGS.includes(storedLang) ? storedLang : "cs";
+
+function t(key, vars = {}) {
+  const lang = state?.lang || initialLang;
+  let text = I18N[lang]?.[key] ?? I18N.cs[key] ?? key;
+  for (const [name, value] of Object.entries(vars)) {
+    text = text.replaceAll(`{${name}}`, String(value));
+  }
+  return text;
+}
+
+function currentLocale() {
+  return LANG_LOCALES[state?.lang] || "cs-CZ";
+}
+
+const SERVER_IP = "play.minekube.eu";
+
 const modpacks = [
   {
     id: "ultra-performance",
@@ -60,7 +559,45 @@ const modpacks = [
       "Doporučeno 4 GB RAM pro instanci",
       "Java 21 pro řadu 1.21.x",
       "Samostatná čistá instance"
-    ]
+    ],
+    i18n: {
+      sk: {
+        badge: "ODPORÚČANÉ",
+        description: "Maximálne optimalizovaný FPS modpack.",
+        longDescription: "Maximálne optimalizovaný FPS modpack pre Minecraft 1.21.1 s Fabric loaderom.",
+        features: [
+          "Maximum FPS profil",
+          "Optimalizované vykresľovanie chunkov",
+          "Rýchlejší štart hry",
+          "Nízke využitie operačnej pamäte",
+          "Prednastavené video nastavenia"
+        ],
+        requirements: [
+          "Minecraft Java Edition",
+          "Odporúčané 4 GB RAM pre inštanciu",
+          "Java 21 pre rad 1.21.x",
+          "Samostatná čistá inštancia"
+        ]
+      },
+      en: {
+        badge: "RECOMMENDED",
+        description: "Maximally optimized FPS modpack.",
+        longDescription: "Maximally optimized FPS modpack for Minecraft 1.21.1 with the Fabric loader.",
+        features: [
+          "Maximum FPS profile",
+          "Optimized chunk rendering",
+          "Faster game startup",
+          "Low memory usage",
+          "Preset video settings"
+        ],
+        requirements: [
+          "Minecraft Java Edition",
+          "4 GB RAM per instance recommended",
+          "Java 21 for the 1.21.x series",
+          "A separate clean instance"
+        ]
+      }
+    }
   },
   {
     id: "insider-performance",
@@ -87,7 +624,19 @@ const modpacks = [
     cube: ["#fff09c", "#f4a616", "#e86b08"],
     accentRgb: "255, 132, 22",
     accent: "#ff8c24",
-    visual: "insider"
+    visual: "insider",
+    i18n: {
+      sk: {
+        statusLabel: "VO VÝVOJI",
+        description: "Experimentálny profil s najnovšími výkonnostnými optimalizáciami.",
+        longDescription: "Pripravovaný experimentálny výkonnostný profil Minekube Studios."
+      },
+      en: {
+        statusLabel: "IN DEVELOPMENT",
+        description: "Experimental profile with the latest performance optimizations.",
+        longDescription: "Upcoming experimental performance profile from Minekube Studios."
+      }
+    }
   },
   {
     id: "balanced-performance",
@@ -114,7 +663,19 @@ const modpacks = [
     cube: ["#fff09c", "#e7b72b", "#1674c9"],
     accentRgb: "67, 158, 255",
     accent: "#4a9eff",
-    visual: "balanced"
+    visual: "balanced",
+    i18n: {
+      sk: {
+        statusLabel: "VO VÝVOJI",
+        description: "Vyvážený pomer vysokých FPS, stability a vizuálnej kvality.",
+        longDescription: "Pripravovaný vyvážený profil Minekube Studios."
+      },
+      en: {
+        statusLabel: "IN DEVELOPMENT",
+        description: "A balanced mix of high FPS, stability and visual quality.",
+        longDescription: "Upcoming balanced profile from Minekube Studios."
+      }
+    }
   },
   {
     id: "quality-performance",
@@ -141,7 +702,19 @@ const modpacks = [
     cube: ["#fff0a0", "#e5b62b", "#cc2830"],
     accentRgb: "255, 74, 81",
     accent: "#ff4a51",
-    visual: "quality"
+    visual: "quality",
+    i18n: {
+      sk: {
+        statusLabel: "VO VÝVOJI",
+        description: "Vysoká vizuálna kvalita bez zbytočnej straty výkonu.",
+        longDescription: "Pripravovaný kvalitatívny profil Minekube Studios."
+      },
+      en: {
+        statusLabel: "IN DEVELOPMENT",
+        description: "High visual quality without unnecessary performance loss.",
+        longDescription: "Upcoming quality profile from Minekube Studios."
+      }
+    }
   },
   {
     id: "pvp-performance",
@@ -168,11 +741,29 @@ const modpacks = [
     cube: ["#fff0a0", "#e7b52b", "#8d25c7"],
     accentRgb: "190, 78, 255",
     accent: "#bd55ff",
-    visual: "pvp"
+    visual: "pvp",
+    i18n: {
+      sk: {
+        statusLabel: "VO VÝVOJI",
+        description: "Rýchla odozva a čisté nastavenie pre kompetitívne hranie.",
+        longDescription: "Pripravovaný kompetitívny profil Minekube Studios."
+      },
+      en: {
+        statusLabel: "IN DEVELOPMENT",
+        description: "Fast response and clean settings for competitive play.",
+        longDescription: "Upcoming competitive profile from Minekube Studios."
+      }
+    }
   }
 ];
 
+function packText(pack, field) {
+  const lang = state?.lang || "cs";
+  return pack.i18n?.[lang]?.[field] ?? pack[field];
+}
+
 const state = {
+  lang: initialLang,
   query: "",
   versions: new Set(),
   loaders: new Set(),
@@ -195,9 +786,10 @@ const modalClose = document.getElementById("modalClose");
 const toast = document.getElementById("toast");
 let modalCloseTimer = null;
 let lastModalTrigger = null;
+let currentModal = null;
 
 function formatDownloads(value) {
-  return new Intl.NumberFormat("cs-CZ", { notation: "compact", maximumFractionDigits: 1 }).format(value);
+  return new Intl.NumberFormat(currentLocale(), { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
 
 
@@ -246,11 +838,12 @@ function createDownloadButton(packId, label, extraClass = "") {
 }
 
 function createUnreleasedButton(packId) {
+  const label = t("pack.unreleased");
   return `
-    <button class="release-pending-button" type="button" data-unreleased="${packId}" aria-label="${'Zatím nevydáno'}" title="Tento modpack zatím není vydaný">
+    <button class="release-pending-button" type="button" data-unreleased="${packId}" aria-label="${label}" title="${label}">
       <span class="pending-button-ambient" aria-hidden="true"></span>
       <span class="pending-button-grid" aria-hidden="true"></span>
-      <span class="pending-button-label">Zatím nevydáno</span>
+      <span class="pending-button-label">${label}</span>
       <span class="pending-button-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2"/><rect x="5" y="10" width="14" height="10" rx="3"/><path d="M12 14v2"/></svg>
       </span>
@@ -272,56 +865,58 @@ function createPackCard(pack) {
   };
 
   const actionMarkup = isReleased
-    ? `${createDownloadButton(pack.id, "Stáhnout Modpack", "download-button")}
-       <button class="details-button" type="button" data-details="${pack.id}" aria-label="Zobrazit detail ${pack.name}" title="Detail modpacku">
+    ? `${createDownloadButton(pack.id, t("pack.download"), "download-button")}
+       <button class="details-button" type="button" data-details="${pack.id}" aria-label="${t("pack.detailsAria", { name: pack.name })}" title="${t("pack.details")}">
          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
        </button>`
     : createUnreleasedButton(pack.id);
+
+  const favLabel = favorite ? t("pack.favRemove") : t("pack.favAdd");
 
   return `
     <article class="pack-card pack-card-${pack.visual || "default"} ${isReleased ? "is-released" : "is-unreleased"}" data-pack-id="${pack.id}" style="--pack-accent:${pack.accent}; --pack-accent-rgb:${pack.accentRgb}">
       <span class="pack-card-aura" aria-hidden="true"></span>
       <span class="pack-card-grid" aria-hidden="true"></span>
       <div class="pack-cover" style="--cover-bg:${pack.color}; --cube-a:${pack.cube[0]}; --cube-b:${pack.cube[1]}; --cube-c:${pack.cube[2]}; --cover-accent:${pack.accent}; --cover-accent-rgb:${pack.accentRgb}">
-        <span class="pack-badge ${isReleased ? "" : "is-coming"}"><i></i>${pack.badge}</span>
-        <button class="favorite-button ${favorite ? "active" : ""}" type="button" data-favorite="${pack.id}" aria-label="${favorite ? "Odebrat z oblíbených" : "Přidat do oblíbených"}" aria-pressed="${favorite}">
+        <span class="pack-badge ${isReleased ? "" : "is-coming"}"><i></i>${packText(pack, "badge")}</span>
+        <button class="favorite-button ${favorite ? "active" : ""}" type="button" data-favorite="${pack.id}" aria-label="${favLabel}" aria-pressed="${favorite}">
           <span class="favorite-orbit" aria-hidden="true"></span>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg>
         </button>
         <div class="cover-speed-lines"><i></i><i></i><i></i></div>
-        <div class="cover-hud cover-hud-left" aria-hidden="true"><i></i><span>PERFORMANCE CORE</span></div>
+        <div class="cover-hud cover-hud-left" aria-hidden="true"><i></i><span>${t("pack.core")}</span></div>
         <div class="cover-hud cover-hud-right" aria-hidden="true"><span>MK // ${String(modpacks.indexOf(pack) + 1).padStart(2, "0")}</span><i></i></div>
         <div class="cover-cube" aria-hidden="true">
           <span class="face-top"></span>
           <span class="face-left"></span>
           <span class="face-right"></span>
         </div>
-        <div class="cover-data-strip" aria-hidden="true"><span><i></i> ${isReleased ? "LIVE BUILD" : "IN DEVELOPMENT"}</span><b>${isReleased ? "FPS ENGINE" : "COMING SOON"}</b></div>
+        <div class="cover-data-strip" aria-hidden="true"><span><i></i> ${isReleased ? t("pack.live") : t("pack.indev")}</span><b>${isReleased ? t("pack.engine") : t("pack.soon")}</b></div>
       </div>
       <div class="pack-body">
         <div class="pack-title-row">
           <div class="pack-title-main">
-            <span class="release-state ${isReleased ? "" : "is-coming"}"><i></i> ${pack.statusLabel}</span>
+            <span class="release-state ${isReleased ? "" : "is-coming"}"><i></i> ${packText(pack, "statusLabel")}</span>
             <h3>${pack.name}</h3>
           </div>
-          <span class="pack-version"><small>MINECRAFT</small>${pack.release}</span>
+          <span class="pack-version"><small>${t("pack.minecraft")}</small>${pack.release}</span>
         </div>
-        <p class="pack-description">${pack.description}</p>
+        <p class="pack-description">${packText(pack, "description")}</p>
         <div class="tag-row">
           ${pack.tags.map(tag => `<span class="tag"><svg viewBox="0 0 24 24" aria-hidden="true">${tagIcons[tag] || '<path d="m5 12 4 4L19 6"/>'}</svg>${tag}</span>`).join("")}
         </div>
         <div class="pack-stats">
-          <span class="pack-stat" title="Celkový výkon">
+          <span class="pack-stat" title="${t("pack.perfTitle")}">
             <svg viewBox="0 0 24 24"><path d="M4.9 18a8 8 0 1 1 14.2 0"/><path d="m12 14 4.5-4.5M8 18h8"/></svg>
-            <small>VÝKON</small><strong>${pack.performance}</strong>
+            <small>${t("pack.perf")}</small><strong>${pack.performance}</strong>
           </span>
-          <span class="pack-stat" title="Počet modů">
+          <span class="pack-stat" title="${t("pack.modsTitle")}">
             <svg viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>
-            <small>MODŮ</small><strong>${pack.mods}</strong>
+            <small>${t("pack.mods")}</small><strong>${pack.mods}</strong>
           </span>
-          <span class="pack-stat" title="Maximální FPS">
+          <span class="pack-stat" title="${t("pack.fpsTitle")}">
             <svg viewBox="0 0 24 24"><path d="M5 17a7 7 0 1 1 14 0"/><path d="m12 17 4-5"/></svg>
-            <small>MAX FPS</small><strong>${pack.fpsLabel}</strong>
+            <small>${t("pack.maxfps")}</small><strong>${pack.fpsLabel}</strong>
           </span>
         </div>
         <div class="pack-actions ${isReleased ? "" : "pending-only"}">
@@ -333,10 +928,11 @@ function createPackCard(pack) {
 }
 
 function getFilteredPacks() {
-  const query = state.query.trim().toLocaleLowerCase("cs");
+  const locale = currentLocale();
+  const query = state.query.trim().toLocaleLowerCase(locale);
 
   let result = modpacks.filter(pack => {
-    const searchable = `${pack.name} ${pack.description} ${pack.loader} ${pack.category} ${pack.tags.join(" ")}`.toLocaleLowerCase("cs");
+    const searchable = `${pack.name} ${packText(pack, "description")} ${pack.loader} ${pack.category} ${pack.tags.join(" ")}`.toLocaleLowerCase(locale);
     const queryMatch = !query || searchable.includes(query);
     const versionMatch = state.versions.size === 0 || pack.versions.some(version => state.versions.has(version));
     const loaderMatch = state.loaders.size === 0 || state.loaders.has(pack.loader);
@@ -349,7 +945,7 @@ function getFilteredPacks() {
     downloads: (a, b) => b.downloads - a.downloads,
     fps: (a, b) => b.fps - a.fps,
     newest: (a, b) => new Date(b.updated) - new Date(a.updated),
-    name: (a, b) => a.name.localeCompare(b.name, "cs")
+    name: (a, b) => a.name.localeCompare(b.name, currentLocale())
   };
 
   return result.sort(sorters[state.sort]);
@@ -363,8 +959,8 @@ function renderPacks() {
   if (resultLabel) {
     const releasedCount = filtered.filter(pack => pack.status === "released").length;
     resultLabel.textContent = filtered.length === 1
-      ? (releasedCount === 1 ? "profil · 1 vydaný" : "profil · připravujeme")
-      : `${filtered.length} profilů · ${releasedCount} vydaný`;
+      ? (releasedCount === 1 ? t("results.oneReleased") : t("results.onePending"))
+      : t("results.many", { n: filtered.length, r: releasedCount });
   }
   emptyState.hidden = filtered.length !== 0;
   packGrid.hidden = filtered.length === 0;
@@ -391,22 +987,24 @@ function resetFilters() {
   renderPacks();
 }
 
-function openPackModal(pack) {
+function renderPackModalContent(pack) {
   const featureIcons = ["speed", "chunks", "rocket", "memory", "settings"];
   const requirementIcons = ["game", "memory", "java", "layers"];
+  const features = packText(pack, "features") || [];
+  const requirements = packText(pack, "requirements") || [];
 
-  modalContent.innerHTML = `
+  return `
     <div class="modal-hero" style="--cover-bg:${pack.color}">
       <span class="modal-hero-grid-lines" aria-hidden="true"></span>
       <span class="modal-hero-glow" aria-hidden="true"></span>
       <div class="modal-hero-layout">
         <div class="modal-hero-copy">
-          <span class="modal-kicker">${modalIcon("verified")} MINEKUBE VERIFIED BUILD</span>
+          <span class="modal-kicker">${modalIcon("verified")} ${t("modal.verified")}</span>
           <h2 id="modalTitle">${pack.shortName || pack.name}</h2>
           <p>${pack.category} <i></i> ${pack.loader} <i></i> Minecraft ${pack.release}</p>
           <div class="modal-hero-status">
-            <span><b></b> Stabilní release</span>
-            <span>Optimalizováno pro klienta</span>
+            <span><b></b> ${t("modal.stable")}</span>
+            <span>${t("modal.client")}</span>
           </div>
         </div>
         <div class="modal-power-core" aria-hidden="true">
@@ -423,27 +1021,27 @@ function openPackModal(pack) {
       <div class="modal-stats" aria-label="Parametry modpacku">
         <article class="modal-stat-card">
           <span class="modal-stat-icon">${modalIcon("game")}</span>
-          <div><small>VERZE HRY</small><strong>Minecraft ${pack.versions[0]}</strong></div>
+          <div><small>${t("modal.gameVersion")}</small><strong>Minecraft ${pack.versions[0]}</strong></div>
         </article>
         <article class="modal-stat-card">
           <span class="modal-stat-icon">${modalIcon("cubes")}</span>
-          <div><small>OBSAH BALÍČKU</small><strong>${pack.mods} optimalizačních modů</strong></div>
+          <div><small>${t("modal.content")}</small><strong>${t("modal.contentValue", { n: pack.mods })}</strong></div>
         </article>
         <article class="modal-stat-card">
           <span class="modal-stat-icon">${modalIcon("archive")}</span>
-          <div><small>VELIKOST</small><strong>${pack.size}</strong></div>
+          <div><small>${t("modal.size")}</small><strong>${pack.size}</strong></div>
         </article>
         <article class="modal-stat-card modal-stat-highlight">
           <span class="modal-stat-icon">${modalIcon("speed")}</span>
-          <div><small>VÝKONOVÝ PROFIL</small><strong>${pack.performance} · Maximum FPS</strong></div>
+          <div><small>${t("modal.perfProfile")}</small><strong>${t("modal.perfValue", { p: pack.performance })}</strong></div>
         </article>
       </div>
 
       <div class="modal-description">
         <span class="modal-description-icon">${modalIcon("shield")}</span>
         <div>
-          <small>PROVĚŘENÁ KONFIGURACE</small>
-          <p>${pack.longDescription} Nastavení je připravené tak, aby poskytovalo vysoký výkon, rychlé načítání a stabilní průběh hry bez zbytečného nastavování.</p>
+          <small>${t("modal.proven")}</small>
+          <p>${packText(pack, "longDescription")} ${t("modal.provenText")}</p>
         </div>
       </div>
 
@@ -451,10 +1049,10 @@ function openPackModal(pack) {
         <section class="modal-panel modal-panel-features">
           <header class="modal-panel-heading">
             <span>${modalIcon("rocket")}</span>
-            <div><small>HLAVNÍ VÝHODY</small><h3>Co balíček nabízí</h3></div>
+            <div><small>${t("modal.advKicker")}</small><h3>${t("modal.advTitle")}</h3></div>
           </header>
           <ul class="modal-feature-list">
-            ${pack.features.map((feature, index) => `
+            ${features.map((feature, index) => `
               <li>
                 <span class="modal-list-icon">${modalIcon(featureIcons[index] || "check")}</span>
                 <span>${feature}</span>
@@ -466,10 +1064,10 @@ function openPackModal(pack) {
         <section class="modal-panel modal-panel-requirements">
           <header class="modal-panel-heading">
             <span>${modalIcon("settings")}</span>
-            <div><small>RYCHLÝ START</small><h3>Požadavky a doporučení</h3></div>
+            <div><small>${t("modal.reqKicker")}</small><h3>${t("modal.reqTitle")}</h3></div>
           </header>
           <ul class="modal-feature-list">
-            ${pack.requirements.map((item, index) => `
+            ${requirements.map((item, index) => `
               <li>
                 <span class="modal-list-icon">${modalIcon(requirementIcons[index] || "check")}</span>
                 <span>${item}</span>
@@ -482,43 +1080,48 @@ function openPackModal(pack) {
       <div class="modal-download">
         <div class="modal-release-icon">${modalIcon("download")}</div>
         <div class="modal-release-copy">
-          <span>AKTUÁLNÍ RELEASE</span>
+          <span>${t("modal.release")}</span>
           <strong>${pack.release} · Minecraft ${pack.versions[0]}</strong>
-          <small>${pack.loader} build · ${pack.size} · připraveno ke stažení</small>
+          <small>${t("modal.releaseMeta", { loader: pack.loader, size: pack.size })}</small>
         </div>
         ${pack.downloadUrl ? `
-        ${createDownloadButton(pack.id, "Stáhnout ZIP", "modal-download-button")}` : `
+        ${createDownloadButton(pack.id, t("modal.downloadZip"), "modal-download-button")}` : `
         <button class="button button-secondary" type="button" disabled>
-          Zatím nedostupné
+          ${t("modal.unavailable")}
         </button>`}
       </div>
     </div>
   `;
+}
 
+function openPackModal(pack) {
+  if (!pack) return;
+  currentModal = { kind: "pack", id: pack.id };
+  modalContent.innerHTML = renderPackModalContent(pack);
   showModal();
 }
 
-function openInfoModal(type) {
+function renderInfoModalContent(type) {
   const content = {
     methodology: {
-      title: "Metodika měření výkonu",
-      text: "Pro důvěryhodné srovnání používej stejný svět, seed, pozici hráče, render distance, rozlišení, verzi Javy i ovladače. Každý test spusť několikrát, první průchod nepočítej a uváděj nejen průměrné FPS, ale také 1% low a frametime."
+      title: t("info.methodologyTitle"),
+      text: t("info.methodologyText")
     },
     changelog: {
-      title: "Changelog",
-      text: "Tady může být seznam verzí, datum vydání, přidané a odebrané mody, změny konfigurace, známé chyby a pokyny pro bezpečný update."
+      title: t("info.changelogTitle"),
+      text: t("info.changelogText")
     },
     compatibility: {
-      title: "Kompatibilita",
-      text: "Tady můžeš popsat podporované verze Minecraftu, loadery, doporučené verze Javy, kompatibilitu se shadery, resource packy a známé konflikty."
+      title: t("info.compatibilityTitle"),
+      text: t("info.compatibilityText")
     },
     license: {
-      title: "Licence a upozornění",
-      text: "Před zveřejněním doplň vlastní licenční podmínky a zkontroluj oprávnění jednotlivých autorů modů k distribuci v modpacku."
+      title: t("info.licenseTitle"),
+      text: t("info.licenseText")
     }
   }[type];
 
-  modalContent.innerHTML = `
+  return `
     <div class="modal-hero" style="--cover-bg:linear-gradient(135deg,#210623,#7c1194,#ff8500,#ffd84f)">
       <div><h2 id="modalTitle">${content.title}</h2></div>
     </div>
@@ -526,14 +1129,29 @@ function openInfoModal(type) {
       <p>${content.text}</p>
       <div class="modal-download">
         <div>
-          <span>DEMONSTRAČNÍ OBSAH</span>
-          <strong>Tento text uprav podle skutečného projektu.</strong>
+          <span>${t("modal.demo")}</span>
+          <strong>${t("modal.demoText")}</strong>
         </div>
-        <button class="button button-secondary" type="button" data-close-modal>Zavřít</button>
+        <button class="button button-secondary" type="button" data-close-modal>${t("modal.close")}</button>
       </div>
     </div>
   `;
+}
+
+function openInfoModal(type) {
+  currentModal = { kind: "info", type };
+  modalContent.innerHTML = renderInfoModalContent(type);
   showModal();
+}
+
+function refreshOpenModalLanguage() {
+  if (modalBackdrop.hidden || !currentModal) return;
+  if (currentModal.kind === "pack") {
+    const pack = modpacks.find(item => item.id === currentModal.id);
+    if (pack) modalContent.innerHTML = renderPackModalContent(pack);
+  } else if (currentModal.kind === "info") {
+    modalContent.innerHTML = renderInfoModalContent(currentModal.type);
+  }
 }
 
 function showModal() {
@@ -573,6 +1191,7 @@ function closeModal({ animateCloseButton = false } = {}) {
     modalBackdrop.classList.remove("is-closing");
     modalClose.classList.remove("is-closing-trigger");
     document.body.classList.remove("modal-open");
+    currentModal = null;
 
     if (lastModalTrigger?.isConnected) {
       lastModalTrigger.focus({ preventScroll: true });
@@ -597,11 +1216,12 @@ function showToast(message, type = "default", duration = 2900) {
   if (toastMessage) toastMessage.textContent = message;
 
   const toastConfig = {
-    "download-start": { className: "is-download-start", kicker: "PŘIPRAVUJI PŘENOS" },
-    "download-success": { className: "is-download-success", kicker: "MINEKUBE DOWNLOAD" },
-    warning: { className: "is-warning", kicker: "UPOZORNĚNÍ" },
-    favorite: { className: "is-favorite", kicker: "OBLÍBENÉ" },
-    theme: { className: "is-theme", kicker: "ROZHRANÍ" }
+    "download-start": { className: "is-download-start", kicker: t("kicker.transfer") },
+    "download-success": { className: "is-download-success", kicker: t("kicker.download") },
+    warning: { className: "is-warning", kicker: t("kicker.warn") },
+    favorite: { className: "is-favorite", kicker: t("kicker.fav") },
+    theme: { className: "is-theme", kicker: t("kicker.ui") },
+    lang: { className: "is-theme", kicker: t("kicker.lang") }
   }[type];
 
   if (toastConfig) {
@@ -609,7 +1229,7 @@ function showToast(message, type = "default", duration = 2900) {
     if (toastKicker) toastKicker.textContent = toastConfig.kicker;
   } else {
     toast.classList.add("is-system");
-    if (toastKicker) toastKicker.textContent = "MINEKUBE SYSTEM";
+    if (toastKicker) toastKicker.textContent = t("kicker.sys");
   }
 
   // Restartuje vstupní, pulzní i časovací animaci při každém novém oznámení.
@@ -642,10 +1262,10 @@ function toggleFavorite(id, button) {
 
   if (activating) {
     state.favorites.add(id);
-    showToast("Modpack byl uložen do oblíbených.");
+    showToast(t("toast.favAdd"));
   } else {
     state.favorites.delete(id);
-    showToast("Modpack byl odebrán z oblíbených.");
+    showToast(t("toast.favRemove"));
   }
 
   safeStorage.set("minekube-favorites", JSON.stringify([...state.favorites]));
@@ -656,7 +1276,7 @@ function toggleFavorite(id, button) {
     void button.offsetWidth;
     button.classList.add(activating ? "is-popping" : "is-unpopping");
     button.setAttribute("aria-pressed", String(activating));
-    button.setAttribute("aria-label", activating ? "Odebrat z oblíbených" : "Přidat do oblíbených");
+    button.setAttribute("aria-label", activating ? t("pack.favRemove") : t("pack.favAdd"));
     createFavoriteBurst(button, activating);
     window.setTimeout(() => button.classList.remove("is-popping", "is-unpopping"), 720);
   }
@@ -744,11 +1364,11 @@ async function triggerDownload(button, pack, event) {
 
 async function demoDownload(pack) {
   if (!pack?.downloadUrl) {
-    showToast("Soubor ke stažení zatím není nastavený.", "warning", 3600);
+    showToast(t("toast.dlNone"), "warning", 3600);
     return;
   }
 
-  showToast("Navazuji bezpečné spojení…", "download-start", 1800);
+  showToast(t("toast.dlStart"), "download-start", 1800);
 
   // Přímý odkaz míří na soubor v GitHub Release. GitHub ho vrátí
   // jako přílohu, takže se neotevře stránka projektu ani Game Jolt.
@@ -762,7 +1382,7 @@ async function demoDownload(pack) {
   link.click();
   link.remove();
 
-  showToast("Stahování bylo úspěšně zahájeno", "download-success", 4200);
+  showToast(t("toast.dlOk"), "download-success", 4200);
 }
 
 
@@ -803,7 +1423,7 @@ packGrid.addEventListener("click", event => {
     openPackModal(modpacks.find(pack => pack.id === detailsButton.dataset.details));
   }
   if (downloadButton) triggerDownload(downloadButton, modpacks.find(pack => pack.id === downloadButton.dataset.download), event);
-  if (unreleasedButton) showToast("Tento modpack zatím není vydaný.", "warning", 3200);
+  if (unreleasedButton) showToast(t("toast.unreleased"), "warning", 3200);
 });
 
 modalContent.addEventListener("click", event => {
@@ -909,7 +1529,7 @@ themeToggle.addEventListener("click", () => {
   const current = document.documentElement.dataset.theme === "light" ? "dark" : "light";
   document.documentElement.dataset.theme = current;
   safeStorage.set("minekube-theme", current);
-  showToast(current === "light" ? "Zapnut světlý motiv." : "Zapnut tmavý motiv.");
+  showToast(current === "light" ? t("toast.themeLight") : t("toast.themeDark"));
 });
 
 const siteHeader = document.querySelector(".site-header");
@@ -1088,6 +1708,7 @@ function initializeScrollExperience() {
     [document.querySelectorAll(".section-heading"), 0],
     [document.querySelectorAll(".filters-panel, .catalog-toolbar"), 80],
     [document.querySelectorAll(".pack-card"), 90],
+    [document.querySelectorAll(".server-card"), 0],
     [document.querySelectorAll(".benchmark-copy"), 0],
     [document.querySelectorAll(".steps-grid .step-card"), 105],
     [document.querySelectorAll(".about-copy, .about-emblem"), 110],
@@ -1097,118 +1718,13 @@ function initializeScrollExperience() {
 
   revealGroups.forEach(([elements, delay]) => registerRevealElements(elements, delay));
 
-  const pageTransition = document.getElementById("pageTransition");
-  const pageTransitionTitle = document.getElementById("pageTransitionTitle");
-  const pageTransitionStatus = document.getElementById("pageTransitionStatus");
-  const pageTransitionCode = document.getElementById("pageTransitionCode");
-  const pageTargets = new Map([
-    ["#home", { title: "DOMŮ", status: "Návrat do hlavního Minekube systému", code: "MK-01", accent: "#ffbd2f", rgb: "255,189,47" }],
-    ["#modpacks", { title: "MODPACKY", status: "Načítání výkonových profilů", code: "MK-02", accent: "#ffad1f", rgb: "255,173,31" }],
-    ["#benchmarks", { title: "VÝKON", status: "Aktivace benchmarkového jádra", code: "MK-03", accent: "#ef58ff", rgb: "239,88,255" }],
-    ["#install", { title: "INSTALACE", status: "Příprava instalačního protokolu", code: "MK-04", accent: "#ffca3a", rgb: "255,202,58" }],
-    ["#about", { title: "O PROJEKTU", status: "Otevírání Minekube manifestu", code: "MK-05", accent: "#df55ff", rgb: "223,85,255" }]
-  ]);
-  let pageTransitionBusy = false;
-  let sectionArrivalCleanupTimer = 0;
-
-  const clearSectionArrival = () => {
-    window.clearTimeout(sectionArrivalCleanupTimer);
-    document.querySelectorAll(".mk-section-preparing, .mk-section-arriving").forEach(section => {
-      section.classList.remove("mk-section-preparing", "mk-section-arriving");
-    });
-    document.querySelectorAll(".mk-section-entry-sweep").forEach(sweep => sweep.remove());
-  };
-
-  const prepareSectionArrival = target => {
-    clearSectionArrival();
-    if (!target || prefersReducedMotion.matches) return;
-    target.classList.add("mk-section-preparing");
-  };
-
-  const playSectionArrival = target => {
-    if (!target || prefersReducedMotion.matches) return;
-
-    target.classList.remove("mk-section-arriving");
-    // Reflow zaručí spuštění animace při každém přepnutí stránky.
-    void target.offsetWidth;
-    target.classList.remove("mk-section-preparing");
-    target.classList.add("mk-section-arriving");
-
-    // Domů nesmí dostat žádnou vstupní energetickou vlnu. Pro jistotu
-    // odstraníme i případný starší element, který mohl zůstat v DOM.
-    if (target.id === "home") {
-      target.querySelectorAll(".mk-section-entry-sweep").forEach(element => element.remove());
-    }
-
-    const sweep = target.id === "home" ? null : document.createElement("span");
-    if (sweep) {
-      sweep.className = "mk-section-entry-sweep";
-      sweep.setAttribute("aria-hidden", "true");
-      target.appendChild(sweep);
-    }
-
-    sectionArrivalCleanupTimer = window.setTimeout(() => {
-      target.classList.remove("mk-section-arriving");
-      sweep?.remove();
-    }, 1050);
-  };
-
-  // Zpřístupní rychlý nájezd sekcí po portálovém přepnutí stránky.
-  window.playMinekubeSectionArrival = playSectionArrival;
-
   const updateNavigationActive = id => {
     document.querySelectorAll('.desktop-nav a[href^="#"], .mobile-nav a[href^="#"]').forEach(link => {
       link.classList.toggle("active", link.getAttribute("href") === id);
     });
   };
 
-  const navigateWithPortal = (id, target) => {
-    if (pageTransitionBusy) return;
-    const config = pageTargets.get(id);
-
-    if (!config || prefersReducedMotion.matches || !pageTransition) {
-      target.scrollIntoView({ behavior: prefersReducedMotion.matches ? "auto" : "smooth", block: "start" });
-      history.replaceState(null, "", id);
-      updateNavigationActive(id);
-      return;
-    }
-
-    pageTransitionBusy = true;
-    prepareSectionArrival(target);
-    document.body.classList.add("mk-transitioning");
-    pageTransition.style.setProperty("--transition-accent", config.accent);
-    pageTransition.style.setProperty("--transition-accent-rgb", config.rgb);
-    if (pageTransitionTitle) pageTransitionTitle.textContent = config.title;
-    if (pageTransitionStatus) pageTransitionStatus.textContent = config.status;
-    if (pageTransitionCode) pageTransitionCode.textContent = config.code;
-    pageTransition.setAttribute("aria-hidden", "false");
-
-    // Re-trigger all CSS keyframes on every navigation click.
-    pageTransition.classList.remove("is-active");
-    void pageTransition.offsetWidth;
-    pageTransition.classList.add("is-active");
-
-    window.setTimeout(() => {
-      target.scrollIntoView({ behavior: "auto", block: "start" });
-      history.replaceState(null, "", id);
-      updateNavigationActive(id);
-      syncScrollExperience();
-    }, 590);
-
-    window.setTimeout(() => {
-      pageTransition.classList.remove("is-active");
-      pageTransition.setAttribute("aria-hidden", "true");
-      document.body.classList.remove("mk-transitioning");
-
-      // Až portál odkryje stránku, cílová sekce rychle a plynule vyjede.
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => playSectionArrival(target));
-      });
-
-      pageTransitionBusy = false;
-    }, 1450);
-  };
-
+  // Jednoduché plynulé scrollování bez celoplošných přechodových animací.
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener("click", event => {
       const id = anchor.getAttribute("href");
@@ -1217,12 +1733,9 @@ function initializeScrollExperience() {
       if (!target) return;
 
       event.preventDefault();
-      if (pageTargets.has(id)) {
-        navigateWithPortal(id, target);
-      } else {
-        target.scrollIntoView({ behavior: prefersReducedMotion.matches ? "auto" : "smooth", block: "start" });
-        history.replaceState(null, "", id);
-      }
+      target.scrollIntoView({ behavior: prefersReducedMotion.matches ? "auto" : "smooth", block: "start" });
+      history.replaceState(null, "", id);
+      updateNavigationActive(id);
     });
   });
 
@@ -1259,10 +1772,10 @@ function initializeCustomSort() {
   control.innerHTML = `
     <button class="sort-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
       <span class="sort-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6h12M4 6h.01M8 12h9M4 12h.01M8 18h6M4 18h.01"/></svg></span>
-      <span class="sort-trigger-copy"><small>AKTUÁLNÍ ŘAZENÍ</small><strong>${sortSelect.options[sortSelect.selectedIndex].text}</strong></span>
+      <span class="sort-trigger-copy"><small>${t("sort.current")}</small><strong>${sortSelect.options[sortSelect.selectedIndex].text}</strong></span>
       <span class="sort-trigger-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></span>
     </button>
-    <div class="sort-menu" role="listbox" aria-label="Řazení modpacků"></div>
+    <div class="sort-menu" role="listbox" aria-label="${t("a11y.sort")}"></div>
   `;
 
   const menu = control.querySelector(".sort-menu");
@@ -1273,7 +1786,7 @@ function initializeCustomSort() {
     item.dataset.value = option.value;
     item.setAttribute("role", "option");
     item.setAttribute("aria-selected", String(option.selected));
-    item.innerHTML = `<span class="sort-option-index">0${index + 1}</span><span>${option.text}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>`;
+    item.innerHTML = `<span class="sort-option-index">0${index + 1}</span><span class="sort-option-label">${option.text}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>`;
     menu.appendChild(item);
   });
 
@@ -1314,6 +1827,24 @@ function initializeCustomSort() {
   });
 }
 
+function refreshCustomSortLanguage() {
+  const control = document.querySelector(".sort-select .sort-control");
+  if (!control) return;
+  const caption = control.querySelector(".sort-trigger-copy small");
+  const currentLabel = control.querySelector(".sort-trigger-copy strong");
+  const menu = control.querySelector(".sort-menu");
+  if (caption) caption.textContent = t("sort.current");
+  if (currentLabel && sortSelect.options[sortSelect.selectedIndex]) {
+    currentLabel.textContent = sortSelect.options[sortSelect.selectedIndex].text;
+  }
+  if (menu) menu.setAttribute("aria-label", t("a11y.sort"));
+  control.querySelectorAll(".sort-option").forEach(item => {
+    const option = [...sortSelect.options].find(entry => entry.value === item.dataset.value);
+    const label = item.querySelector(".sort-option-label");
+    if (option && label) label.textContent = option.text;
+  });
+}
+
 function initializeEpicSurfaceInteractions() {
   if (!window.matchMedia("(pointer: fine)").matches || prefersReducedMotion.matches) return;
 
@@ -1343,6 +1874,10 @@ function initializeEpicSurfaceInteractions() {
   aboutCard?.addEventListener("pointermove", event => applyTilt(aboutCard, event, 2.5));
   aboutCard?.addEventListener("pointerleave", () => resetTilt(aboutCard));
 
+  const serverCard = document.querySelector(".server-card");
+  serverCard?.addEventListener("pointermove", event => applyTilt(serverCard, event, 2.5));
+  serverCard?.addEventListener("pointerleave", () => resetTilt(serverCard));
+
   const filters = document.querySelector(".filters-panel");
   filters?.addEventListener("pointermove", event => applyTilt(filters, event, 0));
 }
@@ -1357,269 +1892,128 @@ function initializeSearchShortcut() {
   });
 }
 
+/* =========================================================
+   JAZYK STRÁNKY // PŘEPÍNAČ V HLAVIČCE
+   ========================================================= */
+function applyStaticLanguage() {
+  document.documentElement.lang = state.lang;
+  document.title = t("meta.title");
+  document.getElementById("metaDescription")?.setAttribute("content", t("meta.desc"));
+
+  document.querySelectorAll("[data-i18n]").forEach(element => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(element => {
+    element.setAttribute("placeholder", t(element.dataset.i18nPh));
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach(element => {
+    element.setAttribute("aria-label", t(element.dataset.i18nAria));
+  });
+  document.querySelectorAll("[data-i18n-title]").forEach(element => {
+    element.setAttribute("title", t(element.dataset.i18nTitle));
+  });
+
+  const langCurrent = document.getElementById("langCurrent");
+  if (langCurrent) langCurrent.textContent = LANG_CODES[state.lang] || "CZ";
+
+  document.querySelectorAll("#langMenu .lang-option").forEach(option => {
+    const selected = option.dataset.lang === state.lang;
+    option.setAttribute("aria-selected", String(selected));
+    option.classList.toggle("is-selected", selected);
+  });
+}
+
+function setLanguage(lang, { announce = true } = {}) {
+  if (!SUPPORTED_LANGS.includes(lang)) return;
+  state.lang = lang;
+  safeStorage.set("minekube-lang", lang);
+  applyStaticLanguage();
+  refreshCustomSortLanguage();
+  renderPacks();
+  refreshOpenModalLanguage();
+  closeLanguageMenu();
+  if (announce) showToast(t("toast.langSwitched"), "lang", 2600);
+}
+
+function closeLanguageMenu() {
+  const switcher = document.getElementById("langSwitcher");
+  const toggle = document.getElementById("langToggle");
+  if (!switcher || !toggle) return;
+  switcher.classList.remove("open");
+  toggle.setAttribute("aria-expanded", "false");
+}
+
+function initializeLanguageSwitcher() {
+  const switcher = document.getElementById("langSwitcher");
+  const toggle = document.getElementById("langToggle");
+  const menu = document.getElementById("langMenu");
+  if (!switcher || !toggle || !menu) return;
+
+  toggle.addEventListener("click", event => {
+    event.stopPropagation();
+    const isOpen = switcher.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  menu.querySelectorAll(".lang-option").forEach(option => {
+    option.addEventListener("click", () => setLanguage(option.dataset.lang));
+  });
+
+  document.addEventListener("click", event => {
+    if (!switcher.contains(event.target)) closeLanguageMenu();
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeLanguageMenu();
+  });
+}
+
+/* =========================================================
+   SERVER // KOPÍROVÁNÍ IP ADRESY
+   ========================================================= */
+async function copyServerIp() {
+  try {
+    await navigator.clipboard.writeText(SERVER_IP);
+  } catch {
+    const fallback = document.createElement("textarea");
+    fallback.value = SERVER_IP;
+    fallback.setAttribute("readonly", "");
+    fallback.style.position = "fixed";
+    fallback.style.opacity = "0";
+    document.body.appendChild(fallback);
+    fallback.select();
+    try {
+      document.execCommand("copy");
+    } catch {
+      // Schránka není dostupná — IP zůstává viditelná na stránce.
+    }
+    fallback.remove();
+  }
+  showToast(t("toast.serverCopied"), "download-success", 3200);
+}
+
+function initializeServerButton() {
+  document.getElementById("serverJoinButton")?.addEventListener("click", copyServerIp);
+  document.getElementById("serverIp")?.addEventListener("click", copyServerIp);
+}
+
+/* Staré odkazy na odstraněnou sekci Domů přesměrujeme na začátek stránky. */
+function fixLegacyHash() {
+  if (window.location.hash === "#home") {
+    history.replaceState(null, "", "#top");
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }
+}
+
 document.getElementById("currentYear").textContent = new Date().getFullYear();
 
+fixLegacyHash();
+applyStaticLanguage();
 renderPacks();
 initializeCustomSort();
 initializeUltimateDownloadButtons();
 initializeEpicSurfaceInteractions();
 initializeSearchShortcut();
 initializeScrollExperience();
-
-/* =========================================================
-   HOME // FUTURE ENTRY CONTROLLER
-   Web se při každém otevření vrátí na Domů a přehraje boot sekvenci.
-   ========================================================= */
-(() => {
-  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-
-  const goHomeInstantly = () => {
-    try {
-      history.replaceState(null, "", "#home");
-    } catch {
-      location.hash = "home";
-    }
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  };
-
-  goHomeInstantly();
-
-  const loader = document.getElementById("futureLoader");
-  const progressBar = document.getElementById("loaderProgressBar");
-  const percent = document.getElementById("loaderPercent");
-  const status = document.getElementById("loaderStatus");
-  const storeButton = document.querySelector(".store-button");
-  const pageTransition = document.getElementById("pageTransition");
-  const pageTransitionTitle = document.getElementById("pageTransitionTitle");
-  const pageTransitionStatus = document.getElementById("pageTransitionStatus");
-  const pageTransitionCode = document.getElementById("pageTransitionCode");
-  let storePageTransitionBusy = false;
-  const storeDestination = "https://minekubestudios.github.io/store/";
-  if (storeButton) storeButton.href = storeDestination;
-  const startTime = performance.now();
-  let pageLoaded = document.readyState === "complete";
-  let finished = false;
-
-  const statusForProgress = value => {
-    if (value < 24) return "Načítám Minekube ekosystém...";
-    if (value < 48) return "Propojuji modpacky a server...";
-    if (value < 72) return "Aktivuji open-source jádro...";
-    if (value < 94) return "Spouštím technologie budoucnosti...";
-    return "Systém připraven";
-  };
-
-  const finishLoader = () => {
-    if (finished) return;
-    finished = true;
-    progressBar?.style.setProperty("--loader-progress", "100%");
-    if (percent) percent.textContent = "100";
-    if (status) status.textContent = "Systém připraven";
-
-    window.setTimeout(() => {
-      loader?.classList.add("is-leaving");
-      document.body.classList.remove("future-loading");
-      document.body.classList.add("home-ready");
-      goHomeInstantly();
-
-      // Domů má po boot sekvenci vlastní odhalení. Další stránkový nájezd
-      // se zde nespouští, aby se animace nepřekryly a obraz neblikl.
-
-      window.setTimeout(() => {
-        if (loader) loader.hidden = true;
-      }, 780);
-    }, prefersReducedMotion.matches ? 80 : 320);
-  };
-
-  const updateLoader = now => {
-    if (!loader || finished) return;
-    const elapsed = now - startTime;
-    const baseDuration = prefersReducedMotion.matches ? 120 : 1750;
-    const waitingProgress = Math.min(94, (elapsed / baseDuration) * 94);
-    const value = pageLoaded
-      ? Math.min(100, waitingProgress + Math.max(0, (elapsed - baseDuration * .64) / (prefersReducedMotion.matches ? 3 : 12)))
-      : waitingProgress;
-    const rounded = Math.max(0, Math.min(100, Math.round(value)));
-
-    progressBar?.style.setProperty("--loader-progress", `${rounded}%`);
-    if (percent) percent.textContent = String(rounded);
-    if (status) status.textContent = statusForProgress(rounded);
-
-    if (pageLoaded && rounded >= 100) {
-      finishLoader();
-      return;
-    }
-
-    requestAnimationFrame(updateLoader);
-  };
-
-  const markLoaded = () => {
-    pageLoaded = true;
-    goHomeInstantly();
-  };
-
-  if (document.readyState === "complete") {
-    markLoaded();
-  } else {
-    window.addEventListener("load", markLoaded, { once: true });
-  }
-
-  requestAnimationFrame(updateLoader);
-
-  const homePrimary = document.querySelector(".mk-home-primary");
-  if (homePrimary && window.matchMedia("(pointer: fine)").matches && !prefersReducedMotion.matches) {
-    homePrimary.addEventListener("pointermove", event => {
-      const rect = homePrimary.getBoundingClientRect();
-      homePrimary.style.setProperty("--mx", `${((event.clientX - rect.left) / rect.width) * 100}%`);
-      homePrimary.style.setProperty("--my", `${((event.clientY - rect.top) / rect.height) * 100}%`);
-    });
-    homePrimary.addEventListener("pointerleave", () => {
-      homePrimary.style.setProperty("--mx", "50%");
-      homePrimary.style.setProperty("--my", "50%");
-    });
-  }
-
-  // STORE // ostré 2D neon-galaxy tlačítko, částice, blesky, Store pulz a plynulý celoplošný přechod.
-  if (storeButton && !prefersReducedMotion.matches) {
-    const fxLayer = storeButton.querySelector(".store-button-fx");
-    const fxPalette = ["#69f7ff", "#8f6cff", "#ff58df", "#ffd36e", "#78adff"];
-    const fxIcons = ["✦", "◇", "⬡", "+", "✧"];
-    let fxTimer = 0;
-    let storeTransitionOpening = false;
-    let lastPulseAt = 0;
-
-    const randomBetween = (min, max) => Math.random() * (max - min) + min;
-
-    const spawnStoreFx = (amount = 16, force = false) => {
-      if (!fxLayer || (!force && !storeButton.matches(":hover"))) return;
-
-      for (let index = 0; index < amount; index += 1) {
-        const roll = Math.random();
-        const node = document.createElement("i");
-        const angle = randomBetween(0, Math.PI * 2);
-        const distanceX = randomBetween(64, 138);
-        const distanceY = randomBetween(46, 104);
-        const color = fxPalette[Math.floor(Math.random() * fxPalette.length)];
-        const x = Math.cos(angle) * distanceX;
-        const y = Math.sin(angle) * distanceY;
-
-        if (roll < .19) {
-          node.className = "store-fx-bolt";
-        } else if (roll < .44) {
-          node.className = "store-fx-icon";
-          node.textContent = fxIcons[Math.floor(Math.random() * fxIcons.length)];
-        } else {
-          node.className = "store-fx-particle";
-        }
-
-        node.style.setProperty("--fx-x", `${x.toFixed(1)}px`);
-        node.style.setProperty("--fx-y", `${y.toFixed(1)}px`);
-        node.style.setProperty("--fx-size", `${randomBetween(3, roll < .44 ? 15 : 7.5).toFixed(1)}px`);
-        node.style.setProperty("--fx-duration", `${Math.round(randomBetween(720, 1260))}ms`);
-        node.style.setProperty("--fx-delay", `${Math.round(randomBetween(0, 100))}ms`);
-        node.style.setProperty("--fx-rotation", `${Math.round(randomBetween(-180, 180))}deg`);
-        node.style.setProperty("--fx-scale", randomBetween(.38, 1.08).toFixed(2));
-        node.style.setProperty("--fx-color", color);
-        fxLayer.appendChild(node);
-        node.addEventListener("animationend", () => node.remove(), { once: true });
-      }
-    };
-
-    if (window.matchMedia("(pointer: fine)").matches) {
-      storeButton.addEventListener("pointermove", event => {
-        const rect = storeButton.getBoundingClientRect();
-        const x = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
-        const y = Math.min(Math.max((event.clientY - rect.top) / rect.height, 0), 1);
-        storeButton.style.setProperty("--store-x", `${x * 100}%`);
-        storeButton.style.setProperty("--store-y", `${y * 100}%`);
-      });
-
-      storeButton.addEventListener("pointerenter", () => {
-        spawnStoreFx(32);
-        window.clearInterval(fxTimer);
-        fxTimer = window.setInterval(() => spawnStoreFx(9), 210);
-      });
-
-      storeButton.addEventListener("pointerleave", () => {
-        window.clearInterval(fxTimer);
-        storeButton.style.setProperty("--store-x", "50%");
-        storeButton.style.setProperty("--store-y", "50%");
-      });
-    }
-
-    const launchStorePulse = (clientX, clientY) => {
-      const now = performance.now();
-      if (now - lastPulseAt < 220) return;
-      lastPulseAt = now;
-
-      const rect = storeButton.getBoundingClientRect();
-      const x = Number.isFinite(clientX) && clientX > 0 ? clientX : rect.left + rect.width / 2;
-      const y = Number.isFinite(clientY) && clientY > 0 ? clientY : rect.top + rect.height / 2;
-      const pulse = document.createElement("span");
-      pulse.className = "store-cyber-pulse store-main-style-pulse";
-      pulse.style.setProperty("--pulse-x", `${x}px`);
-      pulse.style.setProperty("--pulse-y", `${y}px`);
-      pulse.innerHTML = '<i class="store-cyber-pulse-grid"></i><i class="store-cyber-pulse-cross"></i>';
-      document.body.appendChild(pulse);
-      pulse.addEventListener("animationend", pulseEvent => {
-        if (pulseEvent.target === pulse) pulse.remove();
-      });
-      window.setTimeout(() => pulse.remove(), 1700);
-    };
-
-    const launchStoreTransition = (clientX, clientY) => {
-      if (storeTransitionOpening || storePageTransitionBusy) return;
-      const destination = storeDestination;
-
-      if (!pageTransition) {
-        window.location.assign(destination);
-        return;
-      }
-
-      storeTransitionOpening = true;
-      storePageTransitionBusy = true;
-      window.clearInterval(fxTimer);
-      spawnStoreFx(54, true);
-      launchStorePulse(clientX, clientY);
-
-      storeButton.classList.add("is-store-opening");
-      document.body.classList.add("mk-transitioning", "store-transitioning");
-      pageTransition.classList.add("is-store-transition");
-      pageTransition.style.setProperty("--transition-accent", "#72f4ff");
-      pageTransition.style.setProperty("--transition-accent-rgb", "114,244,255");
-      pageTransition.style.setProperty("--transition-accent-2", "#9568ff");
-      pageTransition.style.setProperty("--transition-accent-3", "#ff55dc");
-      if (pageTransitionTitle) pageTransitionTitle.textContent = "STORE";
-      if (pageTransitionStatus) pageTransitionStatus.textContent = "Otevírání Minekube Store";
-      if (pageTransitionCode) pageTransitionCode.textContent = "MK-ST";
-      pageTransition.setAttribute("aria-hidden", "false");
-
-      pageTransition.classList.remove("is-active");
-      void pageTransition.offsetWidth;
-      pageTransition.classList.add("is-active");
-
-      // Přesměrování proběhne až po nejvýraznější části plynulého Store portálu.
-      window.setTimeout(() => {
-        window.location.assign(destination);
-      }, 1660);
-
-      // Bezpečnostní úklid pro případ, že prohlížeč přesměrování zablokuje.
-      window.setTimeout(() => {
-        pageTransition.classList.remove("is-active", "is-store-transition");
-        pageTransition.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("mk-transitioning", "store-transitioning");
-        storeButton.classList.remove("is-store-opening");
-        storePageTransitionBusy = false;
-        storeTransitionOpening = false;
-      }, 3200);
-    };
-
-    storeButton.addEventListener("pointerdown", event => launchStorePulse(event.clientX, event.clientY));
-    storeButton.addEventListener("click", event => {
-      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      event.preventDefault();
-      if (event.detail === 0) launchStorePulse(0, 0);
-      launchStoreTransition(event.clientX, event.clientY);
-    });
-  }
-
-})();
+initializeLanguageSwitcher();
+initializeServerButton();
