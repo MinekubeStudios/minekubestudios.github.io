@@ -1,21 +1,53 @@
-# Minekube Web – Portal + Section Arrival
+# Minekube Studios // Hlavní web (nová verze)
 
-Tato verze zachovává celoplošnou Minekube portálovou animaci při přepínání hlavních sekcí.
+Hlavní stránka postavená **komplet od nuly** — obsahuje pouze **O projektu**
+a **Studio Minekube**. Barvy, typografie, karty, boot loader, portálové
+přechody a veškeré animace odpovídají původnímu webu
+(`https://minekubestudios.github.io`).
 
-Nově po dokončení portálu cílová sekce rychle a plynule vyjede, její hlavní obsah se odhalí ve dvou krátkých navazujících krocích a přes stránku proběhne jemná zlato-fialová energetická vlna.
+## Struktura
 
-Animace se opakuje při každém přechodu na Domů, Modpacky, Výkon, Instalaci a O projektu. Stejný nájezd se použije také po úvodní boot animaci stránky.
+| Soubor | Popis |
+|---|---|
+| `index.html` | Nová stránka: Domů (hero) → O projektu → Studio → CTA → patička |
+| `styles.css` | Původní design systém (411 kB, beze změny) + nový blok `MAIN PAGE V2` pro sekci Studio |
+| `app.js` | Nový skript: boot sekvence, portálové přechody sekcí, reveal animace, 3D tilt karet, Store FX, motiv, toast, modaly |
+| `assets/favicon.svg` | Favicon z brand znaku (původní web ho neměl — 404) |
 
-Funkce webu, modpacky, filtry, Store a přímé stahování zůstaly beze změny.
+## Sekce stránky
 
+1. **Domů (`#home`)** — hero s aurora pozadím, orbit modulemi ekosystému
+   (MODPACKY → `modpacky/`, STORE → Store, OPEN SOURCE → `#studio`) a
+   odkazem „NÁSLEDUJÍCÍ STRÁNKA: MODPACKY" do nové stránky modpacků.
+2. **O projektu (`#projekt`)** — původní about karta (manifest projektu +
+   3D emblém) a níže 4 karty principů (Vanilla friendly, Bezpečné
+   aktualizace, Čistá konfigurace, Transparentní changelog).
+3. **Studio Minekube (`#studio`)** — karta „Kdo jsme" (hodnoty + fakty +
+   emblém) a 4 karty pilířů: Modpacky (LIVE → `modpacky/`), Komunitní
+   server (VE VÝVOJI — tlačítko „Brzy" s tostem), Store (OPEN → Store),
+   Open source (BUILD TOGETHER).
+4. **CTA + patička** — CTA na modpacky, patička s dialogy (Changelog,
+   Kompatibilita, Licence) a odkazy komunity.
 
-## Úprava této verze
+## Navigace
 
-U sekce Domů je odstraněna energetická vstupní vlna, aby se nepřekrývala s ostatními úvodními animacemi. Rychlý nájezd Domů i kompletní přechody ostatních sekcí zůstávají zachované.
+- **Domů / O projektu / Studio** — kotvy s portálovým přechodem
+  (MK-01, MK-02, MK-03).
+- **Modpacky** — odkaz na `modpacky/` (druhá stránka, bude dělaná
+  následně). Uloženo materiály: `/home/user/modpacky-save/`.
 
+## Jak spustit
 
-## Oprava blikání sekce Domů
-- Domů už po úvodní boot animaci nespouští druhý souběžný stránkový nájezd.
-- Energetická vstupní vlna je pro Domů zablokovaná v JavaScriptu i CSS.
-- Při návratu přes navigaci zůstává pouze jeden čistý nájezd celé sekce, bez animování jejích vnitřních částí podruhé.
-- Ostatní sekce a jejich vlny zůstaly beze změny.
+```bash
+cd site
+python3 -m http.server 8080 --bind 0.0.0.0
+```
+
+## Poznámky
+
+- Odkazy na Store a Game Jolt vedou na produkční URL
+  (`https://minekubestudios.github.io/store/`, Game Jolt) — stejné jako v
+  původním webu.
+- Discord a GitHub v patičce jsou placeholdery (`#`), stejně jako v
+  původním webu — doplň vlastní odkazy.
+- Tmavý/světlý motiv, boot loader a Store FX fungují přesně jako v originále.

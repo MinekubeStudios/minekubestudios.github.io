@@ -4,15 +4,17 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="Minekube FPS modpacky – rychlejší, plynulejší a stabilnější Minecraft." name="description"/>
-<meta content="#0f1512" name="theme-color"/>
-<title>Minekube FPS — Minecraft Performance Modpacks</title>
+<meta content="Minekube Studios — nezávislé československé studio výkonných Minecraft modpacků, komunitního serveru, Store a open-source projektů." name="description"/>
+<meta content="#08040b" name="theme-color"/>
+<title>Minekube Studios — O projektu a studiu</title>
 <link href="assets/favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="styles.css" rel="stylesheet"/>
 </head>
 <body class="future-loading">
 <div aria-hidden="true" class="noise"></div>
 <div aria-hidden="true" class="scroll-progress" id="scrollProgress"><span></span></div>
+
+<!-- ===================== BOOT LOADER ===================== -->
 <div aria-label="Načítání Minekube systému" aria-live="polite" class="future-loader" id="futureLoader" role="status">
 <div aria-hidden="true" class="future-loader-grid"></div>
 <div aria-hidden="true" class="future-loader-beam"></div>
@@ -43,13 +45,14 @@
 </div>
 </div>
 
+<!-- ===================== PAGE TRANSITION PORTAL ===================== -->
 <div aria-hidden="true" class="mk-page-transition" id="pageTransition">
   <div class="mk-transition-panel mk-transition-panel-left"></div>
   <div class="mk-transition-panel mk-transition-panel-right"></div>
   <div class="mk-transition-grid"></div>
   <div class="mk-transition-beam"></div>
   <div class="mk-transition-particles" aria-hidden="true">
-    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
   </div>
   <div class="mk-transition-console">
     <div class="mk-transition-emblem" aria-hidden="true">
@@ -64,19 +67,21 @@
     </div>
     <div class="mk-transition-copy">
       <span class="mk-transition-kicker"><i></i> MINEKUBE // PAGE LINK</span>
-      <strong id="pageTransitionTitle">MODPACKY</strong>
+      <strong id="pageTransitionTitle">MINEKUBE</strong>
       <small id="pageTransitionStatus">Přesměrování do další sekce</small>
       <div class="mk-transition-progress"><span></span></div>
-      <div class="mk-transition-meta"><span>SECURE CHANNEL</span><b id="pageTransitionCode">MK-02</b></div>
+      <div class="mk-transition-meta"><span>SECURE CHANNEL</span><b id="pageTransitionCode">MK-01</b></div>
     </div>
   </div>
   <div class="mk-transition-scanlines"></div>
 </div>
+
+<!-- ===================== HEADER ===================== -->
 <header class="site-header">
 <div class="nav-wrap">
-<a aria-label="Minekube Studios – domovská stránka" class="brand" href="#home">
+<a aria-label="Minekube Studios — domovská stránka" class="brand" href="#home">
 <span aria-hidden="true" class="brand-mark">
-<svg role="img" viewbox="0 0 48 48">
+<svg role="img" viewBox="0 0 48 48">
 <path d="M24 3 43 13.5v21L24 45 5 34.5v-21L24 3Z"></path>
 <path class="mark-top" d="m24 3 19 10.5L24 24 5 13.5 24 3Z"></path>
 <path class="mark-left" d="M24 24v21L5 34.5v-21L24 24Z"></path>
@@ -91,14 +96,13 @@
 </a>
 <nav aria-label="Hlavní navigace" class="desktop-nav">
 <a class="active" href="#home">Domů</a>
-<a href="#modpacks">Modpacky</a>
-<a href="#benchmarks">Výkon</a>
-<a href="#install">Instalace</a>
-<a href="#about">O projektu</a>
+<a href="#projekt">O projektu</a>
+<a href="#studio">Studio</a>
+<a href="modpacky/">Modpacky</a>
 </nav>
 <div class="header-actions">
 <button aria-label="Přepnout motiv" class="icon-button" id="themeToggle" title="Přepnout motiv" type="button">
-<svg aria-hidden="true" class="sun-icon" viewbox="0 0 24 24">
+<svg aria-hidden="true" class="sun-icon" viewBox="0 0 24 24">
 <circle cx="12" cy="12" r="4"></circle>
 <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path>
 </svg>
@@ -112,14 +116,14 @@
 <span class="store-button-scan"></span>
 </span>
 <span aria-hidden="true" class="store-button-lightning">
-<svg class="store-lightning store-lightning-a" viewbox="0 0 210 84"><path d="M9 55 31 38 48 45 70 18 89 31 112 8"></path></svg>
-<svg class="store-lightning store-lightning-b" viewbox="0 0 210 84"><path d="M202 23 179 38 163 30 141 61 119 48 97 74"></path></svg>
-<svg class="store-lightning store-lightning-c" viewbox="0 0 210 84"><path d="M17 18 40 28 54 14 76 35"></path></svg>
+<svg class="store-lightning store-lightning-a" viewBox="0 0 210 84"><path d="M9 55 31 38 48 45 70 18 89 31 112 8"></path></svg>
+<svg class="store-lightning store-lightning-b" viewBox="0 0 210 84"><path d="M202 23 179 38 163 30 141 61 119 48 97 74"></path></svg>
+<svg class="store-lightning store-lightning-c" viewBox="0 0 210 84"><path d="M17 18 40 28 54 14 76 35"></path></svg>
 </span>
 <span aria-hidden="true" class="store-button-orbits"><i></i><i></i><i></i></span>
 <span aria-hidden="true" class="store-button-icon">
 <span class="store-icon-core"></span>
-<svg viewbox="0 0 24 24"><path d="M5 9h14l-1 11H6L5 9Z"></path><path d="M8 9a4 4 0 0 1 8 0"></path><path d="m10 14 2 2 3-4"></path></svg>
+<svg viewBox="0 0 24 24"><path d="M5 9h14l-1 11H6L5 9Z"></path><path d="M8 9a4 4 0 0 1 8 0"></path><path d="m10 14 2 2 3-4"></path></svg>
 </span>
 <span class="store-button-label">
 <small><span>MINEKUBE</span><i aria-hidden="true"></i></small>
@@ -127,7 +131,7 @@
 </span>
 <span aria-hidden="true" class="store-button-arrow">
 <span class="store-arrow-core"></span>
-<svg viewbox="0 0 24 24"><path d="m8 18 6-6-6-6"></path><path d="M4 12h10"></path></svg>
+<svg viewBox="0 0 24 24"><path d="m8 18 6-6-6-6"></path><path d="M4 12h10"></path></svg>
 </span>
 <span aria-hidden="true" class="store-button-corners"><i></i><i></i><i></i><i></i></span>
 </a>
@@ -138,14 +142,15 @@
 </div>
 <nav aria-label="Mobilní navigace" class="mobile-nav" id="mobileNav">
 <a class="active" href="#home">Domů</a>
-<a href="#modpacks">Modpacky</a>
-<a href="#benchmarks">Výkon</a>
-<a href="#install">Instalace</a>
-<a href="#about">O projektu</a>
+<a href="#projekt">O projektu</a>
+<a href="#studio">Studio</a>
+<a href="modpacky/">Modpacky</a>
 <a href="https://minekubestudios.github.io/store/" rel="noopener noreferrer" target="_blank">Store</a>
 </nav>
 </header>
+
 <main id="top">
+<!-- ===================== DOMŮ ===================== -->
 <section aria-labelledby="homeTitle" class="mk-home-page" id="home">
   <div class="mk-home-backdrop" aria-hidden="true">
     <span class="mk-home-aurora mk-home-aurora-gold"></span>
@@ -173,18 +178,19 @@
       </div>
 
       <p class="mk-home-lead">
-        Minekube Studios propojuje <strong>výkonné modpacky</strong>, komunitní Minecraft server,
-        Store a moderní open-source projekty do jednoho československého ekosystému.
-        Nové technologie hraní tvoříme společně — bez paywallu a zcela zdarma.
+        Minekube Studios je nezávislé československé studio, které staví
+        <strong>výkonné modpacky</strong>, komunitní Minecraft server,
+        Store a moderní open-source projekty do jednoho ekosystému.
+        Nové technologie hraní tvoříme společně s komunitou — bez paywallu a zcela zdarma.
       </p>
 
       <div class="mk-home-actions">
-        <a class="mk-home-primary" href="#modpacks">
+        <a class="mk-home-primary" href="#projekt">
           <span class="mk-home-primary-aura" aria-hidden="true"></span>
           <span class="mk-home-primary-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"></path></svg>
           </span>
-          <span><small>VSTOUPIT DO SYSTÉMU</small><strong>Objevit Minekube</strong></span>
+          <span><small>ZNAJ PROJEKT A STUDIO</small><strong>O projektu Minekube</strong></span>
           <svg class="mk-home-primary-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
         </a>
         <a class="mk-home-secondary" href="https://minekubestudios.github.io/store/" rel="noopener noreferrer" target="_blank">
@@ -214,7 +220,7 @@
           <span class="mk-home-orbit mk-home-orbit-three"></span>
           <span class="mk-home-orbit-pulse"></span>
 
-          <a class="mk-home-module mk-home-module-modpacks" href="#modpacks">
+          <a class="mk-home-module mk-home-module-modpacks" href="modpacky/">
             <span><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5"></path></svg></span>
             <b>MODPACKY</b><small>PERFORMANCE</small>
           </a>
@@ -226,7 +232,7 @@
             <span><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Z"></path><path d="M9 9V6a3 3 0 0 1 6 0v3"></path></svg></span>
             <b>STORE</b><small>FREE CONTENT</small>
           </a>
-          <a class="mk-home-module mk-home-module-open" href="#about">
+          <a class="mk-home-module mk-home-module-open" href="#studio">
             <span><svg viewBox="0 0 24 24"><path d="M8 9 5 12l3 3M16 9l3 3-3 3M14 5l-4 14"></path></svg></span>
             <b>OPEN SOURCE</b><small>BUILD TOGETHER</small>
           </a>
@@ -248,286 +254,35 @@
     </div>
   </div>
 
-  <a class="mk-home-next" href="#modpacks" aria-label="Přejít na stránku Modpacky">
+  <a class="mk-home-next" href="modpacky/" aria-label="Přejít na stránku Modpacky">
     <small>NÁSLEDUJÍCÍ STRÁNKA</small>
     <strong>MODPACKY</strong>
     <span><i></i></span>
   </a>
 </section>
-<section class="catalog section catalog-clean-aligned" id="modpacks">
+
+<!-- ===================== O PROJEKTU ===================== -->
+<section class="about-section section" id="projekt">
 <div class="container">
-<div class="section-heading" id="modpack-catalog">
-<div>
-<span class="section-kicker">KATALOG</span>
-<h2>Vyber si správný výkonový profil</h2>
-<p>Každý modpack cílí na jiný hardware a styl hraní. Filtry ti pomohou najít přesně ten tvůj.</p>
-</div>
-<div class="result-count"><strong id="resultCount">5</strong><span id="resultLabel">5 profilů · 1 vydaný</span></div>
-</div>
-<div class="catalog-layout">
-<aside aria-label="Filtry modpacků" class="filters-panel">
-<div aria-hidden="true" class="filter-panel-ambient"><i></i><i></i><i></i></div>
-<div class="filter-head">
-<div class="filter-title">
-<span aria-hidden="true" class="filter-title-icon">
-<svg viewbox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M8 4v6M16 14v6"></path></svg>
-</span>
-<div><small>NAJDI SVŮJ BUILD</small><h3>Filtry</h3></div>
-</div>
-<button id="resetFilters" type="button">Resetovat</button>
-</div>
-<label class="search-field">
-<span aria-hidden="true" class="search-field-glow"></span>
-<svg aria-hidden="true" viewbox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
-<input autocomplete="off" id="searchInput" placeholder="Hledat modpack..." type="search"/>
-<kbd>Ctrl K</kbd>
-</label>
-<fieldset>
-<legend><span aria-hidden="true" class="filter-legend-icon"><svg viewbox="0 0 24 24"><path d="m12 3 8 4-8 4-8-4 8-4Z"></path><path d="m4 12 8 4 8-4M4 17l8 4 8-4"></path></svg></span><span>Verze Minecraftu</span></legend>
-<label class="check-row">
-<input name="version" type="checkbox" value="1.21.1"/>
-<span class="custom-check"></span>
-<span>1.21.1</span>
-<small>5</small>
-</label>
-<label class="check-row">
-<input name="version" type="checkbox" value="1.21.11"/>
-<span class="custom-check"></span>
-<span>1.21.11</span>
-<small>0</small>
-</label>
-<label class="check-row">
-<input name="version" type="checkbox" value="26.2"/>
-<span class="custom-check"></span>
-<span>26.2</span>
-<small>0</small>
-</label>
-</fieldset>
-<fieldset>
-<legend><span aria-hidden="true" class="filter-legend-icon"><svg viewbox="0 0 24 24"><path d="M5 7h14v10H5z"></path><path d="M8 4v3M12 4v3M16 4v3M8 17v3M12 17v3M16 17v3M2 10h3M19 10h3M2 14h3M19 14h3"></path></svg></span><span>Mod loader</span></legend>
-<label class="check-row">
-<input name="loader" type="checkbox" value="Fabric"/>
-<span class="custom-check"></span>
-<span>Fabric</span>
-<small>5</small>
-</label>
-</fieldset>
-<fieldset>
-<legend><span aria-hidden="true" class="filter-legend-icon"><svg viewbox="0 0 24 24"><path d="M4.9 18a8 8 0 1 1 14.2 0"></path><path d="m12 14 4.5-4.5M8 18h8"></path></svg></span><span>Zaměření</span></legend>
-<label class="check-row">
-<input name="category" type="checkbox" value="Maximum FPS"/>
-<span class="custom-check"></span>
-<span>Maximum FPS</span>
-<small>1</small>
-</label>
-<label class="check-row">
-<input name="category" type="checkbox" value="Insider"/>
-<span class="custom-check"></span>
-<span>Insider</span>
-<small>1</small>
-</label>
-<label class="check-row">
-<input name="category" type="checkbox" value="Balanced"/>
-<span class="custom-check"></span>
-<span>Balanced</span>
-<small>1</small>
-</label>
-<label class="check-row">
-<input name="category" type="checkbox" value="Quality"/>
-<span class="custom-check"></span>
-<span>Quality</span>
-<small>1</small>
-</label>
-<label class="check-row">
-<input name="category" type="checkbox" value="PvP"/>
-<span class="custom-check"></span>
-<span>PvP</span>
-<small>1</small>
-</label>
-</fieldset>
-<div class="compatibility-note">
-<span aria-hidden="true" class="compatibility-icon"><svg viewbox="0 0 24 24"><path d="M12 3 3.5 7v5c0 5.2 3.6 8 8.5 9.5 4.9-1.5 8.5-4.3 8.5-9.5V7L12 3Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg></span>
-<div>
-<span class="verified-line"><i></i> MINEKUBE VERIFIED</span>
-<strong>Bezpečné sestavení</strong>
-<p>Každý release lze doplnit kontrolním součtem a seznamem změn.</p>
-</div>
-</div>
-</aside>
-<div class="catalog-content">
-<div class="catalog-toolbar">
-<button class="filter-toggle" id="filterToggle" type="button">
-<svg aria-hidden="true" viewbox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"></path></svg>
-                Filtry
-              </button>
-<div class="sort-select">
-<span class="sort-caption"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M8 6h12M4 6h.01M8 12h9M4 12h.01M8 18h6M4 18h.01"></path></svg><span>Řadit podle</span></span>
-<select aria-label="Řazení modpacků" id="sortSelect">
-<option value="featured">Doporučené</option>
-<option value="downloads">Nejstahovanější</option>
-<option value="fps">Nejvyšší FPS</option>
-<option value="newest">Nejnovější</option>
-<option value="name">Název A–Z</option>
-</select>
-</div>
-</div>
-<div class="pack-grid" id="packGrid"></div>
-<div class="empty-state" hidden="" id="emptyState">
-<div class="empty-icon">
-<svg aria-hidden="true" viewbox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
-</div>
-<h3>Žádný modpack neodpovídá filtrům</h3>
-<p>Zkus upravit hledaný výraz nebo některý filtr vypnout.</p>
-<button class="button button-secondary" id="emptyReset" type="button">Vymazat filtry</button>
-</div>
-</div>
-</div>
-</section>
-<section class="benchmark-section section" id="benchmarks">
-<div class="container benchmark-grid">
-<div class="benchmark-copy">
-<span class="section-kicker">MĚŘITELNÝ ROZDÍL</span>
-<h2>Ne marketing. Výkon, který můžeš změřit.</h2>
-<p>
-            Připravený prostor pro reálné výsledky tvých testů — stejný seed,
-            stejné místo, stejné nastavení a několik opakovaných měření.
-          </p>
-<ul class="feature-list">
-<li>
-<span class="feature-check"><svg viewbox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></span>
-              Oddělené profily pro low-end, mid-range a high-end PC
-            </li>
-<li>
-<span class="feature-check"><svg viewbox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></span>
-              Přehled použité verze Javy, ovladačů a nastavení
-            </li>
-<li>
-<span class="feature-check"><svg viewbox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></span>
-              Hodnoty FPS, 1% low, frametime, RAM a času načítání
-            </li>
-</ul>
-<button class="text-link" id="methodologyButton" type="button">
-            Jak správně měřit výkon
-            <svg viewbox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
-</button>
-</div>
-<div aria-label="Animované porovnání výkonu Vanilla a Ultra Performance" class="benchmark-board">
-<div aria-hidden="true" class="benchmark-ambient"></div>
-<div aria-hidden="true" class="benchmark-gridlines"></div>
-<div aria-hidden="true" class="benchmark-scan"></div>
-<div aria-hidden="true" class="benchmark-particles">
-<i></i><i></i><i></i><i></i><i></i><i></i>
-</div>
-<div class="benchmark-title">
-<div>
-<span class="benchmark-live"><i></i> DEMO BENCHMARK</span>
-<strong>1080p / 8 chunks / bez shaderů</strong>
-</div>
-<span class="test-rig">Intel i5 13600K · 32 GB RAM · GTX 1050 Ti</span>
-</div>
-<div class="benchmark-bars">
-<div class="benchmark-row vanilla-row">
-<div class="benchmark-label">
-<span>Vanilla</span>
-<small>bez optimalizací</small>
-</div>
-<div class="bar-track">
-<span aria-hidden="true" class="bar-scale"></span>
-<i class="bar vanilla-bar" style="--bar: 44%">
-<span class="benchmark-value" data-count="712" data-suffix=" FPS">0 FPS</span>
-</i>
-</div>
-</div>
-<div class="benchmark-row ultra-row">
-<div class="benchmark-label">
-<span>Ultra Performance</span>
-<small>1.21.1</small>
-</div>
-<div class="bar-track">
-<span aria-hidden="true" class="bar-scale"></span>
-<i class="bar ultra-bar" style="--bar: 96%">
-<span class="benchmark-value" data-count="1634" data-suffix=" FPS+">0 FPS+</span>
-</i>
-</div>
-</div>
-</div>
-<div class="benchmark-foot">
-<div class="benchmark-stat">
-<span>VÝKON</span>
-<strong><b>⚡</b><span data-count="75" data-suffix="% FPS BOOST">0% FPS BOOST</span></strong>
-<i style="--stat:75%"></i>
-</div>
-<div class="benchmark-stat">
-<span>📟 PAMĚŤ RAM</span>
-<strong>2.8 GB <b>➲</b> 1.4 GB</strong>
-<i style="--stat:50%"></i>
-</div>
-<div class="benchmark-stat">
-<span>🔃 DOBA NAČÍTÁNÍ</span>
-<strong>10 s <b>➲</b> 5 s</strong>
-<i style="--stat:50%"></i>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="install-section section" id="install">
-<div class="container">
-<div class="section-heading centered">
-<span class="section-kicker">RYCHLÝ START</span>
-<h2>Od stažení ke hraní za pár minut</h2>
-<p>Jednoduchý postup vhodný pro Modrinth App i další launchery podporující formát .mrpack.</p>
-</div>
-<div class="steps-grid">
-<article class="step-card">
-<span class="step-number">01</span>
-<div class="step-icon">
-<span aria-hidden="true" class="step-icon-orbit"></span>
-<svg viewbox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 20h14"></path></svg>
-</div>
-<span class="step-kicker">DOWNLOAD</span>
-<h3>Stáhni balíček</h3>
-<p>Vyber kompatibilní verzi Minecraftu a stáhni soubor modpacku.</p>
-</article>
-<article class="step-card">
-<span class="step-number">02</span>
-<div class="step-icon">
-<span aria-hidden="true" class="step-icon-orbit"></span>
-<svg viewbox="0 0 24 24"><path d="M4 7h16v13H4z"></path><path d="M8 7V4h8v3M8 12h8M8 16h5"></path></svg>
-</div>
-<span class="step-kicker">IMPORT</span>
-<h3>Importuj do launcheru</h3>
-<p>V Modrinth App nebo Prism Launcheru zvol import existujícího balíčku.</p>
-</article>
-<article class="step-card">
-<span class="step-number">03</span>
-<div class="step-icon">
-<span aria-hidden="true" class="step-icon-orbit"></span>
-<svg viewbox="0 0 24 24"><path d="m8 5 11 7-11 7V5Z"></path></svg>
-</div>
-<span class="step-kicker">PLAY</span>
-<h3>Spusť a hraj</h3>
-<p>Launcher automaticky připraví správné mody, knihovny i doporučené nastavení.</p>
-</article>
-</div>
-</div>
-</section>
-<section class="about-section section" id="about">
-<div class="container about-card">
+<div class="about-card">
 <div aria-hidden="true" class="about-ambient"><i></i><i></i><i></i><span></span></div>
 <div class="about-copy">
 <span class="section-kicker">MINEKUBE PROJECT</span>
 <h2>Výkon bez zničení původního Minecraftu</h2>
 <p>
-            Smyslem projektu je zachovat známý vanilla pocit, ale odstranit zbytečné
-            propady FPS, dlouhé načítání a mikrosekání. Každý mod má mít jasný důvod,
-            žádná výplň a žádné náhodné experimenty v produkčním vydání.
-          </p>
+  Smyslem projektu je zachovat známý vanilla pocit, ale odstranit zbytečné
+  propady FPS, dlouhé načítání a mikrosekání. Každý mod má mít jasný důvod,
+  žádná výplň a žádné náhodné experimenty v produkčním vydání.
+</p>
+<p>
+  Výsledkem je Minecraft, který se hraje stejně jako ten původní — jen je
+  rychlejší, klidnější a šetrnější k tvému počítači.
+</p>
 <div class="about-tags">
-<span><svg viewbox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>Vanilla friendly</span>
-<span><svg viewbox="0 0 24 24"><path d="M12 3 19 6v5c0 4.4-2.7 7.8-7 10-4.3-2.2-7-5.6-7-10V6l7-3Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg>Bezpečné aktualizace</span>
-<span><svg viewbox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M8 4v6M16 14v6"></path></svg>Čistá konfigurace</span>
-<span><svg viewbox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h8M8 17h5"></path></svg>Transparentní changelog</span>
+<span><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>Vanilla friendly</span>
+<span><svg viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.4-2.7 7.8-7 10-4.3-2.2-7-5.6-7-10V6l7-3Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg>Bezpečné aktualizace</span>
+<span><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M8 4v6M16 14v6"></path></svg>Čistá konfigurace</span>
+<span><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h8M8 17h5"></path></svg>Transparentní changelog</span>
 </div>
 </div>
 <div aria-hidden="true" class="about-emblem">
@@ -543,27 +298,216 @@
 <div class="emblem-ring ring-b"></div>
 </div>
 </div>
+
+<div class="projekt-principles">
+<div class="section-heading centered">
+<span class="section-kicker">PRINCIPY PROJEKTU</span>
+<h2>Pravidla, podle kterých projekt chodí</h2>
+<p>Žádné náhodné experimenty — každé rozhodnutí v balíčku má jasný důvod.</p>
+</div>
+<div class="steps-grid">
+<article class="step-card">
+<span class="step-number">01</span>
+<div class="step-icon">
+<span aria-hidden="true" class="step-icon-orbit"></span>
+<svg viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"></path></svg>
+</div>
+<span class="step-kicker">VANILLA</span>
+<h3>Vanilla friendly</h3>
+<p>Hra se má cítit jako Minecraft — jen rychlejší, hladší a bez propadů a sekání.</p>
+</article>
+<article class="step-card">
+<span class="step-number">02</span>
+<div class="step-icon">
+<span aria-hidden="true" class="step-icon-orbit"></span>
+<svg viewBox="0 0 24 24"><path d="M12 3 3.5 7v5c0 5.2 3.6 8 8.5 9.5 4.9-1.5 8.5-4.3 8.5-9.5V7L12 3Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg>
+</div>
+<span class="step-kicker">SAFETY</span>
+<h3>Bezpečné aktualizace</h3>
+<p>Každý release jde dopředu bez ztráty světa i nastavení — s kontrolou stability před vydáním.</p>
+</article>
+<article class="step-card">
+<span class="step-number">03</span>
+<div class="step-icon">
+<span aria-hidden="true" class="step-icon-orbit"></span>
+<svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M8 4v6M16 14v6"></path></svg>
+</div>
+<span class="step-kicker">CLEAN</span>
+<h3>Čistá konfigurace</h3>
+<p>Smyslné výchozí nastavení od prvního spuštění. Žádná ruční dohlazování a laciné mody na výplň.</p>
+</article>
+<article class="step-card">
+<span class="step-number">04</span>
+<div class="step-icon">
+<span aria-hidden="true" class="step-icon-orbit"></span>
+<svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h8M8 17h5"></path></svg>
+</div>
+<span class="step-kicker">TRANSPARENT</span>
+<h3>Transparentní changelog</h3>
+<p>Co se do balíčku přidalo, změnilo nebo odebralo — je vidět. Komunita ví, co stahuje.</p>
+</article>
+</div>
+</div>
+</div>
 </section>
+
+<!-- ===================== STUDIO MINEKUBE ===================== -->
+<section class="studio-section section" id="studio">
+<div class="container">
+<div class="section-heading">
+<div>
+<span class="section-kicker">MINEKUBE STUDIOS // CZ/SK</span>
+<h2>Studio, které staví ekosystém kolem Minecraftu</h2>
+<p>
+  Nejsme firemní vývojář. Jsme nezávislá československá skupina vývojářů
+  a fanoušků, kteří chtějí, aby Minecraft běhal lépe — a aby to bylo dostupné každému.
+</p>
+</div>
+</div>
+
+<div class="studio-card">
+<div aria-hidden="true" class="studio-ambient"></div>
+<div class="studio-copy">
+<span class="section-kicker">KDO JSME</span>
+<h3>Stavíme pro komunitu, ne pro byznys</h3>
+<p>
+  Minekube Studios propojuje vývoj výkonných modpacků, komunitní server,
+  Store s beplatným obsahem a moderní open-source projekty. Každý pilíř
+  posiluje ostatní — a všechno držíme otevřené.
+</p>
+<p>
+  Vývoj sleduješ přímo, k projektu se můžeš podílet a o novinkách se dozvíš
+  z první ruky. Nic za paywallelem, nic na úkor komunity.
+</p>
+<div class="studio-values">
+<span><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>100% zdarma pro komunitu</span>
+<span><svg viewBox="0 0 24 24"><path d="M8 9 5 12l3 3M16 9l3 3-3 3M14 5l-4 14"></path></svg>Open development</span>
+<span><svg viewBox="0 0 24 24"><path d="M12 3 3.5 7v5c0 5.2 3.6 8 8.5 9.5 4.9-1.5 8.5-4.3 8.5-9.5V7L12 3Z"></path></svg>CZ/SK komunita</span>
+<span><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Z"></path><path d="M9 9V6a3 3 0 0 1 6 0v3"></path></svg>Store bez paywallu</span>
+</div>
+<div class="studio-facts" aria-label="Fakta o studiu">
+<div><strong>CZ/SK</strong><span>domov studia</span></div>
+<div><strong>0 KČ</strong><span>ceník pro komunitu</span></div>
+<div><strong>4</strong><span>pilíře ekosystému</span></div>
+</div>
+</div>
+<div aria-hidden="true" class="studio-emblem">
+<div class="emblem-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<span class="emblem-label emblem-label-top">MINEKUBE</span>
+<span class="emblem-label emblem-label-bottom">STUDIOS</span>
+<div class="emblem-cube">
+<span class="cube-top"></span>
+<span class="cube-left"></span>
+<span class="cube-right"></span>
+</div>
+<div class="emblem-ring ring-a"></div>
+<div class="emblem-ring ring-b"></div>
+</div>
+</div>
+
+<div class="studio-pillars-head">
+<div class="section-heading centered">
+<span class="section-kicker">CO STUDIO BUDOVA</span>
+<h2>Čtyři pilíře ekosystému</h2>
+<p>Každý modul má vlastní misi — spolu tvoří jedno celé.</p>
+</div>
+<div class="studio-pillars">
+<article class="studio-pillar studio-pillar--gold">
+<span class="studio-pillar-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"></path></svg>
+</span>
+<div class="studio-pillar-body">
+<div class="studio-pillar-top">
+<span class="studio-pillar-kicker">MODUL // 01</span>
+<span class="studio-pillar-status is-live"><i></i> LIVE</span>
+</div>
+<h3>Modpacky</h3>
+<p>Pět výkonových profilů od Ultra až po PvP — čistě optimalizovaný Minecraft bez ztráty vanilla pocitu.</p>
+<a class="studio-pillar-link" href="modpacky/">
+Procházet modpacky
+<svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
+</a>
+</div>
+</article>
+<article class="studio-pillar studio-pillar--purple">
+<span class="studio-pillar-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="5" rx="1"></rect><rect x="4" y="14" width="16" height="5" rx="1"></rect><path d="M8 7.5h.01M8 16.5h.01"></path></svg>
+</span>
+<div class="studio-pillar-body">
+<div class="studio-pillar-top">
+<span class="studio-pillar-kicker">MODUL // 02</span>
+<span class="studio-pillar-status is-soon"><i></i> VE VÝVOJI</span>
+</div>
+<h3>Komunitní server</h3>
+<p>Vlastní Minecraft server s komunitními pravidly, eventosými akcemi a podporou od lidí, které znáš.</p>
+<button class="studio-pillar-link studio-pillar-soon" type="button" data-soon>
+Brzy
+<svg viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18M5 6h14v14H5z"></path></svg>
+</button>
+</div>
+</article>
+<article class="studio-pillar studio-pillar--cyan">
+<span class="studio-pillar-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Z"></path><path d="M9 9V6a3 3 0 0 1 6 0v3"></path><path d="m10 14 2 2 3-4"></path></svg>
+</span>
+<div class="studio-pillar-body">
+<div class="studio-pillar-top">
+<span class="studio-pillar-kicker">MODUL // 03</span>
+<span class="studio-pillar-status is-open"><i></i> OPEN</span>
+</div>
+<h3>Store</h3>
+<p>Beplatný obsah pro komunitu — bez paywallu a bez malicherností. Všechno, co vyjde, je otevřené.</p>
+<a class="studio-pillar-link" href="https://minekubestudios.github.io/store/" rel="noopener noreferrer" target="_blank">
+Otevřít Store
+<svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
+</a>
+</div>
+</article>
+<article class="studio-pillar studio-pillar--magenta">
+<span class="studio-pillar-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24"><path d="M8 9 5 12l3 3M16 9l3 3-3 3M14 5l-4 14"></path></svg>
+</span>
+<div class="studio-pillar-body">
+<div class="studio-pillar-top">
+<span class="studio-pillar-kicker">MODUL // 04</span>
+<span class="studio-pillar-status is-open"><i></i> BUILD TOGETHER</span>
+</div>
+<h3>Open source</h3>
+<p>Moderní open-source projekty, které můžeš studovat, rozšiřovat a zlepšovat společně s námi.</p>
+<a class="studio-pillar-link" href="#" aria-label="GitHub — doplň vlastní odkaz">
+Přispět do projektu
+<svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
+</a>
+</div>
+</article>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===================== CTA ===================== -->
 <section class="cta-section">
 <div class="container cta-card">
 <div>
-<span class="section-kicker">READY TO BOOST?</span>
-<h2>Dej Minecraftu výkon, který si zaslouží.</h2>
-<p>Vyber si profil podle svého počítače a začni hrát plynuleji.</p>
+<span class="section-kicker">JOIN THE BUILD</span>
+<h2>Ekosystém tvoříme společně.</h2>
+<p>Sleduj, co se chystá — a přidej se k tomu, co stavíme pro celou komunitu.</p>
 </div>
-<a class="button button-light" href="#modpacks">
-          Procházet modpacky
-          <svg viewbox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
+<a class="button button-light" href="modpacky/">
+  Procházet modpacky
+  <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
 </a>
 </div>
 </section>
 </main>
+
+<!-- ===================== FOOTER ===================== -->
 <footer class="site-footer">
 <div class="container footer-grid">
 <div>
 <a class="brand footer-brand" href="#top">
 <span aria-hidden="true" class="brand-mark">
-<svg viewbox="0 0 48 48">
+<svg viewBox="0 0 48 48">
 <path d="M24 3 43 13.5v21L24 45 5 34.5v-21L24 3Z"></path>
 <path class="mark-top" d="m24 3 19 10.5L24 24 5 13.5 24 3Z"></path>
 <path class="mark-left" d="M24 24v21L5 34.5v-21L24 24Z"></path>
@@ -571,15 +515,15 @@
 <path class="mark-core" d="m14 18 10 5.5L34 18v11l-10 5.5L14 29V18Z"></path>
 </svg>
 </span>
-<span><strong>Minekube</strong><small>FPS MODPACKS</small></span>
+<span><strong>Minekube</strong><small>CZ/SK STUDIOS</small></span>
 </a>
-<p>Nezávislý demonstrační web pro Minecraft performance modpacky.</p>
+<p>Nezávislé československé studio výkonných Minecraft projektů.</p>
 </div>
 <div>
 <h3>Projekt</h3>
-<a href="#modpacks">Modpacky</a>
-<a href="#benchmarks">Benchmarky</a>
-<a href="#install">Instalace</a>
+<a href="#projekt">O projektu</a>
+<a href="#studio">Studio</a>
+<a href="modpacky/">Modpacky</a>
 </div>
 <div>
 <h3>Informace</h3>
@@ -589,20 +533,22 @@
 </div>
 <div>
 <h3>Komunita</h3>
-<a aria-label="Discord – doplň vlastní odkaz" href="#">Discord</a>
+<a aria-label="Discord — doplň vlastní odkaz" href="#">Discord</a>
 <a aria-label="Minekube Ultra Performance na Game Jolt" href="https://gamejolt.com/games/_/1053229" rel="noopener noreferrer" target="_blank">Game Jolt</a>
-<a aria-label="GitHub – doplň vlastní odkaz" href="#">GitHub</a>
+<a aria-label="GitHub — doplň vlastní odkaz" href="#">GitHub</a>
 </div>
 </div>
 <div class="container footer-bottom">
-<span>© <span id="currentYear"></span> Minekube FPS. Demo web.</span>
+<span>© <span id="currentYear"></span> Minekube Studios. Demo web.</span>
 <span>Minecraft je ochranná známka společnosti Mojang Studios.</span>
 </div>
 </footer>
-<div class="modal-backdrop" hidden="" id="modalBackdrop">
+
+<!-- ===================== MODAL + TOAST ===================== -->
+<div class="modal-backdrop" hidden id="modalBackdrop">
 <section aria-labelledby="modalTitle" aria-modal="true" class="modal" role="dialog">
 <button aria-label="Zavřít detail" class="modal-close" id="modalClose" type="button">
-<svg viewbox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+<svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></svg>
 </button>
 <div id="modalContent"></div>
 </section>
@@ -610,26 +556,26 @@
 <div aria-atomic="true" aria-live="polite" class="toast" id="toast" role="status">
 <span aria-hidden="true" class="toast-glow"></span>
 <span aria-hidden="true" class="toast-icon">
-<svg class="toast-icon-download" viewbox="0 0 24 24">
+<svg class="toast-icon-download" viewBox="0 0 24 24">
 <path d="M12 3v10"></path>
 <path d="m8 10 4 4 4-4"></path>
 <path d="M5 19h14"></path>
 </svg>
-<svg class="toast-icon-check" viewbox="0 0 24 24">
+<svg class="toast-icon-check" viewBox="0 0 24 24">
 <path d="m6.5 12.5 3.5 3.5 7.5-8"></path>
 </svg>
-<svg class="toast-icon-info" viewbox="0 0 24 24">
+<svg class="toast-icon-info" viewBox="0 0 24 24">
 <circle cx="12" cy="12" r="8.5"></circle>
 <path d="M12 8.2v5.4M12 16.8h.01"></path>
 </svg>
 </span>
 <span class="toast-copy">
-<span class="toast-kicker">MINEKUBE DOWNLOAD</span>
+<span class="toast-kicker">MINEKUBE SYSTEM</span>
 <strong class="toast-message"></strong>
 </span>
 <span aria-hidden="true" class="toast-signal"><i></i><i></i><i></i></span>
 <span aria-hidden="true" class="toast-progress"></span>
-<span aria-hidden="true" class="toast-burst"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+<span aria-hidden="true" class="toast-burst"><i></i><i></i><i></i><i></i><i></i></span>
 </div>
 <script src="app.js"></script>
 </body>
