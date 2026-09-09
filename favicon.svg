@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Minekube">
+<rect width="48" height="48" rx="11" fill="#0d060f"></rect>
+<path d="M24 6 40.5 15.5v18L24 43 7.5 33.5v-18L24 6Z" fill="#160717"></path>
+<path d="m24 6 16.5 9.5L24 25 7.5 15.5 24 6Z" fill="#ffe05a"></path>
+<path d="M24 25v18L7.5 33.5v-18L24 25Z" fill="#ff9200"></path>
+<path d="M24 25 40.5 15.5v18L24 43V25Z" fill="#dc4d00"></path>
+<path d="m15 19.5 9 5 9-5v10l-9 5-9-5v-10Z" fill="#2b071f"></path>
+</svg>

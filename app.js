@@ -61,6 +61,9 @@ const I18N = {
     "cta.github.title": "Minekube na GitHubu",
     "cta.github.aria": "Zdrojové kódy Minekube Studios na GitHubu",
     "kofi.label": "Podpořit projekt",
+    "kofi.gate.title": "Otevírám ko-fi.com",
+    "kofi.gate.status": "Připojuji k podpoře komunity",
+    "kofi.gate.cancel": "Zrušit",
     "kofi.aria": "Podpořit Minekube Studios na Ko-fi",
     "intro.title1": "Minecraft budoucnosti.",
     "intro.title2": "Otevřený úplně všem.",
@@ -181,6 +184,9 @@ const I18N = {
     "cta.github.title": "Minekube on GitHub",
     "cta.github.aria": "Minekube Studios source code on GitHub",
     "kofi.label": "Support the project",
+    "kofi.gate.title": "Opening ko-fi.com",
+    "kofi.gate.status": "Connecting to community support",
+    "kofi.gate.cancel": "Cancel",
     "kofi.aria": "Support Minekube Studios on Ko-fi",
     "intro.title1": "The future of Minecraft.",
     "intro.title2": "Open to absolutely everyone.",
@@ -301,6 +307,9 @@ const I18N = {
     "cta.github.title": "Minekube na Githube",
     "cta.github.aria": "Zdrojové kódy Minekube Studios na GitHube",
     "kofi.label": "Podporiť projekt",
+    "kofi.gate.title": "Otváram ko-fi.com",
+    "kofi.gate.status": "Pripojujem k podpore komunity",
+    "kofi.gate.cancel": "Zrušiť",
     "kofi.aria": "Podporiť Minekube Studios na Ko-fi",
     "intro.title1": "Minecraft budúcnosti.",
     "intro.title2": "Otvorený úplne všetkým.",
@@ -636,6 +645,7 @@ document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
     if (!modalBackdrop.hidden) closeModal();
     closeLangMenu();
+    cancelKofiGate();
   }
 });
 document.querySelectorAll("[data-dialog]").forEach(button => {
@@ -884,7 +894,21 @@ function initializeSupportButtonFx() {
   if (!fxLayer || !window.matchMedia("(pointer: fine)").matches) return;
 
   const fxPalette = ["#69f7ff", "#8f6cff", "#ff58df", "#ffd36e", "#78adff"];
-  const fxIcons = ["✦", "♥", "◇", "⬡", "+", "✧"];
+  /* Ko-fi svět: srdíčka, kafíčka, blesky a Minecraft kostky. Každý druh má
+     vlastní paletu i glyfy, takže jiskry nepůsobí jako náhodné emoji. */
+  const fxShapes = {
+    heart: ["\u2665", "\u2665", "\u2661"],
+    cup: ["\u2615\uFE0E", "\u2615\uFE0E", "\u2668\uFE0E"],
+    bolt: ["\u03DF", "\u21AF", "\u21AF"],
+    cube: ["\u25A3", "\u25C8", "\u2B22", "\u2726"]
+  };
+  const fxColors = {
+    heart: ["#ff5f5b", "#ff7a76", "#ff9ab0"],
+    cup: ["#ffcf9c", "#ffb072", "#ff9a52"],
+    bolt: ["#d7fbff", "#69f7ff", "#9fe9ff"],
+    cube: ["#b998ff", "#8f6cff", "#ffd36e"]
+  };
+  const fxKinds = ["heart", "heart", "cup", "cup", "bolt", "cube", "cube"];
   let fxTimer = 0;
 
   const randomBetween = (min, max) => Math.random() * (max - min) + min;
@@ -896,23 +920,29 @@ function initializeSupportButtonFx() {
       const roll = Math.random();
       const node = document.createElement("i");
       const angle = randomBetween(0, Math.PI * 2);
-      const x = Math.cos(angle) * randomBetween(64, 138);
-      const y = Math.sin(angle) * randomBetween(46, 104);
-      const color = fxPalette[Math.floor(Math.random() * fxPalette.length)];
+      const spread = spawnStoreFx.burst ? 1.18 : 1;
+      const x = Math.cos(angle) * randomBetween(64, 138) * spread;
+      const y = Math.sin(angle) * randomBetween(46, 104) * spread;
+      const kind = roll < .52 ? fxKinds[Math.floor(Math.random() * fxKinds.length)] : null;
+      const palette = kind ? fxColors[kind] : fxPalette;
+      const color = palette[Math.floor(Math.random() * palette.length)];
+      let iconSize = 7.5;
 
-      if (roll < .19) {
+      if (roll >= .52 && roll < .68) {
         node.className = "store-fx-bolt";
-      } else if (roll < .44) {
-        node.className = "store-fx-icon";
-        node.textContent = fxIcons[Math.floor(Math.random() * fxIcons.length)];
+      } else if (kind) {
+        const shapes = fxShapes[kind];
+        node.className = `store-fx-icon is-${kind}`;
+        node.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+        iconSize = kind === "cup" ? randomBetween(12, 17) : kind === "cube" ? randomBetween(10, 15) : randomBetween(8, 15);
       } else {
         node.className = "store-fx-particle";
       }
 
       node.style.setProperty("--fx-x", `${x.toFixed(1)}px`);
       node.style.setProperty("--fx-y", `${y.toFixed(1)}px`);
-      node.style.setProperty("--fx-size", `${randomBetween(3, roll < .44 ? 15 : 7.5).toFixed(1)}px`);
-      node.style.setProperty("--fx-duration", `${Math.round(randomBetween(720, 1260))}ms`);
+      node.style.setProperty("--fx-size", kind ? `${iconSize.toFixed(1)}px` : `${randomBetween(3, 7.5).toFixed(1)}px`);
+      node.style.setProperty("--fx-duration", `${Math.round(randomBetween(820, 1480))}ms`);
       node.style.setProperty("--fx-delay", `${Math.round(randomBetween(0, 100))}ms`);
       node.style.setProperty("--fx-rotation", `${Math.round(randomBetween(-180, 180))}deg`);
       node.style.setProperty("--fx-scale", randomBetween(.38, 1.08).toFixed(2));
@@ -931,9 +961,11 @@ function initializeSupportButtonFx() {
   });
 
   storeButton.addEventListener("pointerenter", () => {
-    spawnStoreFx(28);
+    spawnStoreFx.burst = true;
+    spawnStoreFx(34);
+    window.setTimeout(() => { spawnStoreFx.burst = false; }, 90);
     window.clearInterval(fxTimer);
-    fxTimer = window.setInterval(() => spawnStoreFx(9), 210);
+    fxTimer = window.setInterval(() => spawnStoreFx(12), 190);
   });
 
   storeButton.addEventListener("pointerleave", () => {
@@ -941,6 +973,7 @@ function initializeSupportButtonFx() {
     storeButton.style.setProperty("--store-x", "50%");
     storeButton.style.setProperty("--store-y", "50%");
   });
+
 }
 
 /* ===================== PRIMÁRNÍ CTA — světelný bod sleduje kurzor ===================== */
@@ -961,6 +994,109 @@ function initializePrimaryCta() {
   });
 }
 
+/* ===================== KO-FI GATE — celostránkový přechod =====================
+   Kliknutí na „Podpořit projekt“ nezavede na Ko-fi hned. Nejdřív se stránka
+   plynule otevře do Minekube portálu (panely, mřížka, paprsek, jiskry,
+   konzole s progresem) v barvách Ko-fi a přesměrování startuje v momentě,
+   kdy portál drží celou obrazovku. Při prefers-reduced-motion se animace
+   přeskočí a stránka odejde ihned. */
+
+const kofiGate = document.getElementById("kofiGate");
+const kofiGateHost = document.getElementById("kofiGateHost");
+const KOFI_GATE_NAV_MS = 1080;
+const KOFI_GATE_TOTAL_MS = 1560;
+let kofiGateBusy = false;
+let kofiGateNavTimer = 0;
+let kofiGateCleanupTimer = 0;
+
+function isKofiGateNavigating() {
+  return !!kofiGate && kofiGate.classList.contains("is-navigating");
+}
+
+function closeKofiGate() {
+  window.clearTimeout(kofiGateNavTimer);
+  window.clearTimeout(kofiGateCleanupTimer);
+  kofiGateNavTimer = 0;
+  kofiGateCleanupTimer = 0;
+  if (!kofiGate) return;
+  kofiGate.classList.remove("is-active", "is-navigating");
+  kofiGate.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("kofi-gate-open");
+  kofiGateBusy = false;
+}
+
+function cancelKofiGate() {
+  if (isKofiGateNavigating()) return;
+  closeKofiGate();
+}
+
+function launchKofiPulse(clientX, clientY, origin) {
+  if (prefersReducedMotion.matches) return;
+
+  const rect = origin.getBoundingClientRect();
+  const x = Number.isFinite(clientX) && clientX > 0 ? clientX : rect.left + rect.width / 2;
+  const y = Number.isFinite(clientY) && clientY > 0 ? clientY : rect.top + rect.height / 2;
+
+  const pulse = document.createElement("span");
+  pulse.className = "kofi-pulse";
+  pulse.setAttribute("aria-hidden", "true");
+  pulse.style.setProperty("--pulse-x", `${Math.round(x)}px`);
+  pulse.style.setProperty("--pulse-y", `${Math.round(y)}px`);
+  pulse.innerHTML = '<i class="kofi-pulse-grid"></i><i class="kofi-pulse-cross"></i>';
+  document.body.appendChild(pulse);
+  window.setTimeout(() => pulse.remove(), 1500);
+}
+
+function openKofiGate(origin, clientX = 0, clientY = 0) {
+  const url = SITE_LINKS.kofi;
+  if (!url) return;
+  if (prefersReducedMotion.matches || !kofiGate) {
+    window.location.assign(url);
+    return;
+  }
+  if (kofiGateBusy) return;
+  kofiGateBusy = true;
+
+  launchKofiPulse(clientX, clientY, origin);
+  if (kofiGateHost) kofiGateHost.textContent = url.replace(/^https?:\/\//, "");
+
+  document.body.classList.add("kofi-gate-open");
+  kofiGate.setAttribute("aria-hidden", "false");
+  kofiGate.classList.remove("is-active", "is-navigating");
+  // Dva snímky + reflow zajistí, že se všechny keyframy přehrají znovu.
+  void kofiGate.offsetWidth;
+  kofiGate.classList.add("is-active");
+
+  kofiGateNavTimer = window.setTimeout(() => {
+    kofiGate.classList.add("is-navigating");
+    window.location.assign(url);
+  }, KOFI_GATE_NAV_MS);
+
+  // Pojišťka pro případ, že prohlížeč přesměrování zamítne — portál se skryje.
+  kofiGateCleanupTimer = window.setTimeout(closeKofiGate, KOFI_GATE_TOTAL_MS + 1400);
+}
+
+function initializeKofiGate() {
+  const kofiButton = document.querySelector(".store-button.kofi-button");
+  if (!kofiButton) return;
+
+  kofiButton.addEventListener("click", event => {
+    if (event.defaultPrevented) return;
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    openKofiGate(kofiButton, event.clientX, event.clientY);
+  });
+}
+
+document.querySelectorAll("[data-kofi-cancel]").forEach(button => {
+  button.addEventListener("click", cancelKofiGate);
+});
+
+// Po návratu přes tlačítko Zpět (bfcache) nesmí portál zůstat přes celou obrazovku.
+window.addEventListener("pageshow", event => {
+  if (event.persisted) closeKofiGate();
+});
+
 /* ===================== SERVER — iba tlačidlo (stránka ještě nevznikla) ===================== */
 
 document.querySelectorAll("[data-soon]").forEach(button => {
@@ -978,4 +1114,5 @@ applyLanguage(currentLang);
 initializeSurfaceInteractions();
 initializeScrollExperience();
 initializeSupportButtonFx();
+initializeKofiGate();
 initializePrimaryCta();

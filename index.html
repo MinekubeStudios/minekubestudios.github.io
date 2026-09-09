@@ -26,6 +26,35 @@
 <div aria-hidden="true" class="scroll-progress" id="scrollProgress"><span></span></div>
 
 <!-- ===================== HEADER ===================== -->
+<!-- ===================== KO-FI GATE // CELOSTRÁNKOVÝ PŘECHOD ===================== -->
+<div aria-atomic="false" aria-hidden="true" aria-live="polite" class="kofi-gate" id="kofiGate" role="status">
+<span aria-hidden="true" class="kofi-gate-panel kofi-gate-panel-left"></span>
+<span aria-hidden="true" class="kofi-gate-panel kofi-gate-panel-right"></span>
+<span aria-hidden="true" class="kofi-gate-grid"></span>
+<span aria-hidden="true" class="kofi-gate-beam"></span>
+<span aria-hidden="true" class="kofi-gate-aurora"><i></i><i></i></span>
+<span aria-hidden="true" class="kofi-gate-particles"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+<div class="kofi-gate-console">
+<div aria-hidden="true" class="kofi-gate-emblem">
+<span class="kofi-gate-orbit kofi-gate-orbit-a"></span>
+<span class="kofi-gate-orbit kofi-gate-orbit-b"></span>
+<svg class="kofi-gate-mark" viewBox="0 0 24 24">
+<path class="kofi-gate-cup" d="M11.35 2.71 C8.65 2.71 6.37 2.74 4.52 2.97 C2.08 3.29 0 5.15 0 8.61 C0 12.12 0.18 14.74 1.58 17.1 C3.17 19.8 5.82 21.29 9.25 21.29 H10.08 C14.29 21.29 16.57 19.05 17.71 17.29 A9.5 9.5 0 0 0 18.8 14.95 C21.79 14.69 24 12.22 24 9.21 V8.79 C24 5.55 21.87 3.29 18.21 2.92 C16.65 2.77 15.56 2.72 11.35 2.72 M11.35 4.66 C15.56 4.66 16.44 4.71 17.92 4.84 C20.55 5.16 22.05 6.43 22.05 8.84 V9.23 C22.05 11.39 20.26 13.08 18.18 13.08 H17.25 L17.09 13.73 C16.88 14.74 16.49 15.54 16.05 16.27 C15.14 17.7 13.51 19.34 10.13 19.34 H9.32 C6.75 19.34 4.49 18.45 3.25 16.14 C2.16 14.14 1.95 11.99 1.95 8.64 C1.95 6.45 2.81 5.23 4.96 4.92 C6.49 4.69 8.52 4.66 11.35 4.66 M17.9 6.95 C17.48 6.95 17.25 7.18 17.25 7.49 V10.43 C17.25 10.74 17.48 10.97 17.9 10.97 C19.22 10.97 19.95 10.22 19.95 8.97 C19.95 7.73 19.22 6.95 17.9 6.95"></path>
+<path class="kofi-gate-heart" d="M7.51 7.13 C5.69 7.13 4.49 8.61 4.49 10.27 C4.49 11.81 5.35 13.13 6.44 14.17 C7.17 14.87 8.31 15.6 9.09 16.07 A1.47 1.47 0 0 0 10.6 16.07 C11.38 15.6 12.52 14.87 13.22 14.17 C14.34 13.13 15.2 11.81 15.2 10.27 C15.2 8.61 13.95 7.13 12.16 7.13 C11.09 7.13 10.36 7.68 9.82 8.43 C9.33 7.68 8.57 7.13 7.51 7.13"></path>
+</svg>
+</div>
+<div class="kofi-gate-copy">
+<span class="kofi-gate-kicker"><i aria-hidden="true"></i> MINEKUBE // KO-FI CHANNEL</span>
+<strong data-i18n="kofi.gate.title">Otevírám ko-fi.com</strong>
+<small data-i18n="kofi.gate.status">Připojuji k podpoře komunity</small>
+<div aria-hidden="true" class="kofi-gate-progress"><span></span></div>
+<div class="kofi-gate-meta"><span>SECURE CHANNEL</span><b id="kofiGateHost">ko-fi.com</b></div>
+<button class="kofi-gate-cancel" data-i18n="kofi.gate.cancel" data-kofi-cancel id="kofiGateCancel" type="button">Zrušit</button>
+</div>
+</div>
+<span aria-hidden="true" class="kofi-gate-scanlines"></span>
+</div>
+
 <header class="site-header">
 <div class="nav-wrap">
 <a aria-label="Minekube Studios — domovská stránka" class="brand" data-i18n-aria="brand.aria" href="#top">
@@ -76,7 +105,7 @@
 </div>
 </div>
 
-<a aria-label="Podpořit Minekube Studios na Ko-fi" class="store-button kofi-button" data-i18n-aria="kofi.aria" data-i18n-title="kofi.aria" data-site-link="kofi" href="https://ko-fi.com/minekubestudios" rel="noopener noreferrer" target="_blank" title="Podpořit Minekube Studios na Ko-fi">
+<a aria-label="Podpořit Minekube Studios na Ko-fi" class="store-button kofi-button" data-i18n-aria="kofi.aria" data-i18n-title="kofi.aria" data-site-link="kofi" data-kofi-gate href="https://ko-fi.com/minekubestudios" title="Podpořit Minekube Studios na Ko-fi">
 <span aria-hidden="true" class="store-button-fx"></span>
 <span aria-hidden="true" class="store-button-universe">
 <span class="store-button-nebula store-button-nebula-a"></span>
