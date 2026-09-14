@@ -13354,3 +13354,399 @@ body.kofi-gate-open { overflow: hidden !important; }
 }
 
 
+
+/* =========================================================
+   MANIFEST PROJEKTU V2 — nezávislý český projekt
+   Nový hlavní text + malé tlačítko „Celé informace“
+   s plynule rozbalitelným panelem (poslání, sliby, Donate).
+   ========================================================= */
+
+/* Karta: text + emblém nahoře, manifest se po rozbalení roztáhne
+   přes celou šířku pod oba sloupce. */
+.about-card {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  grid-template-areas:
+    "copy emblem"
+    "manifest manifest";
+  align-items: center;
+}
+
+.about-card .about-copy {
+  grid-area: copy;
+  min-width: 0;
+}
+
+.about-card .about-emblem {
+  grid-area: emblem;
+}
+
+.about-manifest {
+  grid-area: manifest;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    grid-template-rows .72s cubic-bezier(.16,.84,.2,1),
+    opacity .5s ease .08s;
+}
+
+.about-manifest-inner {
+  min-height: 0;
+  overflow: hidden;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 1px solid transparent;
+  transition:
+    padding-top .6s cubic-bezier(.16,.84,.2,1),
+    margin-top .6s cubic-bezier(.16,.84,.2,1),
+    border-color .5s ease;
+}
+
+.about-card.is-expanded .about-manifest {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.about-card.is-expanded .about-manifest-inner {
+  margin-top: 14px;
+  padding-top: 38px;
+  border-top-color: rgba(255,255,255,.10);
+}
+
+/* Zvýrazněná část titulku — zlatofialový gradient. */
+.about-copy h2 em {
+  font-style: normal;
+  background: linear-gradient(100deg, var(--green-light) 0%, var(--green) 46%, var(--purple) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Malé tlačítko „Celé informace“ ---------- */
+
+.about-more-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  padding: 11px 18px;
+  border: 1px solid rgba(255, 190, 60, .38);
+  border-radius: 999px;
+  background: linear-gradient(145deg, rgba(255, 174, 0, .14), rgba(200, 60, 255, .10));
+  color: #ffe3ac;
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 850;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    transform .32s cubic-bezier(.16,.84,.2,1),
+    box-shadow .32s ease,
+    border-color .3s ease,
+    background .3s ease,
+    color .3s ease;
+}
+
+.about-more-toggle::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 205, 92, .55);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.about-more-toggle:hover,
+.about-more-toggle:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255, 208, 100, .72);
+  background: linear-gradient(145deg, rgba(255, 174, 0, .22), rgba(200, 60, 255, .16));
+  color: #fff6dd;
+  box-shadow:
+    0 14px 34px rgba(255, 138, 0, .20),
+    0 0 26px rgba(200, 60, 255, .14);
+}
+
+.about-more-toggle:hover::before,
+.about-more-toggle:focus-visible::before {
+  animation: aboutMorePulse 2.4s ease-out infinite;
+}
+
+.about-more-toggle:active {
+  transform: translateY(0) scale(.97);
+}
+
+.about-more-label--open {
+  display: none;
+}
+
+.about-card.is-expanded .about-more-label--closed {
+  display: none;
+}
+
+.about-card.is-expanded .about-more-label--open {
+  display: inline;
+}
+
+.about-more-info {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.about-more-chevron {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .45s cubic-bezier(.16,.84,.2,1);
+}
+
+.about-card.is-expanded .about-more-chevron {
+  transform: rotate(180deg);
+}
+
+@keyframes aboutMorePulse {
+  0% { opacity: .7; transform: scale(1); }
+  72% { opacity: 0; transform: scale(1.22); }
+  100% { opacity: 0; transform: scale(1.22); }
+}
+
+/* ---------- Rozbalený obsah: poslání, sliby, Donate ---------- */
+
+.about-manifest-kicker {
+  margin-bottom: 10px;
+}
+
+.about-manifest-inner h3 {
+  margin: 0;
+  color: #fff8ef;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.12;
+  letter-spacing: -.035em;
+}
+
+.about-manifest-text {
+  display: grid;
+  gap: 13px;
+  max-width: 920px;
+  margin-top: 16px;
+}
+
+.about-manifest-text p {
+  margin: 0;
+  color: #c9b6c4;
+  font-size: 14.5px;
+  line-height: 1.78;
+}
+
+.about-promises {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-promises li {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  min-width: 0;
+  padding: 19px 18px;
+  border: 1px solid rgba(255, 255, 255, .085);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, .012));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+  transition:
+    transform .26s cubic-bezier(.16,.84,.2,1),
+    border-color .26s ease,
+    background .26s ease,
+    box-shadow .26s ease;
+}
+
+.about-promises li:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 190, 60, .30);
+  background: linear-gradient(145deg, rgba(255, 174, 0, .08), rgba(200, 60, 255, .06));
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .28);
+}
+
+.about-promise-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 174, 0, .22);
+  border-radius: 11px;
+  background: linear-gradient(145deg, rgba(255, 174, 0, .15), rgba(200, 60, 255, .08));
+}
+
+.about-promise-icon svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: #ffc952;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.about-promises li b {
+  display: block;
+  color: #fff5e4;
+  font-size: 12.5px;
+  font-weight: 850;
+  letter-spacing: -.01em;
+}
+
+.about-promises li div span {
+  display: block;
+  margin-top: 5px;
+  color: #bca7b6;
+  font-size: 11px;
+  line-height: 1.62;
+}
+
+/* Závěrečný Donate banner. */
+.about-donate-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 22px;
+  padding: 21px 23px;
+  border: 1px solid rgba(255, 174, 0, .28);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 8% 18%, rgba(255, 174, 0, .15), transparent 42%),
+    linear-gradient(120deg, rgba(255, 174, 0, .09), rgba(200, 60, 255, .08));
+}
+
+.about-donate-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 174, 0, .3);
+  background: rgba(255, 174, 0, .1);
+}
+
+.about-donate-icon svg {
+  width: 21px;
+  height: 21px;
+  fill: #ff8a4c;
+  color: #ff8a4c;
+  filter: drop-shadow(0 0 7px rgba(255, 138, 76, .55));
+  animation: aboutHeartbeat 2.4s ease-in-out infinite;
+}
+
+.about-donate-note p {
+  margin: 0;
+  color: #c9b6c4;
+  font-size: 13px;
+  line-height: 1.78;
+}
+
+.about-donate-note strong {
+  color: #ffd884;
+  font-weight: 850;
+}
+
+@keyframes aboutHeartbeat {
+  0%, 40%, 100% { transform: scale(1); }
+  10% { transform: scale(1.16); }
+  22% { transform: scale(.98); }
+  30% { transform: scale(1.08); }
+}
+
+/* Staggerované najetí jednotlivých bloků po rozbalení. */
+.about-card.is-expanded .about-manifest-inner > * {
+  animation: manifestItemIn .68s cubic-bezier(.16,.84,.2,1) both;
+}
+
+.about-card.is-expanded .about-manifest-inner > *:nth-child(1) { animation-delay: .10s; }
+.about-card.is-expanded .about-manifest-inner > *:nth-child(2) { animation-delay: .17s; }
+.about-card.is-expanded .about-manifest-inner > *:nth-child(3) { animation-delay: .24s; }
+.about-card.is-expanded .about-manifest-inner > *:nth-child(4) { animation-delay: .31s; }
+.about-card.is-expanded .about-manifest-inner > *:nth-child(5) { animation-delay: .39s; }
+
+@keyframes manifestItemIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* ---------- Responzivita ---------- */
+
+@media (max-width: 1040px) {
+  .about-card {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "copy"
+      "emblem"
+      "manifest";
+  }
+}
+
+@media (max-width: 900px) {
+  .about-promises {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .about-card.is-expanded .about-manifest-inner {
+    padding-top: 30px;
+  }
+
+  .about-more-toggle {
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .about-promises {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .about-donate-note {
+    padding: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-manifest,
+  .about-manifest-inner,
+  .about-more-toggle,
+  .about-more-chevron,
+  .about-more-toggle::before,
+  .about-donate-icon svg,
+  .about-card.is-expanded .about-manifest-inner > * {
+    animation: none !important;
+    transition-duration: .01ms !important;
+  }
+}
