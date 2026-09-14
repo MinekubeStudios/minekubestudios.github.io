@@ -75,13 +75,36 @@ const I18N = {
     "panel.server": "Komunitní server — ve vývoji",
     "panel.store": "Obsah zdarma, bez paywallu",
     "panel.open": "Stavíme společně",
-    "about.title": "Výkon bez zničení původního Minecraftu",
-    "about.p1": "Smyslem projektu je zachovat známý vanilla pocit, ale odstranit zbytečné propady FPS, dlouhé načítání a mikrosekání. Každý mod má mít jasný důvod, žádná výplň a žádné náhodné experimenty v produkčním vydání.",
-    "about.p2": "Výsledkem je Minecraft, který se hraje stejně jako ten původní — jen je rychlejší, klidnější a šetrnější k tvému počítači.",
-    "about.tag1": "Vanilla friendly",
-    "about.tag2": "Bezpečné aktualizace",
-    "about.tag3": "Čistá konfigurace",
-    "about.tag4": "Transparentní changelog",
+    "about.kicker": "NEZÁVISLÝ ČESKÝ PROJEKT",
+    "about.title": "Minecraft, který patří hráčům — <em>svobodně a navždy zdarma.</em>",
+    "about.p1": "Minekube je nezávislý český projekt postavený na Minecraftu jako otevřený základ pro hraní i tvorbu. Žádné licence, žádné předplatné, žádné DRM ani skryté sledování — projekt společně vlastníme, vyvíjíme a posouváme dál komunita hráčů a tvůrců.",
+    "about.tag1": "Plně open-source",
+    "about.tag2": "Hra bez DRM",
+    "about.tag3": "Bez telemetrie a sledování",
+    "about.tag4": "Vlastněno komunitou",
+    "about.more": "Celé informace",
+    "about.less": "Skrýt informace",
+    "about.more.aria": "Zobrazit celé informace a cíl projektu",
+    "about.emblemTop": "OPEN SOURCE",
+    "about.emblemBottom": "NAVŽDY ZDARMA",
+    "about.manifestKicker": "POSLÁNÍ PROJEKTU",
+    "about.manifestTitle": "Celý cíl projektu v kostce",
+    "about.mp1": "Cílem Minekube je otevřený herní ekosystém kolem Minecraftu, který hráčům i vývojářům dává maximální svobodu a podporu. Za projektem nestojí žádná firma ani investor — tvoří ho nezávisle komunita sama pro sebe, a proto si nikdy nepůjde proti hráčům.",
+    "about.mp2": "Do hry ti nikdo nemluví: žádná DRM omezení, žádné nucené účty, žádná telemetrie ani sledování. Soukromí je u nás výchozí stav, ne marketingový slogan. Vše, co vytváříme, je plně otevřené — kód můžeš studovat, upravovat i dál šířit.",
+    "about.promise1.title": "Nezávislost a svoboda",
+    "about.promise1.text": "Žádné licence, žádné předplatné ani skryté poplatky. Hraješ a tvoříš bez omezení.",
+    "about.promise2.title": "Maximum soukromí",
+    "about.promise2.text": "Žádné sledování, žádná telemetrie, žádný prodej dat. Tvoje hra zůstává tvoje.",
+    "about.promise3.title": "Hra bez DRM",
+    "about.promise3.text": "Svobodné hraní i spouštění bez aktivačních zámků a nuceného online ověřování.",
+    "about.promise4.title": "Otevřený ekosystém",
+    "about.promise4.text": "Plně open-source — kód, nástroje i obsah může kdokoliv studovat, vylepšovat a rozšiřovat.",
+    "about.promise5.title": "Vlastněno komunitou",
+    "about.promise5.text": "Projekt vlastníme a vyvíjíme společně. Hráči i vývojáři spolurozhodují o jeho směřování.",
+    "about.promise6.title": "Přátelská komunita",
+    "about.promise6.text": "Otevřená CZ/SK parta hráčů a tvůrců, kde každý najde podporu i místo k vlastní tvorbě.",
+    "about.noteLead": "Celý ekosystém Minekube funguje čistě na bázi Donate —",
+    "about.noteText": "na dobrovolných finančních darech komunity, které pohánějí růst a budoucí vývoj. Nikdy tu nebude paywall, prémiové zámky ani předplatné. Minekube zůstává navždy pro všechny ZDARMA a plně OPEN-SOURCE.",
     "principles.kicker": "PRINCIPY PROJEKTU",
     "principles.title": "Pravidla, podle kterých projekt chodí",
     "principles.lead": "Žádné náhodné experimenty — každé rozhodnutí v balíčku má jasný důvod.",
@@ -198,13 +221,36 @@ const I18N = {
     "panel.server": "Community server — in development",
     "panel.store": "Free content, no paywall",
     "panel.open": "We build it together",
-    "about.title": "Performance without breaking original Minecraft",
-    "about.p1": "The point of the project is to keep the familiar vanilla feeling while removing pointless FPS drops, long load times and micro-stutter. Every mod has to have a clear reason — no filler, no random experiments in a production release.",
-    "about.p2": "The result is a Minecraft that plays just like the original — only faster, calmer and gentler on your computer.",
-    "about.tag1": "Vanilla friendly",
-    "about.tag2": "Safe updates",
-    "about.tag3": "Clean configuration",
-    "about.tag4": "Transparent changelog",
+    "about.kicker": "INDEPENDENT CZECH PROJECT",
+    "about.title": "Minecraft owned by its players — <em>free and open forever.</em>",
+    "about.p1": "Minekube is an independent Czech project built on Minecraft as an open foundation for playing and creating. No licenses, no subscriptions, no DRM and no hidden tracking — the project is owned, built and pushed forward together by a community of players and creators.",
+    "about.tag1": "Fully open-source",
+    "about.tag2": "DRM-free gameplay",
+    "about.tag3": "No telemetry, no tracking",
+    "about.tag4": "Community owned",
+    "about.more": "Full information",
+    "about.less": "Hide information",
+    "about.more.aria": "Show the full information and project mission",
+    "about.emblemTop": "OPEN SOURCE",
+    "about.emblemBottom": "FREE FOREVER",
+    "about.manifestKicker": "OUR MISSION",
+    "about.manifestTitle": "The whole project goal at a glance",
+    "about.mp1": "Minekube's goal is an open gaming ecosystem around Minecraft that gives players and developers maximum freedom and support. No company or investor stands behind it — the community independently builds it for itself, which is why it will never turn against its players.",
+    "about.mp2": "Nobody controls how you play: no DRM restrictions, no forced accounts, no telemetry or tracking. Privacy is the default here, not a marketing slogan. Everything we make is fully open — you can study, modify and redistribute the code.",
+    "about.promise1.title": "Independence & freedom",
+    "about.promise1.text": "No licenses, no subscriptions and no hidden fees. Play and create without limits.",
+    "about.promise2.title": "Privacy first",
+    "about.promise2.text": "No tracking, no telemetry, no selling your data. Your game stays yours.",
+    "about.promise3.title": "DRM-free gameplay",
+    "about.promise3.text": "Play and launch freely, without activation locks or forced online verification.",
+    "about.promise4.title": "Open ecosystem",
+    "about.promise4.text": "Fully open-source — anyone can study, improve and extend the code, tools and content.",
+    "about.promise5.title": "Community owned",
+    "about.promise5.text": "We all own and build the project together. Players and developers co-decide where it goes.",
+    "about.promise6.title": "Friendly community",
+    "about.promise6.text": "An open CZ/SK crowd of players and creators where everyone finds support and room to create.",
+    "about.noteLead": "The entire Minekube ecosystem runs purely on Donate —",
+    "about.noteText": "voluntary financial contributions from the community that power growth and future development. There will never be a paywall, premium locks or subscriptions. Minekube stays FREE for everyone, forever — and fully OPEN-SOURCE.",
     "principles.kicker": "PROJECT PRINCIPLES",
     "principles.title": "The rules the project runs on",
     "principles.lead": "No random experiments — every decision inside the pack has a reason.",
@@ -321,13 +367,36 @@ const I18N = {
     "panel.server": "Komunitný server — vo vývoji",
     "panel.store": "Obsah zadarmo, bez paywallu",
     "panel.open": "Staviame spolu",
-    "about.title": "Výkon bez zničenia pôvodného Minecraftu",
-    "about.p1": "Zmyslom projektu je zachovať známy vanilla pocit, ale odstrániť zbytočné propady FPS, dlhé načítanie a mikrosekanie. Každý mod musí mať jasný dôvod, žiadna výplň a žiadne náhodné experimenty v produkčnom vydaní.",
-    "about.p2": "Výsledkom je Minecraft, ktorý sa hrá rovnako ako ten pôvodný — len je rýchlejší, kľudnejší a šetrnejší k tvojmu počítaču.",
-    "about.tag1": "Vanilla friendly",
-    "about.tag2": "Bezpečné aktualizácie",
-    "about.tag3": "Čistá konfigurácia",
-    "about.tag4": "Transparentný changelog",
+    "about.kicker": "NEZÁVISLÝ ČESKÝ PROJEKT",
+    "about.title": "Minecraft, ktorý patrí hráčom — <em>slobodne a navždy zadarmo.</em>",
+    "about.p1": "Minekube je nezávislý český projekt postavený na Minecrafte ako otvorený základ pre hranie aj tvorbu. Žiadne licencie, žiadne predplatné, žiadne DRM ani skryté sledovanie — projekt spoločne vlastníme, vyvíjame a posúvame vpred komunita hráčov a tvorcov.",
+    "about.tag1": "Plne open-source",
+    "about.tag2": "Hra bez DRM",
+    "about.tag3": "Bez telemetrie a sledovania",
+    "about.tag4": "Vlastnený komunitou",
+    "about.more": "Celé informácie",
+    "about.less": "Skryť informácie",
+    "about.more.aria": "Zobraziť celé informácie a cieľ projektu",
+    "about.emblemTop": "OPEN SOURCE",
+    "about.emblemBottom": "NAVŽDY ZADARMO",
+    "about.manifestKicker": "POSLANIE PROJEKTU",
+    "about.manifestTitle": "Celý cieľ projektu v kocke",
+    "about.mp1": "Cieľom Minekube je otvorený herný ekosystém okolo Minecraftu, ktorý hráčom aj vývojárom dáva maximálnu slobodu a podporu. Za projektom nestojí žiadna firma ani investor — tvorí ho nezávisle komunita sama pre seba, a preto si nikdy nepôjde proti hráčom.",
+    "about.mp2": "Do hry ti nikto nehovorí: žiadne DRM obmedzenia, žiadne nútené účty, žiadna telemetria ani sledovanie. Súkromie je u nás východiskový stav, nie marketingový slogan. Všetko, čo vytvárame, je plne otvorené — kód môžeš študovať, upravovať aj ďalej šíriť.",
+    "about.promise1.title": "Nezávislosť a sloboda",
+    "about.promise1.text": "Žiadne licencie, žiadne predplatné ani skryté poplatky. Hráš a tvoríš bez obmedzení.",
+    "about.promise2.title": "Maximum súkromia",
+    "about.promise2.text": "Žiadne sledovanie, žiadna telemetria, žiadny predaj dát. Tvoja hra zostáva tvoja.",
+    "about.promise3.title": "Hra bez DRM",
+    "about.promise3.text": "Slobodné hranie aj spúšťanie bez aktivačných zámkov a núteného online overovania.",
+    "about.promise4.title": "Otvorený ekosystém",
+    "about.promise4.text": "Plne open-source — kód, nástroje aj obsah môže ktokoľvek študovať, vylepšovať a rozširovať.",
+    "about.promise5.title": "Vlastnený komunitou",
+    "about.promise5.text": "Projekt vlastníme a vyvíjame spoločne. Hráči aj vývojári spolurozhodujú o jeho smerovaní.",
+    "about.promise6.title": "Priateľská komunita",
+    "about.promise6.text": "Otvorená CZ/SK parta hráčov a tvorcov, kde každý nájde podporu aj miesto na vlastnú tvorbu.",
+    "about.noteLead": "Celý ekosystém Minekube funguje čisto na báze Donate —",
+    "about.noteText": "na dobrovoľných finančných daroch komunity, ktoré poháňajú rast a budúci vývoj. Nikdy tu nebude paywall, prémiové zámky ani predplatné. Minekube zostáva navždy pre všetkých ZDARMA a plne OPEN-SOURCE.",
     "principles.kicker": "PRINCÍPY PROJEKTU",
     "principles.title": "Pravidlá, podľa ktorých projekt chodí",
     "principles.lead": "Žiadne náhodné experimenty — každé rozhodnutie v balíčku má jasný dôvod.",
@@ -1105,6 +1174,41 @@ document.querySelectorAll("[data-soon]").forEach(button => {
   });
 });
 
+/* ===================== MANIFEST — ROZBALITELNÉ CELÉ INFORMACE ===================== */
+
+function initializeManifestToggle() {
+  const card = document.getElementById("aboutCard");
+  const toggle = document.getElementById("aboutMoreToggle");
+  const panel = document.getElementById("aboutManifest");
+  if (!card || !toggle || !panel) return;
+
+  const setExpanded = expanded => {
+    card.classList.toggle("is-expanded", expanded);
+    toggle.setAttribute("aria-expanded", String(expanded));
+    panel.setAttribute("aria-hidden", String(!expanded));
+    panel.inert = !expanded;
+  };
+
+  // Výchozí stav: sbaleno (inert z HTML jistoty kvůli starším prohlížečům).
+  setExpanded(false);
+
+  toggle.addEventListener("click", () => {
+    const expanded = !card.classList.contains("is-expanded");
+    setExpanded(expanded);
+
+    if (expanded) {
+      // Po rozbalení plynule přiscrollujeme, pokud je nový obsah pod okrajem viewportu.
+      window.setTimeout(() => {
+        if (prefersReducedMotion.matches) return;
+        const rect = panel.getBoundingClientRect();
+        if (rect.bottom > window.innerHeight - 28) {
+          toggle.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 540);
+    }
+  });
+}
+
 /* ===================== INICIALIZÁCIA ===================== */
 
 document.getElementById("currentYear").textContent = new Date().getFullYear();
@@ -1116,3 +1220,4 @@ initializeScrollExperience();
 initializeSupportButtonFx();
 initializeKofiGate();
 initializePrimaryCta();
+initializeManifestToggle();

@@ -228,24 +228,29 @@
 </div>
 
 <!-- ---------- MANIFEST PROJEKTU ---------- -->
-<div class="about-card">
+<div class="about-card" id="aboutCard">
 <div aria-hidden="true" class="about-ambient"><i></i><i></i><i></i><span></span></div>
 <div class="about-copy">
-<span class="section-kicker">MINEKUBE PROJECT</span>
-<h2 data-i18n="about.title">Výkon bez zničení původního Minecraftu</h2>
-<p data-i18n="about.p1">Smyslem projektu je zachovat známý vanilla pocit, ale odstranit zbytečné propady FPS, dlouhé načítání a mikrosekání. Každý mod má mít jasný důvod, žádná výplň a žádné náhodné experimenty v produkčním vydání.</p>
-<p data-i18n="about.p2">Výsledkem je Minecraft, který se hraje stejně jako ten původní — jen je rychlejší, klidnější a šetrnější k tvému počítači.</p>
+<span class="section-kicker" data-i18n="about.kicker">NEZÁVISLÝ ČESKÝ PROJEKT</span>
+<h2 data-i18n="about.title">Minecraft, který patří hráčům — <em>svobodně a navždy zdarma.</em></h2>
+<p data-i18n="about.p1">Minekube je nezávislý český projekt postavený na Minecraftu jako otevřený základ pro hraní i tvorbu. Žádné licence, žádné předplatné, žádné DRM ani skryté sledování — projekt společně vlastníme, vyvíjíme a posouváme dál komunita hráčů a tvůrců.</p>
 <div class="about-tags">
-<span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg><i class="lbl" data-i18n="about.tag1">Vanilla friendly</i></span>
-<span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.4-2.7 7.8-7 10-4.3-2.2-7-5.6-7-10V6l7-3Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg><i class="lbl" data-i18n="about.tag2">Bezpečné aktualizace</i></span>
-<span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M8 4v6M16 14v6"></path></svg><i class="lbl" data-i18n="about.tag3">Čistá konfigurace</i></span>
-<span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h8M8 17h5"></path></svg><i class="lbl" data-i18n="about.tag4">Transparentní changelog</i></span>
+<span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"></path></svg><i class="lbl" data-i18n="about.tag1">Plně open-source</i></span>
+<span><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 7-2.6"></path></svg><i class="lbl" data-i18n="about.tag2">Hra bez DRM</i></span>
+<span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.4 5.3A8.8 8.8 0 0 1 12 5c5 0 8.5 4.2 9.4 5.6a13 13 0 0 1-2.2 2.9M6.2 7.2C4.4 8.6 3.3 10 2.6 10.6 3.5 11.8 7 16 12 16a8.7 8.7 0 0 0 4.2-1.1"></path></svg><i class="lbl" data-i18n="about.tag3">Bez telemetrie a sledování</i></span>
+<span><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20a6 6 0 0 1 12 0M16 5.2a3 3 0 0 1 0 5.6M21 20a6 6 0 0 0-4-5.6"></path></svg><i class="lbl" data-i18n="about.tag4">Vlastněno komunitou</i></span>
 </div>
+<button class="about-more-toggle" id="aboutMoreToggle" type="button" aria-controls="aboutManifest" aria-expanded="false" data-i18n-aria="about.more.aria">
+<svg aria-hidden="true" class="about-more-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 7.6h.01"></path></svg>
+<span class="about-more-label about-more-label--closed" data-i18n="about.more">Celé informace</span>
+<span class="about-more-label about-more-label--open" data-i18n="about.less">Skrýt informace</span>
+<svg aria-hidden="true" class="about-more-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg>
+</button>
 </div>
 <div aria-hidden="true" class="about-emblem">
 <div class="emblem-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-<span class="emblem-label emblem-label-top">PURE FPS</span>
-<span class="emblem-label emblem-label-bottom">VANILLA CORE</span>
+<span class="emblem-label emblem-label-top" data-i18n="about.emblemTop">OPEN SOURCE</span>
+<span class="emblem-label emblem-label-bottom" data-i18n="about.emblemBottom">NAVŽDY ZDARMA</span>
 <div class="emblem-cube">
 <span class="cube-top"></span>
 <span class="cube-left"></span>
@@ -253,6 +258,48 @@
 </div>
 <div class="emblem-ring ring-a"></div>
 <div class="emblem-ring ring-b"></div>
+</div>
+
+<!-- ---------- ROZBALITELNÉ: CELÉ INFORMACE A CÍL PROJEKTU ---------- -->
+<div aria-hidden="true" class="about-manifest" id="aboutManifest" inert role="region">
+<div class="about-manifest-inner">
+<span class="section-kicker about-manifest-kicker" data-i18n="about.manifestKicker">POSLÁNÍ PROJEKTU</span>
+<h3 data-i18n="about.manifestTitle">Celý cíl projektu v kostce</h3>
+<div class="about-manifest-text">
+<p data-i18n="about.mp1">Cílem Minekube je otevřený herní ekosystém kolem Minecraftu, který hráčům i vývojářům dává maximální svobodu a podporu. Za projektem nestojí žádná firma ani investor — tvoří ho nezávisle komunita sama pro sebe, a proto si nikdy nepůjde proti hráčům.</p>
+<p data-i18n="about.mp2">Do hry ti nikdo nemluví: žádná DRM omezení, žádné nucené účty, žádná telemetrie ani sledování. Soukromí je u nás výchozí stav, ne marketingový slogan. Vše, co vytváříme, je plně otevřené — kód můžeš studovat, upravovat i dál šířit.</p>
+</div>
+<ul class="about-promises">
+<li>
+<span class="about-promise-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"></rect><circle cx="12" cy="12" r="2.4"></circle><path d="M6 12h.01M18 12h.01"></path></svg></span>
+<div><b data-i18n="about.promise1.title">Nezávislost a svoboda</b><span data-i18n="about.promise1.text">Žádné licence, žádné předplatné ani skryté poplatky. Hraješ a tvoříš bez omezení.</span></div>
+</li>
+<li>
+<span class="about-promise-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.4 5.3A8.8 8.8 0 0 1 12 5c5 0 8.5 4.2 9.4 5.6a13 13 0 0 1-2.2 2.9M6.2 7.2C4.4 8.6 3.3 10 2.6 10.6 3.5 11.8 7 16 12 16a8.7 8.7 0 0 0 4.2-1.1"></path></svg></span>
+<div><b data-i18n="about.promise2.title">Maximum soukromí</b><span data-i18n="about.promise2.text">Žádné sledování, žádná telemetrie, žádný prodej dat. Tvoje hra zůstává tvoje.</span></div>
+</li>
+<li>
+<span class="about-promise-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 7-2.6"></path></svg></span>
+<div><b data-i18n="about.promise3.title">Hra bez DRM</b><span data-i18n="about.promise3.text">Svobodné hraní i spouštění bez aktivačních zámků a nuceného online ověřování.</span></div>
+</li>
+<li>
+<span class="about-promise-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"></path></svg></span>
+<div><b data-i18n="about.promise4.title">Otevřený ekosystém</b><span data-i18n="about.promise4.text">Plně open-source — kód, nástroje i obsah může kdokoliv studovat, vylepšovat a rozšiřovat.</span></div>
+</li>
+<li>
+<span class="about-promise-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20a6 6 0 0 1 12 0M16 5.2a3 3 0 0 1 0 5.6M21 20a6 6 0 0 0-4-5.6"></path></svg></span>
+<div><b data-i18n="about.promise5.title">Vlastněno komunitou</b><span data-i18n="about.promise5.text">Projekt vlastníme a vyvíjíme společně. Hráči i vývojáři spolurozhodují o jeho směřování.</span></div>
+</li>
+<li>
+<span class="about-promise-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8.5 14.5s1.3 1.5 3.5 1.5 3.5-1.5 3.5-1.5M9 9.5h.01M15 9.5h.01"></path></svg></span>
+<div><b data-i18n="about.promise6.title">Přátelská komunita</b><span data-i18n="about.promise6.text">Otevřená CZ/SK parta hráčů a tvůrců, kde každý najde podporu i místo k vlastní tvorbě.</span></div>
+</li>
+</ul>
+<div class="about-donate-note">
+<span class="about-donate-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-9.5A4.2 4.2 0 0 1 12 7.4a4.2 4.2 0 0 1 7.5 3.1C19.5 15.4 12 20 12 20Z"></path></svg></span>
+<p><strong data-i18n="about.noteLead">Celý ekosystém Minekube funguje čistě na bázi Donate —</strong> <span data-i18n="about.noteText">na dobrovolných finančních darech komunity, které pohánějí růst a budoucí vývoj. Nikdy tu nebude paywall, prémiové zámky ani předplatné. Minekube zůstává navždy pro všechny ZDARMA a plně OPEN-SOURCE.</span></p>
+</div>
+</div>
 </div>
 </div>
 
