@@ -17,6 +17,16 @@
     if (theme) document.documentElement.dataset.theme = theme;
     var lang = localStorage.getItem("minekube-lang") || "cs";
     document.documentElement.lang = lang;
+    /* Přiletěli jsme z druhé stránky webu? Pak hned na startu zakryjeme
+       scénu závojem, aby přechod plynule navázal na odchod z předchozí
+       stránky (a hned se zase uklidí, i kdyby app.js nedoběhla). */
+    if (sessionStorage.getItem("minekube:page-transition") === "1") {
+      sessionStorage.removeItem("minekube:page-transition");
+      document.documentElement.classList.add("mk-arriving");
+      window.setTimeout(function () {
+        document.documentElement.classList.remove("mk-arriving");
+      }, 1400);
+    }
   } catch (e) {}
 })();
 </script>
@@ -24,6 +34,26 @@
 <body>
 <div aria-hidden="true" class="noise"></div>
 <div aria-hidden="true" class="scroll-progress" id="scrollProgress"><span></span></div>
+
+<!-- ===================== PLYNULÝ PŘECHOD MEZI STRÁNKAMI ===================== -->
+<div aria-hidden="true" class="page-veil" id="pageVeil">
+<span class="page-veil-panel"></span>
+<span class="page-veil-grid"></span>
+<span class="page-veil-beam"></span>
+<span class="page-veil-mark">
+<svg viewBox="0 0 48 48">
+<path d="M24 3 43 13.5v21L24 45 5 34.5v-21L24 3Z"></path>
+<path d="m24 3 19 10.5L24 24 5 13.5 24 3Z"></path>
+<path d="M24 24v21L5 34.5v-21L24 24Z"></path>
+<path d="M24 24 43 13.5v21L24 45V24Z"></path>
+<path class="mark-core" d="m14 18 10 5.5L34 18v11l-10 5.5L14 29V18Z"></path>
+</svg>
+<b>Minekube</b>
+<small data-i18n="transition.label">Načítám stránku</small>
+<i></i>
+</span>
+</div>
+
 
 <!-- ===================== HEADER ===================== -->
 <!-- ===================== KO-FI GATE // CELOSTRÁNKOVÝ PŘECHOD ===================== -->

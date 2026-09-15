@@ -1,4 +1,82 @@
-# Minekube Studios // Hlavní web (v7 — původní tlačítko zpátky, částice a portál zůstávají)
+# Minekube Studios // Web (v8 — hlavní stránka + samostatná stránka Modpacky)
+
+## v8 — stránka **Modpacky** je na světě (katalog, filtry, detail balíčku)
+
+Hlavní stránka na `modpacky/` odkazovala od začátku (navigace, hero CTA, modul
+v panelu, pilíř, footer) — chyběla jen samotná stránka. Teď existuje a používá
+**stejný design systém** (`styles.css`), **stejnou `app.js`** (motiv, jazyk,
+toast, modal, Ko-fi portál) i stejnou hlavičku a patičku.
+
+1. **Architektura (jedna app.js pro celý web)**
+   - `modpacky/i18n.js` se načítá **před** `app.js` a nastaví
+     `window.MINEKUBE_PAGE_I18N = { cs: {…}, en: {…}, sk: {…} }`; `app.js` si
+     klíče přidá do svého slovníku. Jeden přepínač jazyka, jedna
+     `localStorage`, žádná duplikace kódu.
+   - `app.js` po přepnutí jazyka posílá událost `minekube:language`; katalog si
+     podle ní překreslí dynamické karty, filtry i řazení.
+   - `modpacky/modpacky.js` = data balíčků + logika katalogu (načítá se po
+     `app.js`, používá jeho `t()`, `escapeHtml()`, `showToast()`,
+     `showModal()`/`closeModal()` i reveal při scrollu).
+2. **Katalog** (`.catalog.catalog-clean-aligned` — bloky „MODPACKY …“ ve
+   `styles.css`, které na tuhle stránku čekaly):
+   - **Filtry** (`.filters-panel`): hledání, loader, verze Minecraftu, zaměření
+     a stav vydání. Počty u každé volby se počítají průběžně (fasetové filtrování)
+     a volba, která nic nenajde, se rovnou zašedne.
+   - **Vlastní řazení** (`.sort-control`): doporučené (oblíbené napřed), název
+     A–Z, nejvyšší FPS, naposledy aktualizované. Nad tím `result-count`
+     s počtem výsledků a `empty-state`, když filtr nic nevrátí.
+   - **Karty** (`.pack-card`): barevný banner s 3D Minekube kostkou
+     (`--pack-accent`, `--pack-accent-rgb`, `--cover-accent-rgb`, `--cube-c`,
+     `--cover-bg`), HUD popisky, data strip, srdíčko oblíbených
+     (`.favorite-button` + burst částice), release stav, tagy, tři statistiky
+     a akce — stahovací tlačítko `download-ultimate` nebo zlaté
+     `release-pending-button` („Odkaz připravujeme“).
+   - **Detail balíčku** v modalu (`.modal-hero`, `.modal-stats`, `.modal-columns`,
+     `.modal-download`) — statistiky, popis, tři featury, požadavky a zrcadla.
+   - **Přepínač filtrů na mobilu** (`.filter-toggle` → `.filters-panel.mobile-open`),
+     zkratka **Ctrl K** pro hledání a **Esc** zavře řazení i modal.
+3. **Obsah** — 5 profilů: `ultra`, `performance`, `pvp`, `lite`, `vanilla`
+   (rozpracovaný). Každý má vlastní verzi, loader, zaměření, FPS, RAM, počet
+   modů a datum aktualizace.
+   - **Kde upravit balíčky:** `modpacky/modpacky.js`, konstanta `MODPACKS`
+     (jediné místo — jméno, barvy, verze, statistiky i `mirrors`).
+   - **Kde upravit texty:** `modpacky/i18n.js` (CZ/EN/SK, včetně popisů balíčků).
+   - **Odkazy ke stažení:** `mirrors: [{ label, url }]`. Když je pole prázdné,
+     karta ukáže `release-pending-button` a klik otevře detail balíčku.
+     Předvyplněný je jen Game Jolt u `ultra` (stejný odkaz jako v patičce).
+4. **Drobné (aditivní) úpravy sdílené `app.js`** — nic z chování hlavní stránky
+   se nemění: převzetí `MINEKUBE_PAGE_I18N`, událost `minekube:language`, tři
+   nové typy toastu (`download`, `success`, `favorite` → `is-download-start`,
+   `is-download-success`, `is-favorite`) a guard na `#currentYear`.
+5. **Plynulý přechod mezi oběma stránkami** (blok `PLYNULÝ PŘECHOD MEZI STRÁNKAMI`
+   v `styles.css` + `initializePageTransition()` v `app.js`)
+   - klik na odkaz, který vede z hlavní stránky na `modpacky/` (navigace, hero CTA
+     „Procházet modpacky“, modul v panelu, pilíř, patička i CTA) se **nepřeskočí**:
+     přes obrazovku se převalí lehký závoj (`#pageVeil` — gradient, mřížka,
+     paprsek, logo Minekube + popisek a tenká progress linka) a teprve v momentě,
+     kdy je scéna zakrytá (**430 ms**), se změní dokument;
+   - cílová stránka je na okamžik zakrytá stejně (inline skript v `<head>`
+     přečte `sessionStorage` příznak a přidá `html.mk-arriving`), závoj se z ní
+     stečí pryč a obsah se zvedne — přechod tak působí jako jedna plynulá akce;
+   - závoj kreslí **jen tyhle dvě stránky** (`PAGE_TRANSITION_PATHS`), takže se
+     nespustí na Store ani na jiný web; kotvy na téže stránce, nová karta
+     (Ctrl/Cmd), střední tlačítko ani `prefers-reduced-motion` závoj nepoužívají;
+   - při návratu z historie (bfcache) se závoj okamžitě uklidí (`pageshow`),
+     třída `mk-arriving` zmizí i po dohrání animace nebo po časové pojistce
+     v hlavičce — nikdy nezůstane viset.
+
+6. **Nový CSS blok** na konci `styles.css`: `STRÁNKA MODPACKY (modpacky/index.html)`
+   — drobečková navigace, poznámka v panelu profilů, viditelnost vlastního
+   řazení, zvýraznění karty po kliknutí na profil, jádro výkonu v modalu
+   a responzivita.
+
+Ověřeno jsdomem nad reálným během obou stránek: `modpacky/` **43/43** kontrol
+(vykreslení pěti karet, fasetové filtry, prázdný stav, řazení, oblíbené
+v `localStorage`, detail balíčku, překlad dynamického obsahu, pokrytí CSS tříd)
+a hlavní stránka **13/13** (jazyky, modaly, manifest, toast, odkazy na
+`modpacky/`, stejný počet klíčů ve všech jazycích — 146/146/146).
+
+---
 
 ## v7 — tlačítko je zase originál, jen si ponechalo jiskry a celostránkový portál
 
@@ -178,8 +256,8 @@ Původní popis šestého kola: blok v `site/styles.css` se jmenoval
 - **Žádné celoobrazovkové animace u běžné navigace** — boot loader
   `#futureLoader`, přechod sekcí `#pageTransition`, „nájezd“ cílové sekce
   (`.mk-section-preparing` / `-arriving` / `.mk-section-entry-sweep`) ani
-  Store pulz nebyly vrácené; celou obrazovku překrývá **jen** nově
-  požadovaný portál ke Ko-fi. Z `styles.css` zůstávají fyzicky smazané
+  Store pulz nebyly vrácené; celou obrazovku překrývá **jen** portál ke Ko-fi
+  a od v8 krátký závoj při přechodu hlavní web ↔ `modpacky/` (430 ms, viz výše). Z `styles.css` zůstávají fyzicky smazané
   odpovídající pravidla i mrtvé `@keyframes` (původně 681 pravidel,
   92 keyframes, soubor klesl z 411 kB na 319 kB).
 - **Sloučené sekce** — `Domů` a `Studio` jsou uvnitř jedné sekce **O projektu
@@ -199,7 +277,10 @@ Původní popis šestého kola: blok v `site/styles.css` se jmenoval
 | `styles.css` | Design systém původního webu **minus** pravidla celoobrazovkových animací, **plus** bloky `LANG SWITCHER + NAV SERVER BUTTON + SLOUČENÁ JEDNA STRÁNKA` (v3), `INTRO CTA` + `KO-FI` (v4), `KO-FI GATE // …` + `OKAMŽIK PŘESMEROVÁNÍ` (v5)
   a `KO-FI TLAČÍTKO // ČÁSTICE Z HOVERU` (v7). Přepisové bloky `SYTĚJŠÍ A ŽIVĚJŠÍ` (v5)
   a `V6 …` byly v kole v7 vyříznuté — `styles.css` tak začíná přesně obsahem nahraného originálu. Soubor se **pouze doplňuje**, nikdy se regeneruje ze starých uploadů. |
-| `app.js` | Motiv, jazyk (i18n), toast, modaly, reveal při scrollu, 3D tilt, `SITE_LINKS`, rozklad popisku na písmena, kurzorový svit primárního CTA, částice tlačítka a `openKofiGate()` / `closeKofiGate()` / `launchKofiPulse()` |
+| `app.js` | Motiv, jazyk (i18n + `MINEKUBE_PAGE_I18N` pro podstránky), toast, modaly, reveal při scrollu, 3D tilt, `SITE_LINKS`, rozklad popisku na písmena, kurzorový svit primárního CTA, částice tlačítka, `openKofiGate()` / `closeKofiGate()` / `launchKofiPulse()` a `initializePageTransition()` |
+| `modpacky/index.html` | **Druhá stránka — katalog modpacků**: stejná hlavička, patička, Ko-fi portál, modal i toast jako hlavní stránka + hero s profily, filtry, mřížka balíčků, instalace a CTA |
+| `modpacky/i18n.js` | Překlady stránky Modpacky (CZ/EN/SK) — `window.MINEKUBE_PAGE_I18N`, načítá se před `app.js` |
+| `modpacky/modpacky.js` | Data balíčků (`MODPACKS`) a logika katalogu: filtry, hledání, vlastní řazení, oblíbené, detail balíčku v modalu, animace stahování |
 | `assets/favicon.svg` | Favicon z brand znaku |
 
 ## Sekce stránky
@@ -219,7 +300,8 @@ Původní popis šestého kola: blok v `site/styles.css` se jmenoval
 ## Navigace
 
 - **O projektu** — kotva `#projekt`
-- **Modpacky** — odkaz na `modpacky/` (druhá stránka, není součástí tohoto balíčku)
+- **Modpacky** — odkaz na `modpacky/` (druhá stránka, součástí balíčku od v8);
+  na své stránce je položka označená jako aktivní a „O projektu“ vede zpět na `../`
 - **Server** — tlačítko, žádná stránka (jen info toast)
 - **vpravo v hlavičce** — tlačítko motivu, tlačítko jazyka a **Ko-fi tlačítko**,
   které otevírá portál přes celou obrazovku
