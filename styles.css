@@ -13956,3 +13956,217 @@ body.kofi-gate-open { overflow: hidden !important; }
     margin-bottom: 18px;
   }
 }
+
+
+/* =========================================================
+   PLYNULÝ PŘECHOD MEZI STRÁNKAMI (hlavní web ↔ modpacky/)
+   Lehký závoj: při odchodu se přes obrazovku převalí gradient
+   s mřížkou a logem, cílová stránka je na okamžik stejně zakrytá
+   a závoj se z ní stečí pryč — přechod tak působí spojitě.
+   Kreslí se jen pro dvě stránky, které tenhle blok používají
+   (/ a /modpacky/), a nikdy při prefers-reduced-motion.
+   ========================================================= */
+
+.page-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.page-veil.is-active,
+html.mk-arriving .page-veil {
+  opacity: 1;
+  visibility: visible;
+}
+
+.page-veil-panel {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 24% 26%, rgba(255, 190, 60, .18), transparent 44%),
+    radial-gradient(circle at 76% 70%, rgba(200, 60, 255, .17), transparent 46%),
+    linear-gradient(120deg, #090410 0%, #170822 46%, #0a0411 100%);
+  transform: translateX(-101%);
+}
+
+.page-veil.is-active .page-veil-panel {
+  animation: mkVeilCover .46s cubic-bezier(.72, 0, .18, 1) both;
+}
+
+html.mk-arriving .page-veil-panel {
+  transform: translateX(0);
+  animation: mkVeilClear .56s .04s cubic-bezier(.72, 0, .18, 1) both;
+}
+
+/* Závoj se po příchodu sám uklidí — i kdyby na stránce nic dalšího neběželo. */
+html.mk-arriving .page-veil {
+  animation: mkVeilDismiss .24s .56s ease both;
+}
+
+.page-veil-grid {
+  position: absolute;
+  inset: 0;
+  opacity: .5;
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(circle at 50% 50%, #000 0, transparent 78%);
+}
+
+.page-veil-beam {
+  position: absolute;
+  top: -30%;
+  left: -12%;
+  width: 34%;
+  height: 160%;
+  background: linear-gradient(90deg, transparent, rgba(255, 214, 120, .16), transparent);
+  transform: skewX(-14deg) translateX(0);
+  opacity: 0;
+}
+
+.page-veil.is-active .page-veil-beam {
+  animation: mkVeilBeam .5s ease-out both;
+}
+
+html.mk-arriving .page-veil-beam {
+  animation: mkVeilBeam .58s .06s ease-out both;
+}
+
+.page-veil-mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  transform: translate(-50%, -50%);
+  color: #fff6ea;
+  text-align: center;
+  opacity: 0;
+}
+
+.page-veil.is-active .page-veil-mark {
+  animation: mkVeilMark .44s .06s cubic-bezier(.16, .84, .2, 1) both;
+}
+
+html.mk-arriving .page-veil-mark {
+  animation: mkVeilMark .5s .1s cubic-bezier(.16, .84, .2, 1) both;
+}
+
+.page-veil-mark svg {
+  width: 54px;
+  height: 54px;
+  filter: drop-shadow(0 0 20px rgba(255, 168, 0, .38));
+}
+
+.page-veil-mark svg path {
+  fill: none;
+  stroke: rgba(255, 226, 150, .92);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+
+.page-veil-mark svg .mark-core {
+  fill: rgba(255, 190, 60, .22);
+  stroke: rgba(255, 240, 190, .96);
+}
+
+.page-veil-mark b {
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  text-shadow: 0 0 20px rgba(255, 160, 40, .35);
+}
+
+.page-veil-mark small {
+  display: block;
+  margin-top: 2px;
+  color: #b997b6;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .22em;
+}
+
+.page-veil-mark i {
+  position: relative;
+  display: block;
+  width: 148px;
+  height: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .09);
+}
+
+.page-veil-mark i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ffd34e, #ff8a1e 55%, #c83cff);
+  transform-origin: 0 50%;
+  animation: mkVeilLoad 1s cubic-bezier(.3, 0, .2, 1) both;
+}
+
+@keyframes mkVeilCover {
+  from { transform: translateX(-101%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes mkVeilClear {
+  from { transform: translateX(0); }
+  to { transform: translateX(101%); }
+}
+
+@keyframes mkVeilDismiss {
+  from { opacity: 1; visibility: visible; }
+  to { opacity: 0; visibility: hidden; }
+}
+
+@keyframes mkVeilBeam {
+  0% { opacity: 0; transform: skewX(-14deg) translateX(0); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: skewX(-14deg) translateX(360%); }
+}
+
+@keyframes mkVeilMark {
+  from { opacity: 0; transform: translate(-50%, -46%) scale(.94); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes mkVeilLoad {
+  from { transform: scaleX(.06); }
+  to { transform: scaleX(1); }
+}
+
+/* Obsah cílové stránky se zvedne, aby na závoj plynule navázal. */
+html.mk-arriving main {
+  animation: mkPageRise .5s .06s cubic-bezier(.16, .84, .2, 1) both;
+}
+
+@keyframes mkPageRise {
+  from { opacity: .001; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-veil,
+  html.mk-arriving .page-veil,
+  html.mk-arriving main {
+    animation: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  html.mk-arriving main {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

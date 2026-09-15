@@ -64,6 +64,7 @@ const I18N = {
     "kofi.gate.title": "Otevírám ko-fi.com",
     "kofi.gate.status": "Připojuji k podpoře komunity",
     "kofi.gate.cancel": "Zrušit",
+    "transition.label": "Načítám stránku",
     "kofi.aria": "Podpořit Minekube Studios na Ko-fi",
     "intro.title1": "Minecraft budoucnosti.",
     "intro.title2": "Otevřený úplně všem.",
@@ -213,6 +214,7 @@ const I18N = {
     "kofi.gate.title": "Opening ko-fi.com",
     "kofi.gate.status": "Connecting to community support",
     "kofi.gate.cancel": "Cancel",
+    "transition.label": "Loading page",
     "kofi.aria": "Support Minekube Studios on Ko-fi",
     "intro.title1": "The future of Minecraft.",
     "intro.title2": "Open to absolutely everyone.",
@@ -362,6 +364,7 @@ const I18N = {
     "kofi.gate.title": "Otváram ko-fi.com",
     "kofi.gate.status": "Pripojujem k podpore komunity",
     "kofi.gate.cancel": "Zrušiť",
+    "transition.label": "Načítavam stránku",
     "kofi.aria": "Podporiť Minekube Studios na Ko-fi",
     "intro.title1": "Minecraft budúcnosti.",
     "intro.title2": "Otvorený úplne všetkým.",
@@ -1237,6 +1240,74 @@ function initializeManifestToggle() {
   });
 }
 
+/* ===================== PLYNULÝ PŘECHOD MEZI STRÁNKAMI =====================
+   Klik na odkaz, který vede na druhou stránku webu (/ a /modpacky/), nezobrazí
+   novou stránku skokem: přes obrazovku se převalí lehký závoj s logem a teprve
+   v momentě, kdy je scéna zakrytá, se změní dokument. Cílová stránka je na
+   okamžik zakrytá stejně a závoj se z ní stečí pryč (viz `html.mk-arriving`
+   v inline skriptu hlavičky) — takže přechod působí jako jedna plynulá akce.
+   Při prefers-reduced-motion se nic neanimuje a odkazy fungují normálně. */
+
+const PAGE_TRANSITION_PATHS = ["/", "/modpacky/"];
+const PAGE_TRANSITION_MS = 430;
+
+function normalizeTransitionPath(pathname) {
+  const clean = pathname.replace(/index\.html$/, "");
+  return clean.endsWith("/") ? clean : `${clean}/`;
+}
+
+function initializePageTransition() {
+  const veil = document.getElementById("pageVeil");
+
+  // Návrat z historie (bfcache) má být okamžitý, žádné dohrávání závoje.
+  window.addEventListener("pageshow", event => {
+    if (event.persisted) document.documentElement.classList.remove("mk-arriving");
+  });
+
+  // Po dohrání závoje na cílové stránce třídu uklidíme (nezávisle na časovači
+  // v hlavičce, který je jen pojistka pro případ, že by se animace nekonala).
+  veil?.querySelector(".page-veil-panel")?.addEventListener("animationend", event => {
+    if (event.animationName === "mkVeilClear") document.documentElement.classList.remove("mk-arriving");
+  });
+
+  if (!veil) return;
+
+  if (prefersReducedMotion.matches) {
+    document.documentElement.classList.remove("mk-arriving");
+    return;
+  }
+
+  let leaving = false;
+
+  document.addEventListener("click", event => {
+    if (leaving || event.defaultPrevented) return;
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+    const link = event.target.closest("a[href]");
+    if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
+    if (link.dataset.noTransition !== undefined) return;
+    if (link.origin !== window.location.origin) return;
+
+    // Závoj mají jen stránky, které ho umí i přijmout (hlavní web a modpacky/).
+    if (!PAGE_TRANSITION_PATHS.includes(normalizeTransitionPath(link.pathname))) return;
+    if (normalizeTransitionPath(link.pathname) === normalizeTransitionPath(window.location.pathname)) return;
+
+    event.preventDefault();
+    leaving = true;
+
+    try {
+      window.sessionStorage.setItem("minekube:page-transition", "1");
+    } catch {
+      // Bez úložiště se prostě jen neanimuje příchod cílové stránky.
+    }
+
+    veil.classList.add("is-active");
+    window.setTimeout(() => {
+      window.location.href = link.href;
+    }, PAGE_TRANSITION_MS);
+  });
+}
+
 /* ===================== INICIALIZÁCIA ===================== */
 
 const currentYearNode = document.getElementById("currentYear");
@@ -1250,3 +1321,4 @@ initializeSupportButtonFx();
 initializeKofiGate();
 initializePrimaryCta();
 initializeManifestToggle();
+initializePageTransition();
