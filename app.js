@@ -183,7 +183,10 @@ const I18N = {
     "toast.warning.kicker": "UPOZORNĚNÍ",
     "toast.server.soon": "Komunitní server právě připravujeme — brzy.",
     "toast.lang.kicker": "JAZYK",
-    "toast.lang.changed": "Stránka je teraz v jazyce {lang}."
+    "toast.lang.changed": "Stránka je teraz v jazyce {lang}.",
+    "toast.download.kicker": "STAHOVÁNÍ",
+    "toast.success.kicker": "HOTOVO",
+    "toast.favorite.kicker": "OBLÍBENÉ"
   },
 
   en: {
@@ -329,7 +332,10 @@ const I18N = {
     "toast.warning.kicker": "NOTICE",
     "toast.server.soon": "We are preparing the community server right now — soon.",
     "toast.lang.kicker": "LANGUAGE",
-    "toast.lang.changed": "The page is now in {lang}."
+    "toast.lang.changed": "The page is now in {lang}.",
+    "toast.download.kicker": "DOWNLOAD",
+    "toast.success.kicker": "DONE",
+    "toast.favorite.kicker": "FAVOURITES"
   },
 
   sk: {
@@ -475,9 +481,23 @@ const I18N = {
     "toast.warning.kicker": "UPOZORNENIE",
     "toast.server.soon": "Komunitný server práve pripravujeme — čoskoro.",
     "toast.lang.kicker": "JAZYK",
-    "toast.lang.changed": "Stránka je teraz v jazyku {lang}."
+    "toast.lang.changed": "Stránka je teraz v jazyku {lang}.",
+    "toast.download.kicker": "SŤAHOVANIE",
+    "toast.success.kicker": "HOTOVO",
+    "toast.favorite.kicker": "OBĽÚBENÉ"
   }
 };
+
+/* ===================== PŘEKLADY PRO DALŠÍ STRÁNKY =====================
+   Podstránka (např. modpacky/) si před načtením app.js nastaví
+   window.MINEKUBE_PAGE_I18N = { cs: { … }, en: { … }, sk: { … } }.
+   Klíče se přidají do slovníku níže, takže celý web sdílí jednu app.js,
+   jeden přepínač jazyka i stejné klíče v localStorage. */
+if (window.MINEKUBE_PAGE_I18N) {
+  Object.entries(window.MINEKUBE_PAGE_I18N).forEach(([lang, dictionary]) => {
+    if (I18N[lang] && dictionary) Object.assign(I18N[lang], dictionary);
+  });
+}
 
 const FALLBACK_LANG = "cs";
 const THEME_KEY = "minekube-theme";
@@ -526,6 +546,10 @@ function applyLanguage(lang, { notify = false } = {}) {
   });
 
   renderLabelLetters();
+
+  // Podstránky (katalog modpacků) si poslechnou tuhle událost a překreslí
+  // dynamický obsah — jinak by zůstal v jazyce, ve kterém se vykreslil.
+  document.dispatchEvent(new CustomEvent("minekube:language", { detail: { lang: currentLang } }));
 
   if (notify) {
     showToast(t("toast.lang.changed").replace("{lang}", meta.name), "language");
@@ -601,7 +625,11 @@ function showToast(message, type = "default", duration = 2900) {
   const toastConfig = {
     warning: { className: "is-warning", kicker: t("toast.warning.kicker") },
     theme: { className: "is-theme", kicker: t("toast.theme.kicker") },
-    language: { className: "is-theme", kicker: t("toast.lang.kicker") }
+    language: { className: "is-theme", kicker: t("toast.lang.kicker") },
+    // Používá katalog modpacků (podstránka modpacky/).
+    download: { className: "is-download-start", kicker: t("toast.download.kicker") },
+    success: { className: "is-download-success", kicker: t("toast.success.kicker") },
+    favorite: { className: "is-favorite", kicker: t("toast.favorite.kicker") }
   }[type];
 
   if (toastConfig) {
@@ -1211,7 +1239,8 @@ function initializeManifestToggle() {
 
 /* ===================== INICIALIZÁCIA ===================== */
 
-document.getElementById("currentYear").textContent = new Date().getFullYear();
+const currentYearNode = document.getElementById("currentYear");
+if (currentYearNode) currentYearNode.textContent = new Date().getFullYear();
 
 applySiteLinks();
 applyLanguage(currentLang);

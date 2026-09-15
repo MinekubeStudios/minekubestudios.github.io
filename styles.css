@@ -13750,3 +13750,209 @@ body.kofi-gate-open { overflow: hidden !important; }
     transition-duration: .01ms !important;
   }
 }
+
+
+/* =========================================================
+   STRÁNKA MODPACKY (modpacky/index.html) — SAMOSTATNÁ STRÁNKA
+   Katalog sám používá bloky „MODPACKY …“ výše (filtry, karty,
+   cover, stahovací tlačítka, modal). Tenhle blok doplňuje jen to,
+   co hlavní stránka nepotřebuje: drobečkovou navigaci, poznámku
+   v panelu profilů, chování vlastního řazení a zvýraznění karty.
+   ========================================================= */
+
+/* ---- Drobečková navigace nad titulkem ---- */
+.packs-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 24px;
+  color: var(--muted-2);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .07em;
+}
+
+.packs-breadcrumb a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .22s ease;
+}
+
+.packs-breadcrumb a:hover,
+.packs-breadcrumb a:focus-visible {
+  color: var(--green);
+}
+
+.packs-breadcrumb svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: .55;
+}
+
+.packs-breadcrumb [aria-current="page"] {
+  color: var(--green-light);
+}
+
+/* ---- Hero: panel s profily ---- */
+.packs-hero {
+  padding-top: 74px;
+  padding-bottom: clamp(26px, 3.5vw, 48px);
+}
+
+.packs-hero .mk-intro {
+  margin-bottom: 0;
+}
+
+.packs-hero .mk-intro-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.packs-hero .mk-intro-module {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.packs-hero .mk-intro-modules .mk-intro-module:last-child {
+  grid-column: 1 / -1;
+}
+
+.packs-panel-note {
+  margin: 15px 4px 0;
+  color: var(--muted-2);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+/* ---- Katalog: nástroje a vlastní řazení ---- */
+.catalog-toolbar {
+  min-height: 46px;
+}
+
+.sort-menu {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.sort-control.is-open .sort-menu {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.catalog-clean-aligned .result-count {
+  align-self: flex-start;
+}
+
+/* ---- Zvýraznění karty po kliknutí na profil v panelu ---- */
+.pack-card.is-highlighted {
+  border-color: rgba(var(--pack-accent-rgb), .72);
+  box-shadow:
+    0 32px 84px rgba(0,0,0,.50),
+    0 0 0 1px rgba(var(--pack-accent-rgb), .34),
+    0 0 62px rgba(var(--pack-accent-rgb), .26);
+}
+
+.pack-card.is-highlighted::before {
+  opacity: 1;
+}
+
+/* ---- Detail balíčku: jádro výkonu a seznamy ---- */
+.modal-power-core {
+  justify-items: center;
+  align-content: center;
+  gap: 3px;
+  color: #ffd350;
+}
+
+.modal-power-core svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 14px rgba(255, 174, 0, .35));
+}
+
+.modal-power-core strong {
+  position: relative;
+  color: #fff5d6;
+  font-size: 21px;
+  letter-spacing: -.02em;
+  text-shadow: 0 0 16px rgba(255, 177, 35, .35);
+}
+
+.modal-power-core small {
+  position: static;
+  color: #bda0ae;
+  font-weight: 900;
+  letter-spacing: .18em;
+}
+
+.modal-feature-list li > b {
+  color: #ffd350;
+}
+
+.modal-list-icon {
+  background: rgba(255, 174, 0, .07);
+  color: #ffc230;
+}
+
+.modal-panel-requirements .modal-feature-list li > span:nth-child(2) b {
+  color: #fff5d1;
+  font-weight: 800;
+}
+
+.modal-stat-icon svg,
+.modal-description-icon svg,
+.modal-panel-heading > span svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---- Instalace: odsazení noty o kompatibilitě ---- */
+.install-section + .cta-section .cta-card {
+  margin-top: 0;
+}
+
+/* ---- Responzivita stránky Modpacky ---- */
+@media (max-width: 1040px){
+  .packs-hero {
+    padding-top: 58px;
+  }
+
+  .packs-hero .mk-intro {
+    gap: 34px;
+  }
+}
+
+@media (max-width: 760px){
+  .catalog-toolbar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .sort-select {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .sort-control {
+    width: 100%;
+  }
+
+  .packs-breadcrumb {
+    margin-bottom: 18px;
+  }
+}
