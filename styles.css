@@ -336,37 +336,116 @@ svg {
   width: fit-content;
 }
 
+/* =========================================================
+   LOGO MINEKUUBE STUDIOS // originální PNG grafika
+   Ikona (Minekube Original Logo) + text (MinekubeStudiosTextIcon).
+   ========================================================= */
 .brand-mark {
-  width: 38px;
-  height: 38px;
-  filter: drop-shadow(0 8px 18px rgba(255, 174, 0, .24));
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 216, 79, .35);
+  box-shadow:
+    0 8px 18px rgba(255, 174, 0, .28),
+    0 4px 14px rgba(200, 60, 255, .22),
+    inset 0 0 0 1px rgba(255, 255, 255, .08);
+  transition: transform .32s cubic-bezier(.16, .84, .2, 1), box-shadow .32s ease, border-color .32s ease;
 }
 
-.brand-mark svg > path:first-child {
-  fill: #160717;
+.brand-mark .brand-icon {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
-.brand-mark .mark-top { fill: #ffe05a; }
-.brand-mark .mark-left { fill: #ff9200; }
-.brand-mark .mark-right { fill: #dc4d00; }
-.brand-mark .mark-core { fill: #2b071f; }
+/* Lesklý přeblesk přes ikonu při najetí */
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(115deg,
+    transparent 30%,
+    rgba(255, 255, 255, .38) 46%,
+    rgba(255, 255, 255, .07) 54%,
+    transparent 70%);
+  background-size: 250% 100%;
+  background-position: 120% 0;
+  opacity: 0;
+  pointer-events: none;
+}
 
-.brand > span:last-child {
-  display: grid;
+.brand:hover .brand-mark,
+.brand:focus-visible .brand-mark {
+  transform: translateY(-2px) rotate(-5deg) scale(1.06);
+  border-color: rgba(255, 216, 79, .6);
+  box-shadow:
+    0 12px 26px rgba(255, 174, 0, .40),
+    0 6px 18px rgba(200, 60, 255, .32),
+    inset 0 0 0 1px rgba(255, 255, 255, .12);
+}
+
+.brand:hover .brand-mark::after,
+.brand:focus-visible .brand-mark::after {
+  opacity: 1;
+  animation: mkLogoSheen .7s ease;
+}
+
+@keyframes mkLogoSheen {
+  from { background-position: 120% 0; }
+  to { background-position: -120% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-mark,
+  .brand-mark::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .brand:hover .brand-mark,
+  .brand:focus-visible .brand-mark {
+    transform: none;
+  }
+}
+
+/* Textové logo vedle ikony */
+.brand-text {
+  display: flex;
+  align-items: center;
   line-height: 1;
 }
 
-.brand strong {
-  font-size: 17px;
-  letter-spacing: -.03em;
+.brand-text-img {
+  display: block;
+  height: 34px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(255, 60, 120, .28));
+  transition: transform .32s cubic-bezier(.16, .84, .2, 1), filter .32s ease;
 }
 
-.brand small {
-  margin-top: 5px;
-  color: var(--green);
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: .18em;
+.brand:hover .brand-text-img,
+.brand:focus-visible .brand-text-img {
+  transform: translateY(-1px);
+  filter:
+    drop-shadow(0 6px 16px rgba(255, 60, 120, .38))
+    drop-shadow(0 2px 10px rgba(255, 174, 0, .30));
+}
+
+@media (max-width: 640px) {
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+  }
+  .brand-text-img {
+    height: 28px;
+    max-width: 150px;
+  }
 }
 
 .desktop-nav {
@@ -14253,31 +14332,21 @@ html.mk-arriving .page-veil-mark {
   animation: mkVeilMark .5s .1s cubic-bezier(.16, .84, .2, 1) both;
 }
 
-.page-veil-mark svg {
-  width: 54px;
-  height: 54px;
-  filter: drop-shadow(0 0 20px rgba(255, 168, 0, .38));
+.page-veil-mark .page-veil-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 216, 79, .45);
+  box-shadow:
+    0 0 22px rgba(255, 168, 0, .45),
+    0 0 46px rgba(200, 60, 255, .30);
 }
 
-.page-veil-mark svg path {
-  fill: none;
-  stroke: rgba(255, 226, 150, .92);
-  stroke-width: 1.4;
-  stroke-linejoin: round;
-}
-
-.page-veil-mark svg .mark-core {
-  fill: rgba(255, 190, 60, .22);
-  stroke: rgba(255, 240, 190, .96);
-}
-
-.page-veil-mark b {
-  display: block;
-  font-size: 13px;
-  font-weight: 900;
-  letter-spacing: .34em;
-  text-transform: uppercase;
-  text-shadow: 0 0 20px rgba(255, 160, 40, .35);
+.page-veil-mark .page-veil-text {
+  width: min(230px, 62vw);
+  height: auto;
+  filter: drop-shadow(0 6px 18px rgba(255, 60, 120, .38));
 }
 
 .page-veil-mark small {
@@ -15230,18 +15299,14 @@ html.mk-arriving main {
   min-width: 0;
 }
 
-.launcher-window-title svg {
-  width: 17px;
-  height: 17px;
+.launcher-window-title .launcher-window-logo {
+  width: 19px;
+  height: 19px;
   flex: 0 0 auto;
-  filter: drop-shadow(0 2px 8px rgba(255, 174, 0, .3));
+  border-radius: 6px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(255, 174, 0, .35);
 }
-
-.launcher-window-title svg path:first-child { fill: #160717; }
-.launcher-window-title .mark-top { fill: #ffe05a; }
-.launcher-window-title .mark-left { fill: #ff9200; }
-.launcher-window-title .mark-right { fill: #dc4d00; }
-.launcher-window-title .mark-core { fill: #2b071f; }
 
 .launcher-window-title b {
   font-size: 11.5px;
