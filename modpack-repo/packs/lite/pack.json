@@ -1,0 +1,16 @@
+{
+  "id": "lite",
+  "name": "Minekube Lite",
+  "badge": "LITE",
+  "tagPrefix": "lite",
+  "minecraft": ["1.20.1"],
+  "loader": "Fabric",
+  "focus": ["lowend", "qol"],
+  "state": "released",
+  "updated": "2026-06-18",
+  "ram": "2 GB",
+  "mods": "58",
+  "website": "https://minekubestudios.github.io/modpacky/#pack-lite",
+  "summary": "Pro slabší notebooky a starší sestavy — hratelné i na 2 GB RAM.",
+  "mirrors": []
+}

@@ -1,0 +1,16 @@
+{
+  "id": "pvp",
+  "name": "Minekube PvP",
+  "badge": "PVP",
+  "tagPrefix": "pvp",
+  "minecraft": ["1.21.1", "1.20.1"],
+  "loader": "Fabric",
+  "focus": ["pvp", "fps"],
+  "state": "released",
+  "updated": "2026-07-29",
+  "ram": "3 GB",
+  "mods": "46",
+  "website": "https://minekubestudios.github.io/modpacky/#pack-pvp",
+  "summary": "Nejnižší latence a čistý HUD pro PvP — nic, co by překáželo.",
+  "mirrors": []
+}

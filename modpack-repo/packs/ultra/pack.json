@@ -1,0 +1,18 @@
+{
+  "id": "ultra",
+  "name": "Minekube Ultra",
+  "badge": "ULTRA",
+  "tagPrefix": "ultra",
+  "minecraft": ["1.21.4", "1.21.1"],
+  "loader": "Fabric",
+  "focus": ["fps", "vanilla"],
+  "state": "released",
+  "updated": "2026-08-24",
+  "ram": "4 GB",
+  "mods": "112",
+  "website": "https://minekubestudios.github.io/modpacky/#pack-ultra",
+  "summary": "Nejvyšší výkon pro moderní sestavy — maximum FPS bez ztráty vanilla pocitu.",
+  "mirrors": [
+    { "label": "Game Jolt", "url": "https://gamejolt.com/games/_/1053229" }
+  ]
+}

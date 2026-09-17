@@ -1,0 +1,22 @@
+# Co do tohohle repa nepatří
+
+Do úložiště patří **jen modpacky, jejich metadata a nástroje**. Všechno
+ostatní (buildy, logy, lokálně zabalené balíčky) zůstává mimo Git.
+
+# Lokálně zabalené balíčky a buildy
+/out/
+/build/
+/dist/
+*.mrpack
+*.zip
+*.sha256
+*.sha512
+
+# Systémový a editorský smetí
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.idea/
+.vscode/
+node_modules/

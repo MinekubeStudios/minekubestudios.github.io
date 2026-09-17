@@ -1,0 +1,36 @@
+name: Kontrola vydání
+
+# Po publikování vydání zkontroluje, že sedí konvence (tag <pack-id>-v<verze>,
+# aspoň jeden .mrpack/.zip, checksum). Když něco chybí, workflow spadne
+# a v Actions je vidět proč — web by totiž takové vydání nezobrazil správně.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag vydání ke kontrole (např. ultra-v1.2.0)"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Zkontrolovat tag a soubory
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Zkontrolovat vydání
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: node tools/validate-release.mjs --tag "$RELEASE_TAG"
