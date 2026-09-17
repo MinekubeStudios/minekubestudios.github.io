@@ -1,4 +1,42 @@
-# Minekube Studios // Web (v8.1 — hlavní stránka + stránka Modpacky napojená na repozitář s vydáními)
+# Minekube Studios // Web (v8.2 — nová stránka Launcher + propojení celého webu)
+
+## v8.2 — stránka **Launcher** (hero s mockem aplikace, platformy, roadmapa)
+
+Nová podstránka `launcher/` v duchu modrinth.com/app, ale v barvách a jazyce
+Minekube. Celý web je teď provázaný: hlavní stránka ↔ modpacky ↔ launcher
+(stejné hlavičky, patičky, plynulé přechody i jeden jazykový přepínač).
+
+1. **Architektura — stejný vzorec jako u `modpacky/`**
+   - `launcher/i18n.js` se načítá před `app.js` a nastavuje
+     `window.MINEKUBE_PAGE_I18N` (133 klíčů × CZ/EN/SK, parita ověřená),
+   - `launcher/launcher.js` = logika stránky: detekce platformy
+     (Windows/macOS/Linux) a přepínání tlačítka ke stažení, toasty
+     „sestavení připravujeme", živá simulace stahování v mocku okna
+     a reveal při scrollu přes `registerRevealElements()` z app.js,
+   - `app.js`: `/launcher/` přidané do `PAGE_TRANSITION_PATHS` (plynulý
+     závoj mezi všemi třemi stránkami) + klíče `panel.launcher`,
+     `cta.launcher.title` a `cta.launcher.aria` do tří jazyků.
+2. **Hero stránky Launcher**
+   - štítky ALPHA // VE VÝVOJI a OPEN SOURCE, velké zlaté tlačítko
+     „Stáhnout pro {os}" s detekcí a přepínačem platformy,
+   - **mock okna launcheru čistě v CSS/HTML** (žádné obrázky): sidebar,
+     karty instancí (Ultra/Performance/PvP), animovaný průběh stahování
+     s procenty, statusová lišta „Java 21 nalezena", plovoucí 3D náklon
+     a záře na pozadí; respektuje `prefers-reduced-motion`,
+   - mock je `aria-hidden` a plně nefokusovatelný (přístupnost).
+3. **Sekce stránky**: mřížka 6 funkcí („Launcher, jaký jsi ještě neviděl"),
+   tři alternující řady s CSS mocky (bezpečná aktualizace s changelogem,
+   vestavěný katalog pěti profilů s odkazem na `modpacky/`, výkonový
+   monitor s animovaným FPS grafem), karty platforem s požadavky,
+   roadmapa v0.1 → v0.2 → v1.0, open-source banner a CTA na katalog.
+4. **Propojení s hlavní stránkou (`index.html`)**
+   - navigace (desktop i mobil) a patička: Launcher už není `aria-disabled`,
+   - hero panel: nový modul **LAUNCHER** („Modpacky na jeden klik"),
+     OPEN SOURCE modul je nyní přes celou šířku (`.mk-intro-module--wide`),
+   - CTA sekce: druhé tlačítko „Stáhnout launcher" (`.button-cta-ghost`).
+5. **Propojení se stránkou Modpacky**: navigace (desktop i mobil) a patička
+   odkazují na `../launcher/`; launcher zase z řady „Katalog vestavěný"
+   odkazuje zpět na `../modpacky/`.
 
 ## v8.1 — modpacky se stahují z vlastního repozitáře `MinekubeStudios/modpacky`
 

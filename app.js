@@ -78,6 +78,7 @@ const I18N = {
     "panel.modpacks": "5 výkonových profilů",
     "panel.server": "Komunitní server — ve vývoji",
     "panel.store": "Obsah zdarma, bez paywallu",
+    "panel.launcher": "Modpacky na jeden klik",
     "panel.open": "Stavíme společně",
     "about.kicker": "NEZÁVISLÝ ČESKÝ PROJEKT",
     "about.title": "Minecraft, který patří hráčům — <em>svobodně a navždy zdarma.</em>",
@@ -156,6 +157,8 @@ const I18N = {
     "cta.title": "Ekosystém tvoříme společně.",
     "cta.lead": "Sleduj, co se chystá — a přidej se k tomu, co stavíme pro celou komunitu.",
     "cta.button": "Procházet modpacky",
+    "cta.launcher.title": "Stáhnout launcher",
+    "cta.launcher.aria": "Přejít na stránku Minekube Launcheru",
     "footer.about": "Nezávislé československé studio výkonných Minecraft projektů.",
     "footer.col1": "Projekt",
     "footer.col2": "Informace",
@@ -231,6 +234,7 @@ const I18N = {
     "panel.modpacks": "5 performance profiles",
     "panel.server": "Community server — in development",
     "panel.store": "Free content, no paywall",
+    "panel.launcher": "Modpacks in one click",
     "panel.open": "We build it together",
     "about.kicker": "INDEPENDENT CZECH PROJECT",
     "about.title": "Minecraft owned by its players — <em>free and open forever.</em>",
@@ -309,6 +313,8 @@ const I18N = {
     "cta.title": "We create the ecosystem together.",
     "cta.lead": "Follow what is coming — and join what we are building for the whole community.",
     "cta.button": "Browse modpacks",
+    "cta.launcher.title": "Get the launcher",
+    "cta.launcher.aria": "Go to the Minekube Launcher page",
     "footer.about": "An independent Czech-Slovak studio of high-performance Minecraft projects.",
     "footer.col1": "Project",
     "footer.col2": "Information",
@@ -384,6 +390,7 @@ const I18N = {
     "panel.modpacks": "5 výkonnostných profilov",
     "panel.server": "Komunitný server — vo vývoji",
     "panel.store": "Obsah zadarmo, bez paywallu",
+    "panel.launcher": "Modpacky na jedno kliknutie",
     "panel.open": "Staviame spolu",
     "about.kicker": "NEZÁVISLÝ ČESKÝ PROJEKT",
     "about.title": "Minecraft, ktorý patrí hráčom — <em>slobodne a navždy zadarmo.</em>",
@@ -462,6 +469,8 @@ const I18N = {
     "cta.title": "Ekosystém tvoríme spoločne.",
     "cta.lead": "Sleduj, čo sa chystá — a pridaj sa k tomu, čo staviame pre celú komunitu.",
     "cta.button": "Prechádzať modpacky",
+    "cta.launcher.title": "Stiahnuť launcher",
+    "cta.launcher.aria": "Prejsť na stránku Minekube Launcheru",
     "footer.about": "Nezávislé česko-slovenské štúdio výkonných Minecraft projektov.",
     "footer.col1": "Projekt",
     "footer.col2": "Informácie",
@@ -1257,7 +1266,7 @@ function initializeManifestToggle() {
    v inline skriptu hlavičky) — takže přechod působí jako jedna plynulá akce.
    Při prefers-reduced-motion se nic neanimuje a odkazy fungují normálně. */
 
-const PAGE_TRANSITION_PATHS = ["/", "/modpacky/"];
+const PAGE_TRANSITION_PATHS = ["/", "/modpacky/", "/launcher/"];
 const PAGE_TRANSITION_MS = 430;
 
 function normalizeTransitionPath(pathname) {
@@ -1297,7 +1306,7 @@ function initializePageTransition() {
     if (link.dataset.noTransition !== undefined) return;
     if (link.origin !== window.location.origin) return;
 
-    // Závoj mají jen stránky, které ho umí i přijmout (hlavní web a modpacky/).
+    // Závoj mají jen stránky, které ho umí i přijmout (hlavní web, modpacky/ i launcher/).
     if (!PAGE_TRANSITION_PATHS.includes(normalizeTransitionPath(link.pathname))) return;
     if (normalizeTransitionPath(link.pathname) === normalizeTransitionPath(window.location.pathname)) return;
 
