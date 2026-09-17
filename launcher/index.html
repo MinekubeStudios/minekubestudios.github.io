@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+
+<html lang="cs">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Minekube Launcher — otevřený launcher, který ti jedním klikem nainstaluje modpacky Minekube, sám je udrží aktuální a postará se i o Javu. Zdarma, bez účtů a bez telemetrie." name="description"/>
+<meta content="#08040b" name="theme-color"/>
+<title>Launcher — Minekube Studios</title>
+<link href="../assets/favicon.svg" rel="icon" type="image/svg+xml"/>
+<link href="../styles.css" rel="stylesheet"/>
+<script>
+/* Motiv a jazyk se čtou dřív, než se stránka vykreslí — žádné bliknutí při startu. */
+(function () {
+  try {
+    var theme = localStorage.getItem("minekube-theme");
+    if (theme) document.documentElement.dataset.theme = theme;
+    var lang = localStorage.getItem("minekube-lang") || "cs";
+    document.documentElement.lang = lang;
+    /* Přiletěli jsme z druhé stránky webu? Pak hned na startu zakryjeme
+       scénu závojem, aby přechod plynule navázal na odchod z předchozí
+       stránky (a hned se zase uklidí, i kdyby app.js nedoběhla). */
+    if (sessionStorage.getItem("minekube:page-transition") === "1") {
+      sessionStorage.removeItem("minekube:page-transition");
+      document.documentElement.classList.add("mk-arriving");
+      window.setTimeout(function () {
+        document.documentElement.classList.remove("mk-arriving");
+      }, 1400);
+    }
+  } catch (e) {}
+})();
+</script>
+</head>
+<body>
+<div aria-hidden="true" class="noise"></div>
+<div aria-hidden="true" class="scroll-progress" id="scrollProgress"><span></span></div>
+
+<!-- ===================== PLYNULÝ PŘECHOD MEZI STRÁNKAMI ===================== -->
+<div aria-hidden="true" class="page-veil" id="pageVeil">
+<span class="page-veil-panel"></span>
+<span class="page-veil-grid"></span>
+<span class="page-veil-beam"></span>
+<span class="page-veil-mark">
+<svg viewBox="0 0 48 48">
+<path d="M24 3 43 13.5v21L24 45 5 34.5v-21L24 3Z"></path>
+<path d="m24 3 19 10.5L24 24 5 13.5 24 3Z"></path>
+<path d="M24 24v21L5 34.5v-21L24 24Z"></path>
+<path d="M24 24 43 13.5v21L24 45V24Z"></path>
+<path class="mark-core" d="m14 18 10 5.5L34 18v11l-10 5.5L14 29V18Z"></path>
+</svg>
+<b>Minekube</b>
+<small data-i18n="transition.label">Načítám stránku</small>
+<i></i>
+</span>
+</div>
+
+
+<!-- ===================== KO-FI GATE // CELOSTRÁNKOVÝ PŘECHOD ===================== -->
+<div aria-atomic="false" aria-hidden="true" aria-live="polite" class="kofi-gate" id="kofiGate" role="status">
+<span aria-hidden="true" class="kofi-gate-panel kofi-gate-panel-left"></span>
+<span aria-hidden="true" class="kofi-gate-panel kofi-gate-panel-right"></span>
+<span aria-hidden="true" class="kofi-gate-grid"></span>
+<span aria-hidden="true" class="kofi-gate-beam"></span>
+<span aria-hidden="true" class="kofi-gate-aurora"><i></i><i></i></span>
+<span aria-hidden="true" class="kofi-gate-particles"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+<div class="kofi-gate-console">
+<div aria-hidden="true" class="kofi-gate-emblem">
+<span class="kofi-gate-orbit kofi-gate-orbit-a"></span>
+<span class="kofi-gate-orbit kofi-gate-orbit-b"></span>
+<svg class="kofi-gate-mark" viewBox="0 0 24 24">
+<path class="kofi-gate-cup" d="M11.35 2.71 C8.65 2.71 6.37 2.74 4.52 2.97 C2.08 3.29 0 5.15 0 8.61 C0 12.12 0.18 14.74 1.58 17.1 C3.17 19.8 5.82 21.29 9.25 21.29 H10.08 C14.29 21.29 16.57 19.05 17.71 17.29 A9.5 9.5 0 0 0 18.8 14.95 C21.79 14.69 24 12.22 24 9.21 V8.79 C24 5.55 21.87 3.29 18.21 2.92 C16.65 2.77 15.56 2.72 11.35 2.72 M11.35 4.66 C15.56 4.66 16.44 4.71 17.92 4.84 C20.55 5.16 22.05 6.43 22.05 8.84 V9.23 C22.05 11.39 20.26 13.08 18.18 13.08 H17.25 L17.09 13.73 C16.88 14.74 16.49 15.54 16.05 16.27 C15.14 17.7 13.51 19.34 10.13 19.34 H9.32 C6.75 19.34 4.49 18.45 3.25 16.14 C2.16 14.14 1.95 11.99 1.95 8.64 C1.95 6.45 2.81 5.23 4.96 4.92 C6.49 4.69 8.52 4.66 11.35 4.66 M17.9 6.95 C17.48 6.95 17.25 7.18 17.25 7.49 V10.43 C17.25 10.74 17.48 10.97 17.9 10.97 C19.22 10.97 19.95 10.22 19.95 8.97 C19.95 7.73 19.22 6.95 17.9 6.95"></path>
+<path class="kofi-gate-heart" d="M7.51 7.13 C5.69 7.13 4.49 8.61 4.49 10.27 C4.49 11.81 5.35 13.13 6.44 14.17 C7.17 14.87 8.31 15.6 9.09 16.07 A1.47 1.47 0 0 0 10.6 16.07 C11.38 15.6 12.52 14.87 13.22 14.17 C14.34 13.13 15.2 11.81 15.2 10.27 C15.2 8.61 13.95 7.13 12.16 7.13 C11.09 7.13 10.36 7.68 9.82 8.43 C9.33 7.68 8.57 7.13 7.51 7.13"></path>
+</svg>
+</div>
+<div class="kofi-gate-copy">
+<span class="kofi-gate-kicker"><i aria-hidden="true"></i> MINEKUBE // KO-FI CHANNEL</span>
+<strong data-i18n="kofi.gate.title">Otevírám ko-fi.com</strong>
+<small data-i18n="kofi.gate.status">Připojuji k podpoře komunity</small>
+<div aria-hidden="true" class="kofi-gate-progress"><span></span></div>
+<div class="kofi-gate-meta"><span>SECURE CHANNEL</span><b id="kofiGateHost">ko-fi.com</b></div>
+<button class="kofi-gate-cancel" data-i18n="kofi.gate.cancel" data-kofi-cancel id="kofiGateCancel" type="button">Zrušit</button>
+</div>
+</div>
+<span aria-hidden="true" class="kofi-gate-scanlines"></span>
+</div>
+
+<header class="site-header">
+<div class="nav-wrap">
+<a aria-label="Minekube Studios — domovská stránka" class="brand" data-i18n-aria="brand.aria" href="../">
+<span aria-hidden="true" class="brand-mark">
+<svg role="img" viewBox="0 0 48 48">
+<path d="M24 3 43 13.5v21L24 45 5 34.5v-21L24 3Z"></path>
+<path class="mark-top" d="m24 3 19 10.5L24 24 5 13.5 24 3Z"></path>
+<path class="mark-left" d="M24 24v21L5 34.5v-21L24 24Z"></path>
+<path class="mark-right" d="M24 24 43 13.5v21L24 45V24Z"></path>
+<path class="mark-core" d="m14 18 10 5.5L34 18v11l-10 5.5L14 29V18Z"></path>
+</svg>
+</span>
+<span>
+<strong>Minekube</strong>
+<small>CZ/SK STUDIOS</small>
+</span>
+</a>
+<nav aria-label="Hlavní navigace" class="desktop-nav" data-i18n-aria="nav.aria">
+<a href="../#projekt"><span data-i18n="nav.about">O projektu</span></a>
+<a aria-disabled="true"><span data-i18n="nav.news">Novinky</span></a>
+<a href="../modpacky/"><span data-i18n="nav.modpacks">Modpacky</span></a>
+<button aria-label="Informace o komunitním serveru" class="nav-server-button" data-i18n="nav.server" data-i18n-aria="nav.server.aria" data-i18n-title="nav.server.aria" data-soon title="Komunitní server — ve vývoji" type="button">Server</button>
+<a class="active" href="./"><span data-i18n="nav.launcher">Launcher</span></a>
+<a aria-disabled="true"><span data-i18n="nav.community">Komunita</span></a>
+</nav>
+<div class="header-actions">
+<button aria-label="Přepnout motiv" class="icon-button" data-i18n-aria="theme.aria" data-i18n-title="theme.aria" id="themeToggle" title="Přepnout motiv" type="button">
+<svg aria-hidden="true" class="sun-icon" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="4"></circle>
+<path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path>
+</svg>
+<svg aria-hidden="true" class="moon-icon" viewBox="0 0 24 24">
+<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a7.5 7.5 0 1 0 10.5 10.5Z"></path>
+</svg>
+</button>
+
+<div class="lang-switcher" id="langSwitcher">
+<button aria-controls="langMenu" aria-expanded="false" aria-haspopup="true" aria-label="Přepnout jazyk stránky" class="icon-button lang-button" data-i18n-aria="lang.aria" data-i18n-title="lang.aria" id="langToggle" title="Přepnout jazyk stránky" type="button">
+<svg aria-hidden="true" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="9"></circle>
+<path d="M3.6 9h16.8M3.6 15h16.8"></path>
+<path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18Z"></path>
+</svg>
+<span class="lang-code" id="langCode">CZ</span>
+</button>
+<div class="lang-menu" data-lang-menu hidden id="langMenu" role="menu">
+<span class="lang-menu-title" data-i18n="lang.menu.title">Jazyk stránky</span>
+<button aria-checked="true" data-lang="en" role="menuitemradio" type="button"><span>English</span><b>EN</b></button>
+<button aria-checked="false" data-lang="cs" role="menuitemradio" type="button"><span>Čeština</span><b>CZ</b></button>
+<button aria-checked="false" data-lang="sk" role="menuitemradio" type="button"><span>Slovenčina</span><b>SK</b></button>
+</div>
+</div>
+
+<a aria-label="Podpořit Minekube Studios na Ko-fi" class="store-button kofi-button" data-i18n-aria="kofi.aria" data-i18n-title="kofi.aria" data-site-link="kofi" data-kofi-gate href="https://ko-fi.com/minekubestudios" title="Podpořit Minekube Studios na Ko-fi">
+<span aria-hidden="true" class="store-button-fx"></span>
+<span aria-hidden="true" class="store-button-universe">
+<span class="store-button-nebula store-button-nebula-a"></span>
+<span class="store-button-nebula store-button-nebula-b"></span>
+<span class="store-button-stars"></span>
+<span class="store-button-scan"></span>
+</span>
+<span aria-hidden="true" class="store-button-lightning">
+<svg class="store-lightning store-lightning-a" viewBox="0 0 210 84"><path d="M9 55 31 38 48 45 70 18 89 31 112 8"></path></svg>
+<svg class="store-lightning store-lightning-b" viewBox="0 0 210 84"><path d="M202 23 179 38 163 30 141 61 119 48 97 74"></path></svg>
+<svg class="store-lightning store-lightning-c" viewBox="0 0 210 84"><path d="M17 18 40 28 54 14 76 35"></path></svg>
+</span>
+<span aria-hidden="true" class="store-button-orbits"><i></i><i></i><i></i></span>
+<span aria-hidden="true" class="store-button-icon">
+<span class="store-icon-core"></span>
+<svg class="kofi-mark" role="img" viewBox="0 0 24 24">
+<path class="kofi-cup" d="M11.35 2.71 C8.65 2.71 6.37 2.74 4.52 2.97 C2.08 3.29 0 5.15 0 8.61 C0 12.12 0.18 14.74 1.58 17.1 C3.17 19.8 5.82 21.29 9.25 21.29 H10.08 C14.29 21.29 16.57 19.05 17.71 17.29 A9.5 9.5 0 0 0 18.8 14.95 C21.79 14.69 24 12.22 24 9.21 V8.79 C24 5.55 21.87 3.29 18.21 2.92 C16.65 2.77 15.56 2.72 11.35 2.72 M11.35 4.66 C15.56 4.66 16.44 4.71 17.92 4.84 C20.55 5.16 22.05 6.43 22.05 8.84 V9.23 C22.05 11.39 20.26 13.08 18.18 13.08 H17.25 L17.09 13.73 C16.88 14.74 16.49 15.54 16.05 16.27 C15.14 17.7 13.51 19.34 10.13 19.34 H9.32 C6.75 19.34 4.49 18.45 3.25 16.14 C2.16 14.14 1.95 11.99 1.95 8.64 C1.95 6.45 2.81 5.23 4.96 4.92 C6.49 4.69 8.52 4.66 11.35 4.66 M17.9 6.95 C17.48 6.95 17.25 7.18 17.25 7.49 V10.43 C17.25 10.74 17.48 10.97 17.9 10.97 C19.22 10.97 19.95 10.22 19.95 8.97 C19.95 7.73 19.22 6.95 17.9 6.95"></path>
+<path class="kofi-heart" d="M7.51 7.13 C5.69 7.13 4.49 8.61 4.49 10.27 C4.49 11.81 5.35 13.13 6.44 14.17 C7.17 14.87 8.31 15.6 9.09 16.07 A1.47 1.47 0 0 0 10.6 16.07 C11.38 15.6 12.52 14.87 13.22 14.17 C14.34 13.13 15.2 11.81 15.2 10.27 C15.2 8.61 13.95 7.13 12.16 7.13 C11.09 7.13 10.36 7.68 9.82 8.43 C9.33 7.68 8.57 7.13 7.51 7.13"></path>
+</svg>
+</span>
+<span class="store-button-label">
+<small><span>KO-FI</span><i aria-hidden="true"></i></small>
+<strong class="kofi-letters" data-i18n="kofi.label" data-letters>Podpořit projekt</strong>
+</span>
+<span aria-hidden="true" class="store-button-arrow">
+<span class="store-arrow-core"></span>
+<svg viewBox="0 0 24 24"><path d="m8 18 6-6-6-6"></path><path d="M4 12h10"></path></svg>
+</span>
+<span aria-hidden="true" class="store-button-corners"><i></i><i></i><i></i><i></i></span>
+</a>
+<button aria-expanded="false" aria-label="Otevřít menu" class="menu-button" data-i18n-aria="menu.aria" id="menuButton" type="button">
+<span></span><span></span><span></span>
+</button>
+</div>
+</div>
+<nav aria-label="Mobilní navigace" class="mobile-nav" data-i18n-aria="nav.mobile.aria" id="mobileNav">
+<a href="../#projekt"><span data-i18n="nav.about">O projektu</span></a>
+<a aria-disabled="true"><span data-i18n="nav.news">Novinky</span></a>
+<a href="../modpacky/"><span data-i18n="nav.modpacks">Modpacky</span></a>
+<button class="nav-server-button" data-i18n="nav.server" data-soon type="button">Server</button>
+<a class="active" href="./"><span data-i18n="nav.launcher">Launcher</span></a>
+<a aria-disabled="true"><span data-i18n="nav.community">Komunita</span></a>
+<a href="https://minekubestudios.github.io/store/" rel="noopener noreferrer" target="_blank"><span data-i18n="nav.store">Store</span></a>
+</nav>
+</header>
+
+<main id="top">
+<!-- ===================== HERO // LAUNCHER ===================== -->
+<section aria-labelledby="launcherTitle" class="section mk-landing launcher-hero" id="launcher">
+<div class="container">
+
+<nav aria-label="Drobečková navigace" class="packs-breadcrumb">
+<a href="../"><span data-i18n="launcher.breadcrumb">Domů</span></a>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
+<span aria-current="page"><span data-i18n="nav.launcher">Launcher</span></span>
+</nav>
+
+<div class="mk-intro">
+<div class="mk-intro-copy">
+<span class="section-kicker" data-i18n="launcher.kicker">MINEKUBE STUDIOS // LAUNCHER</span>
+<div class="launcher-chips">
+<span class="launcher-chip-alpha"><i aria-hidden="true"></i> <span data-i18n="launcher.chip">ALPHA // VE VÝVOJI</span></span>
+<span class="launcher-chip-oss"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 9 5 12l3 3M16 9l3 3-3 3M14 5l-4 14"></path></svg> <span data-i18n="launcher.chip2">OPEN SOURCE</span></span>
+</div>
+<h1 id="launcherTitle"><span data-i18n="launcher.title1">Jeden launcher.</span><em data-i18n="launcher.title2">Celý ekosystém Minekube.</em></h1>
+<p class="mk-intro-lead"><span data-i18n="launcher.lead">Minekube Launcher je <strong>otevřený launcher</strong>, který ti jedním klikem nainstaluje libovolný Minekube modpack, sám ho udržuje aktuální a postará se i o Javu. Žádné účty, žádný paywall, žádná telemetrie — jen hraní.</span></p>
+
+<div class="launcher-os-row" role="group" aria-label="Výběr platformy" data-i18n-aria="launcher.os.aria">
+<button class="launcher-os-chip is-active" data-os="windows" type="button">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5.1 10.6 4v7.2H3zM11.8 3.8 21 2.5v8.7h-9.2zM3 12.8h7.6V20L3 18.9zM11.8 12.8H21v8.7l-9.2-1.3z"></path></svg>
+<span>Windows</span>
+</button>
+<button class="launcher-os-chip" data-os="macos" type="button">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M16.36 1.43c0 1.14-.47 2.2-1.23 3.02-.8.87-2.1 1.55-3.18 1.47-.14-1.1.44-2.28 1.17-3.05.8-.87 2.19-1.51 3.24-1.44zM20.94 17.1c-.57 1.3-.84 1.88-1.57 3.03-1.02 1.6-2.46 3.6-4.25 3.61-1.59.02-2-1.03-4.16-1.02-2.16.01-2.61 1.05-4.2 1.03-1.79-.02-3.16-1.82-4.18-3.42C.02 17.14-.29 12.5 1.35 10c1.13-1.7 2.92-2.7 4.6-2.7 1.71 0 2.79 1.04 4.2 1.04 1.38 0 2.22-1.05 4.19-1.05 1.5 0 3.09.82 4.22 2.23-3.71 2.03-3.11 7.32 2.38 7.58z"></path></svg>
+<span>macOS</span>
+</button>
+<button class="launcher-os-chip" data-os="linux" type="button">
+<svg aria-hidden="true" viewBox="0 0 24 24"><rect height="15" rx="2" width="18" x="3" y="4.5"></rect><path d="m7 9.5 3 2.5-3 2.5M12.5 14.5H17"></path></svg>
+<span>Linux</span>
+</button>
+</div>
+
+<div class="launcher-download">
+<button class="launcher-download-btn" data-launcher-download data-os="windows" type="button">
+<span aria-hidden="true" class="launcher-download-shine"></span>
+<span aria-hidden="true" class="launcher-download-icon">
+<span class="launcher-download-icon-core"></span>
+<svg class="dl-icon dl-icon-windows" viewBox="0 0 24 24"><path d="M3 5.1 10.6 4v7.2H3zM11.8 3.8 21 2.5v8.7h-9.2zM3 12.8h7.6V20L3 18.9zM11.8 12.8H21v8.7l-9.2-1.3z"></path></svg>
+<svg class="dl-icon dl-icon-macos" viewBox="0 0 24 24"><path d="M16.36 1.43c0 1.14-.47 2.2-1.23 3.02-.8.87-2.1 1.55-3.18 1.47-.14-1.1.44-2.28 1.17-3.05.8-.87 2.19-1.51 3.24-1.44zM20.94 17.1c-.57 1.3-.84 1.88-1.57 3.03-1.02 1.6-2.46 3.6-4.25 3.61-1.59.02-2-1.03-4.16-1.02-2.16.01-2.61 1.05-4.2 1.03-1.79-.02-3.16-1.82-4.18-3.42C.02 17.14-.29 12.5 1.35 10c1.13-1.7 2.92-2.7 4.6-2.7 1.71 0 2.79 1.04 4.2 1.04 1.38 0 2.22-1.05 4.19-1.05 1.5 0 3.09.82 4.22 2.23-3.71 2.03-3.11 7.32 2.38 7.58z"></path></svg>
+<svg class="dl-icon dl-icon-linux" viewBox="0 0 24 24"><rect height="15" rx="2" width="18" x="3" y="4.5"></rect><path d="m7 9.5 3 2.5-3 2.5M12.5 14.5H17"></path></svg>
+</span>
+<span class="launcher-download-copy">
+<small><span data-i18n="launcher.download.kicker">MINEKUBE LAUNCHER</span><i aria-hidden="true"></i> <b>v0.1.0-alpha</b></small>
+<strong data-os-label>Stáhnout pro Windows</strong>
+<span class="launcher-download-sub" data-os-sub>Windows 10+ · 64bit</span>
+</span>
+<svg aria-hidden="true" class="launcher-download-arrow" viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
+</button>
+<a class="launcher-download-side" data-i18n-aria="launcher.download.all.aria" data-site-link="github" href="https://github.com/minekubestudios" rel="noopener noreferrer" target="_blank">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
+<span>
+<strong data-i18n="launcher.download.all">Všechna sestavení</strong>
+<small data-i18n="launcher.download.all.note">GitHub — Minekube Studios</small>
+</span>
+</a>
+</div>
+
+<ul class="launcher-meta">
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.meta1">100 % zdarma</span></li>
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.meta2">Bez účtů a přihlašování</span></li>
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.meta3">Bez telemetrie</span></li>
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.meta4">Česky a slovensky</span></li>
+</ul>
+
+<div class="mk-intro-proof">
+<div><strong>5</strong><span data-i18n="launcher.stat1">modpacků na jeden klik</span></div>
+<div><strong>0</strong><span data-i18n="launcher.stat2">odeslaných dat o tobě</span></div>
+<div><strong>100%</strong><span data-i18n="launcher.stat3">otevřený kód</span></div>
+</div>
+</div>
+
+<!-- ---------- MOCK // UKÁZKA OKNA LAUNCHERU (čistý CSS/HTML) ---------- -->
+<aside aria-hidden="true" class="launcher-mock">
+<span aria-hidden="true" class="launcher-mock-glow"></span>
+<span aria-hidden="true" class="launcher-mock-glow launcher-mock-glow-b"></span>
+<div class="launcher-window">
+<div class="launcher-window-bar">
+<span class="launcher-dots"><i></i><i></i><i></i></span>
+<span class="launcher-window-title">
+<svg aria-hidden="true" viewBox="0 0 48 48"><path d="M24 3 43 13.5v21L24 45 5 34.5v-21L24 3Z"></path><path class="mark-top" d="m24 3 19 10.5L24 24 5 13.5 24 3Z"></path><path class="mark-left" d="M24 24v21L5 34.5v-21L24 24Z"></path><path class="mark-right" d="M24 24 43 13.5v21L24 45V24Z"></path><path class="mark-core" d="m14 18 10 5.5L34 18v11l-10 5.5L14 29V18Z"></path></svg>
+<b data-i18n="launcher.mock.title">Minekube Launcher</b>
+<small>v0.1.0</small>
+</span>
+<span class="launcher-window-actions"><i></i><i></i></span>
+</div>
+<div class="launcher-window-body">
+<div class="launcher-side">
+<span class="launcher-side-item is-active">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 11 9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg>
+<span data-i18n="launcher.mock.nav1">Domů</span>
+</span>
+<span class="launcher-side-item">
+<svg aria-hidden="true" viewBox="0 0 24 24"><rect height="16" rx="2" width="16" x="4" y="4"></rect><path d="M4 10h16M10 10v10"></path></svg>
+<span data-i18n="launcher.mock.nav2">Instance</span>
+</span>
+<span class="launcher-side-item">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"></path></svg>
+<span data-i18n="launcher.mock.nav3">Modpacky</span>
+</span>
+<span class="launcher-side-item">
+<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"></circle><path d="M19 12a7 7 0 0 0-.15-1.4l2-1.55-2-3.45-2.35.95a7 7 0 0 0-2.4-1.4L13.75 2.6h-3.5l-.35 2.55a7 7 0 0 0-2.4 1.4l-2.35-.95-2 3.45 2 1.55A7 7 0 0 0 5 12"></path></svg>
+<span data-i18n="launcher.mock.nav4">Nastavení</span>
+</span>
+<div class="launcher-side-user">
+<span class="launcher-side-avatar">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path class="mark-top" d="m24 3 0 0 0 0 0 0"></path><path d="M8 12v4l4 2.5V14L8 12Z"></path><path d="M16 12v4l-4 2.5V14l4-2Z"></path></svg>
+</span>
+<span>
+<b data-i18n="launcher.mock.user">Hráč z komunity</b>
+<small data-i18n="launcher.mock.userNote">Offline režim připraven</small>
+</span>
+</div>
+</div>
+<div class="launcher-main">
+<div class="launcher-main-head">
+<b data-i18n="launcher.mock.instances">Tvé instance</b>
+<span class="launcher-main-new">+ <span data-i18n="launcher.mock.new">Nová instance</span></span>
+</div>
+<div class="launcher-instances">
+<div class="launcher-inst">
+<span class="launcher-inst-icon launcher-inst-icon--ultra">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5"></path></svg>
+</span>
+<span class="launcher-inst-copy">
+<b>Minekube Ultra</b>
+<small>1.21.4 · Fabric · <span data-i18n="launcher.mock.mods112">112 modů</span></small>
+</span>
+<span class="launcher-play"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5Z"></path></svg></span>
+</div>
+<div class="launcher-inst">
+<span class="launcher-inst-icon launcher-inst-icon--perf">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path><path d="M4.5 18a9 9 0 1 1 15 0M12 12l4-4"></path></svg>
+</span>
+<span class="launcher-inst-copy">
+<b>Minekube Performance</b>
+<small>1.21.4 · Fabric · <span data-i18n="launcher.mock.mods84">84 modů</span></small>
+</span>
+<span class="launcher-play"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5Z"></path></svg></span>
+</div>
+<div class="launcher-inst launcher-inst-progress">
+<span class="launcher-inst-icon launcher-inst-icon--pvp">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 20 20 4M14 4h6v6M10 20H4v-6"></path></svg>
+</span>
+<span class="launcher-inst-copy">
+<b>Minekube PvP</b>
+<small data-i18n="launcher.mock.progress">Stahuji soubory balíčku…</small>
+<span class="launcher-progress"><span data-progress-bar style="--progress: 12%"></span></span>
+</span>
+<b class="launcher-progress-pct" data-progress-pct>12 %</b>
+</div>
+</div>
+<div class="launcher-window-status">
+<i aria-hidden="true"></i>
+<span data-i18n="launcher.mock.ready">Java 21 nalezena automaticky · Vše připraveno ke spuštění</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</section>
+
+<!-- ===================== FUNKCE ===================== -->
+<section aria-labelledby="featuresTitle" class="section launcher-features-section" id="funkce">
+<div class="container">
+<div class="section-heading centered">
+<span class="section-kicker" data-i18n="launcher.features.kicker">PROČ VLASTNÍ LAUNCHER</span>
+<h2 id="featuresTitle" data-i18n="launcher.features.title">Launcher, jaký jsi ještě neviděl</h2>
+<p data-i18n="launcher.features.lead">Všechno, co jiný launcher nedomyslel — postavené tak, jak si představujeme ideální herní den.</p>
+</div>
+<div class="launcher-features">
+<article class="launcher-feature launcher-feature--gold">
+<span class="launcher-feature-icon">
+<span aria-hidden="true" class="step-icon-orbit"></span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
+</span>
+<h3 data-i18n="launcher.feature1.title">Instalace na jedno kliknutí</h3>
+<p data-i18n="launcher.feature1.text">Vyber modpack, klikni na Instalovat — a launcher si sám stáhne Minecraft, loader, mody i konfiguraci. Nic nekopíruješ ručně.</p>
+</article>
+<article class="launcher-feature launcher-feature--purple">
+<span class="launcher-feature-icon">
+<span aria-hidden="true" class="step-icon-orbit"></span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4h-4"></path><path d="m9.5 11.5 2 2 4-4.5"></path></svg>
+</span>
+<h3 data-i18n="launcher.feature2.title">Automatické aktualizace</h3>
+<p data-i18n="launcher.feature2.text">Nová verze balíčku? Launcher ji pozná, připraví a nabídne bezpečný přechod — svět i nastavení zůstanou nedotčené.</p>
+</article>
+<article class="launcher-feature launcher-feature--cyan">
+<span class="launcher-feature-icon">
+<span aria-hidden="true" class="step-icon-orbit"></span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 9 5 12l3 3M16 9l3 3-3 3M14 5l-4 14"></path></svg>
+</span>
+<h3 data-i18n="launcher.feature3.title">Java? Vyřešená</h3>
+<p data-i18n="launcher.feature3.text">Launcher najde nainstalovanou Javu, nebo sám stáhne tu správnou verzi pro každý balíček. Žádné chyby „nelze spustit“.</p>
+</article>
+<article class="launcher-feature launcher-feature--magenta">
+<span class="launcher-feature-icon">
+<span aria-hidden="true" class="step-icon-orbit"></span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><rect height="14" rx="2" width="17" x="3.5" y="5"></rect><path d="M3.5 9.5h17M8 5v14"></path><path d="m11.5 12.5 3 1.5-3 1.5v-3Z"></path></svg>
+</span>
+<h3 data-i18n="launcher.feature4.title">Import .mrpack i .zip</h3>
+<p data-i18n="launcher.feature4.text">Přetáhni do okna instanci z Modrinthu, Prismu nebo náš ZIP z katalogu — launcher si poradí s oběma formáty.</p>
+</article>
+<article class="launcher-feature launcher-feature--purple">
+<span class="launcher-feature-icon">
+<span aria-hidden="true" class="step-icon-orbit"></span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.4 5.3A8.8 8.8 0 0 1 12 5c5 0 8.5 4.2 9.4 5.6a13 13 0 0 1-2.2 2.9M6.2 7.2C4.4 8.6 3.3 10 2.6 10.6 3.5 11.8 7 16 12 16a8.7 8.7 0 0 0 4.2-1.1"></path></svg>
+</span>
+<h3 data-i18n="launcher.feature5.title">Bez účtů a bez sledování</h3>
+<p data-i18n="launcher.feature5.text">Žádné povinné přihlašování, žádná telemetrie, žádný prodej dat. Nastavení zůstávají na tvém disku — a nikde jinde.</p>
+</article>
+<article class="launcher-feature launcher-feature--gold">
+<span class="launcher-feature-icon">
+<span aria-hidden="true" class="step-icon-orbit"></span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"></path></svg>
+</span>
+<h3 data-i18n="launcher.feature6.title">Otevřený kód a CZ/SK</h3>
+<p data-i18n="launcher.feature6.text">Celý zdrojový kód na GitHubu — kdokoliv ho může zkontrolovat. A samozřejmě mluví česky i slovensky od prvního spuštění.</p>
+</article>
+</div>
+</div>
+</section>
+
+<!-- ===================== HLOUBKOVÉ FUNKCE (alternující řady) ===================== -->
+<section aria-labelledby="rowsTitle" class="section launcher-rows-section" id="hloubka">
+<div class="container">
+<div class="section-heading centered">
+<span class="section-kicker" data-i18n="launcher.rows.kicker">CO UMÍ ZEVNITŘ</span>
+<h2 id="rowsTitle" data-i18n="launcher.rows.title">Jako by ho ladil někdo, kdo Minecraft hraje</h2>
+<p data-i18n="launcher.rows.lead">Žádné ukazovátko na screenshoty — tohle je návrh reálného chování launcheru.</p>
+</div>
+
+<div class="launcher-rows">
+<!-- ---------- ŘADA 1: AKTUALIZACE ---------- -->
+<article class="launcher-row">
+<div class="launcher-row-copy">
+<span class="section-kicker" data-i18n="launcher.row1.kicker">AKTUALIZACE BEZ STRACHU</span>
+<h3 data-i18n="launcher.row1.title">Balíčky stále aktuální — svět zůstává tvůj</h3>
+<p data-i18n="launcher.row1.p1">Launcher si u každé instance pamatuje verzi. Když vydáme nový balíček, připraví aktualizaci bokem, ověří checksum a pustí ji, až to bude bezpečné.</p>
+<ul class="launcher-row-list">
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row1.li1">Tvoje světy, scény a nastavení se nepřepisují</span></li>
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row1.li2">Každá aktualizace má čitelný changelog</span></li>
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row1.li3">Návrat na starší verzi je vždy na jedno kliknutí</span></li>
+</ul>
+</div>
+<div aria-hidden="true" class="launcher-row-visual">
+<div class="launcher-update-card">
+<div class="launcher-update-head">
+<span class="launcher-update-ver is-old">v1.2.1</span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h13M13 6.5 18.5 12 13 17.5"></path></svg>
+<span class="launcher-update-ver is-new">v1.3.0</span>
+<span class="launcher-update-chip" data-i18n="launcher.row1.chip">PŘIPRAVENO</span>
+</div>
+<ul class="launcher-update-log">
+<li><b class="is-add">+2</b> <span data-i18n="launcher.row1.log1">nové optimalizační mody</span></li>
+<li><b class="is-fix">fix</b> <span data-i18n="launcher.row1.log2">oprava shaderů na AMD kartách</span></li>
+<li><b class="is-chg">↑</b> <span data-i18n="launcher.row1.log3">Fabric 1.21.4 → 1.21.5</span></li>
+<li><b class="is-del">−1</b> <span data-i18n="launcher.row1.log4">odebrán konfliktový mod</span></li>
+</ul>
+<div class="launcher-update-foot">
+<span class="launcher-update-check"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6.5 12.5 3.5 3.5 7.5-8"></path></svg> <span data-i18n="launcher.row1.check">SHA-256 ověřeno</span></span>
+<span class="launcher-update-btn" data-i18n="launcher.row1.button">Aktualizovat vše</span>
+</div>
+</div>
+</div>
+</article>
+
+<!-- ---------- ŘADA 2: KATALOG V LAUNCHERU ---------- -->
+<article class="launcher-row launcher-row--reverse">
+<div class="launcher-row-copy">
+<span class="section-kicker" data-i18n="launcher.row2.kicker">KATALOG VESTAVĚNÝ</span>
+<h3 data-i18n="launcher.row2.title">Všech pět profilů Minekube přímo v launcheru</h3>
+<p data-i18n="launcher.row2.p1">Katalog modpacků je součástí launcheru — se stejnými popisy, nároky na hardware i verzemi jako na webu. Najdeš ho v sekci Modpacky a nainstaluješ bez jediného rolování v prohlížeči.</p>
+<ul class="launcher-row-list">
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row2.li1">Ultra, Performance, PvP, Lite i Vanilla+</span></li>
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row2.li2">Vždy nejnovější vydání z našeho repozitáře</span></li>
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row2.li3">Více instancí vedle sebe — žádné mazání složek</span></li>
+</ul>
+<a class="launcher-row-link" href="../modpacky/">
+<span data-i18n="launcher.row2.link">Prohlédnout celý katalog</span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
+</a>
+</div>
+<div aria-hidden="true" class="launcher-row-visual">
+<div class="launcher-catalog-mock">
+<div class="launcher-catalog-head">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"></path></svg>
+<b data-i18n="launcher.row2.mockHead">Minekube modpacky</b>
+<span data-i18n="launcher.row2.mockCount">5 balíčků</span>
+</div>
+<div class="launcher-catalog-grid">
+<div class="launcher-catalog-item" style="--pack-accent:#ffc43d"><b>Ultra</b><small>+240 % FPS</small><i></i></div>
+<div class="launcher-catalog-item" style="--pack-accent:#49dcff"><b>Performance</b><small>+160 % FPS</small><i></i></div>
+<div class="launcher-catalog-item" style="--pack-accent:#ff5fd2"><b>PvP</b><small>+180 % FPS</small><i></i></div>
+<div class="launcher-catalog-item" style="--pack-accent:#9dff57"><b>Lite</b><small>slabé PC</small><i></i></div>
+<div class="launcher-catalog-item" style="--pack-accent:#ffd84f"><b>Vanilla+</b><small>vanilla pocit</small><i></i></div>
+</div>
+<div class="launcher-catalog-foot">
+<span class="launcher-catalog-btn" data-i18n="launcher.row2.mockBtn">Instalovat</span>
+<span class="launcher-catalog-note" data-i18n="launcher.row2.mockNote">stažení z repozitáře MinekubeStudios</span>
+</div>
+</div>
+</div>
+</article>
+
+<!-- ---------- ŘADA 3: VÝKON ---------- -->
+<article class="launcher-row">
+<div class="launcher-row-copy">
+<span class="section-kicker" data-i18n="launcher.row3.kicker">VÝKON A LEHKOST</span>
+<h3 data-i18n="launcher.row3.title">Lehký jako dobře vyladěný modpack</h3>
+<p data-i18n="launcher.row3.p1">Launcher neběží na Electronu „na plný kvas“. Je postavený úsporně, startuje za zlomek sekundy a v paměti zabírá míň než průměrný texture pack. Tvoje RAM patří Minecraftu, ne launcheru.</p>
+<ul class="launcher-row-list">
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row3.li1">Rychlý start i bleskové přepínání instancí</span></li>
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row3.li2">Přehledné
+monitorování FPS a paměti instance</span></li>
+<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row3.li3">Sekce „mrtvé“ funkce — nic, co nepotřebuješ</span></li>
+</ul>
+</div>
+<div aria-hidden="true" class="launcher-row-visual">
+<div class="launcher-perf-mock">
+<div class="launcher-perf-head">
+<span class="launcher-perf-dot"></span>
+<b>Minekube Ultra — <span data-i18n="launcher.row3.mockTitle">monitor</span></b>
+<small data-i18n="launcher.row3.mockState">BĚŽÍ</small>
+</div>
+<div class="launcher-perf-graph">
+<span style="--h:34%"></span><span style="--h:52%"></span><span style="--h:41%"></span><span style="--h:66%"></span><span style="--h:49%"></span><span style="--h:72%"></span><span style="--h:58%"></span><span style="--h:79%"></span><span style="--h:63%"></span><span style="--h:85%"></span><span style="--h:70%"></span><span style="--h:88%"></span>
+</div>
+<div class="launcher-perf-stats">
+<div><small data-i18n="launcher.row3.statFps">FPS</small><b>238</b></div>
+<div><small data-i18n="launcher.row3.statRam">RAM</small><b>3.1 GB</b></div>
+<div><small data-i18n="launcher.row3.statLaunch">START</small><b>4.2 s</b></div>
+</div>
+</div>
+</div>
+</article>
+</div>
+</div>
+</section>
+
+<!-- ===================== PLATFORMY ===================== -->
+<section aria-labelledby="platformsTitle" class="section launcher-platforms-section" id="platformy">
+<div class="container">
+<div class="section-heading centered">
+<span class="section-kicker" data-i18n="launcher.platforms.kicker">PLATFORMY A POŽADAVKY</span>
+<h2 id="platformsTitle" data-i18n="launcher.platforms.title">Sestavení pro všechny tři světy</h2>
+<p data-i18n="launcher.platforms.lead">Java se stáhne a spravuje automaticky — instalovat nic dalšího nemusíš.</p>
+</div>
+<div class="launcher-platforms">
+<article class="launcher-platform">
+<div class="launcher-platform-head">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5.1 10.6 4v7.2H3zM11.8 3.8 21 2.5v8.7h-9.2zM3 12.8h7.6V20L3 18.9zM11.8 12.8H21v8.7l-9.2-1.3z"></path></svg>
+<div><small data-i18n="launcher.platforms.win.req">Windows 10+ · 64bit</small><h3>Windows</h3></div>
+</div>
+<ul>
+<li data-i18n="launcher.platforms.win.f1">Instalátor .exe i přenosná verze</li>
+<li data-i18n="launcher.platforms.win.f2">Podpora x64 i ARM zařízení</li>
+<li data-i18n="launcher.platforms.win.f3">Integrace do nabídky Start</li>
+</ul>
+<button class="button button-secondary launcher-platform-btn" data-launcher-download data-os="windows" type="button">
+<span data-i18n="launcher.platforms.download">Stáhnout</span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
+</button>
+</article>
+<article class="launcher-platform">
+<div class="launcher-platform-head">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M16.36 1.43c0 1.14-.47 2.2-1.23 3.02-.8.87-2.1 1.55-3.18 1.47-.14-1.1.44-2.28 1.17-3.05.8-.87 2.19-1.51 3.24-1.44zM20.94 17.1c-.57 1.3-.84 1.88-1.57 3.03-1.02 1.6-2.46 3.6-4.25 3.61-1.59.02-2-1.03-4.16-1.02-2.16.01-2.61 1.05-4.2 1.03-1.79-.02-3.16-1.82-4.18-3.42C.02 17.14-.29 12.5 1.35 10c1.13-1.7 2.92-2.7 4.6-2.7 1.71 0 2.79 1.04 4.2 1.04 1.38 0 2.22-1.05 4.19-1.05 1.5 0 3.09.82 4.22 2.23-3.71 2.03-3.11 7.32 2.38 7.58z"></path></svg>
+<div><small data-i18n="launcher.platforms.mac.req">macOS 12+ · Intel i Apple Silicon</small><h3>macOS</h3></div>
+</div>
+<ul>
+<li data-i18n="launcher.platforms.mac.f1">Univerzální sestavení .dmg</li>
+<li data-i18n="launcher.platforms.mac.f2">Nativní podpora M1–M řady</li>
+<li data-i18n="launcher.platforms.mac.f3">Připraveno pro notarizaci</li>
+</ul>
+<button class="button button-secondary launcher-platform-btn" data-launcher-download data-os="macos" type="button">
+<span data-i18n="launcher.platforms.download">Stáhnout</span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
+</button>
+</article>
+<article class="launcher-platform">
+<div class="launcher-platform-head">
+<svg aria-hidden="true" viewBox="0 0 24 24"><rect height="15" rx="2" width="18" x="3" y="4.5"></rect><path d="m7 9.5 3 2.5-3 2.5M12.5 14.5H17"></path></svg>
+<div><small data-i18n="launcher.platforms.lin.req">Ubuntu, Fedora, Arch…</small><h3>Linux</h3></div>
+</div>
+<ul>
+<li data-i18n="launcher.platforms.lin.f1">.AppImage, .deb i .rpm balíčky</li>
+<li data-i18n="launcher.platforms.lin.f2">Wayland i X11 bez úprav</li>
+<li data-i18n="launcher.platforms.lin.f3">Flatpak v plánu</li>
+</ul>
+<button class="button button-secondary launcher-platform-btn" data-launcher-download data-os="linux" type="button">
+<span data-i18n="launcher.platforms.download">Stáhnout</span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
+</button>
+</article>
+</div>
+<div class="compatibility-note">
+<span aria-hidden="true" class="compatibility-icon"><svg viewBox="0 0 24 24"><path d="M12 3 3.5 7v5c0 5.2 3.6 8 8.5 9.5 4.9-1.5 8.5-4.3 8.5-9.5V7L12 3Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg></span>
+<div>
+<strong data-i18n="launcher.platforms.note.title">Poznámka k první alphě</strong>
+<p data-i18n="launcher.platforms.note.text">Sestavení teprve připravujeme — tlačítka tě zatím navedou na GitHub, kde vzniká celý zdrojový kód.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===================== ROADMAP ===================== -->
+<section aria-labelledby="roadmapTitle" class="section launcher-roadmap-section" id="roadmap">
+<div class="container">
+<div class="section-heading centered">
+<span class="section-kicker" data-i18n="launcher.roadmap.kicker">PLÁN VÝVOJE</span>
+<h2 id="roadmapTitle" data-i18n="launcher.roadmap.title">Kam launcher směřuje</h2>
+<p data-i18n="launcher.roadmap.lead">Vyvíjíme otevřeně — každý krok uvidíš na GitHubu dřív, než vyjde.</p>
+</div>
+<ol class="launcher-roadmap">
+<li class="launcher-milestone is-current">
+<div class="launcher-milestone-dot"><i></i></div>
+<div class="launcher-milestone-card">
+<div class="launcher-milestone-top">
+<span class="launcher-milestone-ver">v0.1</span>
+<span class="launcher-milestone-chip is-now" data-i18n="launcher.roadmap.m1.chip">PRÁVĚ TEĎ</span>
+</div>
+<h3 data-i18n="launcher.roadmap.m1.title">První alpha</h3>
+<p data-i18n="launcher.roadmap.m1.text">Design launcheru, instalace modpacků z katalogu a správa instancí. Základ, na kterém stavíme dál.</p>
+</div>
+</li>
+<li class="launcher-milestone">
+<div class="launcher-milestone-dot"><i></i></div>
+<div class="launcher-milestone-card">
+<div class="launcher-milestone-top">
+<span class="launcher-milestone-ver">v0.2</span>
+<span class="launcher-milestone-chip" data-i18n="launcher.roadmap.m2.chip">DALŠÍ KROK</span>
+</div>
+<h3 data-i18n="launcher.roadmap.m2.title">Auto-aktualizace a import</h3>
+<p data-i18n="launcher.roadmap.m2.text">Automatické aktualizace balíčků, import .mrpack a .zip přetažením do okna a více instancí vedle sebe.</p>
+</div>
+</li>
+<li class="launcher-milestone">
+<div class="launcher-milestone-dot"><i></i></div>
+<div class="launcher-milestone-card">
+<div class="launcher-milestone-top">
+<span class="launcher-milestone-ver">v1.0</span>
+<span class="launcher-milestone-chip" data-i18n="launcher.roadmap.m3.chip">CÍL</span>
+</div>
+<h3 data-i18n="launcher.roadmap.m3.title">Celý ekosystém v kapse</h3>
+<p data-i18n="launcher.roadmap.m3.text">Napojení na komunitní server i Store, CZ/SK překlady z webu a jednoduché sdílení instancí s kamarády.</p>
+</div>
+</li>
+</ol>
+</div>
+</section>
+
+<!-- ===================== OPEN SOURCE NOTE ===================== -->
+<section class="section launcher-oss-section">
+<div class="container">
+<div class="repo-note">
+<span aria-hidden="true" class="repo-note-icon"><svg viewBox="0 0 24 24"><path d="M8 9 5 12l3 3M16 9l3 3-3 3M14 5l-4 14"></path></svg></span>
+<div>
+<strong data-i18n="launcher.oss.title">Chceš na launcheru stavět s námi?</strong>
+<p data-i18n="launcher.oss.text">Celý kód bude jako vždy otevřený. Hlasuj o funkcích, hlaste chyby, nebo pošli první pull request — launcher je ideální první projekt.</p>
+</div>
+<a class="repo-note-link" data-i18n-aria="cta.github.aria" data-site-link="github" href="https://github.com/minekubestudios" rel="noopener noreferrer" target="_blank">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
+<span data-i18n="launcher.oss.link">Otevřít GitHub</span>
+</a>
+</div>
+</div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section class="cta-section">
+<div class="container cta-card">
+<div>
+<span class="section-kicker" data-i18n="launcher.cta.kicker">EKOSYSTÉM MINEKUBE</span>
+<h2 data-i18n="launcher.cta.title">Modpacky můžeš zkoušet už teď.</h2>
+<p data-i18n="launcher.cta.lead">Dokud launcher doroste do první alphy, katalog balíčků je plně dostupný na webu — zdarma.</p>
+</div>
+<a class="button button-light" href="../modpacky/">
+<span data-i18n="launcher.cta.button">Procházet modpacky</span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
+</a>
+</div>
+</section>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="site-footer">
+<div class="container footer-grid">
+<div>
+<a class="brand footer-brand" href="../">
+<span aria-hidden="true" class="brand-mark">
+<svg viewBox="0 0 48 48">
+<path d="M24 3 43 13.5v21L24 45 5 34.5v-21L24 3Z"></path>
+<path class="mark-top" d="m24 3 19 10.5L24 24 5 13.5 24 3Z"></path>
+<path class="mark-left" d="M24 24v21L5 34.5v-21L24 24Z"></path>
+<path class="mark-right" d="M24 24 43 13.5v21L24 45V24Z"></path>
+<path class="mark-core" d="m14 18 10 5.5L34 18v11l-10 5.5L14 29V18Z"></path>
+</svg>
+</span>
+<span><strong>Minekube</strong><small>CZ/SK STUDIOS</small></span>
+</a>
+<p data-i18n="footer.about">Nezávislé československé studio výkonných Minecraft projektů.</p>
+</div>
+<div>
+<h3 data-i18n="footer.col1">Projekt</h3>
+<a href="../#projekt"><span data-i18n="nav.about">O projektu</span></a>
+<a href="../modpacky/"><span data-i18n="nav.modpacks">Modpacky</span></a>
+<a class="active" href="./"><span data-i18n="nav.launcher">Launcher</span></a>
+<button class="footer-link" data-i18n="nav.server" data-soon type="button">Server</button>
+</div>
+<div>
+<h3 data-i18n="footer.col2">Informace</h3>
+<button class="footer-link" data-dialog="changelog" type="button"><span data-i18n="footer.info1">Changelog</span></button>
+<button class="footer-link" data-dialog="compatibility" type="button"><span data-i18n="footer.info2">Kompatibilita</span></button>
+<button class="footer-link" data-dialog="license" type="button"><span data-i18n="footer.info3">Licence</span></button>
+</div>
+<div>
+<h3 data-i18n="footer.col3">Komunita</h3>
+<a aria-label="Discord — doplň vlastní odkaz" data-i18n="footer.community1" data-i18n-aria="footer.discord.aria" href="#">Discord</a>
+<a aria-label="Minekube Ultra Performance na Game Jolt" data-i18n="footer.community2" href="https://gamejolt.com/games/_/1053229" rel="noopener noreferrer" target="_blank">Game Jolt</a>
+<a aria-label="GitHub — Minekube Studios" data-i18n="footer.community3" data-i18n-aria="cta.github.aria" data-site-link="github" href="https://github.com/minekubestudios" rel="noopener noreferrer" target="_blank">GitHub</a>
+</div>
+</div>
+<div class="container footer-bottom">
+<span>© <span id="currentYear"></span> <span data-i18n="footer.copyright">Minekube Studios. Demo web.</span></span>
+<span data-i18n="footer.trademark">Minecraft je ochranná známka společnosti Mojang Studios.</span>
+</div>
+</footer>
+
+<!-- ===================== MODAL + TOAST ===================== -->
+<div class="modal-backdrop" hidden id="modalBackdrop">
+<section aria-labelledby="modalTitle" aria-modal="true" class="modal" role="dialog">
+<button aria-label="Zavřít detail" class="modal-close" data-i18n-aria="modal.closeAria" id="modalClose" type="button">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+</button>
+<div id="modalContent"></div>
+</section>
+</div>
+<div aria-atomic="true" aria-live="polite" class="toast" id="toast" role="status">
+<span aria-hidden="true" class="toast-glow"></span>
+<span aria-hidden="true" class="toast-icon">
+<svg class="toast-icon-download" viewBox="0 0 24 24">
+<path d="M12 3v10"></path>
+<path d="m8 10 4 4 4-4"></path>
+<path d="M5 19h14"></path>
+</svg>
+<svg class="toast-icon-check" viewBox="0 0 24 24">
+<path d="m6.5 12.5 3.5 3.5 7.5-8"></path>
+</svg>
+<svg class="toast-icon-info" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="8.5"></circle>
+<path d="M12 8.2v5.4M12 16.8h.01"></path>
+</svg>
+</span>
+<span class="toast-copy">
+<span class="toast-kicker">MINEKUBE SYSTEM</span>
+<strong class="toast-message"></strong>
+</span>
+<span aria-hidden="true" class="toast-signal"><i></i><i></i><i></i></span>
+<span aria-hidden="true" class="toast-progress"></span>
+<span aria-hidden="true" class="toast-burst"><i></i><i></i><i></i><i></i><i></i></span>
+</div>
+
+<!-- Překlady stránky se načítají PŘED app.js, aby si je app.js převzala
+     a fungoval jeden přepínač jazyka pro celý web. -->
+<script src="i18n.js"></script>
+<script src="../app.js"></script>
+<script src="launcher.js"></script>
+</body>
+</html>

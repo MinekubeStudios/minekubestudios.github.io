@@ -14595,3 +14595,1813 @@ html.mk-arriving main {
     margin-left: 0;
   }
 }
+
+/* =============================================================
+   V8.2 // STRÁNKA LAUNCHER (launcher/index.html)
+   Hero s mockem okna launcheru (čistý CSS/HTML — žádné obrázky),
+   přepínač platformy, velké tlačítko ke stažení, mřížka funkcí,
+   alternující řady (aktualizace / katalog / výkon), platformy,
+   roadmapa a open-source poznámka. Inspirace: modrinth.com/app,
+   barvy a jazyk: Minekube (zlato × fialová).
+   ============================================================= */
+
+/* ---------- HERO // pozadí ---------- */
+
+.launcher-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.launcher-hero::before {
+  content: "";
+  position: absolute;
+  top: -220px;
+  left: 50%;
+  width: 980px;
+  height: 620px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 32% 38%, rgba(255, 174, 0, .14), transparent 55%),
+    radial-gradient(circle at 70% 30%, rgba(200, 60, 255, .13), transparent 55%);
+  filter: blur(8px);
+}
+
+:root[data-theme="light"] .launcher-hero::before {
+  background:
+    radial-gradient(circle at 32% 38%, rgba(255, 174, 0, .20), transparent 55%),
+    radial-gradient(circle at 70% 30%, rgba(200, 60, 255, .14), transparent 55%);
+}
+
+.launcher-hero .mk-intro {
+  position: relative;
+  z-index: 1;
+  align-items: center;
+}
+
+/* ---------- HERO // štítky stavu (alpha + open source) ---------- */
+
+.launcher-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  margin-top: 22px;
+}
+
+.launcher-chip-alpha,
+.launcher-chip-oss {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 174, 0, .34);
+  border-radius: 999px;
+  background:
+    linear-gradient(120deg, rgba(255, 174, 0, .12), rgba(200, 60, 255, .10));
+  color: var(--yellow);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.launcher-chip-alpha i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green);
+  animation: launcherChipPulse 1.8s ease-in-out infinite;
+}
+
+.launcher-chip-oss {
+  border-color: rgba(200, 60, 255, .30);
+  color: var(--blue);
+}
+
+.launcher-chip-oss svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes launcherChipPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: .55; }
+}
+
+/* ---------- HERO // přepínač platformy ---------- */
+
+.launcher-os-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.launcher-os-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: border-color .2s ease, background .2s ease, color .2s ease, transform .18s ease, box-shadow .2s ease;
+}
+
+.launcher-os-chip svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+  stroke: none;
+}
+
+.launcher-os-chip[data-os="linux"] svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-os-chip:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.launcher-os-chip.is-active {
+  border-color: rgba(255, 174, 0, .55);
+  background: linear-gradient(120deg, rgba(255, 174, 0, .16), rgba(255, 174, 0, .05));
+  color: var(--text);
+  box-shadow: 0 6px 22px rgba(255, 174, 0, .16);
+}
+
+/* ---------- HERO // velké tlačítko ke stažení ---------- */
+
+.launcher-download {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.launcher-download-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  min-height: 76px;
+  padding: 12px 26px 12px 16px;
+  border: 1px solid rgba(255, 214, 110, .5);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, #ffe267, #ff9a00 55%, #ef6500);
+  color: #241006;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 16px 44px rgba(255, 154, 0, .30), inset 0 1px 0 rgba(255, 255, 255, .35);
+  transition: transform .2s ease, box-shadow .25s ease, filter .2s ease;
+}
+
+.launcher-download-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 22px 54px rgba(255, 154, 0, .40), inset 0 1px 0 rgba(255, 255, 255, .35);
+}
+
+.launcher-download-btn:active {
+  transform: translateY(-1px) scale(.99);
+}
+
+.launcher-download-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, .38) 46%, transparent 60%);
+  transform: translateX(-120%);
+  animation: launcherShine 4.6s ease-in-out infinite;
+}
+
+@keyframes launcherShine {
+  0%, 55% { transform: translateX(-120%); }
+  80%, 100% { transform: translateX(120%); }
+}
+
+.launcher-download-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: rgba(36, 16, 6, .16);
+  box-shadow: inset 0 0 0 1px rgba(36, 16, 6, .14);
+}
+
+.launcher-download-icon .dl-icon {
+  display: none;
+  width: 22px;
+  height: 22px;
+  fill: #241006;
+}
+
+.launcher-download-icon .dl-icon-linux {
+  fill: none;
+  stroke: #241006;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-download-btn[data-os="windows"] .dl-icon-windows { display: block; }
+.launcher-download-btn[data-os="macos"] .dl-icon-macos { display: block; }
+.launcher-download-btn[data-os="linux"] .dl-icon-linux { display: block; }
+
+.launcher-download-copy {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+}
+
+.launcher-download-copy small {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: .16em;
+  opacity: .78;
+}
+
+.launcher-download-copy small b {
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: rgba(36, 16, 6, .16);
+  font-size: 8.5px;
+  letter-spacing: .06em;
+}
+
+.launcher-download-copy strong {
+  font-size: 17px;
+  font-weight: 850;
+  letter-spacing: -.02em;
+}
+
+.launcher-download-sub {
+  font-size: 11px;
+  font-weight: 650;
+  opacity: .72;
+}
+
+.launcher-download-arrow {
+  width: 22px;
+  height: 22px;
+  margin-left: 4px;
+  fill: none;
+  stroke: #241006;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .2s ease;
+}
+
+.launcher-download-btn:hover .launcher-download-arrow {
+  transform: translateY(3px);
+}
+
+.launcher-download-side {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  background: var(--surface);
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.launcher-download-side:hover {
+  border-color: rgba(255, 174, 0, .42);
+  background: var(--surface-2);
+  transform: translateY(-2px);
+}
+
+.launcher-download-side > svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--text);
+}
+
+.launcher-download-side span {
+  display: grid;
+  line-height: 1.3;
+}
+
+.launcher-download-side strong {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.launcher-download-side small {
+  font-size: 10px;
+  color: var(--muted-2);
+}
+
+/* ---------- HERO // meta řádek ---------- */
+
+.launcher-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.launcher-meta li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.launcher-meta svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- MOCK // plovoucí okno launcheru ---------- */
+
+.launcher-mock {
+  position: relative;
+  perspective: 1200px;
+}
+
+.launcher-mock-glow {
+  position: absolute;
+  inset: -8% -6%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 24% 30%, rgba(255, 174, 0, .20), transparent 52%),
+    radial-gradient(circle at 78% 72%, rgba(200, 60, 255, .18), transparent 52%);
+  filter: blur(26px);
+  animation: launcherGlowBreathe 6.5s ease-in-out infinite;
+}
+
+.launcher-mock-glow-b {
+  inset: 4% 10%;
+  background:
+    radial-gradient(circle at 70% 20%, rgba(255, 92, 210, .12), transparent 55%),
+    radial-gradient(circle at 20% 80%, rgba(73, 220, 255, .10), transparent 55%);
+  animation-delay: -3.2s;
+}
+
+@keyframes launcherGlowBreathe {
+  0%, 100% { opacity: .75; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.launcher-window {
+  position: relative;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  background:
+    linear-gradient(160deg, rgba(255, 174, 0, .05), transparent 34%),
+    color-mix(in srgb, var(--surface) 92%, black);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, .5), 0 0 0 1px rgba(255, 174, 0, .07);
+  overflow: hidden;
+  transform: rotateX(2.4deg) rotateY(-2.6deg);
+  transform-style: preserve-3d;
+  animation: launcherWindowFloat 7s ease-in-out infinite;
+  transition: transform .5s ease, box-shadow .5s ease;
+}
+
+.launcher-mock:hover .launcher-window {
+  transform: rotateX(0deg) rotateY(0deg) translateY(-4px);
+  box-shadow: 0 50px 100px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255, 174, 0, .14);
+}
+
+@keyframes launcherWindowFloat {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -10px; }
+}
+
+.launcher-window-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, .02);
+}
+
+.launcher-dots {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.launcher-dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.launcher-dots i:nth-child(1) { background: #ff5f57; }
+.launcher-dots i:nth-child(2) { background: #febc2e; }
+.launcher-dots i:nth-child(3) { background: #28c840; }
+
+.launcher-window-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.launcher-window-title svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 2px 8px rgba(255, 174, 0, .3));
+}
+
+.launcher-window-title svg path:first-child { fill: #160717; }
+.launcher-window-title .mark-top { fill: #ffe05a; }
+.launcher-window-title .mark-left { fill: #ff9200; }
+.launcher-window-title .mark-right { fill: #dc4d00; }
+.launcher-window-title .mark-core { fill: #2b071f; }
+
+.launcher-window-title b {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+
+.launcher-window-title small {
+  padding: 1px 7px;
+  border: 1px solid rgba(255, 174, 0, .30);
+  border-radius: 6px;
+  color: var(--yellow);
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.launcher-window-actions {
+  display: inline-flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.launcher-window-actions i {
+  width: 11px;
+  height: 11px;
+  border: 1.6px solid var(--muted-2);
+  border-radius: 3px;
+  opacity: .65;
+}
+
+.launcher-window-actions i:first-child {
+  border-bottom: 0;
+}
+
+/* ---------- MOCK // tělo okna — sidebar + hlavní plocha ---------- */
+
+.launcher-window-body {
+  display: grid;
+  grid-template-columns: 172px minmax(0, 1fr);
+  min-height: 348px;
+}
+
+.launcher-side {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 9px;
+  border-right: 1px solid var(--border);
+  background: rgba(255, 255, 255, .015);
+}
+
+.launcher-side-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: var(--muted-2);
+  font-size: 11px;
+  font-weight: 750;
+  transition: background .2s ease, color .2s ease;
+}
+
+.launcher-side-item svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-side-item:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, .04);
+}
+
+.launcher-side-item.is-active {
+  color: var(--text);
+  background: linear-gradient(120deg, rgba(255, 174, 0, .16), rgba(200, 60, 255, .10));
+  box-shadow: inset 0 0 0 1px rgba(255, 174, 0, .22);
+}
+
+.launcher-side-user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: auto;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface-2);
+}
+
+.launcher-side-avatar {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ffae00, #c83cff);
+}
+
+.launcher-side-avatar svg {
+  width: 16px;
+  height: 16px;
+  fill: #1c0714;
+}
+
+.launcher-side-user b {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.launcher-side-user small {
+  display: block;
+  font-size: 8.5px;
+  color: var(--muted-2);
+  white-space: nowrap;
+}
+
+.launcher-main {
+  display: flex;
+  flex-direction: column;
+  padding: 13px 14px;
+}
+
+.launcher-main-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.launcher-main-head b {
+  font-size: 13px;
+  font-weight: 850;
+  color: var(--text);
+  letter-spacing: -.01em;
+}
+
+.launcher-main-new {
+  padding: 6px 11px;
+  border: 1px solid rgba(255, 174, 0, .40);
+  border-radius: 9px;
+  background: rgba(255, 174, 0, .10);
+  color: var(--yellow);
+  font-size: 10px;
+  font-weight: 850;
+}
+
+/* ---------- MOCK // karty instancí ---------- */
+
+.launcher-instances {
+  display: grid;
+  gap: 8px;
+}
+
+.launcher-inst {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 11px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface-2);
+  transition: border-color .2s ease, transform .2s ease;
+}
+
+.launcher-inst:hover {
+  border-color: rgba(255, 174, 0, .30);
+  transform: translateX(3px);
+}
+
+.launcher-inst-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border-radius: 11px;
+}
+
+.launcher-inst-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #1c0714;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-inst-icon--ultra { background: linear-gradient(135deg, #ffd95a, #ff9200); }
+.launcher-inst-icon--perf { background: linear-gradient(135deg, #8bf0ff, #12b4d8); }
+.launcher-inst-icon--pvp { background: linear-gradient(135deg, #ff9ae4, #e226b4); }
+
+.launcher-inst-copy {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  gap: 2px;
+}
+
+.launcher-inst-copy b {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.launcher-inst-copy small {
+  font-size: 9.5px;
+  color: var(--muted-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.launcher-play {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ffe267, #ff9a00);
+  box-shadow: 0 6px 18px rgba(255, 154, 0, .35);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.launcher-play svg {
+  width: 15px;
+  height: 15px;
+  fill: #241006;
+}
+
+.launcher-inst:hover .launcher-play {
+  transform: scale(1.08);
+  box-shadow: 0 8px 22px rgba(255, 154, 0, .45);
+}
+
+.launcher-inst-progress {
+  border-color: rgba(255, 174, 0, .34);
+  background:
+    linear-gradient(120deg, rgba(255, 174, 0, .07), transparent 55%),
+    var(--surface-2);
+}
+
+.launcher-progress {
+  display: block;
+  width: 100%;
+  height: 5px;
+  margin-top: 3px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, .08);
+  overflow: hidden;
+}
+
+.launcher-progress span {
+  display: block;
+  width: var(--progress, 40%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ff9200, #ffd95a);
+  box-shadow: 0 0 12px rgba(255, 174, 0, .6);
+  transition: width .32s ease;
+  position: relative;
+}
+
+.launcher-progress span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, .5) 50%, transparent 80%);
+  animation: launcherProgressShimmer 1.6s linear infinite;
+}
+
+@keyframes launcherProgressShimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+.launcher-progress-pct {
+  flex: 0 0 auto;
+  color: var(--yellow);
+  font-size: 11px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.launcher-window-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.launcher-window-status i {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #57e389;
+  box-shadow: 0 0 10px rgba(87, 227, 137, .8);
+  animation: launcherChipPulse 2.4s ease-in-out infinite;
+}
+
+.launcher-window-status span {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--muted-2);
+  letter-spacing: .02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- SEKCE FUNKCÍ // mřížka 6 karet ---------- */
+
+.launcher-features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 44px;
+}
+
+.launcher-feature {
+  position: relative;
+  padding: 24px 22px;
+  border: 1px solid var(--border);
+  border-radius: 19px;
+  background: var(--surface);
+  overflow: hidden;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.launcher-feature::before {
+  content: "";
+  position: absolute;
+  top: -46px;
+  right: -46px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--feature-glow, rgba(255, 174, 0, .18)), transparent 70%);
+  opacity: 0;
+  transition: opacity .3s ease;
+  pointer-events: none;
+}
+
+.launcher-feature:hover {
+  transform: translateY(-5px);
+  border-color: var(--border-strong);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+}
+
+.launcher-feature:hover::before {
+  opacity: 1;
+}
+
+.launcher-feature--gold { --feature-glow: rgba(255, 174, 0, .20); --feature-accent: #ffae00; }
+.launcher-feature--purple { --feature-glow: rgba(200, 60, 255, .20); --feature-accent: #c83cff; }
+.launcher-feature--cyan { --feature-glow: rgba(73, 220, 255, .16); --feature-accent: #49dcff; }
+.launcher-feature--magenta { --feature-glow: rgba(255, 95, 210, .16); --feature-accent: #ff5fd2; }
+
+.launcher-feature-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 16px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--feature-accent, #ffae00) 14%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--feature-accent, #ffae00) 30%, transparent);
+}
+
+.launcher-feature-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--feature-accent, var(--green));
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-feature h3 {
+  margin: 0 0 8px;
+  font-size: 16.5px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--text);
+}
+
+.launcher-feature p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* ---------- ŘADY // alternující bloky copy × vizuál ---------- */
+
+.launcher-rows-section {
+  padding-top: 40px;
+}
+
+.launcher-rows {
+  display: grid;
+  gap: 26px;
+  margin-top: 44px;
+}
+
+.launcher-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: center;
+  padding: 34px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background:
+    linear-gradient(150deg, rgba(200, 60, 255, .05), transparent 40%),
+    var(--surface);
+  overflow: hidden;
+}
+
+.launcher-row--reverse .launcher-row-copy { order: 2; }
+.launcher-row--reverse .launcher-row-visual { order: 1; }
+
+.launcher-row-copy h3 {
+  margin: 14px 0 12px;
+  font-size: clamp(21px, 2.4vw, 27px);
+  font-weight: 850;
+  letter-spacing: -.03em;
+  color: var(--text);
+}
+
+.launcher-row-copy p {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+.launcher-row-list {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.launcher-row-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.launcher-row-list svg {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-row-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 11px 17px;
+  border: 1px solid rgba(255, 174, 0, .40);
+  border-radius: 12px;
+  background: rgba(255, 174, 0, .08);
+  color: var(--yellow);
+  font-size: 12.5px;
+  font-weight: 800;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease, color .2s ease;
+}
+
+.launcher-row-link svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .2s ease;
+}
+
+.launcher-row-link:hover {
+  background: rgba(255, 174, 0, .15);
+  border-color: rgba(255, 174, 0, .6);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+.launcher-row-link:hover svg {
+  transform: translateX(3px);
+}
+
+/* ---------- ŘADY // vizuál 1 — karta aktualizace ---------- */
+
+.launcher-row-visual {
+  min-width: 0;
+}
+
+.launcher-update-card {
+  padding: 20px;
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 90%, black);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, .4);
+}
+
+.launcher-update-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.launcher-update-ver {
+  padding: 5px 11px;
+  border-radius: 9px;
+  font-size: 11.5px;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+
+.launcher-update-ver.is-old {
+  border: 1px solid var(--border);
+  color: var(--muted-2);
+  background: var(--surface-2);
+}
+
+.launcher-update-ver.is-new {
+  border: 1px solid rgba(255, 174, 0, .5);
+  color: var(--yellow);
+  background: rgba(255, 174, 0, .12);
+  box-shadow: 0 0 18px rgba(255, 174, 0, .18);
+}
+
+.launcher-update-head > svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--muted-2);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-update-chip {
+  margin-left: auto;
+  padding: 4px 9px;
+  border-radius: 7px;
+  background: rgba(87, 227, 137, .12);
+  border: 1px solid rgba(87, 227, 137, .3);
+  color: #57e389;
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+
+.launcher-update-log {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.launcher-update-log li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 650;
+}
+
+.launcher-update-log b {
+  flex: 0 0 auto;
+  min-width: 30px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 9.5px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.launcher-update-log .is-add { background: rgba(87, 227, 137, .14); color: #57e389; }
+.launcher-update-log .is-fix { background: rgba(73, 220, 255, .13); color: #49dcff; }
+.launcher-update-log .is-chg { background: rgba(255, 174, 0, .14); color: var(--yellow); }
+.launcher-update-log .is-del { background: rgba(255, 95, 116, .13); color: var(--danger); }
+
+.launcher-update-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.launcher-update-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted-2);
+  font-size: 10.5px;
+  font-weight: 750;
+}
+
+.launcher-update-check svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: #57e389;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-update-btn {
+  padding: 10px 18px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #ffe267, #ff9a00);
+  color: #241006;
+  font-size: 12px;
+  font-weight: 850;
+  box-shadow: 0 10px 26px rgba(255, 154, 0, .3);
+  animation: launcherBtnBreathe 3.4s ease-in-out infinite;
+}
+
+@keyframes launcherBtnBreathe {
+  0%, 100% { box-shadow: 0 10px 26px rgba(255, 154, 0, .3); }
+  50% { box-shadow: 0 14px 34px rgba(255, 154, 0, .48); }
+}
+
+/* ---------- ŘADY // vizuál 2 — mini katalog ---------- */
+
+.launcher-catalog-mock {
+  padding: 20px;
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 90%, black);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, .4);
+}
+
+.launcher-catalog-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.launcher-catalog-head svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-catalog-head b {
+  font-size: 13px;
+  font-weight: 850;
+  color: var(--text);
+}
+
+.launcher-catalog-head span {
+  margin-left: auto;
+  color: var(--muted-2);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+
+.launcher-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.launcher-catalog-item {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding: 12px 13px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background:
+    linear-gradient(140deg, color-mix(in srgb, var(--pack-accent) 12%, transparent), transparent 55%),
+    var(--surface-2);
+  overflow: hidden;
+  transition: transform .2s ease, border-color .2s ease;
+}
+
+.launcher-catalog-item:nth-child(5) {
+  grid-column: 1 / -1;
+}
+
+.launcher-catalog-item:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--pack-accent) 55%, transparent);
+}
+
+.launcher-catalog-item b {
+  font-size: 12.5px;
+  font-weight: 850;
+  color: var(--text);
+}
+
+.launcher-catalog-item small {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--pack-accent) 78%, var(--muted));
+}
+
+.launcher-catalog-item i {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pack-accent);
+  box-shadow: 0 0 10px var(--pack-accent);
+}
+
+.launcher-catalog-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.launcher-catalog-btn {
+  padding: 9px 17px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ffe267, #ff9a00);
+  color: #241006;
+  font-size: 11.5px;
+  font-weight: 850;
+  box-shadow: 0 8px 22px rgba(255, 154, 0, .3);
+}
+
+.launcher-catalog-note {
+  color: var(--muted-2);
+  font-size: 9.5px;
+  font-weight: 650;
+}
+
+/* ---------- ŘADY // vizuál 3 — výkonový monitor ---------- */
+
+.launcher-perf-mock {
+  padding: 20px;
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 90%, black);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, .4);
+}
+
+.launcher-perf-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.launcher-perf-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #57e389;
+  box-shadow: 0 0 12px rgba(87, 227, 137, .8);
+  animation: launcherChipPulse 2s ease-in-out infinite;
+}
+
+.launcher-perf-head b {
+  font-size: 13px;
+  font-weight: 850;
+  color: var(--text);
+}
+
+.launcher-perf-head small {
+  margin-left: auto;
+  padding: 3px 9px;
+  border-radius: 7px;
+  border: 1px solid rgba(87, 227, 137, .3);
+  background: rgba(87, 227, 137, .1);
+  color: #57e389;
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+
+.launcher-perf-graph {
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  height: 130px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background:
+    linear-gradient(transparent 24%, rgba(255, 255, 255, .028) 24% 48%, transparent 48% 74%, rgba(255, 255, 255, .028) 74%),
+    var(--surface-2);
+}
+
+.launcher-perf-graph span {
+  flex: 1;
+  height: var(--h, 40%);
+  border-radius: 5px 5px 2px 2px;
+  background: linear-gradient(180deg, #ffd95a, #ff9200 70%, rgba(239, 101, 0, .5));
+  box-shadow: 0 0 14px rgba(255, 174, 0, .22);
+  transform-origin: bottom;
+  animation: launcherPerfBar 2.6s ease-in-out infinite alternate;
+}
+
+.launcher-perf-graph span:nth-child(2n) { animation-duration: 3.1s; animation-delay: -.6s; }
+.launcher-perf-graph span:nth-child(3n) { animation-duration: 2.2s; animation-delay: -1.1s; }
+.launcher-perf-graph span:nth-child(4n) { animation-duration: 2.9s; animation-delay: -1.7s; }
+.launcher-perf-graph span:nth-child(5n) { animation-duration: 3.4s; animation-delay: -.3s; }
+
+@keyframes launcherPerfBar {
+  from { transform: scaleY(.82); }
+  to { transform: scaleY(1.12); }
+}
+
+.launcher-perf-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.launcher-perf-stats > div {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface-2);
+}
+
+.launcher-perf-stats small {
+  display: block;
+  color: var(--muted-2);
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.launcher-perf-stats b {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--yellow);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- PLATFORMY // tři karty ---------- */
+
+.launcher-platforms {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 44px;
+}
+
+.launcher-platform {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 22px;
+  border: 1px solid var(--border);
+  border-radius: 19px;
+  background: var(--surface);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.launcher-platform:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 174, 0, .34);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+}
+
+.launcher-platform-head {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.launcher-platform-head > svg {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  fill: var(--text);
+  opacity: .92;
+}
+
+.launcher-platform:last-child .launcher-platform-head > svg {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-platform-head small {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted-2);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.launcher-platform-head h3 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 850;
+  letter-spacing: -.02em;
+  color: var(--text);
+}
+
+.launcher-platform ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 1;
+}
+
+.launcher-platform li {
+  position: relative;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.launcher-platform li::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green-glow);
+}
+
+.launcher-platform-btn {
+  justify-content: center;
+  width: 100%;
+}
+
+/* ---------- ROADMAP // časová osa ---------- */
+
+.launcher-roadmap {
+  position: relative;
+  display: grid;
+  gap: 20px;
+  max-width: 760px;
+  margin: 46px auto 0;
+  padding: 0;
+  list-style: none;
+}
+
+.launcher-roadmap::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 15px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--green), rgba(200, 60, 255, .5), transparent);
+  opacity: .5;
+}
+
+.launcher-milestone {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.launcher-milestone-dot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+}
+
+.launcher-milestone-dot i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--muted-2);
+}
+
+.launcher-milestone.is-current .launcher-milestone-dot {
+  border-color: rgba(255, 174, 0, .55);
+  box-shadow: 0 0 22px rgba(255, 174, 0, .3);
+}
+
+.launcher-milestone.is-current .launcher-milestone-dot i {
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green);
+  animation: launcherChipPulse 1.9s ease-in-out infinite;
+}
+
+.launcher-milestone-card {
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  transition: transform .25s ease, border-color .25s ease;
+}
+
+.launcher-milestone-card:hover {
+  transform: translateX(4px);
+  border-color: var(--border-strong);
+}
+
+.launcher-milestone.is-current .launcher-milestone-card {
+  border-color: rgba(255, 174, 0, .36);
+  background:
+    linear-gradient(130deg, rgba(255, 174, 0, .07), transparent 45%),
+    var(--surface);
+}
+
+.launcher-milestone-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.launcher-milestone-ver {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .01em;
+}
+
+.launcher-milestone-chip {
+  padding: 3px 9px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  color: var(--muted-2);
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+
+.launcher-milestone-chip.is-now {
+  border-color: rgba(255, 174, 0, .4);
+  background: rgba(255, 174, 0, .1);
+  color: var(--yellow);
+}
+
+.launcher-milestone-card h3 {
+  margin: 0 0 6px;
+  font-size: 15.5px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--text);
+}
+
+.launcher-milestone-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+/* ---------- OPEN SOURCE POZNÁMKA // mírný tuning ---------- */
+
+.launcher-oss-section {
+  padding-top: 0;
+}
+
+.launcher-oss-section .repo-note {
+  border-color: rgba(200, 60, 255, .3);
+  background:
+    linear-gradient(120deg, rgba(200, 60, 255, .07), transparent 45%),
+    var(--surface);
+}
+
+/* ---------- RESPONSIVITA ---------- */
+
+@media (max-width: 1100px) {
+  .launcher-features {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .launcher-row {
+    grid-template-columns: 1fr;
+    gap: 26px;
+    padding: 28px 24px;
+  }
+
+  .launcher-row--reverse .launcher-row-copy { order: 1; }
+  .launcher-row--reverse .launcher-row-visual { order: 2; }
+
+  .launcher-platforms {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .launcher-platform:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 940px) {
+  .launcher-hero .mk-intro {
+    grid-template-columns: 1fr;
+  }
+
+  .launcher-mock {
+    max-width: 560px;
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .launcher-window {
+    transform: none;
+    animation: none;
+  }
+
+  .launcher-window-body {
+    grid-template-columns: 148px minmax(0, 1fr);
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 720px) {
+  .launcher-features,
+  .launcher-platforms {
+    grid-template-columns: 1fr;
+  }
+
+  .launcher-platform:last-child {
+    grid-column: auto;
+  }
+
+  .launcher-download-btn {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .launcher-download-side {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .launcher-window-body {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .launcher-side {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .launcher-side-item span {
+    display: none;
+  }
+
+  .launcher-side-item {
+    padding: 8px;
+  }
+
+  .launcher-side-user {
+    margin-top: 0;
+    margin-left: auto;
+    padding: 6px 9px;
+  }
+
+  .launcher-side-user span:last-child {
+    display: none;
+  }
+
+  .launcher-roadmap::before {
+    left: 13px;
+  }
+
+  .launcher-roadmap {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 520px) {
+  .launcher-update-head {
+    flex-wrap: wrap;
+  }
+
+  .launcher-catalog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .launcher-catalog-item:nth-child(5) {
+    grid-column: auto;
+  }
+
+  .launcher-perf-graph {
+    height: 96px;
+  }
+
+  .launcher-perf-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .launcher-perf-stats > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* ---------- PŘÍSTUPNOST // reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .launcher-chip-alpha i,
+  .launcher-window,
+  .launcher-mock-glow,
+  .launcher-download-shine,
+  .launcher-progress span::after,
+  .launcher-update-btn,
+  .launcher-perf-dot,
+  .launcher-perf-graph span,
+  .launcher-milestone.is-current .launcher-milestone-dot i,
+  .launcher-window-status i {
+    animation: none !important;
+  }
+
+  .launcher-window {
+    transform: none;
+  }
+
+  .launcher-progress span,
+  .launcher-perf-graph span {
+    transition: none;
+  }
+}
+
+/* ---------- SVĚTLÝ MOTIF // doladění ---------- */
+
+:root[data-theme="light"] .launcher-window {
+  background:
+    linear-gradient(160deg, rgba(255, 174, 0, .06), transparent 34%),
+    var(--surface);
+  box-shadow: 0 40px 90px rgba(94, 34, 74, .22), 0 0 0 1px rgba(72, 25, 55, .06);
+}
+
+:root[data-theme="light"] .launcher-window-bar,
+:root[data-theme="light"] .launcher-side {
+  background: rgba(72, 25, 55, .025);
+}
+
+:root[data-theme="light"] .launcher-progress {
+  background: rgba(72, 25, 55, .12);
+}
+
+:root[data-theme="light"] .launcher-update-card,
+:root[data-theme="light"] .launcher-catalog-mock,
+:root[data-theme="light"] .launcher-perf-mock {
+  background: var(--surface);
+  box-shadow: 0 26px 60px rgba(94, 34, 74, .16);
+}
+
+:root[data-theme="light"] .launcher-perf-graph {
+  background:
+    linear-gradient(transparent 24%, rgba(72, 25, 55, .05) 24% 48%, transparent 48% 74%, rgba(72, 25, 55, .05) 74%),
+    var(--surface-2);
+}
+
+/* ---------- HLAVNÍ STRÁNKA // LAUNCHER MODUL V PANELU ---------- */
+
+.mk-intro-module--wide {
+  grid-column: 1 / -1;
+}
+
+.mk-intro-module--wide small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- HLAVNÍ STRÁNKA // CTA SEKCE SE DVĚMA TLAČÍTKY ---------- */
+
+.cta-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.cta-card .button-cta-ghost {
+  border: 1.5px solid rgba(42, 16, 6, .4);
+  background: rgba(255, 248, 231, .14);
+  color: #2a1006;
+  backdrop-filter: blur(3px);
+}
+
+.cta-card .button-cta-ghost:hover {
+  border-color: rgba(42, 16, 6, .65);
+  background: rgba(255, 248, 231, .26);
+  box-shadow: 0 12px 34px rgba(42, 16, 6, .22);
+}
