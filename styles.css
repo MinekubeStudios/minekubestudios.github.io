@@ -106,35 +106,63 @@ svg {
 }
 
 /* =========================================================
-   MINEKUBE HEADER V9 // TOP PANEL ONLY
-   Pouze horní panel — inspirace herním headerem:
-   tmavé sklo, zlatofialová záře v rozích, jemná mřížka,
-   ostrá RGB linka dole. Tlačítka a navigace beze změny.
+   MINEKUBE HEADER V10 // FLOATING LEVITATING TOP PANEL
+   Pouze horní panel — levitující ostrůvek v Minekube barvách:
+   - vznáší se pod horním okrajem (margin / sticky clearance)
+   - zaoblené rohy (border-radius: 20px / modern pill dock)
+   - tmavé sklo s vysokým blurem a Minekube radial glow (gold x purple)
+   - prostorový levitační stín + barevné podsvícení dolů
+   - jemná technologická mřížka uvnitř ::before
+   - neonová gradientová linka vespod ::after se září
+   - adaptivní na scroll, motiv i mobilní zobrazení
+   - na tlačítka, odkazy ani ostatní prvky se nesahá!
    ========================================================= */
 .site-header {
   position: sticky;
-  top: 0;
+  top: 14px;
   z-index: 1000;
-  border-bottom: 0;
+  width: min(calc(100% - 32px), calc(var(--container) + 40px));
+  margin: 14px auto 0;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, .10);
+  border-color: rgba(255, 216, 79, .22) rgba(200, 60, 255, .25) rgba(200, 60, 255, .30) rgba(255, 174, 0, .25);
   background:
-    radial-gradient(110% 140% at 14% -10%, rgba(255, 174, 0, .18), transparent 40%),
-    radial-gradient(90% 130% at 86% -20%, rgba(200, 60, 255, .20), transparent 46%),
-    radial-gradient(60% 80% at 50% 0%, rgba(255, 225, 107, .06), transparent 60%),
-    linear-gradient(180deg, rgba(22, 11, 27, .96) 0%, rgba(10, 5, 15, .90) 100%);
-  backdrop-filter: blur(22px) saturate(1.35);
-  -webkit-backdrop-filter: blur(22px) saturate(1.35);
+    radial-gradient(120% 160% at 10% -20%, rgba(255, 174, 0, .22), transparent 45%),
+    radial-gradient(100% 150% at 90% -20%, rgba(200, 60, 255, .24), transparent 48%),
+    radial-gradient(60% 80% at 50% 0%, rgba(255, 225, 107, .08), transparent 60%),
+    linear-gradient(180deg, rgba(22, 11, 27, .92) 0%, rgba(10, 5, 15, .86) 100%);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .08),
-    inset 0 -1px 0 rgba(255, 255, 255, .04),
-    0 8px 32px rgba(0, 0, 0, .38),
-    0 0 0 1px rgba(255, 255, 255, .04) inset;
-  transition: background .28s ease, box-shadow .28s ease, backdrop-filter .28s ease;
+    inset 0 1px 0 rgba(255, 255, 255, .16),
+    inset 0 -1px 0 rgba(200, 60, 255, .18),
+    0 4px 16px rgba(0, 0, 0, .35),
+    0 16px 42px -6px rgba(0, 0, 0, .65),
+    0 24px 64px -10px rgba(0, 0, 0, .55),
+    -16px 14px 36px -6px rgba(255, 174, 0, .20),
+    18px 18px 44px -6px rgba(200, 60, 255, .26),
+    0 10px 28px -4px rgba(255, 216, 79, .12);
+  transition: top .28s ease, background .28s ease, box-shadow .28s ease, border-color .28s ease, backdrop-filter .28s ease;
+}
+
+.site-header:hover {
+  border-color: rgba(255, 216, 79, .32) rgba(200, 60, 255, .36) rgba(200, 60, 255, .40) rgba(255, 174, 0, .34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .20),
+    inset 0 -1px 0 rgba(200, 60, 255, .24),
+    0 6px 20px rgba(0, 0, 0, .40),
+    0 20px 48px -6px rgba(0, 0, 0, .70),
+    0 28px 72px -10px rgba(0, 0, 0, .55),
+    -18px 16px 42px -6px rgba(255, 174, 0, .26),
+    22px 22px 50px -6px rgba(200, 60, 255, .34),
+    0 12px 34px -4px rgba(255, 216, 79, .18);
 }
 
 .site-header::before {
   content: "";
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   pointer-events: none;
   z-index: 0;
   background-image:
@@ -142,84 +170,98 @@ svg {
     linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
   background-size: 28px 28px;
   opacity: .18;
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 85%);
-  mask-image: linear-gradient(to bottom, black 0%, transparent 85%);
+  -webkit-mask-image: radial-gradient(120% 120% at 50% 0%, black 35%, transparent 95%);
+  mask-image: radial-gradient(120% 120% at 50% 0%, black 35%, transparent 95%);
 }
 
 .site-header::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 24px;
+  right: 24px;
   bottom: 0;
-  height: 1px;
+  height: 1.5px;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(255, 174, 0, 0) 6%,
-    rgba(255, 174, 0, .75) 20%,
-    rgba(255, 216, 79, .95) 36%,
-    rgba(200, 60, 255, .72) 58%,
-    rgba(211, 108, 255, .38) 76%,
+    rgba(255, 174, 0, 0) 4%,
+    rgba(255, 174, 0, .85) 18%,
+    rgba(255, 216, 79, 1) 36%,
+    rgba(200, 60, 255, .90) 64%,
+    rgba(211, 108, 255, .45) 86%,
     transparent 100%);
   box-shadow:
-    0 0 14px rgba(255, 174, 0, .32),
-    0 0 28px rgba(200, 60, 255, .18);
+    0 0 14px rgba(255, 174, 0, .45),
+    0 0 28px rgba(200, 60, 255, .35),
+    0 2px 10px rgba(200, 60, 255, .25);
+  border-radius: 999px;
   pointer-events: none;
   z-index: 2;
 }
 
 :root[data-theme="light"] .site-header {
+  border-color: rgba(255, 174, 0, .30) rgba(200, 60, 255, .22) rgba(200, 60, 255, .26) rgba(255, 174, 0, .25);
   background:
     radial-gradient(110% 140% at 14% -10%, rgba(255, 174, 0, .22), transparent 40%),
     radial-gradient(90% 130% at 86% -20%, rgba(200, 60, 255, .14), transparent 46%),
-    radial-gradient(60% 80% at 50% 0%, rgba(255, 225, 107, .10), transparent 60%),
-    linear-gradient(180deg, rgba(255, 253, 248, .96) 0%, rgba(255, 247, 234, .92) 100%);
+    radial-gradient(60% 80% at 50% 0%, rgba(255, 225, 107, .12), transparent 60%),
+    linear-gradient(180deg, rgba(255, 253, 248, .94) 0%, rgba(255, 247, 234, .88) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .95),
+    inset 0 1px 0 rgba(255, 255, 255, .98),
     inset 0 -1px 0 rgba(72, 25, 55, .06),
-    0 8px 32px rgba(94, 34, 74, .12),
-    0 0 0 1px rgba(72, 25, 55, .05) inset;
+    0 4px 16px rgba(94, 34, 74, .08),
+    0 18px 44px -8px rgba(94, 34, 74, .18),
+    0 26px 60px -12px rgba(94, 34, 74, .12),
+    -12px 12px 30px -6px rgba(255, 174, 0, .18),
+    14px 16px 36px -6px rgba(200, 60, 255, .16);
 }
 
 :root[data-theme="light"] .site-header::before {
-  opacity: .12;
+  opacity: .10;
 }
 
 :root[data-theme="light"] .site-header::after {
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(255, 174, 0, 0) 6%,
-    rgba(255, 174, 0, .70) 20%,
-    rgba(214, 91, 0, .65) 36%,
-    rgba(200, 60, 255, .55) 58%,
-    rgba(211, 108, 255, .28) 76%,
+    rgba(255, 174, 0, 0) 5%,
+    rgba(255, 174, 0, .75) 20%,
+    rgba(214, 91, 0, .70) 38%,
+    rgba(200, 60, 255, .65) 64%,
+    rgba(211, 108, 255, .32) 84%,
     transparent 100%);
   box-shadow:
-    0 0 12px rgba(255, 174, 0, .22),
-    0 0 20px rgba(200, 60, 255, .12);
+    0 0 12px rgba(255, 174, 0, .28),
+    0 0 22px rgba(200, 60, 255, .18);
 }
 
 .site-header.scrolled {
-  border-color: transparent;
+  border-color: rgba(255, 216, 79, .28) rgba(200, 60, 255, .32) rgba(200, 60, 255, .36) rgba(255, 174, 0, .30);
   background:
-    radial-gradient(110% 140% at 14% -10%, rgba(255, 174, 0, .16), transparent 40%),
-    radial-gradient(90% 130% at 86% -20%, rgba(200, 60, 255, .18), transparent 46%),
-    linear-gradient(180deg, rgba(18, 9, 23, .98) 0%, rgba(8, 4, 11, .96) 100%);
+    radial-gradient(110% 140% at 14% -10%, rgba(255, 174, 0, .20), transparent 40%),
+    radial-gradient(90% 130% at 86% -20%, rgba(200, 60, 255, .22), transparent 46%),
+    linear-gradient(180deg, rgba(16, 8, 22, .96) 0%, rgba(8, 4, 11, .94) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .06),
-    0 14px 48px rgba(0, 0, 0, .48),
-    0 0 0 1px rgba(255, 255, 255, .05) inset;
+    inset 0 1px 0 rgba(255, 255, 255, .18),
+    inset 0 -1px 0 rgba(200, 60, 255, .22),
+    0 8px 24px rgba(0, 0, 0, .50),
+    0 22px 56px -8px rgba(0, 0, 0, .75),
+    0 30px 80px -12px rgba(0, 0, 0, .60),
+    -18px 16px 40px -6px rgba(255, 174, 0, .24),
+    20px 20px 48px -6px rgba(200, 60, 255, .32),
+    0 12px 32px -4px rgba(255, 216, 79, .15);
 }
 
 :root[data-theme="light"] .site-header.scrolled {
+  border-color: rgba(255, 174, 0, .36) rgba(200, 60, 255, .28) rgba(200, 60, 255, .32) rgba(255, 174, 0, .30);
   background:
-    radial-gradient(110% 140% at 14% -10%, rgba(255, 174, 0, .18), transparent 40%),
+    radial-gradient(110% 140% at 14% -10%, rgba(255, 174, 0, .20), transparent 40%),
     radial-gradient(90% 130% at 86% -20%, rgba(200, 60, 255, .12), transparent 46%),
-    linear-gradient(180deg, rgba(255, 253, 248, .98) 0%, rgba(255, 247, 234, .96) 100%);
+    linear-gradient(180deg, rgba(255, 253, 248, .98) 0%, rgba(255, 247, 234, .95) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .92),
-    0 14px 48px rgba(94, 34, 74, .16),
-    0 0 0 1px rgba(72, 25, 55, .06) inset;
+    inset 0 1px 0 rgba(255, 255, 255, .96),
+    0 8px 24px rgba(94, 34, 74, .12),
+    0 22px 56px -8px rgba(94, 34, 74, .22),
+    -14px 14px 34px -6px rgba(255, 174, 0, .22),
+    16px 18px 40px -6px rgba(200, 60, 255, .20);
 }
 
 /* Obsah headeru musí být nad dekorační mřížkou */
@@ -227,6 +269,54 @@ svg {
 .site-header .mobile-nav {
   position: relative;
   z-index: 1;
+}
+
+.site-header .nav-wrap {
+  width: 100%;
+  max-width: 100%;
+  min-height: 72px;
+  padding: 0 22px;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 28px;
+}
+
+@media (max-width: 1040px) {
+  .site-header {
+    top: 10px;
+    margin: 10px auto 0;
+    width: min(calc(100% - 20px), calc(var(--container) + 40px));
+    border-radius: 18px;
+  }
+  .site-header .nav-wrap {
+    min-height: 66px;
+    padding: 0 16px;
+    gap: 16px;
+  }
+  .site-header::after {
+    left: 18px;
+    right: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .site-header {
+    top: 8px;
+    margin: 8px auto 0;
+    width: calc(100% - 16px);
+    border-radius: 16px;
+  }
+  .site-header .nav-wrap {
+    min-height: 60px;
+    padding: 0 12px;
+    gap: 10px;
+  }
+  .site-header::after {
+    left: 14px;
+    right: 14px;
+  }
 }
 
 .nav-wrap {
