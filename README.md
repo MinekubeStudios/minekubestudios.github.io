@@ -1,4 +1,35 @@
-# Minekube Studios // Web (v8.2 — nová stránka Launcher + propojení celého webu)
+# Minekube Studios // Web (v8.3 — nové logo MK Hexa-Cube na celém webu)
+
+## v8.3 — nové logo **MK Hexa-Cube** (hlavička, patička, závoj, favicon)
+
+Starou plochou kostku nahradilo nové logo naprogramované čistě v SVG:
+zaoblená tmavá dlaždice se zlatofialovým prstencem, izometrická 3D kostka
+(zlatý vrch, oranžový bok, fialový bok) a krémové písmeno **M** s tmavým
+obrysem, jiskřičkami a jemnou minecraftí texturou pixelů na vrchu.
+
+1. **Kde logo žije** — inline SVG v `index.html`, `modpacky/index.html`
+   i `launcher/index.html` (hlavička `.brand-mark`, patička, závoj
+   `.page-veil-mark`, titulek okna launcheru). Každá stránka nese jeden
+   skrytý blok sdílených gradientů (`#mkBg` … `#mkSpark`), na který se
+   všechna její loga odkazují — žádné duplicitní definice, žádné externí
+   soubory, logo je ostré v každé velikosti.
+2. **Složka `assets/`** (dřív chyběla, favicon vracel 404):
+   `favicon.svg` (tučnější zjednodušená varianta pro malé velikosti),
+   `logo-mark.svg` (plná značka), `logo.svg` (horizontální lockup
+   MINEKUBE / STUDIOS • CZ/SK) a `apple-touch-icon.png` (180 px pro iOS).
+3. **Styly (`styles.css`)** — `.brand-mark` má zlatofialovou záři, při
+   najetí se nakloní a přeběhne přes něj lesklý přeblesk (`mkLogoSheen`),
+   jiskry jemně třpytí (`mkSparkleIdle`, na závoji rychleji); ve světlém
+   motivu i při `prefers-reduced-motion` se chová klidně. Nápis
+   „Minekube / CZ/SK STUDIOS“ vedle loga dostal tučnější řez a zlatý
+   gradient. V ministroni launcheru se pixely a malá jiskra schovávají,
+   aby logo zůstalo čitelné.
+4. **Oprava avataru** v mocku launcheru — rozbitý zlomek kostky
+   (`d="m24 3 0 0 …"`) nahradila správná ikona uživatele.
+5. Ověřeno: všechna `url(#…)` log mají na každé stránce svůj gradient,
+   SVG tagy jsou párové, logo vyrenderované přes resvg je čitelné
+   od 480 px až po 16px favicon.
+
 
 ## v8.2 — stránka **Launcher** (hero s mockem aplikace, platformy, roadmapa)
 
