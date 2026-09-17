@@ -337,35 +337,37 @@ svg {
 }
 
 /* =========================================================
-   MINEKUBE LOGO V2 // MK HEXA-CUBE
-   Dlaždice se zlatofialovým prstencem, 3D kostka s písmenem M.
-   Barvy nese samotné SVG (sdílené gradienty #mk* v každé stránce),
-   tady je jen velikost, záře, lesklý přeblesk a třpyt jisker.
+   LOGO MINEKUUBE STUDIOS // originální PNG grafika
+   Ikona (Minekube Original Logo) + text (MinekubeStudiosTextIcon).
    ========================================================= */
 .brand-mark {
   position: relative;
   width: 40px;
   height: 40px;
   flex: 0 0 auto;
-  border-radius: 13px;
-  filter:
-    drop-shadow(0 8px 18px rgba(255, 174, 0, .28))
-    drop-shadow(0 4px 14px rgba(200, 60, 255, .22));
-  transition: transform .32s cubic-bezier(.16, .84, .2, 1), filter .32s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 216, 79, .35);
+  box-shadow:
+    0 8px 18px rgba(255, 174, 0, .28),
+    0 4px 14px rgba(200, 60, 255, .22),
+    inset 0 0 0 1px rgba(255, 255, 255, .08);
+  transition: transform .32s cubic-bezier(.16, .84, .2, 1), box-shadow .32s ease, border-color .32s ease;
 }
 
-.brand-mark .mk-logo {
+.brand-mark .brand-icon {
   width: 100%;
   height: 100%;
   display: block;
+  object-fit: cover;
 }
 
-/* Lesklý přeblesk přes dlaždici při najetí */
+/* Lesklý přeblesk přes ikonu při najetí */
 .brand-mark::after {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 13px;
+  border-radius: 12px;
   background: linear-gradient(115deg,
     transparent 30%,
     rgba(255, 255, 255, .38) 46%,
@@ -380,9 +382,11 @@ svg {
 .brand:hover .brand-mark,
 .brand:focus-visible .brand-mark {
   transform: translateY(-2px) rotate(-5deg) scale(1.06);
-  filter:
-    drop-shadow(0 12px 26px rgba(255, 174, 0, .40))
-    drop-shadow(0 6px 18px rgba(200, 60, 255, .32));
+  border-color: rgba(255, 216, 79, .6);
+  box-shadow:
+    0 12px 26px rgba(255, 174, 0, .40),
+    0 6px 18px rgba(200, 60, 255, .32),
+    inset 0 0 0 1px rgba(255, 255, 255, .12);
 }
 
 .brand:hover .brand-mark::after,
@@ -391,31 +395,14 @@ svg {
   animation: mkLogoSheen .7s ease;
 }
 
-/* Jemný třpyt jisker na logu */
-.mk-logo .mk-spark {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: mkSparkleIdle 3.4s ease-in-out infinite;
-}
-
-.mk-logo .mk-spark--sm {
-  animation-delay: -1.7s;
-}
-
 @keyframes mkLogoSheen {
   from { background-position: 120% 0; }
   to { background-position: -120% 0; }
 }
 
-@keyframes mkSparkleIdle {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(.76); opacity: .72; }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .brand-mark,
-  .brand-mark::after,
-  .mk-logo .mk-spark {
+  .brand-mark::after {
     animation: none !important;
     transition: none !important;
   }
@@ -425,28 +412,40 @@ svg {
   }
 }
 
-.brand > span:last-child {
-  display: grid;
+/* Textové logo vedle ikony */
+.brand-text {
+  display: flex;
+  align-items: center;
   line-height: 1;
 }
 
-.brand strong {
-  font-size: 17px;
-  font-weight: 850;
-  letter-spacing: -.04em;
+.brand-text-img {
+  display: block;
+  height: 34px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(255, 60, 120, .28));
+  transition: transform .32s cubic-bezier(.16, .84, .2, 1), filter .32s ease;
 }
 
-.brand small {
-  display: inline-block;
-  width: fit-content;
-  margin-top: 5px;
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: .18em;
-  background: linear-gradient(90deg, var(--green-light), var(--green) 55%, var(--purple));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.brand:hover .brand-text-img,
+.brand:focus-visible .brand-text-img {
+  transform: translateY(-1px);
+  filter:
+    drop-shadow(0 6px 16px rgba(255, 60, 120, .38))
+    drop-shadow(0 2px 10px rgba(255, 174, 0, .30));
+}
+
+@media (max-width: 640px) {
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+  }
+  .brand-text-img {
+    height: 28px;
+    max-width: 150px;
+  }
 }
 
 .desktop-nav {
@@ -14333,31 +14332,21 @@ html.mk-arriving .page-veil-mark {
   animation: mkVeilMark .5s .1s cubic-bezier(.16, .84, .2, 1) both;
 }
 
-.page-veil-mark svg {
-  width: 62px;
-  height: 62px;
+.page-veil-mark .page-veil-logo {
+  width: 72px;
+  height: 72px;
   border-radius: 18px;
-  filter:
-    drop-shadow(0 0 22px rgba(255, 168, 0, .45))
-    drop-shadow(0 0 46px rgba(200, 60, 255, .30));
+  object-fit: cover;
+  border: 1px solid rgba(255, 216, 79, .45);
+  box-shadow:
+    0 0 22px rgba(255, 168, 0, .45),
+    0 0 46px rgba(200, 60, 255, .30);
 }
 
-/* Na závoji jiskry třpytí rychleji, ať přechod působí živě */
-.page-veil-mark svg .mk-spark {
-  animation-duration: 1.6s;
-}
-
-.page-veil-mark svg .mk-spark--sm {
-  animation-delay: -.8s;
-}
-
-.page-veil-mark b {
-  display: block;
-  font-size: 13px;
-  font-weight: 900;
-  letter-spacing: .34em;
-  text-transform: uppercase;
-  text-shadow: 0 0 20px rgba(255, 160, 40, .35);
+.page-veil-mark .page-veil-text {
+  width: min(230px, 62vw);
+  height: auto;
+  filter: drop-shadow(0 6px 18px rgba(255, 60, 120, .38));
 }
 
 .page-veil-mark small {
@@ -15310,18 +15299,13 @@ html.mk-arriving main {
   min-width: 0;
 }
 
-.launcher-window-title svg {
+.launcher-window-title .launcher-window-logo {
   width: 19px;
   height: 19px;
   flex: 0 0 auto;
   border-radius: 6px;
-  filter: drop-shadow(0 2px 8px rgba(255, 174, 0, .35));
-}
-
-/* V ministroni schováme jemné detaily, aby logo zůstalo čitelné */
-.launcher-window-title svg .mk-pixels,
-.launcher-window-title svg .mk-spark--sm {
-  display: none;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(255, 174, 0, .35);
 }
 
 .launcher-window-title b {

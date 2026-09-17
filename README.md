@@ -1,4 +1,27 @@
-# Minekube Studios // Web (v8.3 — nové logo MK Hexa-Cube na celém webu)
+# Minekube Studios // Web (v8.4 — originální PNG loga od autora)
+
+## v8.4 — originální loga **Minekube Original Logo + TextIcon** (místo SVG)
+
+SVG logo z v8.3 nahradila autorova originální PNG grafika: zlatá
+hexagonální kostka s fialovou mlhovinou (ikona) a minecraftí 3D nápis
+MINEKUBE / STUDIOS (textové logo).
+
+1. **Textové logo** (`assets/minekube-studios-text.png`, 1200×279) —
+   černé pozadí vyčištěno na průhledné (`-fuzz 6% -transparent black`),
+   ořezáno (`-trim`) a zmenšeno ze 4K. Sedí na tmavém i světlém motivu.
+   V hlavičce a patičce nahrazuje text „Minekube / CZ/SK STUDIOS“.
+2. **Ikona** (`assets/minekube-original-logo.png`, 512×512) — zmenšeno
+   z 1024 px (2,1 MB → 440 KB) bez viditelné ztráty; v hlavičce,
+   patičce, závoji i mocku launcheru. Zobrazuje se v zaobleném rámečku
+   se zlatým okrajem, hover si nechal naklonění a lesklý přeblesk.
+3. **Favicons** generované z kostky: `assets/favicon.png` (64 px) a
+   `assets/apple-touch-icon.png` (180 px). Staré `favicon.svg`,
+   `logo-mark.svg` a `logo.svg` smazány; sdílené SVG gradienty a všechna
+   `mk-*` pravidla odstraněna z HTML i CSS.
+4. Zdrojové soubory dodal autor přes GitHub upload na `main`
+   (kořen repa, commit `e7fe95a`); web používá jen zpracované kopie
+   v `assets/` na téhle větvi.
+
 
 ## v8.3 — nové logo **MK Hexa-Cube** (hlavička, patička, závoj, favicon)
 
