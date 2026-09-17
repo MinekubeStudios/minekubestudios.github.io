@@ -1,13 +1,20 @@
 /* =============================================================
    MINEKUBE STUDIOS // STRÁNKA MODPACKY — KATALOG (logika)
-   Načítá se po app.js, takže používá jeho překlady (t), toast
-   (showToast), modal (showModal/closeModal) i reveal při scrollu.
+   Načítá se po app.js a po releases.js, takže používá jejich
+   překlady (t), toast (showToast), modal (showModal/closeModal)
+   i vydání z repozitáře MinekubeStudios/modpacky.
    Všechny texty jsou v i18n.js, tady je jen obsah balíčků níže.
    ============================================================= */
 
 /* ===================== BALÍČKY — EDITUJ POUZE TADY =====================
-   mirrors: []            → tlačítko se chová jako „Odkaz připravujeme“
-   mirrors: [{ label, url }] → tlačítko stáhne první zrcadlo, modal vypíše vše
+   Ke každému balíčku se nejnovější vydání bere z repozitáře
+   MinekubeStudios/modpacky podle `id` (viz releases.js) — odtamtud
+   míří tlačítko „Stáhnout balíček“ na soubor .mrpack/.zip.
+
+   mirrors: []            → dokud balíček nemá vydání, hlásí
+                            „Odkaz připravujeme“
+   mirrors: [{ label, url }] → záložní ruční zrcadlo pro dobu, než
+                            balíček dostane první vydání v repozitáři
    focus:   klíče z i18n (packs.focus.*) — určují filtry i hledání
    accent / cover: barvy karty a banneru (--pack-accent[-rgb], --cover-bg) */
 const MODPACKS = [
@@ -124,7 +131,9 @@ const packState = {
   search: "",
   filters: { loader: new Set(), version: new Set(), focus: new Set(), state: new Set() },
   sort: "featured",
-  favorites: new Set()
+  favorites: new Set(),
+  /* Který balíček je právě otevřený v detailu — kvůli doplnění vydání. */
+  openId: null
 };
 
 const packElements = {
@@ -150,6 +159,40 @@ const packElements = {
 
 const packById = id => MODPACKS.find(pack => pack.id === id);
 
+/* ===================== VYDÁNÍ Z REPOZITÁŘE =====================
+   releases.js (načtený před tímhle souborem) drží vydání balíčků
+   z repozitáře MinekubeStudios/modpacky. Dokud data nedorazí,
+   vrací všechny funkce null a web se chová jako dřív — tlačítko
+   hlásí „Odkaz připravujeme“, případně použije ruční zrcadlo. */
+
+const packReleaseApi = () => window.MinekubeReleases || null;
+const packRelease = id => packReleaseApi()?.pack(id) || null;
+const packLatest = id => packRelease(id)?.latest || null;
+const packIsLive = pack => Boolean(pack) && (pack.released || Boolean(packLatest(pack.id)));
+const packReleaseFiles = id => packReleaseApi()?.downloads(id) || [];
+const packPrimaryFile = id => packReleaseApi()?.primaryFile(id) || null;
+const packReleasesUrl = () => packReleaseApi()?.releasesUrl || null;
+const packLocale = () => (currentLang === "cs" ? "cs-CZ" : currentLang === "sk" ? "sk-SK" : "en-GB");
+
+const packDateLabel = value =>
+  new Intl.DateTimeFormat(packLocale(), { day: "2-digit", month: "long", year: "numeric" }).format(
+    new Date(String(value).includes("T") ? value : `${value}T12:00:00`)
+  );
+
+const packSizeLabel = size => {
+  if (typeof size !== "number" || size <= 0) return null;
+
+  const units = ["B", "kB", "MB", "GB"];
+  let value = size;
+  let unit = 0;
+  while (value >= 1024 && unit < units.length - 1) {
+    value /= 1024;
+    unit += 1;
+  }
+
+  return `${new Intl.NumberFormat(packLocale(), { maximumFractionDigits: value >= 10 || unit === 0 ? 0 : 1 }).format(value)} ${units[unit]}`;
+};
+
 const packText = pack => [
   pack.name,
   pack.badge,
@@ -161,14 +204,25 @@ const packText = pack => [
   ...pack.focus.map(focus => t(`packs.focus.${focus}`))
 ].join(" ").toLowerCase();
 
-const packUpdatedLabel = pack =>
-  new Intl.DateTimeFormat(currentLang === "cs" ? "cs-CZ" : currentLang === "sk" ? "sk-SK" : "en-GB", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric"
-  }).format(new Date(`${pack.updated}T12:00:00`));
+/* Datum „naposledy aktualizováno“: když má balíček vydání v repozitáři,
+   ukazujeme datum jeho publikace — statické datum z MODPACKS je jen záloha. */
+const packUpdatedValue = pack => packLatest(pack.id)?.published || `${pack.updated}T12:00:00`;
+const packUpdatedLabel = pack => packDateLabel(packUpdatedValue(pack));
+const packUpdatedDate = pack => String(packUpdatedValue(pack)).slice(0, 10);
 
-const packPrimaryMirror = pack => pack.mirrors[0]?.url || null;
+/* Nejdřív soubor z nejnovějšího vydání v repozitáři, teprve pak ruční zrcadlo. */
+const packPrimaryMirror = pack => packPrimaryFile(pack.id)?.url || pack.mirrors[0]?.url || null;
+
+/* Popis vydání (markdown z GitHubu) zjednodušíme na čitelný text. */
+const packNotesText = notes =>
+  String(notes || "")
+    .replace(/\r/g, "")
+    .replace(/^#{1,6}\s*(.+)$/gm, "$1")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/^\s*[-*]\s+/gm, "• ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .trim();
 
 const formatPackMessage = (key, pack, extra = {}) =>
   Object.entries({ pack: pack.name, ...extra }).reduce(
@@ -207,7 +261,7 @@ const packMatchesFilters = (pack, skipGroup = null) => {
   if (skipGroup !== "loader" && filters.loader.size && !filters.loader.has(pack.loader)) return false;
   if (skipGroup !== "version" && filters.version.size && !filters.version.has(pack.version)) return false;
   if (skipGroup !== "state" && filters.state.size) {
-    const stateKey = pack.released ? "released" : "pending";
+    const stateKey = packIsLive(pack) ? "released" : "pending";
     if (!filters.state.has(stateKey)) return false;
   }
   if (skipGroup !== "focus" && filters.focus.size && !pack.focus.some(focus => filters.focus.has(focus))) return false;
@@ -220,7 +274,7 @@ const packVisible = (pack, skipGroup = null) => packMatchesSearch(pack) && packM
 const packSort = (a, b) => {
   if (packState.sort === "az") return a.name.localeCompare(b.name, "cs");
   if (packState.sort === "fps") return b.fpsValue - a.fpsValue;
-  if (packState.sort === "newest") return b.updated.localeCompare(a.updated);
+  if (packState.sort === "newest") return packUpdatedDate(b).localeCompare(packUpdatedDate(a));
 
   const favoriteDiff = Number(packState.favorites.has(b.id)) - Number(packState.favorites.has(a.id));
   return favoriteDiff || a.rank - b.rank;
@@ -252,11 +306,15 @@ function packStatsHtml(pack) {
 }
 
 function packDownloadHtml(pack) {
+  const file = packPrimaryFile(pack.id);
+  const release = packLatest(pack.id);
   const url = packPrimaryMirror(pack);
   const particles = "<i></i>".repeat(10);
   const backdrop = "<i></i>".repeat(12);
 
   if (!url) {
+    /* Vydání se ještě načítají — ukážeme klidný stav „připravujeme“,
+       ať tlačítko nemění text dvakrát během jedné vteřiny. */
     return `
       <button class="release-pending-button" type="button" data-pending="${pack.id}">
         <span class="pending-button-ambient" aria-hidden="true"></span>
@@ -266,8 +324,16 @@ function packDownloadHtml(pack) {
       </button>`;
   }
 
+  const label = file ? t(`packs.card.download.${file.format}`) : t("packs.card.download");
+  const title = release
+    ? formatPackMessage("packs.card.downloadTitle", pack, { version: release.version, date: packUpdatedLabel(pack) })
+    : t("packs.card.download");
+
   return `
-      <a class="button button-primary download-ultimate" data-download="${pack.id}" href="${url}" target="_blank" rel="noopener noreferrer">
+      <a class="button button-primary download-ultimate" data-download="${pack.id}"
+        ${release ? `data-release="${escapeHtml(release.tag || release.version)}"` : ""}
+        aria-label="${escapeHtml(title)}" title="${escapeHtml(title)}"
+        href="${url}" target="_blank" rel="noopener noreferrer">
         <span class="download-fx" aria-hidden="true">
           <span class="download-plasma"></span>
           <span class="download-matrix"></span>
@@ -279,21 +345,47 @@ function packDownloadHtml(pack) {
           <span class="download-icon-orbit"></span>
           <svg viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
         </span>
-        <span class="download-label">${t("packs.card.download")}</span>
+        <span class="download-label">${label}</span>
         <span class="download-hover-back" aria-hidden="true">${backdrop}</span>
       </a>`;
 }
 
-function packCardHtml(pack, index) {
-  const favorite = packState.favorites.has(pack.id);
+/* Řádek pod tlačítky na kartě: které vydání se právě stahuje + rychlý
+   odkaz na .zip, když balíček nabízí oba formáty. */
+function packReleaseRowHtml(pack) {
+  const release = packLatest(pack.id);
+  if (!release) return "";
+
+  const files = packReleaseFiles(pack.id);
+  const primary = files.find(file => file.primary) || files[0] || null;
+  const alternative = files.find(file => file !== primary) || null;
 
   return `
-  <article class="pack-card${pack.released ? "" : " is-unreleased"}" data-pack="${pack.id}" id="pack-${pack.id}"
+    <div class="pack-release-row">
+      <span class="pack-release-chip" title="${escapeHtml(release.name || release.version)}">
+        <i aria-hidden="true"></i>${t("packs.card.release")} <b>${escapeHtml(release.version)}</b>
+        <span class="pack-release-date">${escapeHtml(packDateLabel(release.published))}</span>
+        ${release.channel === "beta" ? `<span class="pack-release-beta">${t("packs.release.channel.beta")}</span>` : ""}
+      </span>
+      ${alternative ? `
+      <a class="pack-alt-download" href="${alternative.url}" target="_blank" rel="noopener noreferrer"
+        title="${escapeHtml(formatPackMessage("packs.card.downloadAltTitle", pack, { format: alternative.format }))}">
+        .${escapeHtml(alternative.format)}
+      </a>` : ""}
+    </div>`;
+}
+
+function packCardHtml(pack, index) {
+  const favorite = packState.favorites.has(pack.id);
+  const live = packIsLive(pack);
+
+  return `
+  <article class="pack-card${live ? "" : " is-unreleased"}" data-pack="${pack.id}" id="pack-${pack.id}"
     style="--pack-accent:${pack.accent};--pack-accent-rgb:${pack.accentRgb};--cover-accent-rgb:${pack.accentRgb};--cube-c:${pack.accent};--cover-bg:${pack.cover};--i:${index}">
     <span class="pack-card-aura" aria-hidden="true"></span>
     <span class="pack-card-grid" aria-hidden="true"></span>
     <div class="pack-cover">
-      <span class="pack-badge${pack.released ? "" : " is-coming"}"><i aria-hidden="true"></i>${escapeHtml(pack.badge)}</span>
+      <span class="pack-badge${live ? "" : " is-coming"}"><i aria-hidden="true"></i>${escapeHtml(pack.badge)}</span>
       <button class="favorite-button${favorite ? " active" : ""}" type="button" data-favorite="${pack.id}"
         aria-pressed="${favorite}" aria-label="${favorite ? t("packs.card.favoriteOn") : t("packs.card.favorite")}"
         title="${favorite ? t("packs.card.favoriteOn") : t("packs.card.favorite")}">
@@ -318,8 +410,8 @@ function packCardHtml(pack, index) {
     <div class="pack-body">
       <div class="pack-title-row">
         <div class="pack-title-main">
-          <span class="release-state${pack.released ? "" : " is-coming"}">
-            <i aria-hidden="true"></i>${pack.released ? t("packs.release.stable") : t("packs.release.coming")}
+          <span class="release-state${live ? "" : " is-coming"}">
+            <i aria-hidden="true"></i>${live ? t("packs.release.stable") : t("packs.release.coming")}
           </span>
           <h3>${escapeHtml(pack.name)}</h3>
         </div>
@@ -333,6 +425,7 @@ function packCardHtml(pack, index) {
         <button class="details-button" type="button" data-details="${pack.id}"
           aria-label="${t("packs.card.details")}" title="${t("packs.card.details")}">${packIcon("info")}</button>
       </div>
+      ${packReleaseRowHtml(pack)}
     </div>
   </article>`;
 }
@@ -372,8 +465,8 @@ function packCounts() {
     focusKeys.map(focus => [focus, MODPACKS.filter(pack => pack.focus.includes(focus) && packVisible(pack, "focus")).length])
   );
   counts.state = {
-    released: MODPACKS.filter(pack => pack.released && packVisible(pack, "state")).length,
-    pending: MODPACKS.filter(pack => !pack.released && packVisible(pack, "state")).length
+    released: MODPACKS.filter(pack => packIsLive(pack) && packVisible(pack, "state")).length,
+    pending: MODPACKS.filter(pack => !packIsLive(pack) && packVisible(pack, "state")).length
   };
 
   return counts;
@@ -534,6 +627,108 @@ function togglePackFavorite(id, button) {
 
 /* ===================== DETAIL BALÍČKU ===================== */
 
+/* Blok „nejnovější vydání“ v modalu — soubory z repozitáře, checksum,
+   changelog a starší vydání. Když balíček žádné vydání nemá, zůstane
+   původní chování (ruční zrcadla / „odkaz připravujeme“). */
+function packModalReleaseHtml(pack, ic) {
+  const release = packLatest(pack.id);
+  const files = packReleaseFiles(pack.id);
+  const history = packRelease(pack.id)?.history || [];
+
+  if (!release) {
+    const mirrors = pack.mirrors.length
+      ? pack.mirrors.map(mirror => `
+        <a class="button button-primary modal-download-button" href="${mirror.url}" target="_blank" rel="noopener noreferrer">
+          <span class="download-label">${escapeHtml(mirror.label)}</span>
+        </a>`).join("")
+      : null;
+
+    return `
+      <div class="modal-download">
+        <span class="modal-release-icon" aria-hidden="true">${ic(mirrors ? "download" : "clock")}</span>
+        <div class="modal-release-copy">
+          <span>${mirrors ? t("packs.modal.download.title") : t("packs.modal.download.pendingTitle")}</span>
+          <strong>${mirrors ? t("packs.modal.download.note") : t("packs.modal.download.pendingNote")}</strong>
+        </div>
+        ${mirrors || `<button class="button button-secondary modal-download-button" type="button" data-close-modal>${t("packs.modal.download.pendingButton")}</button>`}
+      </div>`;
+  }
+
+  const sizeOf = format => {
+    const file = files.find(candidate => candidate.format === format);
+    const label = file ? packSizeLabel(file.size) : null;
+    return label ? `${label} .${format}` : null;
+  };
+
+  const buttons = files.map((file, index) => `
+        <a class="button ${index === 0 ? "button-primary" : "button-secondary"} modal-download-button modal-release-button"
+          href="${file.url}" target="_blank" rel="noopener noreferrer" data-release-file="${pack.id}">
+          <span class="${index === 0 ? "download-label" : "modal-release-button-text"}">${t(`packs.release.file.${file.format}`)}</span>
+        </a>`).join("");
+
+  const meta = [t("packs.release.version"), release.version, "·", packDateLabel(release.published)]
+    .concat(sizeOf("mrpack") ? ["·", sizeOf("mrpack")] : [])
+    .concat(sizeOf("zip") ? ["·", sizeOf("zip")] : []);
+
+  const checksumFile = release.files.find(file => file.sha256);
+
+  const notes = packNotesText(release.notes);
+  const notesPanel = notes
+    ? `
+      <details class="modal-release-notes">
+        <summary>${escapeHtml(formatPackMessage("packs.release.notes", pack, { version: release.version }))}</summary>
+        <p>${escapeHtml(notes)}</p>
+      </details>`
+    : "";
+
+  const historyPanel = history.length
+    ? `
+      <details class="modal-release-history">
+        <summary>${t("packs.release.history")} (${history.length})</summary>
+        <ul>
+          ${history.slice(0, 6).map(entry => `
+            <li>
+              <span class="modal-history-version">${escapeHtml(entry.version)}${entry.channel === "beta" ? ` <b>${t("packs.release.channel.beta")}</b>` : ""}</span>
+              <span class="modal-history-date">${escapeHtml(packDateLabel(entry.published))}</span>
+              <span class="modal-history-links">
+                ${["mrpack", "zip"].map(format => {
+                  const file = entry.files.find(candidate => candidate.format === format);
+                  return file
+                    ? `<a href="${file.url}" target="_blank" rel="noopener noreferrer">.${format}</a>`
+                    : "";
+                }).join("")}
+                <a class="modal-history-page" href="${entry.htmlUrl}" target="_blank" rel="noopener noreferrer">${t("packs.release.page")}</a>
+              </span>
+            </li>`).join("")}
+        </ul>
+      </details>`
+    : "";
+
+  return `
+      <div class="modal-download">
+        <span class="modal-release-icon" aria-hidden="true">${ic("download")}</span>
+        <div class="modal-release-copy">
+          <span>${t("packs.release.latest")}${release.channel === "beta" ? ` · ${t("packs.release.channel.beta")}` : ""}</span>
+          <strong>${escapeHtml(release.name || `${pack.name} ${release.version}`)}</strong>
+          <small>${meta.map(escapeHtml).join(" ")}</small>
+        </div>
+        <div class="modal-release-actions">${buttons}</div>
+      </div>
+      <div class="modal-release-meta">
+        <span class="modal-release-meta-icon" aria-hidden="true">${ic("shield")}</span>
+        <div>
+          <small>${t("packs.release.checksum")}</small>
+          <p title="${checksumFile ? escapeHtml(checksumFile.sha256) : ""}">${checksumFile ? escapeHtml(checksumFile.sha256) : t("packs.release.checksumMissing")}</p>
+        </div>
+        <div class="modal-release-links">
+          <a href="${release.htmlUrl}" target="_blank" rel="noopener noreferrer">${t("packs.release.page")}</a>
+          ${packReleasesUrl() ? `<a href="${packReleasesUrl()}" target="_blank" rel="noopener noreferrer">${t("packs.release.all")}</a>` : ""}
+        </div>
+      </div>
+      ${notesPanel}
+      ${historyPanel}`;
+}
+
 function packModalHtml(pack) {
   const ic = name => packIcon(name, "modal-svg-icon");
 
@@ -551,16 +746,7 @@ function packModalHtml(pack) {
     { icon: ic("clock"), label: t("packs.modal.updated"), value: packUpdatedLabel(pack) }
   ];
 
-  const mirrors = pack.mirrors.length
-    ? pack.mirrors.map(mirror => `
-        <a class="button button-primary modal-download-button" href="${mirror.url}" target="_blank" rel="noopener noreferrer">
-          <span class="download-label">${escapeHtml(mirror.label)}</span>
-          <span class="download-icon" aria-hidden="true">
-            <span class="download-icon-orbit"></span>
-            <svg viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
-          </span>
-        </a>`).join("")
-    : `<button class="button button-secondary modal-download-button" type="button" data-close-modal>${t("packs.modal.download.pendingButton")}</button>`;
+  const modalRelease = packModalReleaseHtml(pack, ic);
 
   return `
     <div class="modal-hero" style="--cover-bg:${pack.cover}">
@@ -570,7 +756,7 @@ function packModalHtml(pack) {
           <h2 id="modalTitle">${escapeHtml(pack.name)}</h2>
           <p><span>Minecraft ${escapeHtml(pack.version)}</span><i aria-hidden="true"></i><span>${escapeHtml(pack.loader)}</span><i aria-hidden="true"></i><span>${escapeHtml(pack.badge)}</span></p>
           <div class="modal-hero-status">
-            <span><b aria-hidden="true"></b>${pack.released ? t("packs.release.stable") : t("packs.release.coming")}</span>
+            <span><b aria-hidden="true"></b>${packIsLive(pack) ? t("packs.release.stable") : t("packs.release.coming")}</span>
           </div>
         </div>
         <div class="modal-power-core" aria-hidden="true">
@@ -632,13 +818,7 @@ function packModalHtml(pack) {
         </div>
       </div>
 
-      <div class="modal-download">
-        <div>
-          <span>${pack.mirrors.length ? t("packs.modal.download.title") : t("packs.modal.download.pendingTitle")}</span>
-          <strong>${pack.mirrors.length ? t("packs.modal.download.note") : t("packs.modal.download.pendingNote")}</strong>
-        </div>
-        ${mirrors}
-      </div>
+      ${modalRelease}
     </div>`;
 }
 
@@ -649,8 +829,25 @@ function openPackModal(id) {
   const modalContent = document.getElementById("modalContent");
   if (!modalContent) return;
 
+  packState.openId = id;
+  modalContent.dataset.pack = id;
   modalContent.innerHTML = packModalHtml(pack);
   showModal();
+}
+
+/* Vydání se můžou načíst až po otevření detailu (nebo se přepne jazyk) —
+   obsah modalu v tu chvíli překreslíme, ať tlačítka míří na soubory
+   z nejnovějšího vydání. */
+function refreshPackModal() {
+  const modalContent = document.getElementById("modalContent");
+  const modalBackdrop = document.getElementById("modalBackdrop");
+  if (!modalContent || !modalBackdrop || modalBackdrop.hidden) return;
+
+  const pack = packById(modalContent.dataset.pack || packState.openId);
+  if (!pack) return;
+
+  modalContent.dataset.pack = pack.id;
+  modalContent.innerHTML = packModalHtml(pack);
 }
 
 /* ===================== INTERAKCE ===================== */
@@ -685,6 +882,13 @@ function focusPackCard(id) {
 
 function initializePackCatalog() {
   if (!packElements.grid) return;
+
+  /* Odkazy na repozitář s modpacky bereme z releases.js — když se repo
+     přejmenuje, stačí to změnit na jednom místě. */
+  document.querySelectorAll("[data-repo-link]").forEach(link => {
+    const url = packReleasesUrl();
+    if (url) link.href = url;
+  });
 
   loadPackFavorites();
   renderPackFilters();
@@ -721,9 +925,29 @@ function initializePackCatalog() {
     if (downloadLink) {
       const pack = packById(downloadLink.dataset.download);
       if (!pack) return;
-      showToast(formatPackMessage("packs.toast.download", pack), "download", 2600);
+
+      const release = packLatest(pack.id);
+      showToast(
+        release
+          ? formatPackMessage("packs.toast.release", pack, { version: release.version })
+          : formatPackMessage("packs.toast.download", pack),
+        "download",
+        2600
+      );
       downloadLink.classList.add("download-animating");
       window.setTimeout(() => downloadLink.classList.remove("download-animating"), 1500);
+    }
+  });
+
+  // Soubory ke stažení v modalu jsou mimo mřížku, proto vlastní posluchač.
+  document.getElementById("modalContent")?.addEventListener("click", event => {
+    const releaseFile = event.target.closest("[data-release-file]");
+    if (!releaseFile) return;
+
+    const pack = packById(releaseFile.dataset.releaseFile);
+    const release = pack ? packLatest(pack.id) : null;
+    if (pack && release) {
+      showToast(formatPackMessage("packs.toast.release", pack, { version: release.version }), "download", 2400);
     }
   });
 
@@ -824,6 +1048,21 @@ function initializePackCatalog() {
     renderPackFilters();
     renderSortMenu();
     renderPackGrid();
+    refreshPackModal();
+  });
+
+  // Dorazila vydání z repozitáře (releases.js) — karty i otevřený detail
+  // se překreslí, takže tlačítka míří na nejnovější soubory ke stažení.
+  document.addEventListener("minekube:releases", () => {
+    renderPackFilters();
+    renderPackGrid();
+    refreshPackModal();
+  });
+
+  // Detail se může otevřít dřív, než dorazí vydání — připomeneme si stav.
+  const modalBackdrop = document.getElementById("modalBackdrop");
+  modalBackdrop?.addEventListener("click", event => {
+    if (event.target.closest("[data-close-modal]")) packState.openId = null;
   });
 }
 

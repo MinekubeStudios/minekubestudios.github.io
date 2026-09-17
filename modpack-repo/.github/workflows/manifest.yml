@@ -1,0 +1,59 @@
+name: Aktualizovat manifest
+
+# Manifest.json je index vydání, ze kterého čte web Minekube tlačítka
+# ke stažení. Generuje se automaticky — nikdy ho needituj ručně.
+
+on:
+  release:
+    types: [published, edited, released, unpublished, deleted]
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "packs/**"
+      - "tools/build-manifest.mjs"
+      - ".github/workflows/manifest.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manifest
+  cancel-in-progress: true
+
+jobs:
+  manifest:
+    name: Přegenerovat manifest.json
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Sestavit manifest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node tools/build-manifest.mjs
+
+      - name: Zkontrolovat manifest
+        run: |
+          node --check tools/build-manifest.mjs
+          node -e "const m=require('./manifest.json'); if(m.schema!==1||typeof m.packs!=='object'){throw new Error('manifest.json nemá očekávaný tvar');} console.log('balíčků v manifestu:', Object.keys(m.packs).length);"
+
+      - name: Uložit změny
+        run: |
+          if git diff --quiet -- manifest.json; then
+            echo "Manifest je beze změny."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json
+          git commit -m "manifest: aktualizace vydání [skip ci]"
+          git push

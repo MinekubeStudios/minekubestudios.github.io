@@ -384,6 +384,17 @@
 <p data-i18n="packs.install.step4.text">První start může trvat déle kvůli cache.</p>
 </article>
 </div>
+<div class="repo-note">
+<span aria-hidden="true" class="repo-note-icon"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"></path></svg></span>
+<div>
+<strong data-i18n="packs.install.repo.title">Všechna vydání na jednom místě</strong>
+<p data-i18n="packs.install.repo.text">Balíčky nahráváme jen do repozitáře MinekubeStudios/modpacky. Katalog si odsud vždy bere nejnovější vydání.</p>
+</div>
+<a class="repo-note-link" data-repo-link href="https://github.com/MinekubeStudios/modpacky/releases" rel="noopener noreferrer" target="_blank">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"></path></svg>
+<span data-i18n="packs.install.repo.link">Otevřít repozitář</span>
+</a>
+</div>
 <div class="compatibility-note">
 <span aria-hidden="true" class="compatibility-icon"><svg viewBox="0 0 24 24"><path d="M12 3 3.5 7v5c0 5.2 3.6 8 8.5 9.5 4.9-1.5 8.5-4.3 8.5-9.5V7L12 3Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg></span>
 <div>
@@ -490,6 +501,9 @@
      a fungoval jeden přepínač jazyka pro celý web. -->
 <script src="i18n.js"></script>
 <script src="../app.js"></script>
+<!-- Vydání modpacků z repozitáře MinekubeStudios/modpacky se načítají
+     před katalogem, aby tlačítka ke stažení mířila na nejnovější vydání. -->
+<script src="releases.js"></script>
 <script src="modpacky.js"></script>
 </body>
 </html>

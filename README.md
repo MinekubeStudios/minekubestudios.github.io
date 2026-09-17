@@ -1,4 +1,57 @@
-# Minekube Studios // Web (v8 — hlavní stránka + samostatná stránka Modpacky)
+# Minekube Studios // Web (v8.1 — hlavní stránka + stránka Modpacky napojená na repozitář s vydáními)
+
+## v8.1 — modpacky se stahují z vlastního repozitáře `MinekubeStudios/modpacky`
+
+Balíčky už nejsou odkázané na ruční zrcadla: každý modpack má vlastní
+**vydání (GitHub Release)** v samostatném repozitáři `modpacky` a web si
+z něj bere **vždy to nejnovější**.
+
+1. **Nový repozitář `MinekubeStudios/modpacky`** (obsah je připravený ve
+   složce `modpack-repo/` v tomhle repu, založí ho
+   `tools/create-modpack-repo.sh`):
+   - `packs/<id>/pack.json` + `CHANGELOG.md` — metadata a changelog balíčku,
+   - `manifest.json` — **generovaný** index nejnovějších vydání pro web,
+   - `tools/build-manifest.mjs` — sestaví manifest z GitHub Releases,
+   - `tools/publish-release.sh` — založí vydání (tag `<id>-v<verze>`),
+     nahraje `.mrpack` / `.zip`, doplní `.sha256`, spustí manifest,
+   - `tools/make-mrpack.sh` — zabalí složku instance do `.mrpack`
+     (`modrinth.index.json` + `overrides/`) a přidá checksum,
+   - `tools/validate-release.mjs` — kontrola konvencí vydání,
+   - `.github/workflows/manifest.yml` — po publikování vydání sám
+     přegeneruje `manifest.json` (a `[skip ci]` commitne),
+   - `.github/workflows/validate-release.yml` — kontrola tagu a souborů.
+   - Návody: `docs/JAK-NAHRAT-VYDANI.md` (krok za krokem) a `docs/MANIFEST.md`.
+2. **Web (`modpacky/releases.js`)** — jediné místo, kde je repozitář
+   napojený (`CONFIG.owner` / `CONFIG.repo`). Načítá data v pořadí:
+   `manifest.json` → jsDelivr → GitHub Releases API → statická data
+   v katalogu. Výsledek drží 10 minut v `localStorage`
+   (`?releases=refresh` vynutí nové načtení, `?releases=demo` ukáže
+   `manifest.demo.json` bez publikovaného vydání).
+3. **Katalog (`modpacky/modpacky.js`)**:
+   - karta má řádek `.pack-release-row` s verzí a datem vydání a vedle
+     `.zip` druhou variantu (když balíček nabízí oba formáty),
+   - tlačítko stahuje **primární soubor vydání** (`.mrpack`, jinak `.zip`);
+     popisek se mění podle formátu, tooltip nese verzi a datum,
+   - detail balíčku vykresluje `packModalReleaseHtml()`: dvě tlačítka
+     (`.mrpack` + `.zip`), SHA-256, odkazy na stránku vydání a na všechna
+     vydání, rozbalovací changelog a seznam starších vydání,
+   - dokud balíček žádné vydání nemá, chování zůstává původní
+     („Odkaz připravujeme“, případně ruční zrcadlo z `MODPACKS`),
+   - „stav vydání“ v kartách i filtrech se počítá z reálných vydání
+     (`packIsLive()`), datum aktualizace taky.
+4. **Sekce „Jak nainstalovat“** má nový blok `.repo-note` s odkazem na
+   repozitář a kroky popisují `.mrpack` (import v Prism Launcheru) i `.zip`.
+
+### Nasazení nového repozitáře (2 kroky)
+
+```bash
+./tools/create-modpack-repo.sh --dry-run   # co se stane
+./tools/create-modpack-repo.sh             # založí MinekubeStudios/modpacky a nahraje obsah
+```
+
+Když účet nemá právo zakládat repozitáře v organizaci, založ prázdný
+repozitář ručně na GitHubu a spusť `./tools/create-modpack-repo.sh --push-only`.
+Web funguje i bez vydání — jen místo tlačítka ukazuje „Odkaz připravujeme“.
 
 ## v8 — stránka **Modpacky** je na světě (katalog, filtry, detail balíčku)
 
@@ -280,7 +333,12 @@ Původní popis šestého kola: blok v `site/styles.css` se jmenoval
 | `app.js` | Motiv, jazyk (i18n + `MINEKUBE_PAGE_I18N` pro podstránky), toast, modaly, reveal při scrollu, 3D tilt, `SITE_LINKS`, rozklad popisku na písmena, kurzorový svit primárního CTA, částice tlačítka, `openKofiGate()` / `closeKofiGate()` / `launchKofiPulse()` a `initializePageTransition()` |
 | `modpacky/index.html` | **Druhá stránka — katalog modpacků**: stejná hlavička, patička, Ko-fi portál, modal i toast jako hlavní stránka + hero s profily, filtry, mřížka balíčků, instalace a CTA |
 | `modpacky/i18n.js` | Překlady stránky Modpacky (CZ/EN/SK) — `window.MINEKUBE_PAGE_I18N`, načítá se před `app.js` |
-| `modpacky/modpacky.js` | Data balíčků (`MODPACKS`) a logika katalogu: filtry, hledání, vlastní řazení, oblíbené, detail balíčku v modalu, animace stahování |
+| `modpacky/modpacky.js` | Data balíčků (`MODPACKS`) a logika katalogu: filtry, hledání, vlastní řazení, oblíbené, detail balíčku v modalu, animace stahování, napojení na vydání z repozitáře |
+| `modpacky/releases.js` | **Vydání z repozitáře `MinekubeStudios/modpacky`** — adresa repa je jen tady (`CONFIG`), čtení `manifest.json` → jsDelivr → GitHub API, cache v `localStorage`, událost `minekube:releases`, veřejné API `window.MinekubeReleases` |
+| `modpacky/manifest.demo.json` | Ukázkový manifest pro vývoj (`modpacky/?releases=demo`) — ostrá data chodí z repozitáře s modpacky |
+| `modpack-repo/` | **Obsah samostatného repozitáře s modpacky** (`packs/`, `manifest.json`, `tools/`, `.github/workflows/`, `docs/`) — nahrává ho `tools/create-modpack-repo.sh` |
+| `tools/create-modpack-repo.sh` | Založí `MinekubeStudios/modpacky` a nahraje do něj `modpack-repo/` |
+| `tools/releases_test.mjs` | Test napojení na repozitář (jsdom): manifest, záložní GitHub API, demo i stav bez sítě |
 | `assets/favicon.svg` | Favicon z brand znaku |
 
 ## Sekce stránky
@@ -333,6 +391,19 @@ node --check site/app.js
 bash tools/build.sh      # totéž + obě sady testů
 node tools/dom_test.js   # 136 kontrol (chování, i18n, tlačítka, CSS, portál, částice)
 node tools/lang_test.js  #  31 kontrol (jazyky, portál v 3 jazycích, odkazy, bez localStorage)
+```
+
+Navíc test napojení modpacků na repozitář s vydáními (`tools/releases_test.mjs`,
+31 kontrol ve čtyřech scénářích — manifest, GitHub API, demo, úplně bez sítě):
+
+```bash
+node tools/releases_test.mjs
+```
+
+Stejně jako generátor manifestu v repu s modpacky se dá ověřit i sám:
+
+```bash
+cd modpack-repo && node tools/test-manifest.mjs   # 24 kontrol
 ```
 
 Testy běží v jsdomu (CSS parser `css-tree` hlásí 0 chyb na 2287 pravidlech).

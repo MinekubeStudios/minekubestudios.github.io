@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "generated": "2026-09-17T15:32:55.152Z",
+  "repository": "MinekubeStudios/modpacky",
+  "branch": "main",
+  "releasesUrl": "https://github.com/MinekubeStudios/modpacky/releases",
+  "web": "https://minekubestudios.github.io/modpacky/",
+  "packs": {
+    "lite": {
+      "id": "lite",
+      "name": "Minekube Lite",
+      "badge": "LITE",
+      "tagPrefix": "lite",
+      "minecraft": [
+        "1.20.1"
+      ],
+      "loader": "Fabric",
+      "focus": [
+        "lowend",
+        "qol"
+      ],
+      "state": "released",
+      "released": false,
+      "website": "https://minekubestudios.github.io/modpacky/#pack-lite",
+      "summary": "Pro slabší notebooky a starší sestavy — hratelné i na 2 GB RAM.",
+      "latest": null,
+      "history": []
+    },
+    "performance": {
+      "id": "performance",
+      "name": "Minekube Performance",
+      "badge": "PERFORMANCE",
+      "tagPrefix": "performance",
+      "minecraft": [
+        "1.21.4",
+        "1.21.1"
+      ],
+      "loader": "Fabric",
+      "focus": [
+        "fps",
+        "qol"
+      ],
+      "state": "released",
+      "released": false,
+      "website": "https://minekubestudios.github.io/modpacky/#pack-performance",
+      "summary": "Vyvážený balíček pro běžný herní počítač — výkon plus kvalita života.",
+      "latest": null,
+      "history": []
+    },
+    "pvp": {
+      "id": "pvp",
+      "name": "Minekube PvP",
+      "badge": "PVP",
+      "tagPrefix": "pvp",
+      "minecraft": [
+        "1.21.1",
+        "1.20.1"
+      ],
+      "loader": "Fabric",
+      "focus": [
+        "pvp",
+        "fps"
+      ],
+      "state": "released",
+      "released": false,
+      "website": "https://minekubestudios.github.io/modpacky/#pack-pvp",
+      "summary": "Nejnižší latence a čistý HUD pro PvP — nic, co by překáželo.",
+      "latest": null,
+      "history": []
+    },
+    "ultra": {
+      "id": "ultra",
+      "name": "Minekube Ultra",
+      "badge": "ULTRA",
+      "tagPrefix": "ultra",
+      "minecraft": [
+        "1.21.4",
+        "1.21.1"
+      ],
+      "loader": "Fabric",
+      "focus": [
+        "fps",
+        "vanilla"
+      ],
+      "state": "released",
+      "released": false,
+      "website": "https://minekubestudios.github.io/modpacky/#pack-ultra",
+      "summary": "Nejvyšší výkon pro moderní sestavy — maximum FPS bez ztráty vanilla pocitu.",
+      "latest": null,
+      "history": []
+    },
+    "vanilla": {
+      "id": "vanilla",
+      "name": "Minekube Vanilla+",
+      "badge": "VANILLA+",
+      "tagPrefix": "vanilla",
+      "minecraft": [
+        "1.21.4"
+      ],
+      "loader": "NeoForge",
+      "focus": [
+        "vanilla",
+        "qol"
+      ],
+      "state": "pending",
+      "released": false,
+      "website": "https://minekubestudios.github.io/modpacky/#pack-vanilla",
+      "summary": "Původní Minecraft s vylepšeními, která by měla být ve hře od začátku.",
+      "latest": null,
+      "history": []
+    }
+  }
+}

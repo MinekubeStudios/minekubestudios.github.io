@@ -1,0 +1,16 @@
+{
+  "id": "vanilla",
+  "name": "Minekube Vanilla+",
+  "badge": "VANILLA+",
+  "tagPrefix": "vanilla",
+  "minecraft": ["1.21.4"],
+  "loader": "NeoForge",
+  "focus": ["vanilla", "qol"],
+  "state": "pending",
+  "updated": "2026-09-02",
+  "ram": "4 GB",
+  "mods": "132",
+  "website": "https://minekubestudios.github.io/modpacky/#pack-vanilla",
+  "summary": "Původní Minecraft s vylepšeními, která by měla být ve hře od začátku.",
+  "mirrors": []
+}

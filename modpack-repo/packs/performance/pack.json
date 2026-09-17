@@ -1,0 +1,16 @@
+{
+  "id": "performance",
+  "name": "Minekube Performance",
+  "badge": "PERFORMANCE",
+  "tagPrefix": "performance",
+  "minecraft": ["1.21.4", "1.21.1"],
+  "loader": "Fabric",
+  "focus": ["fps", "qol"],
+  "state": "released",
+  "updated": "2026-08-11",
+  "ram": "3 GB",
+  "mods": "84",
+  "website": "https://minekubestudios.github.io/modpacky/#pack-performance",
+  "summary": "Vyvážený balíček pro běžný herní počítač — výkon plus kvalita života.",
+  "mirrors": []
+}
