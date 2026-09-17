@@ -114,13 +114,52 @@ fi
 git remote add origin "https://github.com/$SLUG.git"
 
 step "Nahrávám do $SLUG ($BRANCH)"
-if git push -u origin "$BRANCH" 2>/dev/null; then
+PUSH_OUTPUT="$(git push -u origin "$BRANCH" 2>&1)" && PUSHED=1 || PUSHED=0
+
+if [[ $PUSHED -eq 1 ]]; then
   ok "Obsah nahrán."
 else
-  warn "Push se nepovedl. Zkontroluj, že máš k repozitáři právo zápisu,"
-  warn "nebo nahraj obsah ručně:"
-  printf '%s\n' "    git remote add origin https://github.com/$SLUG.git && git push -u origin $BRANCH"
-  exit 1
+  printf '%s\n' "${C_DIM}$(printf '%s' "$PUSH_OUTPUT" | tail -4)${C_RESET}" >&2
+
+  # GitHub App bez práva „Workflows“ nesmí nahrát .github/workflows/* — zbytek
+  # repozitáře se ale nahrát dá, takže workflowy vynecháme a upozorníme.
+  if printf '%s' "$PUSH_OUTPUT" | grep -qi "workflow"; then
+    warn "Instalace nemá právo „Workflows“ — nahrávám obsah bez .github/workflows/."
+    git rm -rq --cached .github/workflows 2>/dev/null || true
+    printf '.github/workflows/\n' >> .git/info/exclude
+    git -c user.name="$GIT_NAME" -c user.email="$GIT_MAIL" commit -q --amend --no-edit
+
+    if git push -u origin "$BRANCH" 2>/dev/null; then
+      ok "Obsah nahrán (workflowy zůstaly mimo)."
+      printf '%s\n' ""
+      warn "Workflowy přidej ručně — soubory najdeš v modpack-repo/.github/workflows/:"
+      printf '%s\n' "    manifest.yml         → automatické přegenerování manifest.json"
+      printf '%s\n' "    validate-release.yml → kontrola konvencí u nového vydání"
+      printf '%s\n' "  Na GitHubu: Add file → Create new file → název i obsah zkopíruj."
+      printf '%s\n' "  Nebo po rozšíření práv spusť tenhle skript znovu."
+      exit 0
+    fi
+  fi
+
+  fail "$(cat <<TEXT
+Push do $SLUG se nepovedl. Nejčastěji proto, že přihlášený účet
+(nebo GitHub App v Areně) nemá k repozitáři $SLUG přístup.
+
+Řešení:
+  1) V Areně znovu připoj GitHub a v „Repository access“ zaškrtni
+     i MinekubeStudios/modpacky (nebo zvol „All repositories“).
+  2) Nebo na GitHubu: Settings → Applications → instalační aplikace →
+     Configure → Repository access → přidat $SLUG.
+  3) Pak spusť znovu: ./tools/create-modpack-repo.sh --push-only
+
+Bez GitHubu to nahraješ i ručně —
+obsah je ve složce modpack-repo/:
+  cd modpack-repo && git init -b main && git add -A \\
+    && git commit -m "Minekube modpacky: úložiště modpacků a instancí" \\
+    && git remote add origin https://github.com/$SLUG.git \\
+    && git push -u origin main
+TEXT
+)"
 fi
 
 printf '%s\n' ""
