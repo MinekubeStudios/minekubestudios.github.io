@@ -1,0 +1,1410 @@
+/* =========================================================
+   MINEKUBE // DESIGN PLUS V1 — vrstva hravosti a čistoty
+   =========================================================
+   Nadvrstvení na styles.css (používej jen doladění, nic nepřepisuje
+   od základu). Starší pravidla vyhrávají tam, kde si to Design Plus
+   explicitně nevezme — vše je doplněné, ne přepsané.
+
+   Obsah:
+     01 · Typografie a čitelnost (webfonts, řádkování, kontrast)
+     02 · Výber textu, kurzor, scrollbar, focus ring
+     03 · Plynulý pozadový scén (aurora, hvězdy, mlha, padáky)
+     04 · Hlavička — brand, navigace, mobilní menu
+     05 · Sekční nadpisy a kickery (✦, podtržení, svit)
+     06 · Hero (vstup titulu, shimmer, plovoucí orbíky, statistiky)
+     07 · Karty — principy, pilíře, manifest, slib
+     08 · Tlačítka (jarní stisk, lesk, magnet, šípky)
+     09 · CTA — běžící linka s emoji a konfety
+     10 · Patička
+     11 · Scroll progress + kotva zpátky nahoru
+     12 · Konfety / jiskry (společná stylingová základna)
+     13 · Party režim (easter egg)
+     14 · Stránka LAUNCHER — detaily
+     15 · Stránka MODPACKY — detaily
+     16 · Světlý motiv
+     17 · Respekt k redukci pohybu + tisk
+   ========================================================= */
+
+/* ---------- 01 · Typografie a čitelnost ---------- */
+
+:root {
+  --plus-font-body: "Inter", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --plus-font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --plus-spring: cubic-bezier(.34, 1.56, .5, 1);
+  --plus-glide: cubic-bezier(.22, .9, .24, .99);
+  /* Pro drobné kontexty, ať jsou všechny labely konzistentní */
+  --plus-label-gap: .18em;
+}
+
+body {
+  font-family: var(--plus-font-body);
+  font-size: 16px;
+  line-height: 1.68;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
+}
+
+h1, h2, h3 {
+  font-family: var(--plus-font-display);
+  text-wrap: balance;
+}
+
+h1 em, h2 em { hyphens: none; }
+
+p { text-wrap: pretty; }
+
+.mk-intro h1,
+.section-heading h2,
+.about-copy h2,
+.cta-card h2,
+.studio-card h3 {
+  text-shadow: 0 2px 24px rgba(8, 4, 12, .35);
+}
+
+:root[data-theme="light"] .mk-intro h1,
+:root[data-theme="light"] .section-heading h2,
+:root[data-theme="light"] .about-copy h2,
+:root[data-theme="light"] .cta-card h2 {
+  text-shadow: none;
+}
+
+/* Malé technické labely — jednotný řez, ať dýchají */
+.section-kicker,
+.mk-intro-panel-head,
+.mk-intro-panel-foot,
+.studio-pillar-kicker,
+.step-kicker,
+.toast-kicker,
+.about-more-toggle,
+.mk-cta-primary-copy small,
+.mk-cta-github-copy small,
+.store-button-label small {
+  font-family: var(--plus-font-display);
+}
+
+/* Drobné labely: trošku víc vzduchu a o stupeň větší */
+.section-kicker {
+  font-size: 11.5px;
+  letter-spacing: var(--plus-label-gap);
+}
+
+/* Mírně výraznější kontrast pro tlumený text v tmavém motivu */
+:root {
+  --muted: #d0bccc;
+  --muted-2: #a390a5;
+}
+
+.mk-intro-lead,
+.about-copy > p,
+.studio-copy p,
+.section-heading p {
+  font-size: 16.5px;
+  letter-spacing: .005em;
+}
+
+.mk-intro-lead {
+  max-width: 640px;
+}
+
+strong {
+  font-weight: 700;
+}
+
+/* Čísla v HUD datech ať sedí na řádku jako ulitá */
+.mk-intro-proof strong,
+.studio-facts strong,
+.result-count strong {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: linear-gradient(100deg, rgba(255, 174, 0, .9), rgba(200, 60, 255, .85));
+  color: #180a03;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] ::selection {
+  background: rgba(255, 174, 0, .38);
+  color: #281019;
+}
+
+/* ---------- 02 · Kurzor, scrollbar, focus ---------- */
+
+input, textarea, select { caret-color: var(--green); }
+
+/* Scrollbar — WebKit má vlastní sladění v styles.css; pro Firefox jen doladíme barvu */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 174, 0, .45) rgba(255, 255, 255, .03);
+  }
+}
+
+:focus-visible {
+  outline: 2px solid rgba(255, 199, 72, .75);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- 03 · Plynulá pozadová scéna ---------- */
+
+.mk-plus-scene {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: clip;
+  pointer-events: none;
+  contain: strict;
+}
+
+.mk-plus-layer {
+  position: absolute;
+  inset: -8%;
+  transform: translate3d(
+    calc(var(--mx, 0) * var(--depth, 6px)),
+    calc(var(--my, 0) * var(--depth, 6px) + var(--sy, 0) * var(--sdepth, 1px)),
+    0
+  );
+  transition: transform .24s linear;
+}
+
+.mk-plus-layer--far { --depth: 4px; --sdepth: 12px; }
+.mk-plus-layer--mid { --depth: 11px; --sdepth: 30px; }
+.mk-plus-layer--near { --depth: 18px; --sdepth: 52px; }
+
+.mk-plus-blob {
+  position: absolute;
+  border-radius: 50%;
+  /* Měkkost dělá samotný radiální gradient — bez filter:blur šetříme GPU */
+  opacity: .5;
+  will-change: transform;
+}
+
+.mk-plus-blob i {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  animation: mkPlusFloat var(--dur, 34s) ease-in-out infinite alternate;
+}
+
+.mk-plus-blob--a { width: 56vmax; height: 42vmax; left: -14vmax; top: -16vmax; }
+.mk-plus-blob--a i { background: radial-gradient(circle, rgba(255, 174, 0, .16), transparent 62%); --dur: 38s; }
+
+.mk-plus-blob--b { width: 46vmax; height: 38vmax; right: -12vmax; top: 22vh; }
+.mk-plus-blob--b i { background: radial-gradient(circle, rgba(190, 45, 255, .17), transparent 60%); --dur: 30s; animation-delay: -8s; }
+
+.mk-plus-blob--c { width: 52vmax; height: 30vmax; left: 18vw; bottom: -18vmax; }
+.mk-plus-blob--c i { background: radial-gradient(circle, rgba(255, 90, 190, .10), transparent 58%); --dur: 44s; animation-delay: -16s; }
+
+@keyframes mkPlusFloat {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(3.2vmax, -2.4vmax, 0) scale(1.07); }
+  to { transform: translate3d(-2.4vmax, 2.8vmax, 0) scale(.96); }
+}
+
+.mk-plus-stars {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background: transparent;
+  animation: mkPlusTwinkle var(--tw, 5.5s) ease-in-out infinite alternate;
+}
+
+.mk-plus-stars--near { --tw: 4.2s; }
+.mk-plus-stars--far { --tw: 6.8s; animation-delay: -2.6s; transform: scale(.65); }
+
+@keyframes mkPlusTwinkle {
+  from { opacity: .34; }
+  to { opacity: .95; }
+}
+
+.mk-plus-mist {
+  position: absolute;
+  inset: auto -4% -6% -4%;
+  height: 40vh;
+  background:
+    radial-gradient(60% 90% at 22% 100%, rgba(255, 174, 0, .07), transparent 70%),
+    radial-gradient(52% 80% at 78% 100%, rgba(200, 60, 255, .08), transparent 68%),
+    linear-gradient(180deg, transparent, rgba(10, 5, 14, .55));
+  animation: mkPlusBreathe 16s ease-in-out infinite alternate;
+}
+
+@keyframes mkPlusBreathe {
+  from { opacity: .65; }
+  to { opacity: 1; }
+}
+
+/* Padající hvězdička — JS ji načasuje, CSS jen vypadá */
+.mk-plus-shooting {
+  position: absolute;
+  width: 150px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(255, 236, 170, .95), rgba(255, 174, 0, .35) 40%, transparent);
+  filter: drop-shadow(0 0 6px rgba(255, 214, 120, .8));
+  opacity: 0;
+}
+
+/* Scéna je navozená i na světlejších displejích — lehce zeslábnutá */
+:root[data-theme="light"] .mk-plus-scene { opacity: .5; }
+
+/* ---------- 04 · Hlavička — brand, navigace, mobilní menu ---------- */
+
+.brand {
+  transition: transform .4s var(--plus-spring);
+}
+
+.brand:hover {
+  transform: translateY(-2px);
+}
+
+.brand-mark {
+  transition: box-shadow .35s ease, transform .5s var(--plus-spring);
+}
+
+.brand:hover .brand-mark {
+  transform: rotate(-6deg) scale(1.06);
+  box-shadow: 0 0 26px rgba(255, 174, 0, .35), 0 0 60px rgba(200, 60, 255, .22);
+}
+
+.brand:hover .brand-icon {
+  animation: mkPlusNudge .6s var(--plus-spring);
+}
+
+@keyframes mkPlusNudge {
+  0% { rotate: 0deg; }
+  30% { rotate: -10deg; }
+  60% { rotate: 7deg; }
+  100% { rotate: 0deg; }
+}
+
+/* Odkazy v navigaci: pružné podtržení + jemný odraz */
+.desktop-nav a::after,
+.desktop-nav .nav-server-button::before {
+  transition: transform .34s var(--plus-spring), box-shadow .34s ease, opacity .3s ease;
+}
+
+.desktop-nav a:hover {
+  transform: translateY(-1px);
+}
+
+.desktop-nav a {
+  transition: color .2s ease, transform .3s var(--plus-spring), text-shadow .3s ease;
+}
+
+.desktop-nav a:hover,
+.desktop-nav a:focus-visible {
+  text-shadow: 0 0 18px rgba(255, 199, 72, .28);
+}
+
+.desktop-nav a.active::after {
+  animation: mkPlusUnderlineGlow 3.4s ease-in-out infinite;
+}
+
+@keyframes mkPlusUnderlineGlow {
+  0%, 100% { box-shadow: 0 0 9px var(--green-glow); }
+  50% { box-shadow: 0 0 16px rgba(255, 199, 72, .55), 0 0 30px rgba(200, 60, 255, .28); }
+}
+
+/* Ikony v headeru — pružný odskok */
+.icon-button {
+  transition: transform .25s var(--plus-spring), border-color .2s ease, background .2s ease, box-shadow .3s ease;
+}
+
+.icon-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .28), 0 0 24px rgba(255, 174, 0, .18);
+}
+
+.icon-button:active { transform: scale(.93); }
+
+.icon-button .sun-icon,
+.icon-button .moon-icon {
+  transition: transform .5s var(--plus-spring), rotate .5s var(--plus-spring);
+}
+
+#themeToggle:hover .sun-icon { transform: rotate(45deg) scale(1.12); }
+#themeToggle:hover .moon-icon { transform: rotate(-24deg) scale(1.12); }
+
+.lang-button:hover svg { animation: mkPlusGlobe 1.4s ease-in-out; }
+
+@keyframes mkPlusGlobe {
+  0%, 100% { transform: rotateY(0deg); }
+  50% { transform: rotateY(190deg); }
+}
+
+/* Mobilní menu: položky naskakují jedna po druhé */
+.mobile-nav.open > a,
+.mobile-nav.open > button {
+  animation: mkPlusMenuPop .5s var(--plus-glide) both;
+}
+
+.mobile-nav.open > a:nth-child(1) { animation-delay: .03s; }
+.mobile-nav.open > a:nth-child(2) { animation-delay: .08s; }
+.mobile-nav.open > a:nth-child(3) { animation-delay: .13s; }
+.mobile-nav.open > a:nth-child(4),
+.mobile-nav.open > button:nth-child(4) { animation-delay: .18s; }
+.mobile-nav.open > a:nth-child(5) { animation-delay: .23s; }
+.mobile-nav.open > a:nth-child(6) { animation-delay: .28s; }
+.mobile-nav.open > a:nth-child(7) { animation-delay: .33s; }
+
+@keyframes mkPlusMenuPop {
+  from { opacity: 0; transform: translateY(14px) scale(.97); filter: blur(3px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+/* ---------- 05 · Sekční nadpisy a kickery ---------- */
+
+.section-kicker::before {
+  content: "✦";
+  display: inline-block;
+  margin-right: .55em;
+  color: var(--green-light);
+  animation: mkPlusSparkPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes mkPlusSparkPulse {
+  0%, 100% { opacity: .55; transform: rotate(0deg) scale(.9); }
+  50% { opacity: 1; transform: rotate(18deg) scale(1.15); }
+}
+
+/* Na barevné kartě CTA drží hvězdička barvu textu, ať neplave */
+.cta-card .section-kicker::before { color: currentColor; }
+
+/* Podtržení velkých nadpisů — roztahuje se, až když se sekce zjeví */
+.section-heading h2,
+.about-copy h2,
+.studio-copy h3 { position: relative; }
+
+.section-heading h2::after,
+.about-copy h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 100%;
+  max-width: 190px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--green), var(--yellow) 46%, var(--purple));
+  box-shadow: 0 0 18px var(--green-glow);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform .9s var(--plus-glide) .18s;
+}
+
+.section-heading.is-revealed h2::after,
+.about-copy.is-revealed h2::after {
+  transform: scaleX(1);
+}
+
+.section-heading.centered h2::after,
+.cta-card .section-heading h2::after {
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: 50% 50%;
+}
+
+.section-heading.centered.is-revealed h2::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* ---------- 06 · Hero ---------- */
+
+.mk-landing .mk-intro { position: relative; }
+
+/* Kurzor-follow světelko v hero (pouze s JS, jemné) */
+.mk-plus-spot {
+  position: absolute;
+  inset: -12% -8%;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(46% 60% at var(--spot-x, 50%) var(--spot-y, 40%),
+      rgba(255, 199, 72, .09), rgba(200, 60, 255, .05) 42%, transparent 70%);
+  mix-blend-mode: screen;
+  transition: opacity .6s ease;
+}
+
+.mk-plus-spot.is-on { opacity: 1; }
+
+:root[data-theme="light"] .mk-plus-spot { mix-blend-mode: multiply; }
+
+/* Gradientní řádek titulu pomalu dýchá barvama */
+.mk-intro h1 > em,
+.about-copy h2 em {
+  background-size: 220% 100%;
+  animation: mkPlusSheen 7.5s ease-in-out infinite alternate;
+}
+
+@keyframes mkPlusSheen {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+/* Jiskřičky za titulkem */
+.mk-intro-copy { position: relative; }
+
+.mk-plus-mote {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  font-size: 15px;
+  opacity: 0;
+  animation: mkPlusMote var(--dur, 9s) ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes mkPlusMote {
+  0% { opacity: 0; transform: translateY(12px) scale(.7) rotate(-8deg); }
+  18% { opacity: .9; }
+  70% { opacity: .75; }
+  100% { opacity: 0; transform: translateY(-44px) scale(1.05) rotate(10deg); }
+}
+
+/* Plovoucí drahokamy u panelu ekosystému */
+.mk-intro-panel { position: relative; }
+
+.mk-intro-panel::before,
+.mk-intro-panel::after {
+  position: absolute;
+  z-index: 2;
+  font-size: 26px;
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, .35));
+  animation: mkPlusOrbBob 6.5s ease-in-out infinite alternate;
+}
+
+.mk-intro-panel::before {
+  content: "💎";
+  top: -18px;
+  right: 34px;
+}
+
+.mk-intro-panel::after {
+  content: "⚡";
+  bottom: -14px;
+  left: -12px;
+  font-size: 22px;
+  animation-delay: -3.2s;
+}
+
+@keyframes mkPlusOrbBob {
+  from { transform: translateY(0) rotate(-4deg); }
+  to { transform: translateY(-14px) rotate(5deg); }
+}
+
+@media (max-width: 1040px) {
+  .mk-intro-panel::before,
+  .mk-intro-panel::after { display: none; }
+}
+
+/* Online inzerát v hlavičce panelu — živá tečka */
+.mk-intro-panel-head b {
+  position: relative;
+  animation: mkPlusLiveBlink 2.6s ease-in-out infinite;
+}
+
+@keyframes mkPlusLiveBlink {
+  0%, 100% { opacity: 1; }
+  48% { opacity: .55; }
+}
+
+/* Statistiky — lesk při hoveru + odraz při načtení čísla */
+.mk-intro-proof > div,
+.studio-facts > div {
+  position: relative;
+  overflow: hidden;
+  transition: border-color .3s ease, box-shadow .3s ease, transform .35s var(--plus-spring);
+}
+
+.mk-intro-proof > div::before,
+.studio-facts > div::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, .16) 45%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform .7s var(--plus-glide);
+}
+
+.mk-intro-proof > div:hover,
+.studio-facts > div:hover {
+  border-color: rgba(255, 199, 72, .4);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .26), 0 0 22px var(--green-glow);
+  transform: translateY(-3px);
+}
+
+.mk-intro-proof > div:hover::before,
+.studio-facts > div:hover::before {
+  transform: translateX(120%);
+}
+
+.mk-plus-counted {
+  animation: mkPlusCountPop .55s var(--plus-spring) both;
+}
+
+@keyframes mkPlusCountPop {
+  0% { transform: scale(.7); filter: blur(3px); }
+  60% { transform: scale(1.12); filter: blur(0); }
+  100% { transform: scale(1); }
+}
+
+/* Moduly v panelu — ikona se při hoveru otočí, proužek podsvítí */
+.mk-intro-module > span {
+  transition: transform .4s var(--plus-spring), box-shadow .3s ease, background .3s ease;
+}
+
+.mk-intro-module:hover > span {
+  transform: rotate(-8deg) scale(1.12);
+  box-shadow: 0 0 0 1px rgba(255, 199, 72, .35), 0 0 22px rgba(255, 174, 0, .3);
+}
+
+.mk-intro-module::after {
+  content: "";
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  bottom: 6px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--green), var(--purple));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform .38s var(--plus-glide);
+  opacity: .65;
+}
+
+.mk-intro-module { position: relative; }
+
+.mk-intro-module:hover::after,
+.mk-intro-module:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* ---------- 07 · Karty — principy, pilíře, manifest, slib ---------- */
+
+/* Emoji vodoznak do karet principů (JS vloží <span class="mk-plus-watermark">) */
+.mk-plus-watermark {
+  position: absolute;
+  z-index: -1;
+  right: -6px;
+  bottom: -14px;
+  font-size: 84px;
+  line-height: 1;
+  opacity: .05;
+  pointer-events: none;
+  transform: rotate(-10deg) scale(.94);
+  transition: opacity .45s ease, transform .6s var(--plus-spring);
+  filter: saturate(.7);
+}
+
+.mk-plus-watermark.is-top {
+  top: 14px;
+  right: 18px;
+  bottom: auto;
+  font-size: 46px;
+}
+
+.step-card:hover .mk-plus-watermark,
+.studio-pillar:hover .mk-plus-watermark,
+.launcher-feature:hover .mk-plus-watermark {
+  opacity: .17;
+  transform: rotate(4deg) scale(1.12);
+}
+
+/* Principy: tvrdší odraz + roztočená orbita + skok čísla */
+.step-card:hover {
+  transform: perspective(1100px) rotateX(var(--surface-rx)) rotateY(var(--surface-ry)) translateY(-10px);
+  box-shadow: 0 42px 90px rgba(0, 0, 0, .48), 0 0 0 1px rgba(255, 199, 72, .16), 0 0 42px rgba(255, 145, 0, .1), inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.step-card:hover::before { opacity: .95; }
+
+.step-card:hover .step-icon::before { animation: mkPlusRing 2.4s linear infinite; }
+
+@keyframes mkPlusRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.step-card:hover .step-icon-orbit { animation-duration: 3.6s; }
+
+.step-card:hover .step-icon svg { animation: mkPlusIconWiggle .7s var(--plus-spring); }
+
+.step-card:hover .step-number {
+  color: rgba(255, 216, 79, .34);
+  transform: translateZ(26px) translateY(-6px) rotate(-4deg) scale(1.14);
+}
+
+@keyframes mkPlusIconWiggle {
+  0% { transform: rotate(0deg); }
+  30% { transform: rotate(-10deg) scale(1.16); }
+  60% { transform: rotate(8deg) scale(1.1); }
+  100% { transform: rotate(0deg) scale(1.08); }
+}
+
+.step-kicker::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  margin-left: 0;
+  border-top: 1px dashed rgba(255, 199, 72, .4);
+  vertical-align: middle;
+  transition: width .5s var(--plus-glide) .1s, margin-left .5s var(--plus-glide) .1s;
+}
+
+.step-card:hover .step-kicker::after {
+  width: 46px;
+  margin-left: 12px;
+}
+
+/* Pilíře: status tečka pulzuje, ikona hravě poskočí, šipka utíká */
+.studio-pillar-status.is-live i,
+.studio-pillar-status.is-open i {
+  animation: mkPlusPing 2.2s ease-out infinite;
+}
+
+@keyframes mkPlusPing {
+  0% { box-shadow: 0 0 0 0 rgba(255, 199, 72, .5); }
+  70% { box-shadow: 0 0 0 8px rgba(255, 199, 72, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 199, 72, 0); }
+}
+
+.studio-pillar-icon {
+  transition: transform .45s var(--plus-spring), box-shadow .35s ease;
+}
+
+.studio-pillar:hover .studio-pillar-icon {
+  transform: translateY(-4px) rotate(-7deg) scale(1.08);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, .3), 0 0 26px rgba(255, 174, 0, .16);
+}
+
+.studio-pillar-link svg {
+  transition: transform .32s var(--plus-spring);
+}
+
+.studio-pillar-link:hover svg { transform: translateX(5px) scale(1.1); }
+
+.studio-pillar:hover {
+  transform: perspective(1100px) rotateX(var(--surface-rx)) rotateY(var(--surface-ry)) translateY(-8px);
+  box-shadow: 0 40px 88px rgba(0, 0, 0, .46), 0 0 0 1px rgba(var(--pillar-rgb, 255, 194, 47), .18), 0 0 44px rgba(var(--pillar-rgb, 255, 194, 47), .1);
+}
+
+/* Manifest — odrazové prvky */
+.about-tags > span,
+.studio-values > span {
+  transition: transform .3s var(--plus-spring), border-color .25s ease, box-shadow .3s ease, background .25s ease;
+}
+
+.about-tags > span:hover,
+.studio-values > span:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: rgba(255, 199, 72, .4);
+  box-shadow: 0 0 20px rgba(255, 174, 0, .14);
+}
+
+.about-tags svg,
+.studio-values svg {
+  transition: transform .35s var(--plus-spring), filter .3s ease;
+}
+
+.about-tags > span:hover svg { transform: rotate(-8deg) scale(1.15); filter: drop-shadow(0 0 8px rgba(255, 174, 0, .5)); }
+.studio-values > span:hover svg { transform: scale(1.2); filter: drop-shadow(0 0 8px rgba(103, 240, 132, .5)); }
+
+.about-promise-icon svg { transition: transform .35s var(--plus-spring); }
+.about-promises li:hover .about-promise-icon svg { transform: rotate(-10deg) scale(1.14); }
+
+/* Emblémy s krychli — při hoveru karty se krychle protáčí rychleji */
+.about-card:hover .emblem-ring,
+.studio-card:hover .emblem-ring { animation-duration: 9s; }
+
+.about-card:hover .emblem-particles i,
+.studio-card:hover .emblem-particles i { animation-duration: 4.2s; }
+
+/* Vstup prvků, které app.js neregistruje — jemné stoupnutí */
+.js .mk-plus-rise {
+  opacity: 0;
+  transform: translateY(24px) scale(.99);
+  filter: blur(3px);
+}
+
+.js .mk-plus-rise.is-plus-in {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+  transition:
+    opacity .72s var(--plus-glide) var(--plus-delay, 0ms),
+    transform .84s var(--plus-glide) var(--plus-delay, 0ms),
+    filter .66s ease var(--plus-delay, 0ms);
+}
+
+/* ---------- 08 · Tlačítka ---------- */
+
+.button {
+  position: relative;
+  overflow: hidden;
+  translate: 0 0;
+  transition:
+    translate .16s ease-out,
+    transform .32s var(--plus-spring),
+    border-color .2s ease,
+    background .25s ease,
+    box-shadow .35s ease,
+    filter .25s ease;
+}
+
+.button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, .34) 48%, transparent 62%);
+  transform: translateX(-130%);
+  transition: transform .65s var(--plus-glide);
+  pointer-events: none;
+}
+
+.button:hover::before { transform: translateX(130%); }
+
+.button:hover { transform: translateY(-3px) scale(1.02); }
+
+.button:active { transform: translateY(0) scale(.97); transition-duration: .12s; }
+
+.button svg { transition: transform .35s var(--plus-spring); }
+
+.button:hover svg { transform: translateX(3px); }
+
+.button-light:hover,
+.button-cta-ghost:hover {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .28), 0 0 26px rgba(255, 174, 0, .3);
+}
+
+.button-cta-ghost:hover svg { transform: translateY(3px); }
+
+/* Hlavní hero CTA — glow + odraz; magnetický posun řídí JS přes translate */
+.mk-cta-primary,
+.mk-cta-github {
+  translate: 0 0;
+  transition:
+    translate .18s ease-out,
+    transform .45s cubic-bezier(.2, .9, .2, 1),
+    box-shadow .45s ease,
+    border-color .35s ease,
+    background .35s ease,
+    filter .3s ease;
+}
+
+.mk-cta-primary:hover {
+  box-shadow: 0 24px 56px rgba(255, 136, 21, .34), inset 0 1px rgba(255, 255, 255, .62), 0 0 34px rgba(255, 199, 72, .25);
+  filter: saturate(1.08);
+}
+
+.mk-cta-primary-arrow {
+  transition: transform .34s var(--plus-spring);
+}
+
+.mk-cta-primary:hover .mk-cta-primary-arrow {
+  transform: translateX(4px) scale(1.12);
+}
+
+.mk-cta-primary:hover .mk-cta-primary-icon svg {
+  animation: mkPlusCubeHop .6s var(--plus-spring);
+}
+
+@keyframes mkPlusCubeHop {
+  0% { transform: translateY(0) rotate(0deg); }
+  40% { transform: translateY(-7px) rotate(-12deg); }
+  70% { transform: translateY(0) rotate(6deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+.mk-cta-github:hover {
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .3), 0 0 26px rgba(140, 90, 255, .22);
+}
+
+.mk-cta-github-arrow { transition: transform .34s var(--plus-spring); }
+.mk-cta-github:hover .mk-cta-github-arrow { transform: translate(3px, -3px) scale(1.12); }
+
+/* Tlačítko „Celé informace“ dýchá do tepla */
+.about-more-toggle {
+  translate: 0 0;
+  transition: translate .16s ease-out, transform .3s var(--plus-spring), box-shadow .35s ease, border-color .25s ease, background .25s ease;
+}
+
+.about-more-toggle:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 216, 79, .6);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .3), 0 0 24px rgba(255, 174, 0, .2);
+}
+
+.about-more-chevron { transition: transform .4s var(--plus-spring); }
+.about-more-toggle:hover .about-more-chevron { transform: translateY(2px) scale(1.06); }
+.about-more-toggle[aria-expanded="true"] .about-more-chevron { transform: rotate(180deg); }
+
+/* ---------- 09 · CTA — běžící linka s emoji ---------- */
+
+.mk-plus-conveyor {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  width: min(calc(100% - 40px), var(--container));
+  margin: 0 auto 30px;
+  padding: 10px 0 12px;
+  border-top: 1px dashed rgba(255, 199, 72, .22);
+  border-bottom: 1px dashed rgba(200, 60, 255, .22);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.mk-plus-conveyor-track {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 44px;
+  padding-right: 44px;
+  white-space: nowrap;
+  animation: mkPlusConveyor 26s linear infinite;
+  font-family: var(--plus-font-display);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .22em;
+  color: var(--muted-2);
+}
+
+.mk-plus-conveyor:hover .mk-plus-conveyor-track {
+  animation-duration: 9s;
+  color: var(--text);
+}
+
+.mk-plus-conveyor em {
+  font-style: normal;
+  color: var(--green-light);
+  text-shadow: 0 0 14px var(--green-glow);
+  font-size: 15px;
+}
+
+@keyframes mkPlusConveyor {
+  to { transform: translateX(-50%); }
+}
+
+.cta-card {
+  transition: box-shadow .5s ease, transform .5s var(--plus-glide);
+}
+
+.cta-card:hover {
+  box-shadow: 0 36px 90px rgba(255, 174, 0, .26), 0 0 60px rgba(226, 59, 115, .16);
+}
+
+/* ---------- 10 · Patička ---------- */
+
+.site-footer a:not(.brand) {
+  transition: color .2s ease, transform .3s var(--plus-spring), text-shadow .3s ease;
+}
+
+.site-footer a:not(.brand):hover {
+  color: var(--green-light);
+  transform: translateX(3px);
+  text-shadow: 0 0 16px var(--green-glow);
+}
+
+.site-footer a:not(.brand)::after {
+  content: " ↘";
+  font-size: .9em;
+  opacity: 0;
+  transform: translateX(-4px);
+  display: inline-block;
+  transition: opacity .25s ease, transform .3s var(--plus-spring);
+}
+
+.site-footer a:not(.brand):hover::after,
+.site-footer a:not(.brand):focus-visible::after {
+  opacity: .8;
+  transform: translateX(0);
+}
+
+/* Emoji pro komunitní kanály — jen ve čtvrtém sloupci */
+.site-footer .footer-grid > div:nth-of-type(4) a:nth-of-type(1)::before { content: "🎮 "; }
+.site-footer .footer-grid > div:nth-of-type(4) a:nth-of-type(2)::before { content: "🕹️ "; }
+.site-footer .footer-grid > div:nth-of-type(4) a:nth-of-type(3)::before { content: "🐙 "; }
+
+.footer-grid h3 { letter-spacing: .01em; }
+
+.footer-bottom > span:first-child::after {
+  content: " · postaveno s 💛 a ⛏️";
+  color: var(--muted-2);
+}
+
+:root[lang="en"] .footer-bottom > span:first-child::after { content: " · built with 💛 and ⛏️"; }
+:root[lang="sk"] .footer-bottom > span:first-child::after { content: " · postavené s 💛 a ⛏️"; }
+
+.footer-link { transition: color .2s ease, transform .3s var(--plus-spring); }
+.footer-link:hover { color: var(--green-light); transform: translateX(3px); }
+
+/* Logo v patičce pomalu nadnáší */
+.footer-brand .brand-mark {
+  animation: mkPlusFloatSoft 7s ease-in-out infinite alternate;
+}
+
+@keyframes mkPlusFloatSoft {
+  from { transform: translateY(0) rotate(-2deg); }
+  to { transform: translateY(-6px) rotate(2deg); }
+}
+
+/* ---------- 11 · Scroll progress + zpátky nahoru ---------- */
+
+.scroll-progress {
+  height: 4px;
+  background: transparent;
+}
+
+.scroll-progress span {
+  box-shadow: 0 0 16px rgba(255, 79, 216, .65), 0 0 30px rgba(255, 130, 0, .4), 0 2px 14px rgba(255, 216, 79, .35);
+}
+
+/* Kometická hlavička linky (JS zrcadlí --plus-sp) */
+.scroll-progress::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(var(--plus-sp, 0) * 100%);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, #fff6dd, var(--green-light) 45%, rgba(255, 174, 0, 0) 72%);
+  box-shadow: 0 0 18px rgba(255, 216, 79, .9), 0 0 40px rgba(255, 130, 0, .5);
+  opacity: min(calc(var(--plus-sp, 0) * 4), 1);
+  pointer-events: none;
+}
+
+.mk-plus-top {
+  position: fixed;
+  z-index: 1500;
+  left: 22px;
+  bottom: 22px;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 216, 79, .4);
+  border-radius: 16px;
+  background:
+    radial-gradient(120% 120% at 30% 0%, rgba(255, 199, 72, .2), transparent 55%),
+    rgba(22, 11, 27, .88);
+  color: var(--green-light);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .4), 0 0 22px rgba(255, 174, 0, .16);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(18px) scale(.8);
+  pointer-events: none;
+  transition: opacity .35s ease, transform .45s var(--plus-spring), box-shadow .3s ease, border-color .3s ease;
+}
+
+.mk-plus-top.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.mk-plus-top:hover {
+  transform: translateY(-4px) scale(1.06);
+  border-color: rgba(255, 216, 79, .8);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, .5), 0 0 30px rgba(255, 174, 0, .3);
+}
+
+.mk-plus-top:active { transform: translateY(-1px) scale(.96); }
+
+.mk-plus-top svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .3s var(--plus-spring);
+}
+
+.mk-plus-top:hover svg { transform: translateY(-3px); }
+
+:root[data-theme="light"] .mk-plus-top {
+  background: rgba(255, 253, 248, .92);
+  color: #a24f00;
+}
+
+/* ---------- 12 · Jiskry a konfety ---------- */
+
+.mk-plus-spark {
+  position: fixed;
+  z-index: 2300;
+  pointer-events: none;
+  line-height: 1;
+  font-size: var(--spark-size, 14px);
+  filter: drop-shadow(0 2px 8px rgba(255, 174, 0, .45));
+  will-change: transform, opacity;
+}
+
+.mk-plus-spark.is-pixel {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--spark-color, #ffd84f);
+  box-shadow: 0 0 12px var(--spark-color, rgba(255, 216, 79, .8));
+}
+
+/* ---------- 13 · Party režim (easter egg) ---------- */
+
+html.mk-party .mk-plus-scene { animation: mkPartyHue 3.2s linear infinite; }
+
+html.mk-party .mk-plus-blob { opacity: .8; }
+
+html.mk-party .mk-intro h1 > em,
+html.mk-party .about-copy h2 em {
+  animation-duration: 1.2s;
+}
+
+html.mk-party .mk-plus-rain {
+  position: fixed;
+  top: -6vh;
+  z-index: 2350;
+  pointer-events: none;
+  font-size: 20px;
+  animation: mkPartyRain var(--fall, 3.4s) linear var(--delay, 0s) forwards;
+  will-change: transform;
+}
+
+@keyframes mkPartyRain {
+  to { transform: translateY(112vh) rotate(420deg); }
+}
+
+@keyframes mkPartyHue {
+  to { filter: hue-rotate(360deg); }
+}
+
+/* ---------- 14 · Stránka LAUNCHER — detaily ---------- */
+
+.launcher-chips { --plus-float: 0; }
+
+.launcher-chip-alpha {
+  animation: mkPlusChipFloat 5s ease-in-out infinite alternate;
+}
+
+.launcher-chip-alpha i {
+  animation: mkPlusCreeperBlink 2.2s ease-in-out infinite;
+}
+
+@keyframes mkPlusCreeperBlink {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 120, 40, .55); opacity: 1; }
+  50% { box-shadow: 0 0 0 6px rgba(255, 120, 40, 0); opacity: .6; }
+}
+
+@keyframes mkPlusChipFloat {
+  from { transform: translateY(0); }
+  to { transform: translateY(-4px); }
+}
+
+.launcher-chip-oss { transition: transform .3s var(--plus-spring); }
+.launcher-chip-oss:hover { transform: translateY(-2px) rotate(-1deg); }
+
+.launcher-os-chip {
+  transition: transform .28s var(--plus-spring), border-color .2s ease, box-shadow .3s ease, background .25s ease;
+}
+
+.launcher-os-chip:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0, 0, 0, .3); }
+.launcher-os-chip:active { transform: translateY(-1px) scale(.97); }
+
+.launcher-os-chip svg { transition: transform .35s var(--plus-spring); }
+.launcher-os-chip:hover svg { transform: scale(1.14) rotate(-5deg); }
+
+.launcher-download-btn {
+  transition: transform .3s var(--plus-spring), box-shadow .4s ease, filter .3s ease;
+}
+
+.launcher-download-btn:hover {
+  transform: translateY(-3px) scale(1.014);
+  filter: saturate(1.06);
+}
+
+.launcher-download-btn:active { transform: translateY(-1px) scale(.98); transition-duration: .12s; }
+
+.launcher-download-btn:hover .launcher-download-arrow {
+  animation: mkPlusDive 1s ease-in-out infinite;
+}
+
+@keyframes mkPlusDive {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(5px); opacity: .7; }
+}
+
+.launcher-play {
+  transition: transform .3s var(--plus-spring), box-shadow .3s ease;
+}
+
+.launcher-inst:hover .launcher-play {
+  transform: scale(1.14);
+  box-shadow: 0 0 0 4px rgba(255, 199, 72, .12), 0 0 22px rgba(255, 174, 0, .35);
+}
+
+.launcher-feature {
+  transition: transform .4s var(--plus-glide), border-color .3s ease, box-shadow .4s ease;
+}
+
+.launcher-feature:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 34px 70px rgba(0, 0, 0, .42), 0 0 34px rgba(255, 145, 0, .1);
+}
+
+.launcher-feature-icon { transition: transform .45s var(--plus-spring); }
+.launcher-feature:hover .launcher-feature-icon { transform: rotate(-8deg) scale(1.1); }
+
+.launcher-meta li svg { transition: transform .3s var(--plus-spring); }
+.launcher-meta li:hover svg { transform: scale(1.25) rotate(-10deg); }
+
+.launcher-rows .launcher-row-visual {
+  transition: transform .5s var(--plus-glide);
+}
+
+.launcher-row:hover .launcher-row-visual { transform: translateY(-4px) scale(1.015); }
+
+/* ---------- 15 · Stránka MODPACKY — detaily ---------- */
+
+.packs-breadcrumb a {
+  transition: color .2s ease, transform .3s var(--plus-spring);
+}
+
+.packs-breadcrumb a:hover { color: var(--green-light); transform: translateX(-2px); }
+
+.packs-breadcrumb svg { transition: transform .3s var(--plus-spring); }
+.packs-breadcrumb:hover svg { transform: translateX(3px); }
+
+.search-field { transition: border-color .25s ease, box-shadow .35s ease; }
+
+.search-field:focus-within {
+  border-color: rgba(255, 199, 72, .55);
+  box-shadow: 0 0 0 3px rgba(255, 174, 0, .12), 0 10px 34px rgba(0, 0, 0, .3);
+}
+
+.search-field input { caret-color: var(--green); }
+
+.result-count strong {
+  display: inline-block;
+  transform-origin: 50% 60%;
+}
+
+#resultCount.is-bumped {
+  animation: mkPlusCountPop .5s var(--plus-spring) both;
+}
+
+.catalog-toolbar .filter-toggle {
+  transition: transform .28s var(--plus-spring), border-color .2s ease, box-shadow .3s ease, background .25s ease;
+}
+
+.catalog-toolbar .filter-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .28);
+}
+
+.catalog-toolbar .filter-toggle:hover svg { animation: mkPlusIconWiggle .7s var(--plus-spring); }
+
+/* Karty v katalogu: jemnější dotlak (transform si drží own tilt) */
+.pack-card {
+  transition:
+    transform .35s var(--plus-glide),
+    border-color .28s ease,
+    box-shadow .35s ease,
+    scale .35s var(--plus-spring);
+}
+
+/* .scroll-reveal po odhalení drží scale:1 (vyšší specificita) — musíme ho přebít */
+.pack-card:hover {
+  box-shadow: 0 44px 96px rgba(0, 0, 0, .5), 0 0 46px rgba(255, 145, 0, .12), inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+
+.js .scroll-reveal.is-revealed.pack-card:hover,
+.pack-card:not(.scroll-reveal):hover {
+  scale: 1.008;
+}
+
+.pack-card:hover::before { opacity: 1; }
+
+/* ---------- 16 · Světlý motiv ---------- */
+
+:root[data-theme="light"] {
+  --muted: #5f4657;
+  --muted-2: #8a6f81;
+}
+
+:root[data-theme="light"] .mk-plus-mist {
+  background:
+    radial-gradient(60% 90% at 22% 100%, rgba(255, 174, 0, .1), transparent 70%),
+    radial-gradient(52% 80% at 78% 100%, rgba(200, 60, 255, .08), transparent 68%);
+}
+
+:root[data-theme="light"] .mk-plus-stars { display: none; }
+
+:root[data-theme="light"] .mk-intro h1 > em,
+:root[data-theme="light"] .about-copy h2 em {
+  animation: none;
+}
+
+:root[data-theme="light"] .mk-plus-top {
+  border-color: rgba(196, 108, 0, .4);
+  box-shadow: 0 14px 30px rgba(94, 34, 74, .18);
+}
+
+:root[data-theme="light"] .mk-plus-conveyor {
+  border-top-color: rgba(196, 108, 0, .25);
+  border-bottom-color: rgba(160, 40, 220, .2);
+}
+
+/* ---------- 17 · Redukovaný pohyb + tisk ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-plus-scene,
+  .mk-plus-shooting,
+  .mk-plus-mote,
+  .mk-plus-conveyor {
+    display: none !important;
+  }
+
+  .mk-plus-top,
+  .mk-plus-top:hover,
+  .mk-plus-top:active {
+    transition: none;
+    transform: none;
+  }
+
+  .mk-intro-panel::before,
+  .mk-intro-panel::after {
+    animation: none !important;
+  }
+
+  .mk-plus-watermark,
+  .mk-plus-spot { opacity: 0 !important; display: none !important; }
+
+  .mk-intro h1 > em,
+  .about-copy h2 em,
+  .launcher-chip-alpha,
+  .footer-brand .brand-mark,
+  .mk-intro-panel-head b,
+  .section-kicker::before,
+  .desktop-nav a.active::after,
+  .mk-plus-blob i,
+  .mk-plus-stars,
+  .mk-plus-mist,
+  .mk-plus-conveyor-track {
+    animation: none !important;
+  }
+
+  .js .mk-plus-rise,
+  .js .mk-plus-rise.is-plus-in {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+
+  .brand:hover,
+  .button:hover,
+  .button:active,
+  .step-card:hover,
+  .studio-pillar:hover,
+  .launcher-os-chip:hover,
+  .launcher-download-btn:hover,
+  .pack-card:hover {
+    transform: none;
+    translate: 0 0;
+  }
+}
+
+@media print {
+  .mk-plus-scene,
+  .mk-plus-top,
+  .mk-plus-conveyor,
+  .mk-plus-spark { display: none !important; }
+}
+
+/* ---------- Drobnosti pro úzké displeje ---------- */
+
+@media (max-width: 720px) {
+  .mk-plus-watermark { font-size: 64px; }
+  .mk-plus-top { left: 14px; bottom: 14px; width: 42px; height: 42px; }
+  .mk-intro h1 { letter-spacing: -.045em; }
+  .mk-plus-conveyor { margin-bottom: 18px; }
+  .mk-plus-conveyor-track { gap: 28px; }
+}
+
+/* ---------- 18 · DROBNOSTI V2 — nepatrné labely nahoru, scroll-driven lean ---------- */
+
+/* To nejmenší techno písmo zvedáme o stupeň — ať je čitelné i na slabších displejích */
+.mk-intro-panel-head { font-size: 9.5px; }
+.mk-intro-panel-foot { font-size: 9px; }
+.mk-cta-primary-copy small,
+.mk-cta-github-copy small { font-size: 9px; letter-spacing: .14em; }
+.about-more-toggle { font-size: 11px; }
+.step-kicker { font-size: 10px; letter-spacing: .2em; }
+.studio-pillar-kicker { font-size: 10px; letter-spacing: .2em; }
+.store-button-label small { font-size: 9px; }
+.mobile-nav .nav-server-button::after { font-size: 8.5px; }
+
+/* Leskové efekty ať pod reduced motion blikají ani nejezdí */
+@media (prefers-reduced-motion: reduce) {
+  .button::before,
+  .mk-intro-proof > div::before,
+  .studio-facts > div::before {
+    transition: none !important;
+  }
+}
+
+/* Scroll-driven animace — moderní prohlížeče (Chromium 115+).
+   Podpora se testuje přes @supports, ostatní prohlížeče žijí dál beze změny. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+
+    /* HUD panel se při scrol jemně přiklání jako ukazatel konzole */
+    .mk-intro .mk-intro-panel {
+      animation: mkPlusPanelLean linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 110%;
+    }
+
+    @keyframes mkPlusPanelLean {
+      from { transform: perspective(1400px) rotateY(2.4deg) translateY(-8px); }
+      to { transform: perspective(1400px) rotateY(-2.8deg) translateY(12px); }
+    }
+
+    /* Emblémy s krychlemi se v průběhu sekce pootočí.
+       Sáhneme na wrapper, ne na .emblem-cube — ten má vlastní idle float. */
+    .about-emblem,
+    .studio-emblem {
+      animation: mkPlusCubeLean linear both;
+      animation-timeline: view(block);
+      animation-range: cover 0% cover 100%;
+    }
+
+    @keyframes mkPlusCubeLean {
+      from { rotate: -5deg; }
+      50% { rotate: 0deg; }
+      to { rotate: 5deg; }
+    }
+
+    /* Breadcrumbs na podstránkách se při odchodu z pohledu lehce srovnají */
+    .packs-breadcrumb {
+      animation: mkPlusCrumbs linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 220px;
+    }
+
+    @keyframes mkPlusCrumbs {
+      from { opacity: 1; transform: none; }
+      to { opacity: .35; transform: translateY(-6px); }
+    }
+  }
+}
