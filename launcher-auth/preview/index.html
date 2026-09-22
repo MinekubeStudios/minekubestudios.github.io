@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<!-- CSP: žádné vzdálené skripty, žádný inline eval -->
+<meta content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'" http-equiv="Content-Security-Policy"/>
+<title>Minekube Launcher — Přihlášení</title>
+<link href="login.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="auth-shell">
+<span aria-hidden="true" class="auth-glow"></span>
+<span aria-hidden="true" class="auth-glow auth-glow-b"></span>
+
+<main class="auth-card" role="main">
+
+  <!-- ======================= VÝBĚR ZPŮSOBU ======================= -->
+  <section aria-labelledby="auth-choose-title" class="auth-step is-active" data-step="choose">
+    <header class="auth-head">
+      <div class="auth-brand">
+        <span aria-hidden="true" class="auth-brand-mark"></span>
+        <span class="auth-brand-text">Minekube<b>Studios</b></span>
+      </div>
+      <h1 class="auth-title" id="auth-choose-title">Jak se chceš přihlásit?</h1>
+      <p class="auth-sub">Vyber si způsob. Změnit ho můžeš kdykoliv později v nastavení.</p>
+    </header>
+
+    <div class="auth-options">
+      <!-- Microsoft -->
+      <button class="auth-option" data-goto="microsoft" type="button">
+        <span aria-hidden="true" class="auth-option-icon">
+          <svg viewBox="0 0 23 23" width="26" height="26">
+            <rect fill="#f25022" x="1" y="1" width="10" height="10"/>
+            <rect fill="#7fba00" x="12" y="1" width="10" height="10"/>
+            <rect fill="#00a4ef" x="1" y="12" width="10" height="10"/>
+            <rect fill="#ffb900" x="12" y="12" width="10" height="10"/>
+          </svg>
+        </span>
+        <span class="auth-option-body">
+          <span class="auth-option-title">Microsoft účet</span>
+          <span class="auth-option-desc">Pro hráče s koupeným Minecraftem. Připojíš se na všechny servery, skiny a plášť se načtou automaticky.</span>
+          <span class="auth-option-tags">
+            <i class="auth-tag auth-tag-online">Online režim</i>
+            <i class="auth-tag">Oficiální</i>
+          </span>
+        </span>
+        <span aria-hidden="true" class="auth-option-arrow">→</span>
+      </button>
+
+      <!-- Lokální -->
+      <button class="auth-option" data-goto="local" type="button">
+        <span aria-hidden="true" class="auth-option-icon auth-option-icon-local">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="10" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
+        <span class="auth-option-body">
+          <span class="auth-option-title">Lokální účet</span>
+          <span class="auth-option-desc">Zvol si jméno a hraj hned. Vše zůstává jen v tomto počítači — nikam se nic neodesílá.</span>
+          <span class="auth-option-tags">
+            <i class="auth-tag auth-tag-offline">Offline servery</i>
+            <i class="auth-tag auth-tag-privacy">Bez odesílání dat</i>
+          </span>
+        </span>
+        <span aria-hidden="true" class="auth-option-arrow">→</span>
+      </button>
+    </div>
+
+    <p class="auth-foot-note">
+      <span aria-hidden="true" class="auth-shield">🛡</span>
+      Lokální účet nekomunikuje s žádným serverem. Microsoft se použije jen tehdy, když si ho sám zvolíš.
+    </p>
+  </section>
+
+  <!-- ======================= MICROSOFT ======================= -->
+  <section aria-labelledby="auth-ms-title" class="auth-step" data-step="microsoft" hidden>
+    <header class="auth-head">
+      <button class="auth-back" data-goto="choose" type="button">← Zpět</button>
+      <h1 class="auth-title" id="auth-ms-title">Přihlášení Microsoft účtem</h1>
+      <p class="auth-sub">Heslo zadáváš přímo u Microsoftu ve svém prohlížeči. Launcher ho nikdy nevidí.</p>
+    </header>
+
+    <!-- stav: čekání na kód -->
+    <div class="auth-ms-pane" data-pane="idle">
+      <ol class="auth-steps-list">
+        <li>Klikni na <b>Získat kód</b>.</li>
+        <li>Otevře se stránka Microsoftu ve tvém prohlížeči.</li>
+        <li>Opíšeš tam zobrazený kód a přihlásíš se.</li>
+      </ol>
+      <button class="auth-btn auth-btn-primary" data-action="ms-start" type="button">Získat kód</button>
+    </div>
+
+    <!-- stav: kód zobrazen -->
+    <div class="auth-ms-pane" data-pane="code" hidden>
+      <p class="auth-code-label">Zadej tento kód na stránce Microsoftu:</p>
+      <div class="auth-code" data-ms-code>——————</div>
+      <div class="auth-code-actions">
+        <button class="auth-btn auth-btn-ghost" data-action="copy-code" type="button">Kopírovat kód</button>
+        <button class="auth-btn auth-btn-primary" data-action="open-link" type="button">Otevřít stránku</button>
+      </div>
+      <p class="auth-hint">
+        Čekám na potvrzení… <span data-ms-timer>15:00</span>
+      </p>
+      <button class="auth-btn auth-btn-quiet" data-action="ms-cancel" type="button">Zrušit</button>
+    </div>
+
+    <!-- stav: dokončování -->
+    <div class="auth-ms-pane" data-pane="working" hidden>
+      <div aria-hidden="true" class="auth-spinner"></div>
+      <p class="auth-hint" data-ms-working>Ověřuji u Xbox Live…</p>
+    </div>
+
+    <!-- stav: chyba -->
+    <div class="auth-ms-pane" data-pane="error" hidden>
+      <div aria-hidden="true" class="auth-error-mark">!</div>
+      <p class="auth-error-text" data-ms-error>Něco se nepovedlo.</p>
+      <div class="auth-code-actions">
+        <button class="auth-btn auth-btn-ghost" data-goto="choose" type="button">Zpět na výběr</button>
+        <button class="auth-btn auth-btn-primary" data-action="ms-start" type="button">Zkusit znovu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= LOKÁLNÍ ======================= -->
+  <section aria-labelledby="auth-local-title" class="auth-step" data-step="local" hidden>
+    <header class="auth-head">
+      <button class="auth-back" data-goto="choose" type="button">← Zpět</button>
+      <h1 class="auth-title" id="auth-local-title">Lokální účet</h1>
+      <p class="auth-sub">Jen si zvol jméno. Žádný e-mail, žádné heslo, žádná registrace.</p>
+    </header>
+
+    <form class="auth-form" data-form="local" novalidate>
+      <label class="auth-label" for="local-name">Herní jméno</label>
+      <input
+        autocapitalize="off"
+        autocomplete="off"
+        autocorrect="off"
+        class="auth-input"
+        id="local-name"
+        maxlength="16"
+        name="username"
+        placeholder="napr. Kubik_2011"
+        spellcheck="false"
+        type="text"/>
+      <p class="auth-field-hint" data-local-hint>3–16 znaků, povolena jsou písmena, číslice a podtržítko.</p>
+
+      <div class="auth-preview" data-local-preview hidden>
+        <span class="auth-preview-label">Tvoje offline UUID</span>
+        <code class="auth-preview-uuid" data-local-uuid></code>
+      </div>
+
+      <button class="auth-btn auth-btn-primary" data-action="local-create" disabled type="submit">Vytvořit účet a hrát</button>
+    </form>
+
+    <div class="auth-notice">
+      <p><b>Co to znamená:</b> lokální účet funguje na serverech v offline režimu (včetně našich a hry pro jednoho hráče). Na oficiální servery s kontrolou licence se s ním nepřipojíš.</p>
+      <p class="auth-notice-privacy">Tvoje jméno se uloží jen do souboru v tomto počítači. Neodchází nikam na internet.</p>
+    </div>
+  </section>
+
+  <!-- ======================= HOTOVO ======================= -->
+  <section aria-labelledby="auth-done-title" class="auth-step" data-step="done" hidden>
+    <div aria-hidden="true" class="auth-done-mark">✓</div>
+    <h1 class="auth-title" id="auth-done-title">Přihlášeno</h1>
+    <p class="auth-sub">
+      Vítej, <b data-done-name>hráči</b>.
+      <span class="auth-done-type" data-done-type></span>
+    </p>
+    <button class="auth-btn auth-btn-primary" data-action="continue" type="button">Pokračovat do launcheru</button>
+  </section>
+
+</main>
+</div>
+
+<script src="mock-api.js"></script>
+<script src="login.js"></script>
+</body>
+</html>
