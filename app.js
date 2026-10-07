@@ -590,6 +590,9 @@ function escapeHtml(value) {
 const SITE_LINKS = {
   kofi: "https://ko-fi.com/minekubestudios",
   github: "https://github.com/minekubestudios",
+  /* Repozitář launcheru — odtud si stránka launcher/ bere nejnovější vydání. */
+  launcherRepo: "https://github.com/MinekubeStudios/MinekubeLauncher",
+  launcherReleases: "https://github.com/MinekubeStudios/MinekubeLauncher/releases",
   store: "https://minekubestudios.github.io/store/"
 };
 
