@@ -1,4 +1,56 @@
-# Minekube Studios // Web (v8.4 — originální PNG loga od autora)
+# Minekube Studios // Web (v8.5 — Launcher se stahuje rovnou z GitHubu)
+
+## v8.5 — Launcher: **nové ikony platforem** a skutečné stahování z GitHubu
+
+Sekce Launcher přestala být maketou. Tlačítko „Stáhnout“ teď opravdu stahuje
+nejnovější vydání přímo z repozitáře
+[`MinekubeStudios/MinekubeLauncher`](https://github.com/MinekubeStudios/MinekubeLauncher)
+a macOS s Linuxem jsou poctivě označené jako **v plánu**.
+
+1. **Nový sprite ikon** (`launcher/index.html`, skrytý blok `.mk-sprite` za
+   `<body>`) — všechny ikony sekce se kreslí jednou a odkazují se přes
+   `<use href="#…">`, takže se dají přebarvit přes `currentColor`:
+   - `#mk-os-windows` — čtyřoknový znak Windows 11 (vlastní kresba),
+   - `#mk-os-macos` — jablko ze sady Simple Icons (CC0),
+   - `#mk-os-linux` — Tux ze sady Simple Icons (CC0), místo dřívějšího
+     terminálového okýnka,
+   - `#mk-tray`, `#mk-check`, `#mk-clock`, `#mk-alert`, `#mk-package`,
+     `#mk-refresh`, `#mk-github` — stavové piktogramy tlačítka.
+2. **`launcher/releases.js`** — napojení na repozitář launcheru ve stejném
+   duchu jako `modpacky/releases.js`. Adresa repa je jen v `CONFIG`, hledá se
+   ve třech krocích: **GitHub Releases API** → **obsah repozitáře** (právě
+   tenhle případ — v repu zatím není žádné Release, jen
+   `Minekube Launcher_1.0.0-local_x64-setup.exe`) → **statická záloha**, kdyby
+   API mlčelo. Soubory se třídí podle přípony a názvu platformy (`.exe`/`.msi`,
+   `.dmg`/`.pkg`/`.app.tar.gz`, `.AppImage`/`.deb`/`.rpm`), zdrojový archiv
+   `source-code .zip` se ignoruje. Cache v `localStorage` (5 minut), událost
+   `minekube:launcher-releases`, veřejné API `window.MinekubeLauncherReleases`.
+3. **Stavy tlačítka** (`data-state`) — `loading` → `idle` → `downloading` →
+   `done`, plus `planned` a `error`. Tlačítko ukazuje verzi vydání, zdroj
+   (GitHub Releases / repozitář), název souboru i velikost a podle stavu
+   mění ikonu (tác se šipkou, kolo, fajfka, hodiny, vykřičník). Když se
+   vydání nepodaří najít, klik zkusí načtení znovu.
+4. **Platformy v plánu** — čipy i karty macOS a Linuxu mají přerušovaný
+   rámec, odznak „V plánu“ s hodinami, ztlumenou ikonu a poznámku, že se
+   sestavení na webu objeví samo, jakmile vyjde v repozitáři. Klik nic
+   nestahuje, jen vysvětlí situaci a na chvilku zvýrazní Windows. Když
+   návštěvník přijde z macOS nebo Linuxu, hlavní tlačítko zůstane na Windows
+   a toast mu to řekne. Až vydáme `.dmg`/`.AppImage`, stačí v
+   `CONFIG.platformStatus` přepsat `planned` na `live`.
+5. **`launcher/launcher.css`** — nový soubor se styly téhle sekce (načítá se
+   po `styles.css` a `design-plus.css`), včetně tabletového rozložení, kde
+   živá karta Windows zabírá celou šířku, světlého motivu, `color-mix`
+   fallbacku a `prefers-reduced-motion`.
+6. **`app.js`** — do `SITE_LINKS` přibyly `launcherRepo` a
+   `launcherReleases`, odkaz „Repozitář launcheru“ v hero sekci i v
+   open-source poznámce teď vede na repozitář launcheru, ne na profil studia.
+7. **`launcher/i18n.js`** — 22 nových klíčů ve všech třech jazycích
+   (odznaky, stavy, toast stahování, poznámky k platformám).
+8. **Test** `tools/launcher_page_test.mjs` — 6 scénářů v jsdomu nad reálným
+   během stránky (instalátor z repozitáře + stažení, platformy v plánu,
+   návštěvník z macOS, nedostupné API a záložní adresa, přepínání jazyků,
+   odkazy na repozitář).
+
 
 ## v8.4 — originální loga **Minekube Original Logo + TextIcon** (místo SVG)
 
@@ -430,7 +482,10 @@ Původní popis šestého kola: blok v `site/styles.css` se jmenoval
 | `modpacky/manifest.demo.json` | Ukázkový manifest pro vývoj (`modpacky/?releases=demo`) — ostrá data chodí z repozitáře s modpacky |
 | `modpack-repo/` | **Obsah samostatného repozitáře s modpacky** (`packs/`, `manifest.json`, `tools/`, `.github/workflows/`, `docs/`) — nahrává ho `tools/create-modpack-repo.sh` |
 | `tools/create-modpack-repo.sh` | Založí `MinekubeStudios/modpacky` a nahraje do něj `modpack-repo/` |
+| `launcher/releases.js` | **Vydání launcheru z repozitáře `MinekubeStudios/MinekubeLauncher`** — GitHub Releases API → obsah repozitáře → statická záloha, cache v `localStorage`, událost `minekube:launcher-releases`, veřejné API `window.MinekubeLauncherReleases` |
+| `launcher/launcher.css` | Styly sekce ke stažení: sprite ikon, čipy platforem, stavy tlačítka, karty Windows / macOS / Linux |
 | `tools/releases_test.mjs` | Test napojení na repozitář (jsdom): manifest, záložní GitHub API, demo i stav bez sítě |
+| `tools/launcher_page_test.mjs` | Test stránky Launcher (jsdom): stažení z GitHubu, platformy v plánu, záložní adresa, jazyky |
 | `assets/favicon.svg` | Favicon z brand znaku |
 
 ## Sekce stránky
@@ -490,6 +545,15 @@ Navíc test napojení modpacků na repozitář s vydáními (`tools/releases_tes
 
 ```bash
 node tools/releases_test.mjs
+```
+
+A test stránky Launcher (`tools/launcher_page_test.mjs`, 6 scénářů —
+instalátor nalezený v repozitáři a jeho stažení, macOS a Linux „v plánu“,
+návštěvník z macOS, nedostupné GitHub API a záložní adresa, přepínání
+jazyků, odkazy na repozitář):
+
+```bash
+node tools/launcher_page_test.mjs
 ```
 
 Stejně jako generátor manifestu v repu s modpacky se dá ověřit i sám:

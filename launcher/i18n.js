@@ -30,9 +30,9 @@ window.MINEKUBE_PAGE_I18N = {
 
     "launcher.download.kicker": "MINEKUBE LAUNCHER",
     "launcher.download.title": "Stáhnout pro {os}",
-    "launcher.download.all": "Všechna sestavení",
-    "launcher.download.all.note": "GitHub — Minekube Studios",
-    "launcher.download.all.aria": "Všechna sestavení launcheru na GitHubu",
+    "launcher.download.all": "Repozitář launcheru",
+    "launcher.download.all.note": "MinekubeStudios/MinekubeLauncher",
+    "launcher.download.all.aria": "Otevřít repozitář Minekube Launcher na GitHubu",
 
     "launcher.meta1": "100 % zdarma",
     "launcher.meta2": "Bez účtů a přihlašování",
@@ -120,8 +120,8 @@ window.MINEKUBE_PAGE_I18N = {
 
     /* ---- Platformy ---- */
     "launcher.platforms.kicker": "PLATFORMY A POŽADAVKY",
-    "launcher.platforms.title": "Sestavení pro všechny tři světy",
-    "launcher.platforms.lead": "Java se stáhne a spravuje automaticky — instalovat nic dalšího nemusíš.",
+    "launcher.platforms.title": "Windows teď, macOS a Linux v plánu",
+    "launcher.platforms.lead": "Instalátor pro Windows stáhneš jedním klikem přímo z repozitáře na GitHubu. Java se stáhne a spravuje automaticky — instalovat nic dalšího nemusíš.",
     "launcher.platforms.win.req": "Windows 10+ · 64bit",
     "launcher.platforms.win.f1": "Instalátor .exe i přenosná verze",
     "launcher.platforms.win.f2": "Podpora x64 i ARM zařízení",
@@ -135,8 +135,8 @@ window.MINEKUBE_PAGE_I18N = {
     "launcher.platforms.lin.f2": "Wayland i X11 bez úprav",
     "launcher.platforms.lin.f3": "Flatpak v plánu",
     "launcher.platforms.download": "Stáhnout",
-    "launcher.platforms.note.title": "Poznámka k první alphě",
-    "launcher.platforms.note.text": "Sestavení teprve připravujeme — tlačítka tě zatím navedou na GitHub, kde vzniká celý zdrojový kód.",
+    "launcher.platforms.note.title": "Odkud se stahuje",
+    "launcher.platforms.note.text": "Tlačítko pro Windows si samo najde nejnovější vydání v repozitáři MinekubeStudios/MinekubeLauncher a soubor stáhne přímo z GitHubu — nic neprochází přes náš server. macOS a Linux jsou v plánu.",
 
     /* ---- Roadmap ---- */
     "launcher.roadmap.kicker": "PLÁN VÝVOJE",
@@ -155,7 +155,7 @@ window.MINEKUBE_PAGE_I18N = {
     /* ---- Open source ---- */
     "launcher.oss.title": "Chceš na launcheru stavět s námi?",
     "launcher.oss.text": "Celý kód bude jako vždy otevřený. Hlasuj o funkcích, hlaste chyby, nebo pošli první pull request — launcher je ideální první projekt.",
-    "launcher.oss.link": "Otevřít GitHub",
+    "launcher.oss.link": "Otevřít repozitář launcheru",
 
     /* ---- CTA ---- */
     "launcher.cta.kicker": "EKOSYSTÉM MINEKUBE",
@@ -163,10 +163,33 @@ window.MINEKUBE_PAGE_I18N = {
     "launcher.cta.lead": "Dokud launcher doroste do první alphy, katalog balíčků je plně dostupný na webu — zdarma.",
     "launcher.cta.button": "Procházet modpacky",
 
+    /* ---- Stahování z GitHubu ---- */
+    "launcher.os.flag.live": "K dispozici",
+    "launcher.os.flag.planned": "V plánu",
+    "launcher.os.sub.planned": "Sestavení připravujeme · sleduj repozitář",
+    "launcher.download.source": "GitHub",
+    "launcher.download.source.releases": "GitHub Releases",
+    "launcher.download.source.repo": "GitHub repozitář",
+    "launcher.download.state.loading": "Zjišťuji nejnovější vydání…",
+    "launcher.download.state.error": "GitHub teď není dostupný",
+    "launcher.download.title.planned": "{os} zatím v plánu",
+    "launcher.platforms.flag.live": "K dispozici",
+    "launcher.platforms.flag.planned": "V plánu",
+    "launcher.platforms.planned.button": "V plánu",
+    "launcher.platforms.planned.note.macos": "Sestavení pro macOS připravujeme — na webu se objeví samo, jakmile vyjde v repozitáři.",
+    "launcher.platforms.planned.note.linux": "Sestavení pro Linux připravujeme — na webu se objeví samo, jakmile vyjde v repozitáři.",
+    "launcher.oss.aria": "Otevřít repozitář Minekube Launcher na GitHubu",
+
     /* ---- Toasty ---- */
     "launcher.toast.pending": "Sestavení launcheru právě připravujeme — mezitím sleduj vývoj na GitHubu.",
-    "launcher.toast.os": "Rozpoznali jsme tvou platformu: {os}."
-  },
+    "launcher.toast.os": "Rozpoznali jsme tvou platformu: {os}.",
+    "launcher.toast.os.planned": "Rozpoznali jsme {os} — to je zatím v plánu. Stáhnout si můžeš verzi pro Windows.",
+    "launcher.toast.planned": "Sestavení pro {os} je v plánu — zatím si můžeš stáhnout verzi pro Windows.",
+    "launcher.toast.fetching": "Zjišťuji nejnovější vydání v repozitáři na GitHubu…",
+    "launcher.toast.start": "Stahuji {file} přímo z GitHubu.",
+    "launcher.toast.done": "Hotovo! {file} najdeš ve složce Stažené.",
+    "launcher.toast.error": "Nejnovější vydání se nepodařilo načíst. Klikni znovu, nebo otevři repozitář na GitHubu.",
+    "launcher.toast.degraded": "GitHub API momentálně neodpovídá — stahuji poslední známé sestavení přímo z repozitáře."  },
 
   /* ===================== ENGLISH ===================== */
   en: {
@@ -191,9 +214,9 @@ window.MINEKUBE_PAGE_I18N = {
 
     "launcher.download.kicker": "MINEKUBE LAUNCHER",
     "launcher.download.title": "Download for {os}",
-    "launcher.download.all": "All builds",
-    "launcher.download.all.note": "GitHub — Minekube Studios",
-    "launcher.download.all.aria": "All launcher builds on GitHub",
+    "launcher.download.all": "Launcher repository",
+    "launcher.download.all.note": "MinekubeStudios/MinekubeLauncher",
+    "launcher.download.all.aria": "Open the Minekube Launcher repository on GitHub",
 
     "launcher.meta1": "100% free",
     "launcher.meta2": "No accounts, no sign-ins",
@@ -281,8 +304,8 @@ window.MINEKUBE_PAGE_I18N = {
 
     /* ---- Platforms ---- */
     "launcher.platforms.kicker": "PLATFORMS & REQUIREMENTS",
-    "launcher.platforms.title": "Builds for all three worlds",
-    "launcher.platforms.lead": "Java is downloaded and managed automatically — there's nothing else to install.",
+    "launcher.platforms.title": "Windows now, macOS and Linux planned",
+    "launcher.platforms.lead": "The Windows installer downloads with a single click straight from the GitHub repository. Java is fetched and managed automatically — there's nothing else to install.",
     "launcher.platforms.win.req": "Windows 10+ · 64-bit",
     "launcher.platforms.win.f1": ".exe installer and portable build",
     "launcher.platforms.win.f2": "x64 and ARM device support",
@@ -296,8 +319,8 @@ window.MINEKUBE_PAGE_I18N = {
     "launcher.platforms.lin.f2": "Wayland and X11 out of the box",
     "launcher.platforms.lin.f3": "Flatpak on the roadmap",
     "launcher.platforms.download": "Download",
-    "launcher.platforms.note.title": "A note on the first alpha",
-    "launcher.platforms.note.text": "We're still preparing the builds — the buttons will lead you to GitHub for now, where the whole source code is being born.",
+    "launcher.platforms.note.title": "Where the download comes from",
+    "launcher.platforms.note.text": "The Windows button finds the latest release in the MinekubeStudios/MinekubeLauncher repository on its own and pulls the file straight from GitHub — nothing passes through our server. macOS and Linux are planned.",
 
     /* ---- Roadmap ---- */
     "launcher.roadmap.kicker": "DEVELOPMENT PLAN",
@@ -316,7 +339,7 @@ window.MINEKUBE_PAGE_I18N = {
     /* ---- Open source ---- */
     "launcher.oss.title": "Want to help build the launcher?",
     "launcher.oss.text": "The whole codebase will be open as always. Vote on features, report bugs, or send the first pull request — the launcher is a perfect first project.",
-    "launcher.oss.link": "Open GitHub",
+    "launcher.oss.link": "Open the launcher repository",
 
     /* ---- CTA ---- */
     "launcher.cta.kicker": "MINEKUBE ECOSYSTEM",
@@ -324,10 +347,33 @@ window.MINEKUBE_PAGE_I18N = {
     "launcher.cta.lead": "While the launcher grows into its first alpha, the pack catalog is fully available on the web — for free.",
     "launcher.cta.button": "Browse modpacks",
 
+    /* ---- Downloading from GitHub ---- */
+    "launcher.os.flag.live": "Available",
+    "launcher.os.flag.planned": "Planned",
+    "launcher.os.sub.planned": "Build in progress · follow the repository",
+    "launcher.download.source": "GitHub",
+    "launcher.download.source.releases": "GitHub Releases",
+    "launcher.download.source.repo": "GitHub repository",
+    "launcher.download.state.loading": "Looking up the latest release…",
+    "launcher.download.state.error": "GitHub is unreachable right now",
+    "launcher.download.title.planned": "{os} is still planned",
+    "launcher.platforms.flag.live": "Available",
+    "launcher.platforms.flag.planned": "Planned",
+    "launcher.platforms.planned.button": "Planned",
+    "launcher.platforms.planned.note.macos": "We're preparing the macOS build — it will appear here on its own as soon as it lands in the repository.",
+    "launcher.platforms.planned.note.linux": "We're preparing the Linux build — it will appear here on its own as soon as it lands in the repository.",
+    "launcher.oss.aria": "Open the Minekube Launcher repository on GitHub",
+
     /* ---- Toasts ---- */
     "launcher.toast.pending": "We're still preparing the launcher builds — follow the development on GitHub in the meantime.",
-    "launcher.toast.os": "We detected your platform: {os}."
-  },
+    "launcher.toast.os": "We detected your platform: {os}.",
+    "launcher.toast.os.planned": "We detected {os} — that build is still planned. You can download the Windows version.",
+    "launcher.toast.planned": "The {os} build is still planned — for now you can download the Windows version.",
+    "launcher.toast.fetching": "Looking up the latest release in the GitHub repository…",
+    "launcher.toast.start": "Downloading {file} straight from GitHub.",
+    "launcher.toast.done": "Done! You'll find {file} in your Downloads folder.",
+    "launcher.toast.error": "We couldn't load the latest release. Click again, or open the repository on GitHub.",
+    "launcher.toast.degraded": "The GitHub API isn't responding right now — downloading the last known build straight from the repository."  },
 
   /* ===================== SLOVENČINA ===================== */
   sk: {
@@ -352,9 +398,9 @@ window.MINEKUBE_PAGE_I18N = {
 
     "launcher.download.kicker": "MINEKUBE LAUNCHER",
     "launcher.download.title": "Stiahnuť pre {os}",
-    "launcher.download.all": "Všetky zostavenia",
-    "launcher.download.all.note": "GitHub — Minekube Studios",
-    "launcher.download.all.aria": "Všetky zostavenia launcheru na GitHube",
+    "launcher.download.all": "Repozitár launcheru",
+    "launcher.download.all.note": "MinekubeStudios/MinekubeLauncher",
+    "launcher.download.all.aria": "Otvoriť repozitár Minekube Launcher na GitHube",
 
     "launcher.meta1": "100 % zadarmo",
     "launcher.meta2": "Bez účtov a prihlasovania",
@@ -442,8 +488,8 @@ window.MINEKUBE_PAGE_I18N = {
 
     /* ---- Platformy ---- */
     "launcher.platforms.kicker": "PLATFORMY A POŽIADAVKY",
-    "launcher.platforms.title": "Zostavenia pre všetky tri svety",
-    "launcher.platforms.lead": "Java sa stiahne a spravuje automaticky — inštalovať nič ďalšie nemusíš.",
+    "launcher.platforms.title": "Windows teraz, macOS a Linux v pláne",
+    "launcher.platforms.lead": "Inštalátor pre Windows stiahneš jedným klikom priamo z repozitára na GitHube. Java sa stiahne a spravuje automaticky — inštalovať nič ďalšie nemusíš.",
     "launcher.platforms.win.req": "Windows 10+ · 64-bit",
     "launcher.platforms.win.f1": "Inštalátor .exe aj prenosná verzia",
     "launcher.platforms.win.f2": "Podpora x64 aj ARM zariadení",
@@ -457,8 +503,8 @@ window.MINEKUBE_PAGE_I18N = {
     "launcher.platforms.lin.f2": "Wayland aj X11 bez úprav",
     "launcher.platforms.lin.f3": "Flatpak v pláne",
     "launcher.platforms.download": "Stiahnuť",
-    "launcher.platforms.note.title": "Poznámka k prvej alphe",
-    "launcher.platforms.note.text": "Zostavenia ešte pripravujeme — tlačidlá ťa zatiaľ vedú na GitHub, kde vzniká celý zdrojový kód.",
+    "launcher.platforms.note.title": "Odkiaľ sa sťahuje",
+    "launcher.platforms.note.text": "Tlačidlo pre Windows si samo nájde najnovšie vydanie v repozitári MinekubeStudios/MinekubeLauncher a súbor stiahne priamo z GitHubu — nič neprechádza cez náš server. macOS a Linux sú v pláne.",
 
     /* ---- Roadmap ---- */
     "launcher.roadmap.kicker": "PLÁN VÝVOJA",
@@ -477,7 +523,7 @@ window.MINEKUBE_PAGE_I18N = {
     /* ---- Open source ---- */
     "launcher.oss.title": "Chceš na launcheri stavať s nami?",
     "launcher.oss.text": "Celý kód bude ako vždy otvorený. Hlasuj o funkciách, hlaš chyby, alebo pošli prvý pull request — launcher je ideálny prvý projekt.",
-    "launcher.oss.link": "Otvoriť GitHub",
+    "launcher.oss.link": "Otvoriť repozitár launcheru",
 
     /* ---- CTA ---- */
     "launcher.cta.kicker": "EKOSYSTÉM MINEKUBE",
@@ -485,8 +531,31 @@ window.MINEKUBE_PAGE_I18N = {
     "launcher.cta.lead": "Kým launcher dorastie do prvej alphy, katalóg balíčkov je plne dostupný na webe — zadarmo.",
     "launcher.cta.button": "Prehliadať modpacky",
 
+    /* ---- Sťahovanie z GitHubu ---- */
+    "launcher.os.flag.live": "K dispozícii",
+    "launcher.os.flag.planned": "V pláne",
+    "launcher.os.sub.planned": "Zostavenie pripravujeme · sleduj repozitár",
+    "launcher.download.source": "GitHub",
+    "launcher.download.source.releases": "GitHub Releases",
+    "launcher.download.source.repo": "GitHub repozitár",
+    "launcher.download.state.loading": "Zisťujem najnovšie vydanie…",
+    "launcher.download.state.error": "GitHub teraz nie je dostupný",
+    "launcher.download.title.planned": "{os} zatiaľ v pláne",
+    "launcher.platforms.flag.live": "K dispozícii",
+    "launcher.platforms.flag.planned": "V pláne",
+    "launcher.platforms.planned.button": "V pláne",
+    "launcher.platforms.planned.note.macos": "Zostavenie pre macOS pripravujeme — na webe sa objaví samo, akonáhle vyjde v repozitári.",
+    "launcher.platforms.planned.note.linux": "Zostavenie pre Linux pripravujeme — na webe sa objaví samo, akonáhle vyjde v repozitári.",
+    "launcher.oss.aria": "Otvoriť repozitár Minekube Launcher na GitHube",
+
     /* ---- Toasty ---- */
     "launcher.toast.pending": "Zostavenia launcheru práve pripravujeme — medzitým sleduj vývoj na GitHube.",
-    "launcher.toast.os": "Rozpoznali sme tvoju platformu: {os}."
-  }
+    "launcher.toast.os": "Rozpoznali sme tvoju platformu: {os}.",
+    "launcher.toast.os.planned": "Rozpoznali sme {os} — to je zatiaľ v pláne. Stiahnuť si môžeš verziu pre Windows.",
+    "launcher.toast.planned": "Zostavenie pre {os} je v pláne — zatiaľ si môžeš stiahnuť verziu pre Windows.",
+    "launcher.toast.fetching": "Zisťujem najnovšie vydanie v repozitári na GitHube…",
+    "launcher.toast.start": "Sťahujem {file} priamo z GitHubu.",
+    "launcher.toast.done": "Hotovo! {file} nájdeš v priečinku Stiahnuté.",
+    "launcher.toast.error": "Najnovšie vydanie sa nepodarilo načítať. Klikni znova, alebo otvor repozitár na GitHube.",
+    "launcher.toast.degraded": "GitHub API momentálne neodpovedá — sťahujem posledné známe zostavenie priamo z repozitára."  }
 };

@@ -1,0 +1,862 @@
+/* =============================================================
+   MINEKUBE STUDIOS // STRÁNKA LAUNCHER — IKONY A STAHOVÁNÍ
+   Načítá se PO styles.css a design-plus.css, takže tady jsou
+   všechny úpravy sekce „ke stažení“:
+
+     • sprite s ikonami platforem (Windows / macOS / Linux)
+     • přepínač platforem v hero sekci + odznaky „K dispozici“ / „V plánu“
+     • velké tlačítko ke stažení a jeho stavy
+       (loading → idle → downloading → done / planned / error)
+     • karty platforem dole na stránce
+
+   Barvy i proměnné přebíráme ze styles.css, takže motiv
+   (tmavý / světlý) funguje beze změny.
+   ============================================================= */
+
+/* ===================== SPRITE ===================== */
+
+.mk-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ===================== IKONY =====================
+   Značky platforem a GitHub jsou vyplněné plochy, ostatní
+   piktogramy (tác, fajfka, hodiny, vykřičník, balíček) jsou linkové. */
+
+.launcher-os-row svg,
+.launcher-download svg,
+.launcher-platforms svg,
+.launcher-platform svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-os-row .os-chip-glyph .os-glyph,
+.launcher-download .dl-os .os-glyph,
+.launcher-download-side > svg,
+.launcher-platform-glyph > svg {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* Tux i jablko mají drobné detaily — při malé velikosti je
+   trochu zeštíhlíme, ať se nerozpijí. */
+.launcher-os-row .os-glyph,
+.launcher-download .os-glyph,
+.launcher-platform-glyph > svg {
+  transition: transform .38s var(--plus-spring, cubic-bezier(.34, 1.56, .64, 1)), opacity .25s ease;
+}
+
+/* ===================== HERO // PŘEPÍNAČ PLATFOREM ===================== */
+
+.launcher-os-row {
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.launcher-os-chip {
+  position: relative;
+  gap: 10px;
+  padding: 8px 14px 8px 8px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.launcher-os-chip .os-chip-glyph {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: 9px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.launcher-os-chip .os-chip-glyph .os-glyph {
+  width: 16px;
+  height: 16px;
+}
+
+.launcher-os-chip .os-chip-name {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+
+.launcher-os-chip .os-chip-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 2px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.launcher-os-chip .os-chip-flag svg {
+  width: 10px;
+  height: 10px;
+  stroke-width: 2.4;
+}
+
+.launcher-os-chip .os-chip-flag i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 0 currentColor;
+  animation: launcherFlagPulse 2.4s ease-out infinite;
+}
+
+@keyframes launcherFlagPulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 55%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 6px transparent; }
+}
+
+/* ---- dostupná platforma (Windows) ---- */
+
+.launcher-os-chip.is-live .os-chip-flag.is-live {
+  background: rgba(102, 226, 143, .16);
+  color: #66e28f;
+  box-shadow: inset 0 0 0 1px rgba(102, 226, 143, .34);
+}
+
+.launcher-os-chip.is-live.is-active {
+  border-color: rgba(255, 174, 0, .6);
+  background: linear-gradient(120deg, rgba(255, 174, 0, .2), rgba(255, 174, 0, .05));
+  color: var(--text);
+}
+
+.launcher-os-chip.is-live.is-active .os-chip-glyph {
+  background: linear-gradient(140deg, #ffe267, #ff9a00);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35), 0 6px 18px rgba(255, 154, 0, .35);
+  color: #241006;
+}
+
+/* ---- platforma v plánu (macOS, Linux) ---- */
+
+.launcher-os-chip.is-planned {
+  border-style: dashed;
+  color: var(--muted-2);
+}
+
+.launcher-os-chip.is-planned .os-chip-glyph { opacity: .62; }
+
+.launcher-os-chip.is-planned .os-chip-flag.is-planned {
+  background: color-mix(in srgb, var(--muted-2) 14%, transparent);
+  color: var(--muted-2);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--muted-2) 26%, transparent);
+}
+
+.launcher-os-chip.is-planned:hover {
+  border-color: color-mix(in srgb, var(--blue) 45%, transparent);
+  color: var(--text);
+}
+
+.launcher-os-chip.is-planned:hover .os-chip-glyph { opacity: 1; }
+
+.launcher-os-chip.is-planned.is-active {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--blue) 55%, transparent);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--blue) 16%, transparent), transparent);
+  color: var(--text);
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--blue) 18%, transparent);
+}
+
+.launcher-os-chip.is-planned.is-active .os-chip-glyph {
+  opacity: 1;
+  background: color-mix(in srgb, var(--blue) 22%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue) 40%, transparent);
+}
+
+.launcher-os-chip.is-planned.is-active .os-chip-flag.is-planned {
+  background: color-mix(in srgb, var(--blue) 20%, transparent);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue) 42%, transparent);
+}
+
+/* ikony se při najetí jen zvětší — otáčení by značkám neslušelo */
+.launcher-os-chip:hover .os-chip-glyph .os-glyph { transform: scale(1.12); }
+
+/* ===================== HERO // VELKÉ TLAČÍTKO KE STAŽENÍ ===================== */
+
+.launcher-download-btn {
+  gap: 16px;
+  min-height: 84px;
+  padding: 13px 22px 13px 14px;
+  border-radius: 20px;
+}
+
+.launcher-download-icon {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  border-radius: 16px;
+  background: rgba(36, 16, 6, .18);
+  box-shadow: inset 0 0 0 1px rgba(36, 16, 6, .16), inset 0 1px 0 rgba(255, 255, 255, .22);
+}
+
+.launcher-download-icon .dl-plate {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120% 120% at 30% 12%, rgba(255, 255, 255, .28), transparent 62%);
+  opacity: .8;
+}
+
+/* ---- značka systému uprostřed ---- */
+
+.launcher-download-icon .dl-os {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #241006;
+}
+
+.launcher-download-icon .dl-os .os-glyph {
+  display: none;
+  width: 26px;
+  height: 26px;
+}
+
+.launcher-download-btn[data-os="windows"] .dl-os .os-glyph-windows,
+.launcher-download-btn[data-os="macos"] .dl-os .os-glyph-macos,
+.launcher-download-btn[data-os="linux"] .dl-os .os-glyph-linux {
+  display: block;
+  animation: launcherOsIn .42s var(--plus-spring, cubic-bezier(.34, 1.56, .64, 1)) both;
+}
+
+@keyframes launcherOsIn {
+  from { opacity: 0; transform: translateY(5px) scale(.86); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- malý odznak s tácem a šipkou (vpravo dole) ---- */
+
+.launcher-download-icon .dl-tray {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #241006;
+  color: #ffd84f;
+  box-shadow: 0 6px 16px rgba(36, 16, 6, .45), inset 0 0 0 1px rgba(255, 214, 110, .4);
+}
+
+.launcher-download-icon .dl-tray-glyph {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.3;
+}
+
+.launcher-download-icon .dl-tray-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  opacity: 0;
+}
+
+/* ---- textová část ---- */
+
+.launcher-download-copy { gap: 3px; }
+
+.launcher-download-copy small {
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  font-size: 9px;
+  letter-spacing: .18em;
+}
+
+.launcher-download-copy small i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .5;
+}
+
+.launcher-download-copy small b {
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(36, 16, 6, .18);
+  box-shadow: inset 0 0 0 1px rgba(36, 16, 6, .14);
+  font-size: 9px;
+  letter-spacing: .04em;
+}
+
+.launcher-download-copy .dl-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(36, 16, 6, .18);
+  box-shadow: inset 0 0 0 1px rgba(36, 16, 6, .14);
+  font-size: 8px;
+  letter-spacing: .14em;
+}
+
+.launcher-download-copy .dl-source svg {
+  width: 10px;
+  height: 10px;
+  fill: currentColor;
+  stroke: none;
+  stroke-width: 0;
+}
+
+.launcher-download-copy strong { font-size: 18px; }
+
+.launcher-download-sub { font-size: 11.5px; }
+
+.launcher-download-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  opacity: .68;
+}
+
+.launcher-download-file svg {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2;
+}
+
+.launcher-download-file span {
+  overflow: hidden;
+  max-width: 260px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- stavová ikona vpravo ---- */
+
+.launcher-download-state {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-left: 4px;
+  flex: 0 0 auto;
+}
+
+.launcher-download-state .dl-state-glyph {
+  position: absolute;
+  width: 23px;
+  height: 23px;
+  stroke-width: 2.1;
+  opacity: 0;
+  transform: scale(.6);
+  transition: opacity .22s ease, transform .3s var(--plus-spring, cubic-bezier(.34, 1.56, .64, 1));
+}
+
+.launcher-download-state .dl-state-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(36, 16, 6, .22);
+  border-top-color: #241006;
+  opacity: 0;
+}
+
+.launcher-download-btn[data-state="idle"] .dl-state-glyph.is-idle,
+.launcher-download-btn[data-state="done"] .dl-state-glyph.is-done,
+.launcher-download-btn[data-state="planned"] .dl-state-glyph.is-planned,
+.launcher-download-btn[data-state="error"] .dl-state-glyph.is-error {
+  opacity: 1;
+  transform: none;
+}
+
+.launcher-download-btn[data-state="loading"] .dl-state-ring,
+.launcher-download-btn[data-state="downloading"] .dl-state-ring {
+  opacity: 1;
+  animation: launcherSpin .9s linear infinite;
+}
+
+.launcher-download-btn[data-state="loading"] .dl-tray-ring,
+.launcher-download-btn[data-state="downloading"] .dl-tray-ring {
+  opacity: 1;
+  border-color: rgba(255, 216, 79, .28);
+  border-top-color: #ffd84f;
+  animation: launcherSpin .8s linear infinite;
+}
+
+.launcher-download-btn[data-state="downloading"] .dl-tray-glyph {
+  animation: launcherTrayDive 1s ease-in-out infinite;
+}
+
+.launcher-download-btn[data-state="done"] .dl-tray {
+  background: #1d5c33;
+  color: #b6ffcd;
+  box-shadow: 0 6px 16px rgba(29, 92, 51, .5), inset 0 0 0 1px rgba(182, 255, 205, .45);
+}
+
+@keyframes launcherSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes launcherTrayDive {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(3px); opacity: .65; }
+}
+
+/* ---- tlačítko ve stavu „v plánu“ ---- */
+
+.launcher-download-btn[data-state="planned"] {
+  border: 1px dashed color-mix(in srgb, var(--blue) 45%, transparent);
+  background: linear-gradient(135deg, var(--surface-2), var(--surface));
+  color: var(--text);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .28);
+}
+
+.launcher-download-btn[data-state="planned"] .launcher-download-shine { display: none; }
+
+.launcher-download-btn[data-state="planned"] .launcher-download-icon {
+  background: color-mix(in srgb, var(--blue) 12%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue) 28%, transparent);
+}
+
+.launcher-download-btn[data-state="planned"] .dl-plate { display: none; }
+.launcher-download-btn[data-state="planned"] .dl-os { color: var(--text); }
+
+.launcher-download-btn[data-state="planned"] .dl-tray {
+  background: color-mix(in srgb, var(--blue) 24%, transparent);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue) 42%, transparent);
+}
+
+.launcher-download-btn[data-state="planned"] .dl-tray { display: none; }
+
+.launcher-download-btn[data-state="planned"] .launcher-download-copy small b,
+.launcher-download-btn[data-state="planned"] .dl-source {
+  background: color-mix(in srgb, var(--blue) 18%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue) 32%, transparent);
+}
+
+/* ---- tlačítko, když se vydání nepodařilo najít ---- */
+
+.launcher-download-btn[data-state="error"] {
+  border-color: rgba(255, 95, 116, .55);
+  box-shadow: 0 16px 44px rgba(255, 95, 116, .22), inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+
+.launcher-download-btn[data-state="error"] .dl-tray {
+  background: #6d1220;
+  color: #ffc3cb;
+  box-shadow: inset 0 0 0 1px rgba(255, 195, 203, .4);
+}
+
+/* ===================== HERO // ODKAZ NA REPOZITÁŘ ===================== */
+
+.launcher-download-side > svg {
+  transition: transform .3s var(--plus-spring, cubic-bezier(.34, 1.56, .64, 1));
+}
+
+.launcher-download-side:hover > svg { transform: rotate(-8deg) scale(1.08); }
+
+/* ===================== PLATFORMY // KARTY ===================== */
+
+.launcher-platform {
+  position: relative;
+  gap: 15px;
+  padding: 22px 22px 24px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.launcher-platform-glow {
+  position: absolute;
+  inset: -40% -10% auto;
+  height: 190px;
+  background: radial-gradient(60% 100% at 50% 0%, rgba(255, 174, 0, .2), transparent 70%);
+  opacity: 0;
+  transition: opacity .35s ease;
+  pointer-events: none;
+}
+
+.launcher-platform.is-live:hover .launcher-platform-glow { opacity: 1; }
+
+.launcher-platform.is-live {
+  border-color: rgba(255, 174, 0, .28);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--green) 6%, transparent), transparent 42%),
+    var(--surface);
+}
+
+.launcher-platform-head {
+  position: relative;
+  align-items: center;
+  gap: 14px;
+  padding-right: 4px;
+}
+
+.launcher-platform-glyph {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  flex: 0 0 auto;
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 10%, transparent);
+  color: var(--text);
+  transition: transform .35s var(--plus-spring, cubic-bezier(.34, 1.56, .64, 1)), background .3s ease, color .3s ease;
+}
+
+.launcher-platform-glyph > svg {
+  width: 25px;
+  height: 25px;
+}
+
+.launcher-platform.is-live:hover .launcher-platform-glyph {
+  transform: translateY(-3px) rotate(-4deg);
+  background: linear-gradient(140deg, #ffe267, #ff9a00);
+  color: #241006;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35), 0 10px 26px rgba(255, 154, 0, .34);
+}
+
+.launcher-platform-head > div { min-width: 0; }
+
+.launcher-platform-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.launcher-platform-flag svg {
+  width: 11px;
+  height: 11px;
+  stroke-width: 2.4;
+}
+
+.launcher-platform-flag i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: launcherFlagPulse 2.4s ease-out infinite;
+}
+
+.launcher-platform-flag.is-live {
+  background: rgba(102, 226, 143, .14);
+  color: #66e28f;
+  box-shadow: inset 0 0 0 1px rgba(102, 226, 143, .32);
+}
+
+.launcher-platform-flag.is-planned {
+  background: color-mix(in srgb, var(--blue) 15%, transparent);
+  color: color-mix(in srgb, var(--blue) 78%, var(--text));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue) 30%, transparent);
+}
+
+/* ---- karta v plánu ---- */
+
+.launcher-platform.is-planned {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--muted-2) 34%, transparent);
+  background:
+    repeating-linear-gradient(135deg, transparent 0 12px, color-mix(in srgb, var(--muted-2) 4%, transparent) 12px 24px),
+    var(--surface);
+}
+
+.launcher-platform.is-planned .launcher-platform-glyph {
+  opacity: .68;
+  background: color-mix(in srgb, var(--muted-2) 10%, transparent);
+}
+
+.launcher-platform.is-planned:hover .launcher-platform-glyph {
+  transform: translateY(-2px);
+  opacity: 1;
+}
+
+.launcher-platform.is-planned ul { opacity: .72; }
+
+.launcher-platform.is-planned li::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--muted-2);
+}
+
+.launcher-platform-note {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--blue) 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue) 20%, transparent);
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+/* ---- soubor ke stažení (název a velikost) ---- */
+
+.launcher-platform-file {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--green) 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 22%, transparent);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.launcher-platform-file svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  color: var(--green);
+  stroke-width: 2;
+}
+
+.launcher-platform-file span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- tlačítko v kartě ---- */
+
+.launcher-platform-btn {
+  position: relative;
+  gap: 9px;
+  min-height: 46px;
+  padding-right: 16px;
+}
+
+.platform-btn-state {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.platform-btn-state .platform-btn-glyph {
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.1;
+  opacity: 0;
+  transform: scale(.6);
+  transition: opacity .2s ease, transform .28s var(--plus-spring, cubic-bezier(.34, 1.56, .64, 1));
+}
+
+.platform-btn-state .platform-btn-ring {
+  position: absolute;
+  inset: 1px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-top-color: currentColor;
+  opacity: 0;
+}
+
+.launcher-platform-btn[data-state="idle"] .platform-btn-glyph.is-idle,
+.launcher-platform-btn[data-state="done"] .platform-btn-glyph.is-done,
+.launcher-platform-btn[data-state="planned"] .platform-btn-glyph.is-planned,
+.launcher-platform-btn[data-state="error"] .platform-btn-glyph.is-error {
+  opacity: 1;
+  transform: none;
+}
+
+.launcher-platform-btn[data-state="loading"] .platform-btn-ring,
+.launcher-platform-btn[data-state="downloading"] .platform-btn-ring {
+  opacity: 1;
+  animation: launcherSpin .9s linear infinite;
+}
+
+.launcher-platform-btn.is-planned {
+  border-style: dashed;
+  color: var(--muted);
+  cursor: help;
+  opacity: .9;
+}
+
+.launcher-platform-btn.is-planned:hover { opacity: 1; color: var(--text); }
+
+/* ===================== SKRYTÉ PRVKY =====================
+   Některé řádky (název souboru, odznak zdroje) mají v CSS
+   display: flex — atribut [hidden] by je nepřekryl, tak to
+   vynutíme. Skrývají se, dokud se vydání nenačte. */
+
+.launcher-download [hidden],
+.launcher-platform [hidden] {
+  display: none !important;
+}
+
+/* ===================== NÁPOVĚDA PRO ČTEČKY ===================== */
+
+.launcher-download-hint {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ===================== POZVÁNKA NA ŽIVOU PLATFORMU =====================
+   Když návštěvník klikne na macOS/Linux („v plánu“), Windows chip
+   na chvilku zavolá, ať je jasné, co je k dispozici teď. */
+
+.launcher-os-chip.is-hint {
+  border-color: rgba(255, 174, 0, .75);
+  color: var(--text);
+  animation: launcherChipHint 1.2s ease-in-out 2;
+}
+
+.launcher-os-chip.is-hint .os-chip-glyph {
+  background: linear-gradient(140deg, #ffe267, #ff9a00);
+  color: #241006;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35), 0 6px 18px rgba(255, 154, 0, .4);
+  opacity: 1;
+}
+
+@keyframes launcherChipHint {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 174, 0, 0); transform: translateY(0); }
+  35% { box-shadow: 0 0 0 7px rgba(255, 174, 0, 0); transform: translateY(-3px); }
+  50% { box-shadow: 0 0 0 0 rgba(255, 174, 0, .45); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .launcher-os-chip.is-hint { animation: none; }
+}
+
+/* ===================== RESPONSIVNÍ ÚPRAVY ===================== */
+
+/* Na tabletu zabírá živá karta (Windows) celou šířku — je to jediné
+   sestavení, které jde opravdu stáhnout, takže má přednost. */
+@media (max-width: 1100px) {
+  .launcher-platforms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .launcher-platform.is-live {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+    grid-template-areas:
+      "head head"
+      "list file"
+      "list action";
+    column-gap: 28px;
+    row-gap: 13px;
+    align-items: start;
+  }
+
+  .launcher-platform.is-live .launcher-platform-glow { grid-area: head; }
+  .launcher-platform.is-live .launcher-platform-head { grid-area: head; }
+  .launcher-platform.is-live ul { grid-area: list; align-self: center; }
+  .launcher-platform.is-live .launcher-platform-file { grid-area: file; }
+  .launcher-platform.is-live .launcher-platform-btn { grid-area: action; }
+  .launcher-platform:last-child { grid-column: auto; }
+}
+
+@media (max-width: 900px) {
+  .launcher-platform.is-live {
+    grid-column: auto;
+    display: flex;
+    grid-template-areas: none;
+  }
+
+  .launcher-os-row { gap: 8px; }
+  .launcher-os-chip { padding: 7px 11px 7px 7px; }
+  .launcher-os-chip .os-chip-flag { letter-spacing: .08em; }
+  .launcher-download-file span { max-width: 180px; }
+  .launcher-platforms { grid-template-columns: 1fr; }
+  .launcher-platform-flag { margin-left: 0; }
+  .launcher-platform-head { flex-wrap: wrap; }
+}
+
+@media (max-width: 560px) {
+  .launcher-os-chip .os-chip-name { font-size: 12px; }
+  .launcher-os-chip .os-chip-flag span { display: none; }
+  .launcher-os-chip .os-chip-flag { padding: 4px; border-radius: 50%; }
+  .launcher-download-btn { padding: 12px 14px 12px 12px; gap: 12px; }
+  .launcher-download-icon { width: 48px; height: 48px; }
+  .launcher-download-copy strong { font-size: 16px; }
+  .launcher-download-file span { max-width: 150px; }
+  .launcher-download-state { width: 26px; height: 26px; }
+}
+
+/* ===================== SVĚTLÝ MOTIV ===================== */
+
+:root[data-theme="light"] .launcher-os-chip.is-live .os-chip-flag.is-live,
+:root[data-theme="light"] .launcher-platform-flag.is-live {
+  background: rgba(21, 138, 62, .12);
+  color: #158a3e;
+  box-shadow: inset 0 0 0 1px rgba(21, 138, 62, .3);
+}
+
+:root[data-theme="light"] .launcher-platform.is-planned {
+  background:
+    repeating-linear-gradient(135deg, transparent 0 12px, rgba(72, 25, 55, .035) 12px 24px),
+    var(--surface);
+}
+
+/* ===================== BEZ ANIMACÍ ===================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .launcher-os-chip .os-chip-flag i,
+  .launcher-platform-flag i { animation: none; }
+  .launcher-download-btn[data-state="loading"] .dl-state-ring,
+  .launcher-download-btn[data-state="downloading"] .dl-state-ring,
+  .launcher-download-btn[data-state="loading"] .dl-tray-ring,
+  .launcher-download-btn[data-state="downloading"] .dl-tray-ring,
+  .launcher-platform-btn[data-state="loading"] .platform-btn-ring,
+  .launcher-platform-btn[data-state="downloading"] .platform-btn-ring {
+    animation-duration: 2.4s;
+  }
+  .launcher-download-btn[data-state="downloading"] .dl-tray-glyph { animation: none; }
+  .launcher-download-btn[data-os] .dl-os .os-glyph { animation: none; }
+}
+
+/* ===================== TISK / FALLBACK BEZ color-mix ===================== */
+
+@supports not (background: color-mix(in srgb, red 10%, blue)) {
+  .launcher-os-chip .os-chip-glyph { background: rgba(255, 255, 255, .08); }
+  .launcher-os-chip.is-planned .os-chip-flag.is-planned,
+  .launcher-platform-flag.is-planned { background: rgba(211, 108, 255, .16); color: #d36cff; }
+  .launcher-platform.is-planned { background: var(--surface); }
+  .launcher-platform-note { background: rgba(211, 108, 255, .1); }
+  .launcher-platform-file { background: rgba(255, 174, 0, .1); }
+}
