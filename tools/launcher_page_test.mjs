@@ -328,6 +328,26 @@ test("Přepnutí jazyka překreslí texty i stav tlačítka", async () => {
   assert.deepEqual(page.errors, []);
 });
 
+test("Nová prezentace zachovává překlady, ukázkový náhled a odkazy", async () => {
+  const page = await buildPage("repoOnly");
+  const { document, window } = page;
+
+  window.eval(`applyLanguage("cs")`);
+  assert.match(document.querySelector("#launcherTitle").textContent, /Tvůj Minecraft/);
+  assert.ok(document.querySelector("#launcherTitle em"), "zvýrazněná část nadpisu zůstává HTML");
+  assert.match(document.querySelector(".preview-caption").textContent, /Ilustrační náhled/);
+  assert.equal(document.querySelector(".all-platforms").getAttribute("href"), "#platformy");
+  assert.equal(document.querySelector(".final-cta a").getAttribute("href"), "../modpacky/");
+
+  window.eval(`applyLanguage("en")`);
+  assert.match(document.querySelector("#launcherTitle").textContent, /Your Minecraft/);
+  assert.ok(document.querySelector("#launcherTitle em"));
+  assert.match(document.querySelector(".preview-caption").textContent, /Illustrative preview/);
+  window.eval(`applyLanguage("sk")`);
+  assert.match(document.querySelector("#launcherTitle").textContent, /Tvoj Minecraft/);
+  assert.deepEqual(page.errors, []);
+});
+
 test("Odkazy na repozitář vedou na MinekubeLauncher", async () => {
   const page = await buildPage("repoOnly");
   const { document } = page;
