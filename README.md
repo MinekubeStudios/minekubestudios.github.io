@@ -1,4 +1,49 @@
-# Minekube Studios // Web (v8.5 — Launcher se stahuje rovnou z GitHubu)
+# Minekube Studios // Web (v8.6 — nová produktová stránka Launcheru)
+
+## v8.6 — **nová produktová stránka Launcheru** (vizuály z reálného rozhraní)
+
+Stránka `launcher/` prošla kompletní přestavbou. Místo dřívější makety
+z HTML kostek stojí na **skutečných snímcích launcheru**: každý je oříznutý
+o okraj rámečku zachycení, sjednocený na 1200 px, zaoblený a uložený jako
+WebP. Výsledkem jsou celá, přirozeně vypadající okna aplikace (rám, stíny,
+průhledné rohy), ne useknuté screenshoty. Všechny takto upravené vizuály
+nesou viditelný popisek **„Ilustrační náhled“**.
+
+1. **Vizuály** (`launcher/img/`, 8 souborů, dohromady ~330 kB) —
+   `hero-welcome` (uvítací okno), `panel-instance` (panel hráče a instance),
+   `settings-features` / `settings-appearance` / `settings-performance` /
+   `settings-privacy` (nastavení, sjednoceno na 1200×644), `dialog-account`
+   a `splash`. Každý má `width`/`height` proti posunu layoutu, `loading="lazy"`
+   (hero naopak `fetchpriority="high"` + `<link rel="preload">`) a překládaný
+   `alt` přes `data-i18n-alt` (app.js alt neřeší, dělá to `launcher.js`).
+   Nepoužívaný `launcher/landscape.png` (2,3 MB) zmizel.
+2. **Nová struktura** — hero s velkým oknem launcheru, pás rychlých fakt,
+   dva střídavé feature řádky (knihovna instancí, vzhled), tři karty
+   (modpacky a import, soukromí, otevřený vývoj), **prohlídka rozhraní**
+   s taby Vzhled / Výkon / Soukromí, sekce stažení a závěrečné CTA.
+3. **Stahování zůstalo napojené na GitHub** a je poctivější: tlačítko po
+   kliknutí hlásí **„Stahování zahájeno“**, nikdy „hotovo“ — dokončení hlásí
+   prohlížeč. Stavový řádek rozlišuje `loading` / `ready` / `fallback` /
+   `error`, u Windows karty se zobrazí název souboru, velikost a zkrácený
+   `SHA-256` z GitHub API (`digest`). Záložní adresa v `releases.js` míří na
+   skutečné vydání `v1.2.1`, ne na dávno smazaný soubor. Když API mlčí,
+   objeví se vysvětlující toast; když chybí vše, karta nabídne „Zkusit znovu“.
+4. **macOS a Linux** zůstávají „V plánu“ (přerušovaný rám, odznak s hodinami,
+   `data-state="planned"`), klik nic nestahuje a jen vysvětlí situaci.
+   Připravované položky jsou vypsané i v seznamu „Připravujeme“.
+5. **Přístupnost** — jedna `h1`, sekce s `aria-labelledby`, taby s `role`
+   a obsluhou šipek/Home/End, `aria-describedby` u hlavního tlačítka,
+   `aria-busy` během načítání, viditelný focus ring (v světlém motivu tmavý),
+   `prefers-reduced-motion`, `forced-colors` a tiskové styly.
+6. **Motivy a jazyky** — celá stránka stojí na tokenech `--lp-*`; světlý
+   motiv má vlastní kontrastní akcenty (zlatá na krémové by neprošla).
+   `launcher/i18n.js` má **133 klíčů ve všech třech jazycích** (CS/EN/SK).
+7. **Testy** `tools/launcher_page_test.mjs` — 16 scénářů v jsdomu: stažení
+   z repozitáře i z Releases, otisk SHA-256, platformy v plánu, návštěvník
+   z macOS, záložní zdroj, chybový stav a retry, přepínání jazyků včetně
+   `alt`, úplnost slovníků, ovládání tabů klávesnicí, popisky „Ilustrační
+   náhled“, odkazy na repo/katalog/navigaci, duplicitní ID, vyváženost
+   značek, velikost a skutečné rozměry WebP.
 
 ## v8.5 — Launcher: **nové ikony platforem** a skutečné stahování z GitHubu
 

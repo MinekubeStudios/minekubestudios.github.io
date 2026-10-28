@@ -19,7 +19,7 @@
    Veřejné API (window.MinekubeLauncherReleases):
      .ready               → Promise vyřešená po prvním načtení
      .status()            → { state, source, version, degraded, fetchedAt, error }
-     .asset(os)           → { name, url, size, version, source } | null
+     .asset(os)           → { name, url, size, digest, version } | null
      .platform(os)        → { id, status, available, asset }
      .platforms()         → [ windows, macos, linux ]
      .isAvailable(os)     → boolean
@@ -56,10 +56,10 @@ window.MinekubeLauncherReleases = (function () {
        (vyčerpaný limit, offline). Adresa míří přímo do repozitáře. */
     fallback: {
       windows: {
-        name: "Minekube Launcher_1.0.0-local_x64-setup.exe",
-        version: "1.0.0-local",
-        size: 24691528,
-        url: "https://github.com/MinekubeStudios/MinekubeLauncher/raw/main/Minekube%20Launcher_1.0.0-local_x64-setup.exe"
+        name: "Minekube.Launcher_1.2.1_x64-setup.exe",
+        version: "1.2.1",
+        size: 27140257,
+        url: "https://github.com/MinekubeStudios/MinekubeLauncher/releases/download/v1.2.1/Minekube.Launcher_1.2.1_x64-setup.exe"
       }
     }
   };
@@ -242,6 +242,7 @@ window.MinekubeLauncherReleases = (function () {
           name: asset.name,
           url: asset.browser_download_url,
           size: typeof asset.size === "number" ? asset.size : null,
+          digest: typeof asset.digest === "string" && asset.digest ? asset.digest : null,
           version: versionFrom(asset.name) || tag
         }))
         .filter(item => item.name && item.url);
@@ -361,7 +362,9 @@ window.MinekubeLauncherReleases = (function () {
             assets: cached.assets,
             version: cached.version,
             releaseUrl: URLS.releases,
-            source: "cache"
+            /* Zdroj z cache si pamatujeme, ať UI neříká „záložní adresa“,
+               když jde o běžné vydání z GitHubu. */
+            source: cached.source && cached.source !== "cache" ? cached.source : "repo"
           },
           cached.fetchedAt
         );

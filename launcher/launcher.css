@@ -1,48 +1,2041 @@
-/* Launcher page: isolated product design, with the rest of the website untouched. */
-.mk-sprite{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
-.launcher-redesign .launch-page{--bg:#151218;--surface:#211c24;--surface-raised:#2b242e;--text:#f7f3f6;--muted:#b2a8b2;--line:#3b323d;--pink:#ffb629;--pink-hover:#ffd35a;--chip:#403123;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;overflow:hidden}
-.launcher-redesign .launch-page *{box-sizing:border-box}
-.launcher-redesign .launch-page [hidden]{display:none!important}
-.launcher-redesign .launch-page :is(h1,h2,h3,p){margin:0;color:inherit}
-.launcher-redesign .launch-page :is(a,button){font-family:inherit;text-decoration:none}
-.launcher-redesign .launch-page button{cursor:pointer}
-.launcher-redesign .launch-page :focus-visible{outline:3px solid #ffd56d;outline-offset:4px}
-.product-wrap{width:min(1200px,calc(100% - 64px));margin-inline:auto}
-.product-hero{padding:104px 0 100px;border-bottom:1px solid var(--line)}
-.hero-layout{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);align-items:center;gap:68px}
-.product-brand{display:inline-flex;align-items:center;gap:10px;color:var(--text);font-size:14px;font-weight:750}
-.product-brand img{width:32px;height:32px;object-fit:cover;border-radius:8px}.product-brand b{margin-left:4px;padding:6px 8px;border-radius:6px;background:var(--chip);color:#ffd681;font-size:9px;letter-spacing:.06em}
-.launcher-redesign .launch-page .product-copy h1{font-family:'Space Grotesk',Inter,sans-serif;font-size:clamp(48px,5vw,72px);line-height:1.04;letter-spacing:-.055em;margin:27px 0 20px;font-weight:700}.product-copy h1 em,.section-intro h2 em{font-style:normal;color:var(--pink)}
-.launcher-redesign .launch-page .product-lead{max-width:480px;color:var(--muted);font-size:18px;line-height:1.65}
-.product-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}.product-button{display:inline-flex;justify-content:center;align-items:center;gap:10px;min-height:48px;padding:0 18px;border:1px solid transparent;border-radius:8px;font-size:14px;font-weight:750;transition:background .18s,transform .18s}.product-button.primary{color:#21131c;background:var(--pink)}.product-button.primary:hover{background:var(--pink-hover);transform:translateY(-2px)}.product-button.secondary{color:var(--text);background:var(--surface-raised);border-color:var(--line)}.product-button.secondary:hover{background:#40333f}.product-button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.release-meta{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin-top:13px;color:var(--muted);font-size:12px}.release-meta [data-launcher-source]{border-left:1px solid var(--line);padding-left:9px}.file-note{margin-top:7px!important;color:var(--muted)!important;font-size:11px;overflow-wrap:anywhere}.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px!important;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.hero-trust{display:flex;flex-wrap:wrap;gap:18px;margin-top:33px;color:var(--muted);font-size:12px;font-weight:600}.hero-trust a{color:inherit}.hero-trust a:hover{color:var(--pink)}.hero-trust i{font-style:normal;color:var(--pink);margin-right:4px}
-.hero-visual{position:relative;min-width:0}.visual-backdrop{position:absolute;inset:-27px -30px 35px 30px;border-radius:24px;background:#42254d;transform:rotate(3deg)}.app-window{position:relative;background:#19161c;border:1px solid #544552;border-radius:12px;box-shadow:0 28px 70px #0007;overflow:hidden;color:#f5f1f5;text-align:left}.window-bar{height:40px;display:flex;justify-content:space-between;align-items:center;padding:0 13px;border-bottom:1px solid #373039;background:#211c23;font-size:10px;font-weight:700}.window-brand{display:flex;align-items:center;gap:7px}.window-brand img{width:19px;height:19px;border-radius:5px}.window-dots{font-size:13px;color:#a596a3;font-weight:400}.app-shell{display:grid;grid-template-columns:125px minmax(0,1fr);min-height:345px}.app-sidebar{position:relative;padding:15px 8px;background:#211c23;border-right:1px solid #373039;color:#b5aab4;font-size:10px}.app-side-item{display:flex;gap:9px;padding:9px;border-radius:6px}.app-side-item>span:first-child{font-size:14px;line-height:11px}.app-side-item.selected{background:#4c3926;color:#ffe5a1;font-weight:700}.app-side-label{margin:22px 9px 7px;font-size:8px;color:#8d7f8b;letter-spacing:.1em;font-weight:800}.app-side-pack{padding:7px 9px;white-space:nowrap}.app-side-pack>span{color:#eac05a;margin-right:5px}.app-side-bottom{position:absolute;bottom:16px;left:17px}.app-main{padding:20px;min-width:0}.app-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.app-toolbar small{display:block;font-size:8px;letter-spacing:.11em;color:#ffd477;font-weight:800}.app-toolbar strong{display:block;font-size:18px;margin-top:4px;letter-spacing:-.03em}.avatar{display:grid;place-items:center;width:28px;height:28px;background:#9552a8;border-radius:50%;font-size:11px;font-weight:800;border:2px solid #d3a2df}.app-cover{height:145px;border-radius:8px;background:linear-gradient(90deg,#1a111cdd 3%,#2112229e 48%,#21122230),url('landscape.png') center 54%/cover;display:flex;align-items:center;padding:18px}.app-cover>div>span{color:#ffd889;font-size:8px;font-weight:800;letter-spacing:.1em}.launcher-redesign .launch-page .app-cover h2{font-size:22px;letter-spacing:-.04em;margin:6px 0}.app-cover p{font-size:10px;color:#eadfe8!important}.app-cover b{display:inline-block;background:#ffb629;color:#21131c;border-radius:5px;padding:8px 13px;font-size:10px;margin-top:13px}.app-list-title{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:18px 0 9px;font-size:11px}.app-list-title span{font-size:9px;color:#d8b882}.app-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}.app-list>div,.illustration-row{display:flex;align-items:center;gap:8px;min-width:0;padding:9px;border:1px solid #403542;border-radius:7px;background:#2a232d}.pack-art{display:grid;place-items:center;flex:0 0 35px;height:35px;border-radius:7px;color:#ffd487;font-size:17px}.art-ultra{background:linear-gradient(135deg,#9454a0,#4c2a54)}.art-performance{background:linear-gradient(135deg,#775291,#392941)}.art-vanilla{background:linear-gradient(135deg,#b36a90,#57374b)}.app-list b,.illustration-row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}.app-list small,.illustration-row small{display:block;margin-top:4px;color:#a99baa;font-size:9px}.app-list i,.illustration-row i{margin-left:auto;color:#e7bc70;font-style:normal;font-size:9px}.preview-caption{position:relative;text-align:right;color:var(--muted)!important;font-size:11px;margin-top:13px!important}.preview-caption>span:first-child{display:inline-block;width:6px;height:6px;background:var(--pink);border-radius:50%;margin-right:4px;vertical-align:middle}
-.features-section{padding-top:115px;padding-bottom:110px}.section-intro{text-align:center;margin:0 auto 42px}.section-tag{color:#ffc85b;font-size:11px;font-weight:800;letter-spacing:.1em}.launcher-redesign .launch-page .section-intro h2,.launcher-redesign .launch-page .download-heading h2,.launcher-redesign .launch-page .closing-section h2{font-family:'Space Grotesk',Inter,sans-serif;font-size:clamp(34px,4vw,52px);line-height:1.12;letter-spacing:-.045em;margin-top:14px}.section-intro p,.download-heading p,.closing-section p{margin-top:15px!important;color:var(--muted)!important;font-size:16px;line-height:1.65}
-.bento-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.bento{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;min-width:0}.bento-copy{padding:28px}.feature-symbol{display:grid;place-items:center;background:var(--chip);color:#ffc755;width:40px;height:40px;border-radius:10px;font-size:21px;font-weight:700}.launcher-redesign .launch-page .bento h3{font-size:22px;letter-spacing:-.03em;margin:17px 0 9px}.bento p{color:var(--muted)!important;font-size:14px;line-height:1.65}.bento a{display:inline-block;margin-top:18px;font-size:13px;font-weight:750;color:#ffc95c}.bento a:hover{text-decoration:underline}.bento-library{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;align-items:center;min-height:310px}.bento-library .bento-copy{padding:40px}.library-illustration{align-self:end;margin:28px 40px 0 0;padding:19px 19px 0;border:1px solid #534251;border-bottom:0;border-radius:12px 12px 0 0;background:#19161c;color:#f5f1f5;box-shadow:0 12px 28px #0004}.illustration-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:12px}.illustration-top>span{color:#ffd075;font-size:19px}.illustration-row{margin-top:7px;padding:10px}.illustration-row:last-child{margin-bottom:0}.bento-discover,.bento-open{display:flex;flex-direction:column}.discover-art,.code-art{height:170px;background:#2c202b;border-bottom:1px solid var(--line);display:flex;justify-content:center;align-items:center;overflow:hidden}.discover-art{gap:10px;background:linear-gradient(130deg,#422b4e,#271d2b)}.discover-card{display:grid;place-items:center;width:88px;height:100px;border-radius:12px;color:#ffd3e8;font-size:35px;border:1px solid #ffffff25;box-shadow:0 12px 30px #0004}.discover-one{background:#604078;transform:rotate(-10deg) translateY(20px)}.discover-two{background:#a7752f;transform:translateY(7px)}.discover-three{background:#634371;transform:rotate(10deg) translateY(20px)}.code-art{background:#211b24}.code-art code{width:240px;padding:20px;border:1px solid #4a3b48;border-radius:9px;background:#171319;color:#ddd0dc;font:12px/1.7 monospace}.code-art code i{color:#ffc65a;font-style:normal}.code-art>span{position:absolute;align-self:flex-start;margin:12px 0 0 -210px;color:#a26b8c;font-size:8px;letter-spacing:3px}.features-note{color:var(--muted)!important;text-align:center;font-size:12px;line-height:1.6;margin-top:22px!important}
-.download-section{padding:90px 0;background:#1c171e;border-block:1px solid var(--line)}.download-heading{display:flex;align-items:end;justify-content:space-between;gap:30px}.version-label{white-space:nowrap;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.07em}.version-label b{color:#f6cf84;font-size:13px;letter-spacing:0;margin-left:8px}.launcher-os-row{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 16px}.launcher-os-chip{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);font-size:12px;font-weight:700}.launcher-os-chip span{margin-left:7px;color:var(--muted);font-size:10px;font-weight:500}.launcher-os-chip.is-active{background:var(--chip);border-color:#c68a27}.download-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.download-card{padding:23px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.download-icon{display:grid;place-items:center;width:42px;height:42px;background:var(--chip);color:#ffd172;border-radius:9px}.download-icon svg{width:20px;height:20px;fill:currentColor}.download-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:20px 0 8px}.launcher-redesign .launch-page .download-card h3{font-size:20px}.download-card-top>span{padding:5px 8px;border:1px solid var(--line);border-radius:50px;color:var(--muted);font-size:10px}.download-card-top .status-live{color:#ffd68a;background:var(--chip);border-color:#71465f}.download-card>p{color:var(--muted)!important;font-size:12px;line-height:1.5}.platform-file{margin-top:8px!important;font-size:10px!important;overflow-wrap:anywhere}.download-card-button{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:25px;padding:12px;border:1px solid #71455f;border-radius:7px;background:var(--chip);color:#ffdc96;font-size:12px;font-weight:750}.download-card-button:hover{filter:brightness(1.2)}.download-card-button.planned{background:var(--surface-raised);border-color:var(--line);color:var(--muted)}.download-note{margin-top:18px!important;color:var(--muted)!important;font-size:12px;line-height:1.6}.closing-section{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:90px 0}.closing-section .product-button{white-space:nowrap}
-@media(max-width:1000px){.hero-layout{gap:35px}.product-hero{padding:80px 0}.product-copy h1{font-size:50px!important}.app-shell{grid-template-columns:105px 1fr}.app-main{padding:15px}.app-list{grid-template-columns:1fr}.app-list>div:nth-child(2){display:none}}
-@media(max-width:760px){.product-wrap{width:calc(100% - 40px)}.hero-layout{grid-template-columns:1fr;gap:55px}.product-hero{padding:64px 0 75px}.product-lead{max-width:580px!important}.hero-visual{width:min(100%,600px);margin:auto}.visual-backdrop{inset:-18px -10px 30px 20px}.app-list{grid-template-columns:1fr 1fr}.app-list>div:nth-child(2){display:flex}.features-section{padding-block:80px}.download-section{padding:70px 0}.download-grid{grid-template-columns:1fr 1fr}.download-card:last-child{grid-column:span 2}.closing-section{padding:70px 0}}
-@media(max-width:520px){.product-wrap{width:calc(100% - 32px)}.product-copy h1{font-size:44px!important}.launcher-redesign .launch-page .product-lead{font-size:16px}.product-actions{display:grid}.hero-trust{gap:12px}.app-shell{grid-template-columns:1fr;min-height:0}.app-sidebar{display:none}.app-main{padding:15px}.app-toolbar strong{font-size:16px}.app-cover{height:125px}.app-list{grid-template-columns:1fr}.app-list>div:nth-child(2){display:none}.bento-grid{grid-template-columns:1fr}.bento-library{grid-column:auto;display:flex;flex-direction:column;align-items:stretch}.bento-library .bento-copy{padding:28px}.library-illustration{align-self:stretch;margin:0 25px}.section-intro{text-align:left}.download-heading{display:block}.version-label{display:block;margin-top:20px}.download-grid{grid-template-columns:1fr}.download-card:last-child{grid-column:auto}.closing-section{display:block}.closing-section .product-button{margin-top:24px}}
-@media(prefers-reduced-motion:reduce){.product-button{transition:none}.product-button.primary:hover{transform:none}}
-/* Light mode follows the site setting; the illustrative app remains dark. */
-:root[data-theme="light"] .launcher-redesign .launch-page{--bg:#faf7f9;--surface:#fff;--surface-raised:#f3eaf0;--text:#291f27;--muted:#70616b;--line:#e6d9e2;--chip:#fff0ce;--pink:#b96500;--pink-hover:#d57900}
-:root[data-theme="light"] .product-brand b,:root[data-theme="light"] .section-tag{color:#985300}
-:root[data-theme="light"] .product-button.primary{color:#fff}
-:root[data-theme="light"] .product-button.secondary:hover{background:#eadbe5}
-:root[data-theme="light"] .download-section{background:#f5eef3}
-:root[data-theme="light"] .download-card-top .status-live,:root[data-theme="light"] .download-card-button,:root[data-theme="light"] .bento a{color:#985300}
-:root[data-theme="light"] .download-card-button.planned{color:#70616b}
-:root[data-theme="light"] .download-icon,:root[data-theme="light"] .feature-symbol{color:#aa6407}
-:root[data-theme="light"] .app-window,:root[data-theme="light"] .library-illustration{color:#f5f1f5}
+/* =============================================================
+   MINEKUBE STUDIOS // STRÁNKA LAUNCHERU — PRODUKTOVÝ DESIGN v9
+   -------------------------------------------------------------
+   Celý styl je uzavřený do `.launcher-page`, aby se nekřížil se
+   zbytkem webu. Načítá se po styles.css a design-plus.css.
 
-/* Neutralize legacy launcher styles inherited from the shared stylesheet. */
-.launcher-redesign .launch-page .launcher-download-btn{min-height:48px;padding:0 18px;border:1px solid transparent;border-radius:8px;box-shadow:none;gap:10px}
-.launcher-redesign .launch-page .launcher-download-btn:hover{box-shadow:none;filter:none}
-.launcher-redesign .launch-page .launcher-platforms{margin-top:0}
-.launcher-redesign .launch-page .launcher-platform{display:block;gap:0}
-.launcher-redesign .launch-page .launcher-platform:hover{transform:none;box-shadow:none;border-color:var(--line)}
-.launcher-redesign .launch-page .launcher-platform-btn{justify-content:space-between}
-.launcher-redesign .launch-page .launcher-os-chip.is-active{box-shadow:none;background:var(--chip);border-color:#c68a27}
-@media(min-width:761px){.launcher-redesign .launch-page .launcher-platforms{grid-template-columns:repeat(3,minmax(0,1fr))}.launcher-redesign .launch-page .launcher-platform:last-child{grid-column:auto}}
-@media(min-width:521px) and (max-width:760px){.launcher-redesign .launch-page .launcher-platforms{grid-template-columns:repeat(2,minmax(0,1fr))}.launcher-redesign .launch-page .launcher-platform:last-child{grid-column:span 2}}
-@media(max-width:520px){.launcher-redesign .launch-page .launcher-platforms{grid-template-columns:1fr}.launcher-redesign .launch-page .launcher-platform:last-child{grid-column:auto}}
+   Obsah:
+     01 · Tokeny (tmavý + světlý motiv)
+     02 · Základ stránky, typografie, focus
+     03 · Tlačítka
+     04 · Hero
+     05 · Rychlá fakta
+     06 · Sekce — hlavičky a rytmus
+     07 · Feature řádky + stag
+     08 · Karty
+     09 · Prohlídka (taby)
+     10 · Stažení
+     11 · Závěrečné CTA
+     12 · Odhalování při scrollu
+     13 · Responzivita
+     14 · Redukce pohybu, tisk, nucené barvy
+   ============================================================= */
+
+/* ---------- 01 · Tokeny ---------- */
+
+.launcher-page {
+  /* plochy */
+  --lp-bg: #0a0509;
+  --lp-bg-soft: #120910;
+  --lp-surface: #160f15;
+  --lp-surface-2: #1e1420;
+  --lp-surface-3: #271a29;
+  /* linky */
+  --lp-line: rgba(255, 255, 255, 0.09);
+  --lp-line-strong: rgba(255, 255, 255, 0.17);
+  --lp-line-gold: rgba(252, 192, 0, 0.32);
+  /* text */
+  --lp-text: #fdf6f1;
+  --lp-muted: #c9b5c1;
+  --lp-muted-2: #9a8090;
+  /* značka */
+  --lp-gold: #fcc000;
+  --lp-gold-soft: #ffd863;
+  --lp-orange: #fb7a12;
+  --lp-magenta: #fc0060;
+  --lp-purple: #c83cff;
+  --lp-green: #46d17d;
+  --lp-danger: #ff6a7a;
+  /* tvary a stíny */
+  --lp-radius-xl: 30px;
+  --lp-radius: 22px;
+  --lp-radius-sm: 14px;
+  --lp-radius-xs: 10px;
+  --lp-shadow-window: 0 40px 90px -30px rgba(0, 0, 0, 0.85), 0 12px 40px -12px rgba(0, 0, 0, 0.6);
+  --lp-shadow-card: 0 18px 44px -24px rgba(0, 0, 0, 0.75);
+  --lp-glow-gold: 0 18px 48px -16px rgba(252, 146, 0, 0.55);
+  /* typografie */
+  --lp-font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --lp-font-body: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* rytmus */
+  --lp-gutter: clamp(20px, 4.2vw, 56px);
+  --lp-max: 1200px;
+  --lp-section-y: clamp(64px, 8vw, 118px);
+  --lp-ease: cubic-bezier(0.22, 0.9, 0.24, 1);
+
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  background: var(--lp-bg);
+  color: var(--lp-text);
+  font-family: var(--lp-font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+:root[data-theme="light"] .launcher-page {
+  --lp-bg: #fffaf2;
+  --lp-bg-soft: #fdf1e0;
+  --lp-surface: #fffefb;
+  --lp-surface-2: #fdf3e5;
+  --lp-surface-3: #f8e6d1;
+  --lp-line: rgba(74, 26, 46, 0.12);
+  --lp-line-strong: rgba(74, 26, 46, 0.22);
+  --lp-line-gold: rgba(198, 132, 0, 0.34);
+  --lp-text: #2a1019;
+  --lp-muted: #6d5260;
+  --lp-muted-2: #7f6573;
+  --lp-gold: #b98200;
+  --lp-gold-soft: #e0a200;
+  --lp-shadow-window: 0 34px 70px -28px rgba(92, 33, 63, 0.4), 0 10px 30px -14px rgba(92, 33, 63, 0.22);
+  --lp-shadow-card: 0 18px 40px -26px rgba(92, 33, 63, 0.45);
+  --lp-glow-gold: 0 16px 40px -18px rgba(214, 138, 0, 0.45);
+}
+
+/* ---------- 02 · Základ stránky ---------- */
+
+.launcher-page,
+.launcher-page *,
+.launcher-page *::before,
+.launcher-page *::after {
+  box-sizing: border-box;
+}
+
+.launcher-page img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.launcher-page :is(h1, h2, h3, h4, p, figure, ul, ol, dl) {
+  margin: 0;
+}
+
+.launcher-page ul,
+.launcher-page ol {
+  padding: 0;
+  list-style: none;
+}
+
+.launcher-page :is(a, button) {
+  font-family: inherit;
+  text-decoration: none;
+  color: inherit;
+}
+
+.launcher-page button {
+  cursor: pointer;
+}
+
+.launcher-page [hidden] {
+  display: none !important;
+}
+
+.launcher-page :focus-visible {
+  outline: 3px solid var(--lp-focus-ring, var(--lp-gold-soft));
+  outline-offset: 3px;
+}
+
+:root[data-theme="light"] .launcher-page :focus-visible {
+  --lp-focus-ring: #7a4a00;
+}
+
+.launcher-page .lp-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.launcher-page ::selection {
+  background: rgba(252, 192, 0, 0.32);
+  color: var(--lp-text);
+}
+
+.lp-wrap {
+  width: min(var(--lp-max), calc(100% - (var(--lp-gutter) * 2)));
+  margin-inline: auto;
+}
+
+/* Kotvy musí skončit pod lepivou hlavičkou webu. */
+.launcher-page section[id] {
+  scroll-margin-top: clamp(88px, 12vh, 116px);
+}
+
+.lp-hero__copy,
+.lp-hero__visual,
+.lp-row__body {
+  min-width: 0;
+}
+
+/* Pozadí: jemná mřížka + dvě světelné mlhoviny. Bez animace, jen barva. */
+.launcher-page::before,
+.launcher-page::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.launcher-page::before {
+  inset: 0 0 auto;
+  height: min(1180px, 118vh);
+  background:
+    radial-gradient(58% 46% at 78% 6%, rgba(252, 0, 96, 0.2), transparent 68%),
+    radial-gradient(46% 40% at 16% 12%, rgba(252, 192, 0, 0.17), transparent 72%),
+    radial-gradient(60% 50% at 50% 0%, rgba(148, 40, 190, 0.16), transparent 74%);
+}
+
+.launcher-page::after {
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.032) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.032) 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: radial-gradient(80% 62% at 50% 0%, #000 0%, transparent 76%);
+  opacity: 0.55;
+}
+
+:root[data-theme="light"] .launcher-page::before {
+  background:
+    radial-gradient(58% 46% at 80% 4%, rgba(252, 0, 96, 0.1), transparent 66%),
+    radial-gradient(48% 40% at 12% 10%, rgba(252, 170, 0, 0.18), transparent 70%),
+    radial-gradient(60% 50% at 50% 0%, rgba(200, 60, 255, 0.09), transparent 72%);
+}
+
+:root[data-theme="light"] .launcher-page::after {
+  background-image:
+    linear-gradient(to right, rgba(74, 26, 46, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(74, 26, 46, 0.055) 1px, transparent 1px);
+}
+
+/* ---------- 03 · Tlačítka ---------- */
+
+.lp-btn {
+  --lp-btn-bg: var(--lp-surface-2);
+  --lp-btn-fg: var(--lp-text);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 0 26px;
+  border: 1px solid transparent;
+  border-radius: var(--lp-radius-sm);
+  background: var(--lp-btn-bg);
+  color: var(--lp-btn-fg);
+  font-size: 0.975rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  text-align: center;
+  transition: transform 0.18s var(--lp-ease), background-color 0.18s ease, border-color 0.18s ease,
+    box-shadow 0.18s ease, color 0.18s ease;
+}
+
+.lp-btn svg {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-btn--primary {
+  --lp-btn-bg: linear-gradient(135deg, var(--lp-gold-soft) 0%, var(--lp-orange) 62%, #f24d0a 100%);
+  --lp-btn-fg: #22110a;
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: var(--lp-glow-gold);
+  font-weight: 750;
+}
+
+/* Lesknutí přes tlačítko — jen decentní pruh, žádná duha. */
+.lp-btn--primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.34), transparent 52%);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.lp-btn--primary:hover {
+  --lp-btn-bg: linear-gradient(135deg, #ffe07a 0%, #ff8b21 60%, #ff5c12 100%);
+  transform: translateY(-2px);
+}
+
+.lp-btn--ghost {
+  --lp-btn-bg: color-mix(in srgb, var(--lp-surface-2) 78%, transparent);
+  border-color: var(--lp-line-strong);
+  color: var(--lp-text);
+}
+
+.lp-btn--ghost:hover {
+  border-color: var(--lp-line-gold);
+  background: color-mix(in srgb, var(--lp-gold) 12%, var(--lp-surface-2));
+  transform: translateY(-2px);
+}
+
+.lp-btn--quiet {
+  --lp-btn-bg: transparent;
+  border-color: var(--lp-line);
+  color: var(--lp-text);
+  min-height: 46px;
+  padding: 0 18px;
+  font-size: 0.9rem;
+}
+
+.lp-btn--quiet:hover {
+  border-color: var(--lp-line-gold);
+  color: var(--lp-gold-soft);
+}
+
+.lp-btn:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.lp-btn[aria-disabled="true"],
+.lp-btn:disabled {
+  cursor: not-allowed;
+}
+
+/* Stavy stahovacího tlačítka — pravdivé popisky řeší launcher.js. */
+.lp-btn__spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: lp-spin 0.85s linear infinite;
+}
+
+.lp-btn[data-state="loading"] {
+  cursor: progress;
+  --lp-btn-bg: color-mix(in srgb, var(--lp-surface-3) 70%, var(--lp-surface));
+  --lp-btn-fg: var(--lp-muted);
+  box-shadow: none;
+  border-color: var(--lp-line);
+}
+
+.lp-btn[data-state="loading"]::after {
+  display: none;
+}
+
+.lp-btn[data-state="loading"] .lp-btn__spinner {
+  display: block;
+}
+
+.lp-btn[data-state="loading"] > svg {
+  display: none;
+}
+
+.lp-btn[data-state="idle"] .lp-btn__spinner,
+.lp-btn[data-state="started"] .lp-btn__spinner,
+.lp-btn[data-state="planned"] .lp-btn__spinner,
+.lp-btn[data-state="error"] .lp-btn__spinner {
+  display: none;
+}
+
+.lp-btn[data-state="started"] {
+  --lp-btn-bg: linear-gradient(135deg, #49e08a 0%, #1fb268 100%);
+  --lp-btn-fg: #062314;
+  box-shadow: 0 16px 44px -18px rgba(70, 209, 125, 0.55);
+}
+
+.lp-btn[data-state="started"]::after {
+  display: none;
+}
+
+.lp-btn[data-state="planned"] {
+  --lp-btn-bg: transparent;
+  --lp-btn-fg: var(--lp-muted);
+  border-color: var(--lp-line-strong);
+  border-style: dashed;
+  box-shadow: none;
+  font-weight: 600;
+}
+
+.lp-btn[data-state="planned"]::after {
+  display: none;
+}
+
+.lp-btn[data-state="planned"]:hover {
+  transform: none;
+  border-color: var(--lp-line-strong);
+  color: var(--lp-muted);
+}
+
+.lp-btn[data-state="error"] {
+  --lp-btn-bg: color-mix(in srgb, var(--lp-danger) 16%, var(--lp-surface-2));
+  --lp-btn-fg: var(--lp-text);
+  border-color: color-mix(in srgb, var(--lp-danger) 45%, transparent);
+  box-shadow: none;
+}
+
+.lp-btn[data-state="error"]::after {
+  display: none;
+}
+
+@keyframes lp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ikony značek, které jsou kreslené výplní (GitHub), potřebují opačný režim. */
+.lp-btn svg.lp-icon-solid,
+.lp-cta svg.lp-icon-solid {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* Obsah tlačítka leží nad lesknutím, aby text zůstal čitelný. */
+.lp-btn > * {
+  position: relative;
+  z-index: 1;
+}
+
+.lp-btn--primary::after {
+  z-index: 0;
+}
+
+/* ---------- 04 · Hero ---------- */
+
+.lp-hero {
+  position: relative;
+  padding: clamp(34px, 5vw, 64px) 0 clamp(56px, 7vw, 92px);
+}
+
+.lp-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  align-items: center;
+  gap: clamp(32px, 4.6vw, 68px);
+}
+
+.lp-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-family: var(--lp-font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--lp-gold-soft);
+}
+
+.lp-eyebrow__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--lp-magenta);
+  box-shadow: 0 0 0 4px rgba(252, 0, 96, 0.18);
+}
+
+.lp-eyebrow__badge {
+  padding: 5px 9px;
+  border: 1px solid var(--lp-line-gold);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lp-gold) 12%, transparent);
+  color: var(--lp-text);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+}
+
+.launcher-page .lp-hero h1 {
+  margin: 22px 0 0;
+  font-family: var(--lp-font-display);
+  font-size: clamp(2.65rem, 5.6vw, 4.35rem);
+  font-weight: 700;
+  line-height: 1.01;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.lp-hero h1 em {
+  display: inline-block;
+  font-style: normal;
+  background: linear-gradient(96deg, var(--lp-gold-soft) 4%, var(--lp-orange) 48%, var(--lp-magenta) 96%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.08em;
+}
+
+.lp-lead {
+  max-width: 47ch;
+  margin-top: 20px;
+  color: var(--lp-muted);
+  font-size: clamp(1rem, 1.15vw, 1.125rem);
+  line-height: 1.68;
+}
+
+.lp-lead strong {
+  color: var(--lp-text);
+  font-weight: 650;
+}
+
+.lp-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.lp-hero__actions .lp-btn--primary {
+  min-width: 268px;
+}
+
+.lp-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-top: 16px;
+  color: var(--lp-muted-2);
+  font-size: 0.79rem;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-meta__sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.lp-meta__source {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--lp-line);
+  border-radius: 999px;
+  color: var(--lp-muted);
+  font-size: 0.72rem;
+}
+
+.lp-meta__source svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+}
+
+.lp-file {
+  margin-top: 8px;
+  color: var(--lp-muted-2);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.lp-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid var(--lp-line);
+  color: var(--lp-muted);
+  font-size: 0.82rem;
+  font-weight: 550;
+}
+
+.lp-trust li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.lp-trust svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: var(--lp-gold-soft);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-trust a:hover {
+  color: var(--lp-gold-soft);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Vizuál: okno aplikace ve „skle“ s plovoucím panelem instance. */
+.lp-hero__visual {
+  position: relative;
+  min-width: 0;
+}
+
+.lp-shot {
+  position: relative;
+  margin: 0;
+}
+
+.lp-shot__frame {
+  position: relative;
+  border-radius: var(--lp-radius);
+  border: 1px solid var(--lp-line-strong);
+  background: var(--lp-surface);
+  padding: 6px;
+  box-shadow: var(--lp-shadow-window);
+  overflow: hidden;
+}
+
+.lp-shot__frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 30%);
+  pointer-events: none;
+}
+
+.lp-shot__frame img {
+  width: 100%;
+  border-radius: calc(var(--lp-radius) - 6px);
+}
+
+.lp-shot figcaption {
+  margin-top: 12px;
+}
+
+
+/* Odznak s verzí, který se plní z GitHubu. */
+.lp-hero__tag {
+  position: absolute;
+  top: -14px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid var(--lp-line-gold);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lp-bg) 82%, transparent);
+  backdrop-filter: blur(8px);
+  color: var(--lp-text);
+  font-family: var(--lp-font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lp-hero__tag i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--lp-green);
+  box-shadow: 0 0 0 3px rgba(70, 209, 125, 0.18);
+}
+
+/* Popisek „ilustrační náhled“ — povinný u upravených snímků. */
+.lp-caption {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--lp-muted-2);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.lp-caption::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--lp-magenta);
+  opacity: 0.75;
+}
+
+/* Světlý motiv: zlaté akcenty v textu musí mít dostatečný kontrast. */
+:root[data-theme="light"] .launcher-page :is(.lp-tag, .lp-inline-link, .lp-eyebrow, .lp-row__icon,
+    .lp-card__icon, .lp-facts__icon, .lp-tour__facts svg, .lp-download__alias button,
+    .lp-platform--primary .lp-platform__icon, .lp-bullets li::before, .lp-planned .lp-badge svg) {
+  color: #8a5a00;
+}
+
+:root[data-theme="light"] .lp-eyebrow__badge {
+  color: #3a1420;
+  background: rgba(252, 192, 0, 0.22);
+}
+
+:root[data-theme="light"] .lp-hero h1 em {
+  background-image: linear-gradient(96deg, #9c6000 0%, #b84200 52%, #a30040 100%);
+}
+
+/* ---------- 05 · Rychlá fakta ---------- */
+
+.lp-facts {
+  border-block: 1px solid var(--lp-line);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lp-surface) 55%, transparent), transparent);
+}
+
+.lp-facts__list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--lp-line);
+}
+
+.lp-facts__list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 22px clamp(12px, 2vw, 26px);
+  background: var(--lp-bg);
+  color: var(--lp-muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.lp-facts__list strong {
+  display: block;
+  color: var(--lp-text);
+  font-family: var(--lp-font-display);
+  font-size: 0.98rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.lp-facts__icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  border: 1px solid var(--lp-line-gold);
+  background: color-mix(in srgb, var(--lp-gold) 12%, transparent);
+  color: var(--lp-gold-soft);
+}
+
+.lp-facts__icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- 06 · Sekce ---------- */
+
+.lp-section {
+  padding-block: var(--lp-section-y);
+}
+
+.lp-section--tight {
+  padding-block: clamp(48px, 6vw, 82px);
+}
+
+.lp-section + .lp-section {
+  border-top: 1px solid var(--lp-line);
+}
+
+.lp-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  align-items: end;
+  gap: clamp(20px, 4vw, 60px);
+  margin-bottom: clamp(32px, 4.4vw, 58px);
+}
+
+.lp-head__title {
+  min-width: 0;
+}
+
+.lp-tag {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--lp-gold-soft);
+  font-family: var(--lp-font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.launcher-page .lp-head h2 {
+  font-family: var(--lp-font-display);
+  font-size: clamp(1.95rem, 3.7vw, 2.95rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.038em;
+  text-wrap: balance;
+}
+
+.lp-head h2 em {
+  font-style: normal;
+  color: var(--lp-gold-soft);
+}
+
+:root[data-theme="light"] .lp-head h2 em {
+  color: #b87200;
+}
+
+.lp-head__lead {
+  color: var(--lp-muted);
+  font-size: 0.98rem;
+  line-height: 1.7;
+  max-width: 42ch;
+}
+
+/* ---------- 07 · Feature řádky ---------- */
+
+.lp-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 76px);
+}
+
+.lp-row + .lp-row {
+  margin-top: clamp(52px, 7vw, 104px);
+}
+
+.lp-row--flip .lp-row__body {
+  order: 2;
+}
+
+.lp-row__body {
+  min-width: 0;
+}
+
+.lp-row__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 20px;
+  border-radius: 13px;
+  border: 1px solid var(--lp-line-gold);
+  background: color-mix(in srgb, var(--lp-gold) 13%, transparent);
+  color: var(--lp-gold-soft);
+}
+
+.lp-row__icon svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-page .lp-row h3 {
+  font-family: var(--lp-font-display);
+  font-size: clamp(1.35rem, 2.1vw, 1.72rem);
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.lp-row__text {
+  margin-top: 14px;
+  color: var(--lp-muted);
+  font-size: 0.97rem;
+  line-height: 1.72;
+}
+
+.lp-bullets {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.lp-bullets li {
+  position: relative;
+  padding-left: 26px;
+  color: var(--lp-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.lp-bullets li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.52em;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--lp-gold-soft);
+  opacity: 0.85;
+}
+
+.lp-bullets li strong {
+  color: var(--lp-text);
+  font-weight: 650;
+}
+
+.lp-inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 22px;
+  color: var(--lp-gold-soft);
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.lp-inline-link svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.18s var(--lp-ease);
+}
+
+.lp-inline-link:hover svg {
+  transform: translateX(3px);
+}
+
+.lp-inline-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Stag = podium, na kterém okno aplikace sedí. */
+.lp-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(260px, 34vw, 420px);
+  padding: clamp(20px, 3vw, 42px);
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius-xl);
+  background:
+    radial-gradient(70% 60% at 50% 12%, rgba(252, 146, 0, 0.16), transparent 70%),
+    radial-gradient(60% 60% at 86% 90%, rgba(252, 0, 96, 0.14), transparent 72%),
+    var(--lp-bg-soft);
+  overflow: hidden;
+}
+
+.lp-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(75% 70% at 50% 50%, #000, transparent 78%);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.lp-stage__window {
+  position: relative;
+  width: min(100%, 236px);
+  border-radius: var(--lp-radius-sm);
+  border: 1px solid var(--lp-line-strong);
+  background: var(--lp-surface);
+  padding: 5px;
+  box-shadow: var(--lp-shadow-window);
+  transform: rotate(-1.4deg);
+}
+
+.lp-stage__window img {
+  border-radius: calc(var(--lp-radius-sm) - 5px);
+  width: 100%;
+}
+
+.lp-stage__window--wide {
+  width: 100%;
+  transform: none;
+}
+
+.lp-stage__caption {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  right: 14px;
+  z-index: 2;
+  color: var(--lp-muted-2);
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.lp-stage__chip {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lp-bg) 80%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--lp-muted);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---------- 08 · Karty ---------- */
+
+.lp-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 1.6vw, 20px);
+}
+
+.lp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: clamp(20px, 2.4vw, 28px);
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lp-surface) 92%, transparent), var(--lp-surface));
+  box-shadow: var(--lp-shadow-card);
+  transition: border-color 0.2s ease, transform 0.2s var(--lp-ease), box-shadow 0.2s ease;
+}
+
+.lp-card:hover {
+  border-color: var(--lp-line-gold);
+  transform: translateY(-3px);
+}
+
+.lp-card__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid var(--lp-line-gold);
+  background: color-mix(in srgb, var(--lp-gold) 12%, transparent);
+  color: var(--lp-gold-soft);
+}
+
+.lp-card__icon svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launcher-page .lp-card h3 {
+  margin-top: 18px;
+  font-family: var(--lp-font-display);
+  font-size: 1.12rem;
+  font-weight: 650;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+}
+
+.lp-card p {
+  margin-top: 10px;
+  color: var(--lp-muted);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.lp-card__media {
+  margin-top: 20px;
+  border-radius: var(--lp-radius-xs);
+  border: 1px solid var(--lp-line);
+  overflow: hidden;
+  background: var(--lp-bg-soft);
+}
+
+.lp-card__media img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.lp-card .lp-inline-link {
+  margin-top: auto;
+  padding-top: 18px;
+}
+
+.lp-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 16px;
+}
+
+.lp-chips li {
+  padding: 5px 10px;
+  border: 1px solid var(--lp-line);
+  border-radius: 999px;
+  background: var(--lp-surface-2);
+  color: var(--lp-muted);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.01em;
+}
+
+.lp-code {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: var(--lp-radius-xs);
+  border: 1px solid var(--lp-line);
+  background: #0c070d;
+  color: #e6d9e2;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.72rem;
+  line-height: 1.72;
+  overflow-x: auto;
+}
+
+:root[data-theme="light"] .lp-code {
+  background: #20141c;
+  color: #f4e7ee;
+}
+
+.lp-code b {
+  color: var(--lp-gold-soft);
+  font-weight: 600;
+}
+
+.lp-code i {
+  color: #ff8ba7;
+  font-style: normal;
+}
+
+/* ---------- 09 · Prohlídka ---------- */
+
+.lp-tour__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.lp-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--lp-line);
+  border-radius: 999px;
+  background: var(--lp-surface);
+  color: var(--lp-muted);
+  font-size: 0.86rem;
+  font-weight: 600;
+  transition: color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.lp-tab svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-tab:hover {
+  color: var(--lp-text);
+  border-color: var(--lp-line-gold);
+}
+
+.lp-tab[aria-selected="true"] {
+  background: color-mix(in srgb, var(--lp-gold) 16%, var(--lp-surface));
+  border-color: var(--lp-line-gold);
+  color: var(--lp-text);
+}
+
+.lp-tour__panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.62fr) minmax(0, 0.62fr);
+  align-items: stretch;
+  gap: clamp(16px, 2.4vw, 28px);
+}
+
+.lp-tour__media {
+  min-width: 0;
+}
+
+.lp-tour__facts {
+  align-self: start;
+  padding: clamp(20px, 2.4vw, 28px);
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius);
+  background: var(--lp-surface);
+  box-shadow: var(--lp-shadow-card);
+}
+
+.launcher-page .lp-tour__facts h3 {
+  font-family: var(--lp-font-display);
+  font-size: 1.1rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.lp-tour__facts ul {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.lp-tour__facts li {
+  display: flex;
+  gap: 10px;
+  color: var(--lp-muted);
+  font-size: 0.87rem;
+  line-height: 1.55;
+}
+
+.lp-tour__facts svg {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  fill: none;
+  stroke: var(--lp-gold-soft);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-tour__note {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--lp-line);
+  color: var(--lp-muted-2);
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+
+/* ---------- 10 · Stažení ---------- */
+
+.lp-download__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+  align-items: start;
+  gap: clamp(26px, 4vw, 58px);
+}
+
+.lp-version {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: 22px;
+  padding: 14px 16px;
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius-sm);
+  background: var(--lp-surface);
+}
+
+.lp-version__label {
+  color: var(--lp-muted-2);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.lp-version__value {
+  color: var(--lp-text);
+  font-family: var(--lp-font-display);
+  font-size: 1.02rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-version__state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+  color: var(--lp-muted);
+  font-size: 0.76rem;
+}
+
+.lp-version__state i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--lp-gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--lp-gold) 22%, transparent);
+}
+
+.lp-version__state[data-state="ready"] i {
+  background: var(--lp-green);
+  box-shadow: 0 0 0 3px rgba(70, 209, 125, 0.22);
+}
+
+.lp-version__state[data-state="error"] i {
+  background: var(--lp-danger);
+  box-shadow: 0 0 0 3px rgba(255, 106, 122, 0.22);
+}
+
+.lp-download__grid > div > .lp-head__lead {
+  margin-top: 14px;
+}
+
+.lp-download__notes {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.lp-download__notes li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--lp-muted);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.lp-download__notes li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.58em;
+  width: 10px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--lp-gold-soft);
+  opacity: 0.8;
+}
+
+.lp-download__alias {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  color: var(--lp-muted-2);
+  font-size: 0.78rem;
+}
+
+.lp-download__alias button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--lp-gold-soft);
+  font-size: inherit;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lp-platforms {
+  display: grid;
+  gap: 14px;
+}
+
+.lp-platform {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  padding: clamp(18px, 2.2vw, 24px);
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lp-surface) 94%, transparent), var(--lp-surface));
+  box-shadow: var(--lp-shadow-card);
+}
+
+.lp-platform--primary {
+  border-color: var(--lp-line-gold);
+  background:
+    radial-gradient(120% 130% at 100% 0%, rgba(252, 146, 0, 0.14), transparent 62%),
+    linear-gradient(180deg, var(--lp-surface-2), var(--lp-surface));
+}
+
+.lp-platform__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 13px;
+  border: 1px solid var(--lp-line-strong);
+  background: var(--lp-surface-3);
+  color: var(--lp-text);
+}
+
+.lp-platform--primary .lp-platform__icon {
+  border-color: var(--lp-line-gold);
+  background: color-mix(in srgb, var(--lp-gold) 16%, transparent);
+  color: var(--lp-gold-soft);
+}
+
+.lp-platform__icon svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.lp-platform__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  min-width: 0;
+}
+
+.launcher-page .lp-platform h3 {
+  font-family: var(--lp-font-display);
+  font-size: 1.08rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.lp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.lp-badge svg {
+  width: 11px;
+  height: 11px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-badge--live {
+  border: 1px solid rgba(70, 209, 125, 0.42);
+  background: rgba(70, 209, 125, 0.14);
+  color: #7ce8a6;
+}
+
+:root[data-theme="light"] .lp-badge--live {
+  border-color: rgba(14, 122, 66, 0.34);
+  background: rgba(14, 122, 66, 0.1);
+  color: #0c6b3b;
+}
+
+.lp-badge--planned {
+  border: 1px solid var(--lp-line-strong);
+  background: var(--lp-surface-3);
+  color: var(--lp-muted);
+}
+
+.lp-platform__meta {
+  margin-top: 6px;
+  color: var(--lp-muted-2);
+  font-size: 0.79rem;
+  line-height: 1.55;
+}
+
+.lp-platform__file {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-radius-xs);
+  background: color-mix(in srgb, var(--lp-bg) 55%, transparent);
+  color: var(--lp-muted);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.7rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.lp-platform__hash {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--lp-muted-2);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.68rem;
+  overflow-wrap: anywhere;
+}
+
+.lp-platform__hash b {
+  color: var(--lp-muted);
+  font-weight: 600;
+}
+
+.lp-platform__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.lp-platform__actions .lp-btn {
+  min-height: 46px;
+  padding-inline: 20px;
+  font-size: 0.9rem;
+}
+
+.lp-platform__actions .lp-btn--primary {
+  flex: 1 1 200px;
+}
+
+.lp-platform--planned {
+  border-style: dashed;
+  border-color: var(--lp-line-strong);
+  box-shadow: none;
+}
+
+.lp-platform--planned .lp-platform__icon {
+  color: var(--lp-muted-2);
+}
+
+.lp-platform__status {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  color: var(--lp-muted-2);
+  font-size: 0.78rem;
+}
+
+.lp-platform__status svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Skeletony při načítání a chybová hláška */
+.lp-skeleton {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.lp-skeleton span {
+  display: block;
+  height: 10px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--lp-surface-3), color-mix(in srgb, var(--lp-surface-3) 40%, transparent), var(--lp-surface-3));
+  background-size: 220% 100%;
+  animation: lp-shimmer 1.5s linear infinite;
+}
+
+.lp-skeleton span:nth-child(1) {
+  width: 62%;
+}
+
+.lp-skeleton span:nth-child(2) {
+  width: 42%;
+}
+
+@keyframes lp-shimmer {
+  to {
+    background-position: -220% 0;
+  }
+}
+
+.lp-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--lp-danger) 40%, transparent);
+  border-radius: var(--lp-radius-sm);
+  background: color-mix(in srgb, var(--lp-danger) 9%, var(--lp-surface));
+  color: var(--lp-muted);
+  font-size: 0.83rem;
+  line-height: 1.6;
+}
+
+.lp-alert svg {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  fill: none;
+  stroke: var(--lp-danger);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-alert strong {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--lp-text);
+  font-size: 0.86rem;
+}
+
+.lp-alert button {
+  margin-top: 10px;
+}
+
+.lp-alert button:disabled {
+  cursor: progress;
+  opacity: 0.55;
+}
+
+/* Připravované funkce — vždy viditelně označené. */
+.lp-planned {
+  display: grid;
+  gap: 12px;
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--lp-line);
+}
+
+.lp-planned__title {
+  color: var(--lp-muted-2);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.lp-planned ul {
+  display: grid;
+  gap: 10px;
+}
+
+.lp-planned li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--lp-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.lp-planned .lp-badge {
+  order: -1;
+}
+
+.lp-start-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 1 1 100%;
+  margin-top: 2px;
+  color: var(--lp-green);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.lp-start-note svg {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+:root[data-theme="light"] .lp-start-note {
+  color: #0c7a41;
+}
+
+/* ---------- 11 · Závěrečné CTA ---------- */
+
+.lp-cta {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(20px, 3vw, 40px);
+  padding: clamp(26px, 3.6vw, 46px);
+  border: 1px solid var(--lp-line-gold);
+  border-radius: var(--lp-radius-xl);
+  background:
+    radial-gradient(90% 130% at 8% 0%, rgba(252, 146, 0, 0.16), transparent 58%),
+    radial-gradient(70% 120% at 100% 100%, rgba(252, 0, 96, 0.18), transparent 62%),
+    var(--lp-surface);
+  overflow: hidden;
+}
+
+.launcher-page .lp-cta h2 {
+  font-family: var(--lp-font-display);
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.lp-cta p {
+  max-width: 44ch;
+  margin-top: 14px;
+  color: var(--lp-muted);
+  font-size: 0.95rem;
+  line-height: 1.68;
+}
+
+.lp-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.lp-cta__media {
+  position: relative;
+  margin: 0;
+  border-radius: var(--lp-radius);
+  border: 1px solid var(--lp-line-strong);
+  overflow: hidden;
+  box-shadow: var(--lp-shadow-window);
+}
+
+.lp-cta__media img {
+  width: 100%;
+}
+
+.lp-cta__media figcaption {
+  position: absolute;
+  left: 10px;
+  bottom: 8px;
+  right: 10px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+}
+
+.lp-cta__legal {
+  margin-top: 20px;
+  color: var(--lp-muted-2);
+  font-size: 0.74rem;
+  line-height: 1.6;
+}
+
+.lp-cta__legal a {
+  color: var(--lp-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lp-cta__legal a:hover {
+  color: var(--lp-gold-soft);
+}
+
+/* ---------- 12 · Odhalování při scrollu ---------- */
+
+.lp-js [data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s var(--lp-ease), transform 0.6s var(--lp-ease);
+  will-change: opacity, transform;
+}
+
+.lp-js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* Bez JS musí být obsah vidět — skript třídu lp-js nepřidá. */
+
+/* ---------- 13 · Responzivita ---------- */
+
+@media (max-width: 1080px) {
+  .lp-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(34px, 6vw, 54px);
+  }
+
+  .lp-hero__visual {
+    max-width: 780px;
+  }
+
+  .lp-facts__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-head {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 16px;
+  }
+
+  .lp-head__lead {
+    max-width: 60ch;
+  }
+
+  .lp-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(22px, 4vw, 34px);
+  }
+
+  .lp-row--flip .lp-row__body {
+    order: 0;
+  }
+
+  .lp-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-tour__panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lp-download__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lp-cta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lp-cta__media {
+    order: -1;
+    max-width: 460px;
+  }
+}
+
+@media (max-width: 720px) {
+  .launcher-page {
+    --lp-section-y: clamp(52px, 9vw, 74px);
+    --lp-radius-xl: 22px;
+    --lp-radius: 18px;
+  }
+
+  .lp-hero {
+    padding-top: 22px;
+  }
+
+  .launcher-page .lp-hero h1 {
+    font-size: clamp(2.3rem, 10.4vw, 3.1rem);
+  }
+
+  .lp-hero__actions .lp-btn {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .lp-trust {
+    gap: 8px 16px;
+    font-size: 0.78rem;
+  }
+
+  .lp-hero__tag {
+    top: -12px;
+    right: 10px;
+    font-size: 0.62rem;
+    padding: 6px 10px;
+  }
+
+  .lp-facts__list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lp-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lp-stage {
+    min-height: 0;
+    padding: 18px;
+  }
+
+  .lp-stage__window {
+    width: min(100%, 206px);
+    transform: none;
+  }
+
+  .lp-stage__window--wide {
+    width: 100%;
+  }
+
+  .lp-stage::before {
+    opacity: 0.25;
+  }
+
+  /* Na mobilu je popisek pod stagí, aby nepřekrýval snímek. */
+  .lp-stage__caption {
+    position: static;
+    margin-top: 14px;
+    text-align: center;
+  }
+
+  .lp-stage__chip {
+    display: none;
+  }
+
+  .lp-tab {
+    flex: 1 1 calc(50% - 8px);
+    justify-content: center;
+    padding-inline: 10px;
+    font-size: 0.82rem;
+  }
+
+  .lp-version__state {
+    margin-left: 0;
+  }
+
+  .lp-platform {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .lp-platform__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+  }
+
+  .lp-platform__actions .lp-btn {
+    flex: 1 1 100%;
+  }
+
+  .lp-cta {
+    padding: 22px;
+  }
+
+  .lp-cta__actions .lp-btn {
+    flex: 1 1 100%;
+  }
+
+  .lp-cta__media figcaption {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .lp-eyebrow {
+    font-size: 0.66rem;
+  }
+
+  .lp-meta {
+    font-size: 0.74rem;
+  }
+
+  .lp-meta__sep {
+    display: none;
+  }
+}
+
+/* ---------- 14 · Redukce pohybu, tisk, nucené barvy ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .launcher-page *,
+  .launcher-page *::before,
+  .launcher-page *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .lp-js [data-reveal],
+  .lp-js [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  .lp-btn:hover,
+  .lp-card:hover {
+    transform: none;
+  }
+
+  .lp-stage__window {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .launcher-page .lp-btn,
+  .launcher-page .lp-card,
+  .launcher-page .lp-platform,
+  .launcher-page .lp-stage,
+  .launcher-page .lp-tab {
+    border: 1px solid CanvasText;
+  }
+
+  .lp-badge--live,
+  .lp-badge--planned {
+    border: 1px solid CanvasText;
+  }
+}
+
+@media print {
+  .launcher-page::before,
+  .launcher-page::after,
+  .lp-hero__tag {
+    display: none !important;
+  }
+
+  .launcher-page {
+    background: #fff;
+    color: #000;
+  }
+
+  .lp-btn {
+    border: 1px solid #000;
+    box-shadow: none;
+  }
+}
+
+/* ---------- 15 · Záložní barvy pro starší prohlížeče ----------
+   color-mix() podporuje Chrome 111+, Safari 16.2+ a Firefox 113+.
+   Starší prohlížeče dostanou plné barvy místo průsvitných mixů. */
+
+@supports not (background: color-mix(in srgb, #fff, #000)) {
+  .lp-btn--ghost,
+  .lp-card,
+  .lp-platform,
+  .lp-tour__facts,
+  .lp-version,
+  .lp-stage__chip,
+  .lp-eyebrow__badge,
+  .lp-hero__tag,
+  .lp-tab[aria-selected="true"] {
+    background: var(--lp-surface-2);
+  }
+
+  .lp-btn[data-state="loading"],
+  .lp-btn[data-state="error"] {
+    background: var(--lp-surface-3);
+  }
+
+  .lp-facts__icon,
+  .lp-row__icon,
+  .lp-card__icon {
+    background: rgba(252, 192, 0, 0.16);
+  }
+}
