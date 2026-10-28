@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="Minekube Launcher — otevřený launcher, který ti jedním klikem nainstaluje modpacky Minekube, sám je udrží aktuální a postará se i o Javu. Zdarma, bez účtů a bez telemetrie." name="description"/>
+<meta content="Minekube Launcher — domov pro modpacky a instance Minekube. Prozkoumej launcher ve vývoji a dostupná sestavení." name="description"/>
 <meta content="#08040b" name="theme-color"/>
 <title>Launcher — Minekube Studios</title>
 <link href="../assets/favicon.png" rel="icon" type="image/png"/>
@@ -38,7 +38,7 @@
 })();
 </script>
 </head>
-<body>
+<body class="launcher-redesign">
 <!-- ===================== SPRITE // IKONY PLATFORM =====================
      Značky macOS (Apple) a Linuxu (Tux) pocházejí z otevřené sady
      Simple Icons (CC0). Čtyřoknový znak Windows, tác se šipkou a stavové
@@ -212,528 +212,53 @@
 </nav>
 </header>
 
-<main id="top">
-<!-- ===================== HERO // LAUNCHER ===================== -->
-<section aria-labelledby="launcherTitle" class="section mk-landing launcher-hero" id="launcher">
-<div class="container">
-
-<nav aria-label="Drobečková navigace" class="packs-breadcrumb">
-<a href="../"><span data-i18n="launcher.breadcrumb">Domů</span></a>
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
-<span aria-current="page"><span data-i18n="nav.launcher">Launcher</span></span>
-</nav>
-
-<div class="mk-intro">
-<div class="mk-intro-copy">
-<span class="section-kicker" data-i18n="launcher.kicker">MINEKUBE STUDIOS // LAUNCHER</span>
-<div class="launcher-chips">
-<span class="launcher-chip-alpha"><i aria-hidden="true"></i> <span data-i18n="launcher.chip">ALPHA // VE VÝVOJI</span></span>
-<span class="launcher-chip-oss"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 9 5 12l3 3M16 9l3 3-3 3M14 5l-4 14"></path></svg> <span data-i18n="launcher.chip2">OPEN SOURCE</span></span>
-</div>
-<h1 id="launcherTitle"><span data-i18n="launcher.title1">Jeden launcher.</span><em data-i18n="launcher.title2">Celý ekosystém Minekube.</em></h1>
-<p class="mk-intro-lead"><span data-i18n="launcher.lead">Minekube Launcher je <strong>otevřený launcher</strong>, který ti jedním klikem nainstaluje libovolný Minekube modpack, sám ho udržuje aktuální a postará se i o Javu. Žádné účty, žádný paywall, žádná telemetrie — jen hraní.</span></p>
-
-<div class="launcher-os-row" aria-label="Výběr platformy" data-i18n-aria="launcher.os.aria" role="group">
-<button class="launcher-os-chip is-live is-active" data-os="windows" data-status="live" type="button">
-<span aria-hidden="true" class="os-chip-glyph"><svg aria-hidden="true" class="os-glyph" focusable="false"><use href="#mk-os-windows"></use></svg></span>
-<span class="os-chip-name">Windows</span>
-<em class="os-chip-flag is-live"><i aria-hidden="true"></i><span data-i18n="launcher.os.flag.live">K dispozici</span></em>
-</button>
-<button class="launcher-os-chip is-planned" data-os="macos" data-status="planned" type="button">
-<span aria-hidden="true" class="os-chip-glyph"><svg aria-hidden="true" class="os-glyph" focusable="false"><use href="#mk-os-macos"></use></svg></span>
-<span class="os-chip-name">macOS</span>
-<em class="os-chip-flag is-planned"><svg aria-hidden="true" class="os-chip-flag-icon" focusable="false"><use href="#mk-clock"></use></svg><span data-i18n="launcher.os.flag.planned">V plánu</span></em>
-</button>
-<button class="launcher-os-chip is-planned" data-os="linux" data-status="planned" type="button">
-<span aria-hidden="true" class="os-chip-glyph"><svg aria-hidden="true" class="os-glyph" focusable="false"><use href="#mk-os-linux"></use></svg></span>
-<span class="os-chip-name">Linux</span>
-<em class="os-chip-flag is-planned"><svg aria-hidden="true" class="os-chip-flag-icon" focusable="false"><use href="#mk-clock"></use></svg><span data-i18n="launcher.os.flag.planned">V plánu</span></em>
-</button>
-</div>
-
-<div class="launcher-download">
-<button aria-describedby="launcherDownloadHint" class="launcher-download-btn" data-launcher-download data-os="windows" data-state="loading" type="button">
-<span aria-hidden="true" class="launcher-download-shine"></span>
-<span aria-hidden="true" class="launcher-download-icon">
-<span class="dl-plate"></span>
-<span class="dl-os">
-<svg aria-hidden="true" class="os-glyph os-glyph-windows" focusable="false"><use href="#mk-os-windows"></use></svg>
-<svg aria-hidden="true" class="os-glyph os-glyph-macos" focusable="false"><use href="#mk-os-macos"></use></svg>
-<svg aria-hidden="true" class="os-glyph os-glyph-linux" focusable="false"><use href="#mk-os-linux"></use></svg>
-</span>
-<span class="dl-tray">
-<span class="dl-tray-ring"></span>
-<svg aria-hidden="true" class="dl-tray-glyph" focusable="false"><use href="#mk-tray"></use></svg>
-</span>
-</span>
-<span class="launcher-download-copy">
-<small>
-<span data-i18n="launcher.download.kicker">MINEKUBE LAUNCHER</span>
-<i aria-hidden="true"></i>
-<b data-launcher-version>…</b>
-<span class="dl-source" data-launcher-source hidden><svg aria-hidden="true" class="dl-source-icon" focusable="false"><use href="#mk-github"></use></svg><span data-i18n="launcher.download.source">GitHub</span></span>
-</small>
-<strong data-os-label>Stáhnout pro Windows</strong>
-<span class="launcher-download-sub" data-os-sub>Windows 10+ · 64bit</span>
-<span class="launcher-download-file" data-launcher-file="hero" hidden><svg aria-hidden="true" class="dl-file-icon" focusable="false"><use href="#mk-package"></use></svg><span data-launcher-file-name>—</span></span>
-</span>
-<span aria-hidden="true" class="launcher-download-state">
-<span class="dl-state-ring"></span>
-<svg aria-hidden="true" class="dl-state-glyph is-idle" focusable="false"><use href="#mk-tray"></use></svg>
-<svg aria-hidden="true" class="dl-state-glyph is-done" focusable="false"><use href="#mk-check"></use></svg>
-<svg aria-hidden="true" class="dl-state-glyph is-planned" focusable="false"><use href="#mk-clock"></use></svg>
-<svg aria-hidden="true" class="dl-state-glyph is-error" focusable="false"><use href="#mk-alert"></use></svg>
-</span>
-</button>
-<a class="launcher-download-side" data-i18n-aria="launcher.download.all.aria" data-launcher-repo data-site-link="launcherRepo" href="https://github.com/MinekubeStudios/MinekubeLauncher" rel="noopener noreferrer" target="_blank">
-<svg aria-hidden="true" focusable="false"><use href="#mk-github"></use></svg>
-<span>
-<strong data-i18n="launcher.download.all">Repozitář launcheru</strong>
-<small data-i18n="launcher.download.all.note">MinekubeStudios/MinekubeLauncher</small>
-</span>
-</a>
-<!-- Popisek pro čtečky: co tlačítko právě dělá a jaký soubor nabídne. -->
-<p class="launcher-download-hint" data-launcher-hint id="launcherDownloadHint"></p>
-</div>
-
-<ul class="launcher-meta">
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.meta1">100 % zdarma</span></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.meta2">Bez účtů a přihlašování</span></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.meta3">Bez telemetrie</span></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.meta4">Česky a slovensky</span></li>
-</ul>
-
-<div class="mk-intro-proof">
-<div><strong>5</strong><span data-i18n="launcher.stat1">modpacků na jeden klik</span></div>
-<div><strong>0</strong><span data-i18n="launcher.stat2">odeslaných dat o tobě</span></div>
-<div><strong>100%</strong><span data-i18n="launcher.stat3">otevřený kód</span></div>
-</div>
-</div>
-
-<!-- ---------- MOCK // UKÁZKA OKNA LAUNCHERU (čistý CSS/HTML) ---------- -->
-<aside aria-hidden="true" class="launcher-mock">
-<span aria-hidden="true" class="launcher-mock-glow"></span>
-<span aria-hidden="true" class="launcher-mock-glow launcher-mock-glow-b"></span>
-<div class="launcher-window">
-<div class="launcher-window-bar">
-<span class="launcher-dots"><i></i><i></i><i></i></span>
-<span class="launcher-window-title">
-<img alt="" aria-hidden="true" class="launcher-window-logo" decoding="async" src="../assets/minekube-original-logo.png"/>
-<b data-i18n="launcher.mock.title">Minekube Launcher</b>
-<small>v0.1.0</small>
-</span>
-<span class="launcher-window-actions"><i></i><i></i></span>
-</div>
-<div class="launcher-window-body">
-<div class="launcher-side">
-<span class="launcher-side-item is-active">
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 11 9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg>
-<span data-i18n="launcher.mock.nav1">Domů</span>
-</span>
-<span class="launcher-side-item">
-<svg aria-hidden="true" viewBox="0 0 24 24"><rect height="16" rx="2" width="16" x="4" y="4"></rect><path d="M4 10h16M10 10v10"></path></svg>
-<span data-i18n="launcher.mock.nav2">Instance</span>
-</span>
-<span class="launcher-side-item">
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"></path></svg>
-<span data-i18n="launcher.mock.nav3">Modpacky</span>
-</span>
-<span class="launcher-side-item">
-<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"></circle><path d="M19 12a7 7 0 0 0-.15-1.4l2-1.55-2-3.45-2.35.95a7 7 0 0 0-2.4-1.4L13.75 2.6h-3.5l-.35 2.55a7 7 0 0 0-2.4 1.4l-2.35-.95-2 3.45 2 1.55A7 7 0 0 0 5 12"></path></svg>
-<span data-i18n="launcher.mock.nav4">Nastavení</span>
-</span>
-<div class="launcher-side-user">
-<span class="launcher-side-avatar">
-<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.5 19.5a7.5 7.5 0 0 1 15 0Z"/></svg>
-</span>
-<span>
-<b data-i18n="launcher.mock.user">Hráč z komunity</b>
-<small data-i18n="launcher.mock.userNote">Offline režim připraven</small>
-</span>
-</div>
-</div>
-<div class="launcher-main">
-<div class="launcher-main-head">
-<b data-i18n="launcher.mock.instances">Tvé instance</b>
-<span class="launcher-main-new">+ <span data-i18n="launcher.mock.new">Nová instance</span></span>
-</div>
-<div class="launcher-instances">
-<div class="launcher-inst">
-<span class="launcher-inst-icon launcher-inst-icon--ultra">
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5"></path></svg>
-</span>
-<span class="launcher-inst-copy">
-<b>Minekube Ultra</b>
-<small>1.21.4 · Fabric · <span data-i18n="launcher.mock.mods112">112 modů</span></small>
-</span>
-<span class="launcher-play"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5Z"></path></svg></span>
-</div>
-<div class="launcher-inst">
-<span class="launcher-inst-icon launcher-inst-icon--perf">
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path><path d="M4.5 18a9 9 0 1 1 15 0M12 12l4-4"></path></svg>
-</span>
-<span class="launcher-inst-copy">
-<b>Minekube Performance</b>
-<small>1.21.4 · Fabric · <span data-i18n="launcher.mock.mods84">84 modů</span></small>
-</span>
-<span class="launcher-play"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5Z"></path></svg></span>
-</div>
-<div class="launcher-inst launcher-inst-progress">
-<span class="launcher-inst-icon launcher-inst-icon--pvp">
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 20 20 4M14 4h6v6M10 20H4v-6"></path></svg>
-</span>
-<span class="launcher-inst-copy">
-<b>Minekube PvP</b>
-<small data-i18n="launcher.mock.progress">Stahuji soubory balíčku…</small>
-<span class="launcher-progress"><span data-progress-bar style="--progress: 12%"></span></span>
-</span>
-<b class="launcher-progress-pct" data-progress-pct>12 %</b>
-</div>
-</div>
-<div class="launcher-window-status">
-<i aria-hidden="true"></i>
-<span data-i18n="launcher.mock.ready">Java 21 nalezena automaticky · Vše připraveno ke spuštění</span>
-</div>
-</div>
-</div>
-</div>
-</aside>
-</div>
-</div>
-</section>
-
-<!-- ===================== FUNKCE ===================== -->
-<section aria-labelledby="featuresTitle" class="section launcher-features-section" id="funkce">
-<div class="container">
-<div class="section-heading centered">
-<span class="section-kicker" data-i18n="launcher.features.kicker">PROČ VLASTNÍ LAUNCHER</span>
-<h2 id="featuresTitle" data-i18n="launcher.features.title">Launcher, jaký jsi ještě neviděl</h2>
-<p data-i18n="launcher.features.lead">Všechno, co jiný launcher nedomyslel — postavené tak, jak si představujeme ideální herní den.</p>
-</div>
-<div class="launcher-features">
-<article class="launcher-feature launcher-feature--gold">
-<span class="launcher-feature-icon">
-<span aria-hidden="true" class="step-icon-orbit"></span>
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
-</span>
-<h3 data-i18n="launcher.feature1.title">Instalace na jedno kliknutí</h3>
-<p data-i18n="launcher.feature1.text">Vyber modpack, klikni na Instalovat — a launcher si sám stáhne Minecraft, loader, mody i konfiguraci. Nic nekopíruješ ručně.</p>
-</article>
-<article class="launcher-feature launcher-feature--purple">
-<span class="launcher-feature-icon">
-<span aria-hidden="true" class="step-icon-orbit"></span>
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4h-4"></path><path d="m9.5 11.5 2 2 4-4.5"></path></svg>
-</span>
-<h3 data-i18n="launcher.feature2.title">Automatické aktualizace</h3>
-<p data-i18n="launcher.feature2.text">Nová verze balíčku? Launcher ji pozná, připraví a nabídne bezpečný přechod — svět i nastavení zůstanou nedotčené.</p>
-</article>
-<article class="launcher-feature launcher-feature--cyan">
-<span class="launcher-feature-icon">
-<span aria-hidden="true" class="step-icon-orbit"></span>
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 9 5 12l3 3M16 9l3 3-3 3M14 5l-4 14"></path></svg>
-</span>
-<h3 data-i18n="launcher.feature3.title">Java? Vyřešená</h3>
-<p data-i18n="launcher.feature3.text">Launcher najde nainstalovanou Javu, nebo sám stáhne tu správnou verzi pro každý balíček. Žádné chyby „nelze spustit“.</p>
-</article>
-<article class="launcher-feature launcher-feature--magenta">
-<span class="launcher-feature-icon">
-<span aria-hidden="true" class="step-icon-orbit"></span>
-<svg aria-hidden="true" viewBox="0 0 24 24"><rect height="14" rx="2" width="17" x="3.5" y="5"></rect><path d="M3.5 9.5h17M8 5v14"></path><path d="m11.5 12.5 3 1.5-3 1.5v-3Z"></path></svg>
-</span>
-<h3 data-i18n="launcher.feature4.title">Import .mrpack i .zip</h3>
-<p data-i18n="launcher.feature4.text">Přetáhni do okna instanci z Modrinthu, Prismu nebo náš ZIP z katalogu — launcher si poradí s oběma formáty.</p>
-</article>
-<article class="launcher-feature launcher-feature--purple">
-<span class="launcher-feature-icon">
-<span aria-hidden="true" class="step-icon-orbit"></span>
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.4 5.3A8.8 8.8 0 0 1 12 5c5 0 8.5 4.2 9.4 5.6a13 13 0 0 1-2.2 2.9M6.2 7.2C4.4 8.6 3.3 10 2.6 10.6 3.5 11.8 7 16 12 16a8.7 8.7 0 0 0 4.2-1.1"></path></svg>
-</span>
-<h3 data-i18n="launcher.feature5.title">Bez účtů a bez sledování</h3>
-<p data-i18n="launcher.feature5.text">Žádné povinné přihlašování, žádná telemetrie, žádný prodej dat. Nastavení zůstávají na tvém disku — a nikde jinde.</p>
-</article>
-<article class="launcher-feature launcher-feature--gold">
-<span class="launcher-feature-icon">
-<span aria-hidden="true" class="step-icon-orbit"></span>
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"></path></svg>
-</span>
-<h3 data-i18n="launcher.feature6.title">Otevřený kód a CZ/SK</h3>
-<p data-i18n="launcher.feature6.text">Celý zdrojový kód na GitHubu — kdokoliv ho může zkontrolovat. A samozřejmě mluví česky i slovensky od prvního spuštění.</p>
-</article>
-</div>
-</div>
-</section>
-
-<!-- ===================== HLOUBKOVÉ FUNKCE (alternující řady) ===================== -->
-<section aria-labelledby="rowsTitle" class="section launcher-rows-section" id="hloubka">
-<div class="container">
-<div class="section-heading centered">
-<span class="section-kicker" data-i18n="launcher.rows.kicker">CO UMÍ ZEVNITŘ</span>
-<h2 id="rowsTitle" data-i18n="launcher.rows.title">Jako by ho ladil někdo, kdo Minecraft hraje</h2>
-<p data-i18n="launcher.rows.lead">Žádné ukazovátko na screenshoty — tohle je návrh reálného chování launcheru.</p>
-</div>
-
-<div class="launcher-rows">
-<!-- ---------- ŘADA 1: AKTUALIZACE ---------- -->
-<article class="launcher-row">
-<div class="launcher-row-copy">
-<span class="section-kicker" data-i18n="launcher.row1.kicker">AKTUALIZACE BEZ STRACHU</span>
-<h3 data-i18n="launcher.row1.title">Balíčky stále aktuální — svět zůstává tvůj</h3>
-<p data-i18n="launcher.row1.p1">Launcher si u každé instance pamatuje verzi. Když vydáme nový balíček, připraví aktualizaci bokem, ověří checksum a pustí ji, až to bude bezpečné.</p>
-<ul class="launcher-row-list">
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row1.li1">Tvoje světy, scény a nastavení se nepřepisují</span></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row1.li2">Každá aktualizace má čitelný changelog</span></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row1.li3">Návrat na starší verzi je vždy na jedno kliknutí</span></li>
-</ul>
-</div>
-<div aria-hidden="true" class="launcher-row-visual">
-<div class="launcher-update-card">
-<div class="launcher-update-head">
-<span class="launcher-update-ver is-old">v1.2.1</span>
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h13M13 6.5 18.5 12 13 17.5"></path></svg>
-<span class="launcher-update-ver is-new">v1.3.0</span>
-<span class="launcher-update-chip" data-i18n="launcher.row1.chip">PŘIPRAVENO</span>
-</div>
-<ul class="launcher-update-log">
-<li><b class="is-add">+2</b> <span data-i18n="launcher.row1.log1">nové optimalizační mody</span></li>
-<li><b class="is-fix">fix</b> <span data-i18n="launcher.row1.log2">oprava shaderů na AMD kartách</span></li>
-<li><b class="is-chg">↑</b> <span data-i18n="launcher.row1.log3">Fabric 1.21.4 → 1.21.5</span></li>
-<li><b class="is-del">−1</b> <span data-i18n="launcher.row1.log4">odebrán konfliktový mod</span></li>
-</ul>
-<div class="launcher-update-foot">
-<span class="launcher-update-check"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6.5 12.5 3.5 3.5 7.5-8"></path></svg> <span data-i18n="launcher.row1.check">SHA-256 ověřeno</span></span>
-<span class="launcher-update-btn" data-i18n="launcher.row1.button">Aktualizovat vše</span>
-</div>
-</div>
-</div>
-</article>
-
-<!-- ---------- ŘADA 2: KATALOG V LAUNCHERU ---------- -->
-<article class="launcher-row launcher-row--reverse">
-<div class="launcher-row-copy">
-<span class="section-kicker" data-i18n="launcher.row2.kicker">KATALOG VESTAVĚNÝ</span>
-<h3 data-i18n="launcher.row2.title">Všech pět profilů Minekube přímo v launcheru</h3>
-<p data-i18n="launcher.row2.p1">Katalog modpacků je součástí launcheru — se stejnými popisy, nároky na hardware i verzemi jako na webu. Najdeš ho v sekci Modpacky a nainstaluješ bez jediného rolování v prohlížeči.</p>
-<ul class="launcher-row-list">
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row2.li1">Ultra, Performance, PvP, Lite i Vanilla+</span></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row2.li2">Vždy nejnovější vydání z našeho repozitáře</span></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row2.li3">Více instancí vedle sebe — žádné mazání složek</span></li>
-</ul>
-<a class="launcher-row-link" href="../modpacky/">
-<span data-i18n="launcher.row2.link">Prohlédnout celý katalog</span>
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
-</a>
-</div>
-<div aria-hidden="true" class="launcher-row-visual">
-<div class="launcher-catalog-mock">
-<div class="launcher-catalog-head">
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5L12 3Z"></path><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"></path></svg>
-<b data-i18n="launcher.row2.mockHead">Minekube modpacky</b>
-<span data-i18n="launcher.row2.mockCount">5 balíčků</span>
-</div>
-<div class="launcher-catalog-grid">
-<div class="launcher-catalog-item" style="--pack-accent:#ffc43d"><b>Ultra</b><small>+240 % FPS</small><i></i></div>
-<div class="launcher-catalog-item" style="--pack-accent:#49dcff"><b>Performance</b><small>+160 % FPS</small><i></i></div>
-<div class="launcher-catalog-item" style="--pack-accent:#ff5fd2"><b>PvP</b><small>+180 % FPS</small><i></i></div>
-<div class="launcher-catalog-item" style="--pack-accent:#9dff57"><b>Lite</b><small>slabé PC</small><i></i></div>
-<div class="launcher-catalog-item" style="--pack-accent:#ffd84f"><b>Vanilla+</b><small>vanilla pocit</small><i></i></div>
-</div>
-<div class="launcher-catalog-foot">
-<span class="launcher-catalog-btn" data-i18n="launcher.row2.mockBtn">Instalovat</span>
-<span class="launcher-catalog-note" data-i18n="launcher.row2.mockNote">stažení z repozitáře MinekubeStudios</span>
-</div>
-</div>
-</div>
-</article>
-
-<!-- ---------- ŘADA 3: VÝKON ---------- -->
-<article class="launcher-row">
-<div class="launcher-row-copy">
-<span class="section-kicker" data-i18n="launcher.row3.kicker">VÝKON A LEHKOST</span>
-<h3 data-i18n="launcher.row3.title">Lehký jako dobře vyladěný modpack</h3>
-<p data-i18n="launcher.row3.p1">Launcher neběží na Electronu „na plný kvas“. Je postavený úsporně, startuje za zlomek sekundy a v paměti zabírá míň než průměrný texture pack. Tvoje RAM patří Minecraftu, ne launcheru.</p>
-<ul class="launcher-row-list">
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row3.li1">Rychlý start i bleskové přepínání instancí</span></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row3.li2">Přehledné
-monitorování FPS a paměti instance</span></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg> <span data-i18n="launcher.row3.li3">Sekce „mrtvé“ funkce — nic, co nepotřebuješ</span></li>
-</ul>
-</div>
-<div aria-hidden="true" class="launcher-row-visual">
-<div class="launcher-perf-mock">
-<div class="launcher-perf-head">
-<span class="launcher-perf-dot"></span>
-<b>Minekube Ultra — <span data-i18n="launcher.row3.mockTitle">monitor</span></b>
-<small data-i18n="launcher.row3.mockState">BĚŽÍ</small>
-</div>
-<div class="launcher-perf-graph">
-<span style="--h:34%"></span><span style="--h:52%"></span><span style="--h:41%"></span><span style="--h:66%"></span><span style="--h:49%"></span><span style="--h:72%"></span><span style="--h:58%"></span><span style="--h:79%"></span><span style="--h:63%"></span><span style="--h:85%"></span><span style="--h:70%"></span><span style="--h:88%"></span>
-</div>
-<div class="launcher-perf-stats">
-<div><small data-i18n="launcher.row3.statFps">FPS</small><b>238</b></div>
-<div><small data-i18n="launcher.row3.statRam">RAM</small><b>3.1 GB</b></div>
-<div><small data-i18n="launcher.row3.statLaunch">START</small><b>4.2 s</b></div>
-</div>
-</div>
-</div>
-</article>
-</div>
-</div>
-</section>
-
-<!-- ===================== PLATFORMY ===================== -->
-<section aria-labelledby="platformsTitle" class="section launcher-platforms-section" id="platformy">
-<div class="container">
-<div class="section-heading centered">
-<span class="section-kicker" data-i18n="launcher.platforms.kicker">PLATFORMY A POŽADAVKY</span>
-<h2 id="platformsTitle" data-i18n="launcher.platforms.title">Windows teď, macOS a Linux v plánu</h2>
-<p data-i18n="launcher.platforms.lead">Instalátor pro Windows stáhneš jedním klikem přímo z repozitáře na GitHubu. Java se stáhne a spravuje automaticky — instalovat nic dalšího nemusíš.</p>
-</div>
-<div class="launcher-platforms">
-<article class="launcher-platform is-live" data-os="windows">
-<span aria-hidden="true" class="launcher-platform-glow"></span>
-<div class="launcher-platform-head">
-<span aria-hidden="true" class="launcher-platform-glyph"><svg aria-hidden="true" focusable="false"><use href="#mk-os-windows"></use></svg></span>
-<div><small data-i18n="launcher.platforms.win.req">Windows 10+ · 64bit</small><h3>Windows</h3></div>
-<span class="launcher-platform-flag is-live"><i aria-hidden="true"></i><span data-i18n="launcher.platforms.flag.live">K dispozici</span></span>
-</div>
-<ul>
-<li data-i18n="launcher.platforms.win.f1">Instalátor .exe i přenosná verze</li>
-<li data-i18n="launcher.platforms.win.f2">Podpora x64 i ARM zařízení</li>
-<li data-i18n="launcher.platforms.win.f3">Integrace do nabídky Start</li>
-</ul>
-<p class="launcher-platform-file" data-launcher-file="windows" hidden><svg aria-hidden="true" class="platform-file-icon" focusable="false"><use href="#mk-package"></use></svg><span data-launcher-file-name>—</span></p>
-<button class="button button-secondary launcher-platform-btn" data-launcher-download data-os="windows" data-state="loading" type="button">
-<span data-i18n="launcher.platforms.download">Stáhnout</span>
-<span aria-hidden="true" class="platform-btn-state">
-<span class="platform-btn-ring"></span>
-<svg aria-hidden="true" class="platform-btn-glyph is-idle" focusable="false"><use href="#mk-tray"></use></svg>
-<svg aria-hidden="true" class="platform-btn-glyph is-done" focusable="false"><use href="#mk-check"></use></svg>
-<svg aria-hidden="true" class="platform-btn-glyph is-error" focusable="false"><use href="#mk-alert"></use></svg>
-</span>
-</button>
-</article>
-<article class="launcher-platform is-planned" data-os="macos">
-<div class="launcher-platform-head">
-<span aria-hidden="true" class="launcher-platform-glyph"><svg aria-hidden="true" focusable="false"><use href="#mk-os-macos"></use></svg></span>
-<div><small data-i18n="launcher.platforms.mac.req">macOS 12+ · Intel i Apple Silicon</small><h3>macOS</h3></div>
-<span class="launcher-platform-flag is-planned"><svg aria-hidden="true" class="platform-flag-icon" focusable="false"><use href="#mk-clock"></use></svg><span data-i18n="launcher.platforms.flag.planned">V plánu</span></span>
-</div>
-<ul>
-<li data-i18n="launcher.platforms.mac.f1">Univerzální sestavení .dmg</li>
-<li data-i18n="launcher.platforms.mac.f2">Nativní podpora M1–M řady</li>
-<li data-i18n="launcher.platforms.mac.f3">Připraveno pro notarizaci</li>
-</ul>
-<p class="launcher-platform-note" data-i18n="launcher.platforms.planned.note.macos">Sestavení pro macOS připravujeme — na webu se objeví samo, jakmile vyjde v repozitáři.</p>
-<button aria-disabled="true" class="button button-secondary launcher-platform-btn is-planned" data-launcher-download data-os="macos" data-state="planned" type="button">
-<span data-i18n="launcher.platforms.planned.button">V plánu</span>
-<span aria-hidden="true" class="platform-btn-state"><svg aria-hidden="true" class="platform-btn-glyph is-planned" focusable="false"><use href="#mk-clock"></use></svg></span>
-</button>
-</article>
-<article class="launcher-platform is-planned" data-os="linux">
-<div class="launcher-platform-head">
-<span aria-hidden="true" class="launcher-platform-glyph"><svg aria-hidden="true" focusable="false"><use href="#mk-os-linux"></use></svg></span>
-<div><small data-i18n="launcher.platforms.lin.req">Ubuntu, Fedora, Arch…</small><h3>Linux</h3></div>
-<span class="launcher-platform-flag is-planned"><svg aria-hidden="true" class="platform-flag-icon" focusable="false"><use href="#mk-clock"></use></svg><span data-i18n="launcher.platforms.flag.planned">V plánu</span></span>
-</div>
-<ul>
-<li data-i18n="launcher.platforms.lin.f1">.AppImage, .deb i .rpm balíčky</li>
-<li data-i18n="launcher.platforms.lin.f2">Wayland i X11 bez úprav</li>
-<li data-i18n="launcher.platforms.lin.f3">Flatpak v plánu</li>
-</ul>
-<p class="launcher-platform-note" data-i18n="launcher.platforms.planned.note.linux">Sestavení pro Linux připravujeme — na webu se objeví samo, jakmile vyjde v repozitáři.</p>
-<button aria-disabled="true" class="button button-secondary launcher-platform-btn is-planned" data-launcher-download data-os="linux" data-state="planned" type="button">
-<span data-i18n="launcher.platforms.planned.button">V plánu</span>
-<span aria-hidden="true" class="platform-btn-state"><svg aria-hidden="true" class="platform-btn-glyph is-planned" focusable="false"><use href="#mk-clock"></use></svg></span>
-</button>
-</article>
-</div>
-<div class="compatibility-note">
-<span aria-hidden="true" class="compatibility-icon"><svg viewBox="0 0 24 24"><path d="M12 3 3.5 7v5c0 5.2 3.6 8 8.5 9.5 4.9-1.5 8.5-4.3 8.5-9.5V7L12 3Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg></span>
-<div>
-<strong data-i18n="launcher.platforms.note.title">Odkud se stahuje</strong>
-<p data-i18n="launcher.platforms.note.text">Tlačítko pro Windows si samo najde nejnovější vydání v repozitáři MinekubeStudios/MinekubeLauncher a soubor stáhne přímo z GitHubu — nic se nepřesouvá přes náš server. macOS a Linux jsou v plánu.</p>
-</div>
-</div>
-</div>
-</section>
-
-<!-- ===================== ROADMAP ===================== -->
-<section aria-labelledby="roadmapTitle" class="section launcher-roadmap-section" id="roadmap">
-<div class="container">
-<div class="section-heading centered">
-<span class="section-kicker" data-i18n="launcher.roadmap.kicker">PLÁN VÝVOJE</span>
-<h2 id="roadmapTitle" data-i18n="launcher.roadmap.title">Kam launcher směřuje</h2>
-<p data-i18n="launcher.roadmap.lead">Vyvíjíme otevřeně — každý krok uvidíš na GitHubu dřív, než vyjde.</p>
-</div>
-<ol class="launcher-roadmap">
-<li class="launcher-milestone is-current">
-<div class="launcher-milestone-dot"><i></i></div>
-<div class="launcher-milestone-card">
-<div class="launcher-milestone-top">
-<span class="launcher-milestone-ver">v0.1</span>
-<span class="launcher-milestone-chip is-now" data-i18n="launcher.roadmap.m1.chip">PRÁVĚ TEĎ</span>
-</div>
-<h3 data-i18n="launcher.roadmap.m1.title">První alpha</h3>
-<p data-i18n="launcher.roadmap.m1.text">Design launcheru, instalace modpacků z katalogu a správa instancí. Základ, na kterém stavíme dál.</p>
-</div>
-</li>
-<li class="launcher-milestone">
-<div class="launcher-milestone-dot"><i></i></div>
-<div class="launcher-milestone-card">
-<div class="launcher-milestone-top">
-<span class="launcher-milestone-ver">v0.2</span>
-<span class="launcher-milestone-chip" data-i18n="launcher.roadmap.m2.chip">DALŠÍ KROK</span>
-</div>
-<h3 data-i18n="launcher.roadmap.m2.title">Auto-aktualizace a import</h3>
-<p data-i18n="launcher.roadmap.m2.text">Automatické aktualizace balíčků, import .mrpack a .zip přetažením do okna a více instancí vedle sebe.</p>
-</div>
-</li>
-<li class="launcher-milestone">
-<div class="launcher-milestone-dot"><i></i></div>
-<div class="launcher-milestone-card">
-<div class="launcher-milestone-top">
-<span class="launcher-milestone-ver">v1.0</span>
-<span class="launcher-milestone-chip" data-i18n="launcher.roadmap.m3.chip">CÍL</span>
-</div>
-<h3 data-i18n="launcher.roadmap.m3.title">Celý ekosystém v kapse</h3>
-<p data-i18n="launcher.roadmap.m3.text">Napojení na komunitní server i Store, CZ/SK překlady z webu a jednoduché sdílení instancí s kamarády.</p>
-</div>
-</li>
-</ol>
-</div>
-</section>
-
-<!-- ===================== OPEN SOURCE NOTE ===================== -->
-<section class="section launcher-oss-section">
-<div class="container">
-<div class="repo-note">
-<span aria-hidden="true" class="repo-note-icon"><svg viewBox="0 0 24 24"><path d="M8 9 5 12l3 3M16 9l3 3-3 3M14 5l-4 14"></path></svg></span>
-<div>
-<strong data-i18n="launcher.oss.title">Chceš na launcheru stavět s námi?</strong>
-<p data-i18n="launcher.oss.text">Celý kód bude jako vždy otevřený. Hlasuj o funkcích, hlaste chyby, nebo pošli první pull request — launcher je ideální první projekt.</p>
-</div>
-<a class="repo-note-link" data-i18n-aria="launcher.oss.aria" data-launcher-repo data-site-link="launcherRepo" href="https://github.com/MinekubeStudios/MinekubeLauncher" rel="noopener noreferrer" target="_blank">
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
-<span data-i18n="launcher.oss.link">Otevřít repozitář launcheru</span>
-</a>
-</div>
-</div>
-</section>
-
-<!-- ===================== CTA ===================== -->
-<section class="cta-section">
-<div class="container cta-card">
-<div>
-<span class="section-kicker" data-i18n="launcher.cta.kicker">EKOSYSTÉM MINEKUBE</span>
-<h2 data-i18n="launcher.cta.title">Modpacky můžeš zkoušet už teď.</h2>
-<p data-i18n="launcher.cta.lead">Dokud launcher doroste do první alphy, katalog balíčků je plně dostupný na webu — zdarma.</p>
-</div>
-<a class="button button-light" href="../modpacky/">
-<span data-i18n="launcher.cta.button">Procházet modpacky</span>
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
-</a>
-</div>
-</section>
+<main id="top" class="launch-page">
+  <section class="launch-hero" id="launcher" aria-labelledby="launcherTitle">
+    <div class="launch-container hero-inner">
+      <a class="launch-back" href="../"><span aria-hidden="true">←</span> <span data-i18n="launcher.breadcrumb">Domů</span> <span class="back-divider">/</span> Launcher</a>
+      <div class="hero-copy">
+        <span class="launch-eyebrow"><span class="eyebrow-dot"></span> MINEKUBE LAUNCHER <span class="eyebrow-divider">/</span> <span data-i18n="new.early">VE VÝVOJI</span></span>
+        <h1 id="launcherTitle" data-i18n="new.hero.title">Tvůj Minecraft.<br><em>Jedno místo.</em></h1>
+        <p data-i18n="new.hero.lead">Méně nastavování, více hraní. Minekube Launcher je domov pro tvoje modpacky a instance — vytvořený pro hráče, kteří chtějí prostě hrát.</p>
+        <div class="hero-actions">
+          <button class="launcher-download-btn launch-primary" data-launcher-download data-os="windows" data-state="loading" aria-describedby="launcherDownloadHint" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m-4-4 4 4 4-4M4 17v3h16v-3"/></svg><span data-os-label>Stáhnout pro Windows</span></button>
+          <a class="launch-secondary" href="https://github.com/MinekubeStudios/MinekubeLauncher" data-launcher-repo data-site-link="launcherRepo" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#mk-github"/></svg> GitHub <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="hero-meta"><span data-os-sub>Windows 10+ · 64bit</span><span>·</span><span data-launcher-version>…</span><span class="source-label" data-launcher-source hidden><span>GitHub</span></span></div>
+        <p class="file-note" data-launcher-file="hero" hidden><span data-launcher-file-name></span></p>
+        <p class="sr-only" id="launcherDownloadHint" data-launcher-hint></p>
+        <a class="all-platforms" href="#platformy" data-i18n="new.platform.link">Další platformy a informace o stažení ↓</a>
+      </div>
+      <div class="app-stage">
+        <div class="stage-glow"></div>
+        <div class="app-window" aria-label="Ilustrační návrh rozhraní Minekube Launcheru" data-i18n-aria="new.mock.aria">
+          <div class="app-topbar"><div class="app-brand"><img src="../assets/favicon.png" alt=""><b>Minekube <span>Launcher</span></b></div><div class="app-top-right"><span data-i18n="new.mock.preview">NÁHLED ROZHRANÍ</span><span class="window-controls" aria-hidden="true">— &nbsp; □ &nbsp; ×</span></div></div>
+          <div class="app-layout">
+            <aside class="app-sidebar" aria-hidden="true"><div class="side-title" data-i18n="new.mock.menu">MENU</div><div class="side-link active">⌂ <span data-i18n="launcher.mock.nav1">Domů</span></div><div class="side-link">▦ <span data-i18n="launcher.mock.nav2">Instance</span></div><div class="side-link">◇ <span data-i18n="launcher.mock.nav3">Modpacky</span></div><div class="side-title side-library" data-i18n="new.mock.library">KNIHOVNA</div><div class="side-pack"><i>✦</i> Minekube Ultra</div><div class="side-pack"><i>◈</i> Performance</div><div class="side-bottom">⚙ <span data-i18n="launcher.mock.nav4">Nastavení</span></div></aside>
+            <div class="app-content"><div class="app-heading"><div><small data-i18n="new.mock.welcome">VÍTEJ ZPÁTKY</small><h2 data-i18n="new.mock.heading">Připraven hrát?</h2><p data-i18n="new.mock.sub">Tvůj další svět čeká.</p></div><div class="avatar">M</div></div>
+              <div class="app-banner"><div class="banner-copy"><span data-i18n="new.mock.featured">VYBRANÝ MODPACK</span><h3>Minekube Ultra</h3><p data-i18n="new.mock.banner">Více možností. Jeden svět.</p><span class="mock-play">▶ &nbsp; <span data-i18n="new.mock.play">Hrát</span></span></div></div>
+              <div class="app-section-heading"><b data-i18n="new.mock.instances">Tvoje instance</b><span data-i18n="new.mock.all">Zobrazit vše →</span></div>
+              <div class="app-cards"><div class="app-card"><span class="pack-icon ultra">✦</span><div><b>Minekube Ultra</b><small>Fabric · 1.21.4</small></div><span class="card-play">▶</span></div><div class="app-card"><span class="pack-icon performance">◈</span><div><b>Performance</b><small>Fabric · 1.21.4</small></div><span class="card-play">▶</span></div></div>
+            </div>
+          </div>
+        </div>
+        <p class="preview-caption"><span></span> <span data-i18n="new.mock.caption">Ilustrační náhled. Launcher se stále vyvíjí.</span></p>
+      </div>
+    </div>
+  </section>
+  <section class="launch-intro launch-container" id="funkce"><div><span class="launch-kicker" data-i18n="new.features.kicker">VŠECHNO NA JEDNOM MÍSTĚ</span><h2 data-i18n="new.features.title">Více hraní.<br><em>Méně starostí.</em></h2></div><p data-i18n="new.features.lead">Launcher stavíme jako jednoduchý domov pro Minekube. Od výběru modpacku až po správu vlastních instancí.</p></section>
+  <section class="launch-container feature-grid" aria-label="Funkce launcheru" data-i18n-aria="new.features.aria">
+    <article class="feature-card feature-large"><div class="feature-icon">▦</div><span class="feature-num" data-i18n="new.feature1.num">01 / KNIHOVNA</span><h3 data-i18n="new.feature1.title">Tvoje světy, pěkně pohromadě.</h3><p data-i18n="new.feature1.text">Spravuj instance a měj své oblíbené modpacky vždy po ruce. Každé dobrodružství má své místo.</p><div class="mini-library" aria-hidden="true"><div><span class="pack-icon ultra">✦</span><b>Minekube Ultra<small>Fabric · 1.21.4</small></b><i>▶</i></div><div><span class="pack-icon performance">◈</span><b>Performance<small>Fabric · 1.21.4</small></b><i>▶</i></div></div></article>
+    <article class="feature-card"><div class="feature-icon">↓</div><span class="feature-num" data-i18n="new.feature2.num">02 / MODPACKY</span><h3 data-i18n="new.feature2.title">Najdi svůj další modpack.</h3><p data-i18n="new.feature2.text">Objevuj Minekube modpacky bez zbytečného hledání. Vyber si zážitek, který ti sedne.</p><a href="../modpacky/" data-i18n="new.feature2.link">Prohlédnout modpacky ↗</a></article>
+    <article class="feature-card"><div class="feature-icon">⌘</div><span class="feature-num">03 / OPEN SOURCE</span><h3 data-i18n="new.feature3.title">Tvoříme otevřeně.</h3><p data-i18n="new.feature3.text">Sleduj vývoj na GitHubu, nahlas chybu nebo nám pomoz launcher posunout dál.</p><a href="https://github.com/MinekubeStudios/MinekubeLauncher" data-launcher-repo data-site-link="launcherRepo" target="_blank" rel="noopener noreferrer" data-i18n="new.feature3.link">Prozkoumat GitHub ↗</a></article>
+  </section>
+  <section class="platform-section" id="platformy"><div class="launch-container"><div class="platform-heading"><div><span class="launch-kicker" data-i18n="new.platform.kicker">PŘIPRAVEN KE STAŽENÍ</span><h2 data-i18n="new.platform.title">Začni po svém.</h2><p data-i18n="new.platform.lead">Vyber platformu. Dostupné sestavení stahujeme přímo z GitHubu.</p></div><span class="platform-version"><span data-i18n="new.platform.latest">AKTUÁLNÍ VERZE</span> <b data-launcher-version>…</b></span></div>
+    <div class="launcher-os-row" role="group" aria-label="Výběr platformy pro hlavní tlačítko" data-i18n-aria="launcher.os.aria"><button class="launcher-os-chip is-active" data-os="windows" data-status="live" type="button">Windows <span data-i18n="launcher.os.flag.live">K dispozici</span></button><button class="launcher-os-chip is-planned" data-os="macos" data-status="planned" type="button">macOS <span data-i18n="launcher.os.flag.planned">V plánu</span></button><button class="launcher-os-chip is-planned" data-os="linux" data-status="planned" type="button">Linux <span data-i18n="launcher.os.flag.planned">V plánu</span></button></div>
+    <div class="launcher-platforms platform-grid"><article class="launcher-platform platform-card"><div class="platform-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#mk-os-windows"/></svg></div><div class="platform-card-heading"><h3>Windows</h3><span class="available" data-i18n="launcher.platforms.flag.live">K dispozici</span></div><p>Windows 10+ · 64-bit</p><p class="platform-file" data-launcher-file="windows" hidden><span data-launcher-file-name></span></p><button class="launcher-platform-btn platform-download" data-launcher-download data-os="windows" data-state="loading" type="button"><span data-i18n="new.platform.download">Stáhnout</span> <span aria-hidden="true">↓</span></button></article>
+    <article class="launcher-platform platform-card is-planned"><div class="platform-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#mk-os-macos"/></svg></div><div class="platform-card-heading"><h3>macOS</h3><span data-i18n="launcher.platforms.flag.planned">V plánu</span></div><p data-i18n="new.platform.soon">Sestavení připravujeme</p><button class="launcher-platform-btn platform-download planned" data-launcher-download data-os="macos" data-state="planned" type="button"><span data-i18n="launcher.platforms.planned.button">V plánu</span> <span aria-hidden="true">→</span></button></article>
+    <article class="launcher-platform platform-card is-planned"><div class="platform-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#mk-os-linux"/></svg></div><div class="platform-card-heading"><h3>Linux</h3><span data-i18n="launcher.platforms.flag.planned">V plánu</span></div><p data-i18n="new.platform.soon">Sestavení připravujeme</p><button class="launcher-platform-btn platform-download planned" data-launcher-download data-os="linux" data-state="planned" type="button"><span data-i18n="launcher.platforms.planned.button">V plánu</span> <span aria-hidden="true">→</span></button></article></div>
+    <p class="platform-disclaimer" data-i18n="new.platform.disclaimer">Launcher je ve vývoji. Dostupnost a funkce se mohou měnit; macOS a Linux jsou zatím v plánu.</p></div></section>
+  <section class="launch-container final-cta"><div><span class="launch-kicker" data-i18n="new.cta.kicker">SOUČÁST MINEKUBE</span><h2 data-i18n="new.cta.title">Další dobrodružství čeká.</h2><p data-i18n="new.cta.text">Najdi si modpack, který budeš chtít hrát.</p></div><a class="launch-primary" href="../modpacky/" data-i18n="new.cta.button">Procházet modpacky →</a></section>
 </main>
 
 <!-- ===================== FOOTER ===================== -->
