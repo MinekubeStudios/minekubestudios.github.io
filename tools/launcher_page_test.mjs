@@ -337,7 +337,7 @@ test("Nová prezentace zachovává překlady, ukázkový náhled a odkazy", asyn
   assert.ok(document.querySelector("#launcherTitle em"), "zvýrazněná část nadpisu zůstává HTML");
   assert.match(document.querySelector(".preview-caption").textContent, /Ilustrační náhled/);
   assert.equal(document.querySelector(".all-platforms").getAttribute("href"), "#platformy");
-  assert.equal(document.querySelector(".final-cta a").getAttribute("href"), "../modpacky/");
+  assert.equal(document.querySelector(".closing-section a").getAttribute("href"), "../modpacky/");
 
   window.eval(`applyLanguage("en")`);
   assert.match(document.querySelector("#launcherTitle").textContent, /Your Minecraft/);
@@ -346,6 +346,17 @@ test("Nová prezentace zachovává překlady, ukázkový náhled a odkazy", asyn
   window.eval(`applyLanguage("sk")`);
   assert.match(document.querySelector("#launcherTitle").textContent, /Tvoj Minecraft/);
   assert.deepEqual(page.errors, []);
+});
+
+test("Launcher je dostupný z navigace domů i modpacků", async () => {
+  for (const [file, expected] of [["index.html", "launcher/"], ["modpacky/index.html", "../launcher/"]]) {
+    const dom = new JSDOM(read(file));
+    const links = [...dom.window.document.querySelectorAll(".desktop-nav a, .mobile-nav a")]
+      .filter(link => link.querySelector('[data-i18n="nav.launcher"]'));
+    assert.equal(links.length, 2, file);
+    links.forEach(link => assert.equal(link.getAttribute("href"), expected));
+    dom.window.close();
+  }
 });
 
 test("Odkazy na repozitář vedou na MinekubeLauncher", async () => {
