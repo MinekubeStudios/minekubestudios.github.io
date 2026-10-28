@@ -15,6 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="styles.css" rel="stylesheet"/>
 <link href="design-plus.css" rel="stylesheet"/>
+<link href="apple.css?v=20261029-1" rel="stylesheet"/>
 <script>
 /* Motiv a jazyk se čtou dřív, než se stránka vykreslí — žádné bliknutí při startu. */
 (function () {
@@ -37,7 +38,7 @@
 })();
 </script>
 </head>
-<body>
+<body class="ap-home">
 <div aria-hidden="true" class="noise"></div>
 <div aria-hidden="true" class="scroll-progress" id="scrollProgress"><span></span></div>
 
@@ -256,6 +257,44 @@
 </aside>
 </div>
 
+
+<!-- ---------- SCROLL-DRIVEN SCÉNA (apple vzor: lepivý produkt + kroky) ---------- -->
+<section aria-labelledby="apSceneTitle" class="ap-scene-block">
+<header class="ap-head" data-ap-reveal>
+<p class="ap-kicker" data-i18n="ap.scene.kicker">Jeden ekosystém</p>
+<h2 data-i18n="ap.scene.title" id="apSceneTitle">Tři kroky. Žádné tření.</h2>
+<p class="ap-lead" data-i18n="ap.scene.lead">Launcher, katalog a soukromí drží pohromadě. Projdi si je v pořadí, v jakém je potkáš při hraní.</p>
+</header>
+<div class="ap-scene" data-ap-scene data-step="0">
+<div class="ap-scene__sticky">
+<figure class="ap-scene__media">
+<img alt="" data-step-frame="0" decoding="async" height="900" loading="lazy" src="launcher/img/hero-welcome.webp" width="1680"/>
+<img alt="" data-step-frame="1" decoding="async" height="644" loading="lazy" src="launcher/img/settings-appearance.webp" width="1200"/>
+<img alt="" data-step-frame="2" decoding="async" height="644" loading="lazy" src="launcher/img/settings-privacy.webp" width="1200"/>
+</figure>
+<div aria-hidden="true" class="ap-scene__dots"><i></i><i></i><i></i></div>
+</div>
+<ol class="ap-scene__steps">
+<li class="ap-step is-active">
+<span class="ap-step__num">01</span>
+<h3 data-i18n="ap.scene.s1.title">Všechno na jednom místě</h3>
+<p data-i18n="ap.scene.s1.text">Instance, modpacky a účty v jednom okně. Otevřeš a hraješ — bez hledání, která verze Javy kam patří.</p>
+<a class="ap-link" data-i18n="ap.scene.link" href="launcher/">Prohlédnout launcher</a>
+</li>
+<li class="ap-step">
+<span class="ap-step__num">02</span>
+<h3 data-i18n="ap.scene.s2.title">Vzhled, který si řídíš ty</h3>
+<p data-i18n="ap.scene.s2.text">Šest motivů a akcentní barvy. Přepínačů je málo a každý platí okamžitě.</p>
+</li>
+<li class="ap-step">
+<span class="ap-step__num">03</span>
+<h3 data-i18n="ap.scene.s3.title">Soukromí v základu</h3>
+<p data-i18n="ap.scene.s3.text">Lokální účet, žádná telemetrie a žádné reklamy. Data zůstávají na tvém disku.</p>
+</li>
+</ol>
+</div>
+</section>
+
 <!-- ---------- MANIFEST PROJEKTU ---------- -->
 <div class="about-card" id="aboutCard">
 <div aria-hidden="true" class="about-ambient"><i></i><i></i><i></i><span></span></div>
@@ -334,7 +373,7 @@
 
 <!-- ---------- PRINCIPY ---------- -->
 <div class="projekt-principles">
-<div class="section-heading centered">
+<div class="section-heading centered" data-ap-reveal>
 <span class="section-kicker" data-i18n="principles.kicker">PRINCIPY PROJEKTU</span>
 <h2 data-i18n="principles.title">Pravidla, podle kterých projekt chodí</h2>
 <p data-i18n="principles.lead">Žádné náhodné experimenty — každé rozhodnutí v balíčku má jasný důvod.</p>
@@ -385,7 +424,7 @@
 
 <!-- ---------- STUDIO (bývalá samostatná sekce, nyní uvnitř O projektu) ---------- -->
 <div class="mk-studio-block" id="ekosystem">
-<div class="section-heading">
+<div class="section-heading" data-ap-reveal>
 <div>
 <span class="section-kicker">MINEKUBE STUDIOS // CZ/SK</span>
 <h2 data-i18n="studio.title">Studio, které staví ekosystém kolem Minecraftu</h2>
@@ -427,7 +466,7 @@
 </div>
 
 <div class="studio-pillars-head">
-<div class="section-heading centered">
+<div class="section-heading centered" data-ap-reveal>
 <span class="section-kicker" data-i18n="pillars.kicker">CO STUDIO BUDUJE</span>
 <h2 data-i18n="pillars.title">Čtyři pilíře ekosystému</h2>
 <p data-i18n="pillars.lead">Každý modul má vlastní misi — spolu tvoří jedno celé.</p>
@@ -603,5 +642,6 @@
 </div>
 <script src="app.js"></script>
 <script src="design-plus.js"></script>
+<script src="apple.js?v=20261029-1"></script>
 </body>
 </html>
