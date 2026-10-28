@@ -1,4 +1,44 @@
-# Minekube Studios // Web (v8.6 — nová produktová stránka Launcheru)
+# Minekube Studios // Web (v10 — hravá stránka Launcheru s galerií)
+
+## v10 — **stránka Launcheru znovu od nuly: hravá, animovaná, s galerií**
+
+Produktová stránka `launcher/` dostala nový kabát postavený na pohybu —
+ale s rozpočtem na výkon. Všechno dekorativní jde vypnout jedním tlačítkem
+(`[data-fx-toggle]`, volba se pamatuje v `localStorage`) a samo se vypne
+při `prefers-reduced-motion`.
+
+1. **Animace s rozpočtem** — jedno `requestAnimationFrame` plátno pro prach
+   v hero i pro jiskry pod kurzorem (žádné dvě souběžné smyčky), DPR strop
+   2× resp. 1,5×, prach kreslí ~32 fps, smyčka se zastaví, když je hero
+   mimo viewport nebo je stránka na pozadí, částice mají tvrdý strop
+   a jiskry se načítají jen na zařízeních s jemným ukazatelem.
+2. **Hravé prvky** — 3D náklon hero okna s odleskem sledujícím kurzor,
+   světelný bod na kartách, nekonečný pás (zdvojený v JS kvůli bezešvé
+   smyčce), pulzující odznak, plovoucí nálepky, ripple v tlačítkách,
+   posuvná pilulka v tabech, scroll-spy v lepivé navigaci a odhalování
+   sekcí s kaskádou `--d`.
+3. **Galerie (lightbox)** — každý ilustrační snímek je tlačítko
+   `data-lightbox`; otevře se hi-res verze z `launcher/img/full/`
+   (8 souborů, 2400/1800/960/640 px, dohromady ~490 kB, načítají se až
+   při otevření). Dialog má `role="dialog"`, `aria-modal`, past na fokus,
+   `inert` na podkladu, zámek scrollu, listování šipkami i swipem, zoom
+   kliknutím, přednačtení sousedů a návrat fokusu na spouštěč.
+   **Lightbox leží mimo `<main>`**, proto má vlastní sadu tokenů `--lp-*`.
+4. **Vizuály** — náhledy v `launcher/img/` zůstávají (8 WebP, ~330 kB),
+   nově k nim přibyly ostré hi-res protějšky prozvětšení. Všechny nesou
+   popisek **„Ilustrační náhled“** a překládaný `alt` (`data-i18n-alt`).
+5. **Stahování** beze změny pravidel: Windows míří na GitHub Releases,
+   tlačítko hlásí **„Stahování zahájeno“** (nikdy „hotovo“), macOS a Linux
+   jsou „V plánu“ a nic nestahují. Stavový řádek, otisk SHA-256, skeleton,
+   chybová hláška s „Zkusit znovu“ i záložní adresa zůstaly.
+6. **Přístupnost a jazyky** — jedna `h1`, sekce s `aria-labelledby`, taby
+   s obsluhou šipek/Home/End, `aria-pressed` u přepínače efektů, `aria-live`
+   u počítadla galerie, viditelný focus, `forced-colors`, tisk a redukce
+   pohybu (i pro lightbox). `launcher/i18n.js` má **170 klíčů** v CS/EN/SK.
+7. **Ověřeno** — `launcher.css` prošel `csstree-validator` bez chyby,
+   `html-validate` hlásí už jen dědičné nálezy ve sdílené hlavičce a patičce,
+   `node --check` je čistý a `tools/launcher_page_test.mjs` má **18 scénářů**
+   (nově otevírání galerie, hi-res soubory, fokus a Esc, přepínač efektů).
 
 ## v8.6 — **nová produktová stránka Launcheru** (vizuály z reálného rozhraní)
 

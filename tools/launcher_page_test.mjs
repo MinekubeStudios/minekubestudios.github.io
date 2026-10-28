@@ -14,7 +14,9 @@
      8. všechny překladové klíče existují ve všech třech jazycích,
      9. prohlídka rozhraní jde ovládat klávesnicí,
     10. obrázky mají popisek „ilustrační náhled“, odkazy na repo
-        i navigaci z ostatních stránek webu.
+        i navigaci z ostatních stránek webu,
+    11. galerie otevře hi-res soubor, listuje a zavírá se klávesou Esc,
+    12. přepínač efektů animace vypne a volbu si zapamatuje.
    ============================================================= */
 
 import { createRequire } from "node:module";
@@ -171,6 +173,8 @@ async function buildPage(scenario, { userAgent = WINDOWS_UA } = {}) {
         unobserve() {}
       };
       window.scrollTo = () => {};
+      /* jsdom bez balíčku canvas — plátna v testu jen nesmí nic rozbít. */
+      window.HTMLCanvasElement.prototype.getContext = () => null;
       window.HTMLElement.prototype.scrollIntoView = () => {};
       window.HTMLAnchorElement.prototype.click = function click() {
         if (this.href) downloads.push({ href: this.href, download: this.download });
@@ -452,8 +456,8 @@ test("Prohlídka rozhraní funguje i z klávesnice", async () => {
   const page = await buildPage("repoOnly");
   const { document, window } = page;
 
-  const tabs = [...document.querySelectorAll(".lp-tour__tabs [role='tab']")];
-  const panels = [...document.querySelectorAll(".lp-tour [role='tabpanel']")];
+  const tabs = [...document.querySelectorAll(".lp-tabs [role='tab']")];
+  const panels = [...document.querySelectorAll(".lp-panel[role='tabpanel']")];
   assert.equal(tabs.length, 3);
   assert.equal(panels.length, 3);
   assert.equal(tabs[0].getAttribute("aria-selected"), "true");
@@ -461,7 +465,7 @@ test("Prohlídka rozhraní funguje i z klávesnice", async () => {
   assert.equal(panels[1].hidden, true);
 
   tabs[0].focus();
-  const list = document.querySelector(".lp-tour__tabs");
+  const list = document.querySelector(".lp-tabs");
   list.dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
   assert.equal(tabs[1].getAttribute("aria-selected"), "true");
   assert.equal(tabs[1].tabIndex, 0);
@@ -474,6 +478,62 @@ test("Prohlídka rozhraní funguje i z klávesnice", async () => {
   list.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Home", bubbles: true }));
   assert.equal(tabs[0].getAttribute("aria-selected"), "true");
   assert.equal(tabs[0].tabIndex, 0);
+  assert.deepEqual(page.errors, []);
+});
+
+test("Galerie otevře hi-res náhled, listuje a zavře se klávesou Esc", async () => {
+  const page = await buildPage("withReleases");
+  const { document, window } = page;
+  const root = document.querySelector("[data-lightbox-root]");
+  const image = document.querySelector("[data-lb-img]");
+  const count = document.querySelector("[data-lb-count]");
+  const trigger = document.querySelector('[data-gallery="hero"]');
+
+  assert.equal(root.hidden, true);
+  trigger.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  await new Promise(done => window.setTimeout(done, 60));
+
+  assert.equal(root.hidden, false, "lightbox se neměl otevřít");
+  assert.ok(root.classList.contains("is-open"), "chybí animační třída is-open");
+  assert.match(image.getAttribute("src"), /img\/full\/hero-welcome\.webp$/, "neotevřel se hi-res soubor");
+  assert.equal(count.textContent, "1 / 8");
+  assert.equal(document.querySelector("[data-lb-title]").textContent, "Hlavní okno");
+  assert.ok(document.body.classList.contains("lp-lb-open"), "chybí zámek scrollu");
+  assert.equal(document.querySelector("main").inert, true, "obsah pod galerií má být inert");
+  assert.equal(document.activeElement, document.querySelector(".lp-lb__close"), "fokus má jít na zavírací tlačítko");
+
+  document.dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+  await new Promise(done => window.setTimeout(done, 40));
+  assert.equal(count.textContent, "2 / 8");
+  assert.match(image.getAttribute("src"), /img\/full\/panel-instance\.webp$/);
+
+  document.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+  await new Promise(done => window.setTimeout(done, 400));
+  assert.equal(root.hidden, true, "Esc měl galerii zavřít");
+  assert.ok(!document.body.classList.contains("lp-lb-open"));
+  assert.equal(document.querySelector("main").inert, false);
+  assert.equal(document.activeElement, trigger, "fokus se má vrátit na náhled");
+  assert.deepEqual(page.errors, []);
+});
+
+test("Přepínač efektů animace vypne a volbu si pamatuje", async () => {
+  const page = await buildPage("withReleases");
+  const { document, window } = page;
+  const pageEl = document.querySelector(".launcher-page");
+  const toggle = document.querySelector("[data-fx-toggle]");
+
+  assert.equal(pageEl.dataset.fx, "on");
+  assert.equal(toggle.getAttribute("aria-pressed"), "true");
+  assert.equal(document.querySelectorAll(".lp-marquee__item").length, 16, "pás se má zdvojnásobit kvůli smyčce");
+
+  toggle.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  assert.equal(pageEl.dataset.fx, "off");
+  assert.equal(toggle.getAttribute("aria-pressed"), "false");
+  assert.equal(window.localStorage.getItem("minekube:launcher-fx"), "off");
+
+  toggle.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  assert.equal(pageEl.dataset.fx, "on");
+  assert.equal(window.localStorage.getItem("minekube:launcher-fx"), "on");
   assert.deepEqual(page.errors, []);
 });
 
@@ -559,7 +619,8 @@ test("Stránka je sémantická a bez duplicitních ID", async () => {
 test("Obrázky jsou optimalizované a odpovídají atributům width/height", async () => {
   const dom = new JSDOM(HTML);
   const { document } = dom.window;
-  const files = readdirSync(ROOT + "launcher/img");
+  const entries = readdirSync(ROOT + "launcher/img", { withFileTypes: true });
+  const files = entries.filter(entry => entry.isFile()).map(entry => entry.name);
 
   const used = new Set();
   [...document.querySelectorAll(".launcher-page img")].forEach(image => {
@@ -575,13 +636,26 @@ test("Obrázky jsou optimalizované a odpovídají atributům width/height", asy
 
   const unused = files.filter(file => !used.has(file));
   assert.deepEqual(unused, [], "v img/ zůstaly nepoužité soubory");
+
+  // Každý náhled má hi-res verzi pro lightbox — a žádnou navíc.
+  const fullDir = ROOT + "launcher/img/full";
+  const full = readdirSync(fullDir, { withFileTypes: true })
+    .filter(entry => entry.isFile())
+    .map(entry => entry.name);
+  used.forEach(name => assert.ok(full.includes(name), `chybí hi-res verze pro ${name}`));
+  assert.deepEqual(full.filter(name => !used.has(name)), [], "v img/full/ jsou soubory bez náhledu");
+  full.forEach(name => {
+    const bytes = statSync(`${fullDir}/${name}`).size;
+    assert.ok(bytes < 140 * 1024, `img/full/${name} je moc velký (${Math.round(bytes / 1024)} kB)`);
+  });
   dom.window.close();
 });
 
 test("Styly mají světlý motiv i respekt k redukci pohybu", async () => {
   const css = read("launcher/launcher.css");
 
-  const lightBlock = css.slice(css.indexOf(':root[data-theme="light"] .launcher-page'));
+  const lightBlock = css.slice(css.indexOf(':root[data-theme="light"]'));
+  assert.ok(lightBlock.includes(".launcher-page"), "světlý motiv nemíří na stránku launcheru");
   ["--lp-bg", "--lp-surface", "--lp-text", "--lp-muted", "--lp-line"].forEach(token => {
     assert.ok(lightBlock.includes(`${token}:`), `světlý motiv nedefinuje ${token}`);
   });
@@ -592,7 +666,12 @@ test("Styly mají světlý motiv i respekt k redukci pohybu", async () => {
   assert.match(css, /:focus-visible/);
 
   // Každá akcentní barva z textu musí mít v světlém motivu kontrastní variantu.
-  assert.ok(css.includes(':root[data-theme="light"] .launcher-page :is(.lp-tag'), "chybí kontrastní akcenty pro světlý motiv");
+  assert.ok(
+    css.includes(':root[data-theme="light"] :is(.launcher-page, .lp-lb) :is(.lp-tag'),
+    "chybí kontrastní akcenty pro světlý motiv"
+  );
+  // Lightbox leží mimo <main>, takže musí dostat stejné tokeny.
+  assert.ok(css.includes(".launcher-page,\n.lp-lb {"), "lightbox nemá vlastní sadu tokenů");
 });
 
 test("Stahovací tlačítka nikdy netvrdí dokončení", async () => {
