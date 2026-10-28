@@ -688,3 +688,74 @@ Object.assign(window.MINEKUBE_PAGE_I18N.sk, {
 Object.assign(window.MINEKUBE_PAGE_I18N.cs, {"new.mock.aria":"Ilustrační návrh rozhraní Minekube Launcheru", "new.feature1.num":"01 / KNIHOVNA", "new.feature2.num":"02 / MODPACKY"});
 Object.assign(window.MINEKUBE_PAGE_I18N.en, {"new.mock.aria":"Illustrative preview of the Minekube Launcher interface", "new.feature1.num":"01 / LIBRARY", "new.feature2.num":"02 / MODPACKS"});
 Object.assign(window.MINEKUBE_PAGE_I18N.sk, {"new.mock.aria":"Ilustračný návrh rozhrania Minekube Launcheru", "new.feature1.num":"01 / KNIŽNICA", "new.feature2.num":"02 / MODPACKY"});
+
+/* Product page translations */
+Object.assign(window.MINEKUBE_PAGE_I18N.cs, {
+  "v2.beta": "VE VÝVOJI",
+  "v2.title": "Tvůj Minecraft.<br><em>Tvoje pravidla.</em>",
+  "v2.lead": "Všechny tvoje modpacky a instance na jednom místě. Minekube Launcher je domov pro tvoje další Minecraft dobrodružství.",
+  "v2.more": "Další možnosti stažení",
+  "v2.free": "Zdarma",
+  "v2.fromgithub": "Přímo z GitHubu",
+  "v2.features.tag": "JEDEN LAUNCHER. SPOUSTA MOŽNOSTÍ.",
+  "v2.features.title": "Všechno, co potřebuješ.<br><em>Nic navíc.</em>",
+  "v2.features.lead": "Méně času nastavováním. Více času ve tvém světě.",
+  "v2.library.title": "Tvá herní knihovna",
+  "v2.library.text": "Instance a oblíbené modpacky přehledně na jednom místě. Každé dobrodružství má svůj prostor.",
+  "v2.discover.title": "Objevuj modpacky",
+  "v2.discover.text": "Najdi si zážitek, který ti sedne. Katalog Minekube je připravený k procházení už teď.",
+  "v2.discover.link": "Prohlédnout modpacky →",
+  "v2.open.title": "Otevřený vývoj",
+  "v2.open.text": "Sleduj vývoj, nahlas chybu nebo se zapoj. Launcher tvoříme společně s komunitou.",
+  "v2.open.link": "Podívat se na GitHub ↗",
+  "v2.features.note": "Launcher je stále ve vývoji. Ukázky představují zamýšlený vzhled a funkce se mohou měnit.",
+  "v2.download.tag": "MOŽNOSTI STAŽENÍ",
+  "v2.download.title": "Připravit, stáhnout, hrát.",
+  "v2.download.lead": "Vyber si svou platformu. Dostupný instalátor získáš přímo z našeho GitHubu."
+});
+Object.assign(window.MINEKUBE_PAGE_I18N.en, {
+  "v2.beta": "IN DEVELOPMENT",
+  "v2.title": "Your Minecraft.<br><em>Your rules.</em>",
+  "v2.lead": "All your modpacks and instances in one place. Minekube Launcher is the home for your next Minecraft adventure.",
+  "v2.more": "More download options",
+  "v2.free": "Free",
+  "v2.fromgithub": "Directly from GitHub",
+  "v2.features.tag": "ONE LAUNCHER. MANY POSSIBILITIES.",
+  "v2.features.title": "Everything you need.<br><em>Nothing you don’t.</em>",
+  "v2.features.lead": "Less time setting up. More time in your world.",
+  "v2.library.title": "Your game library",
+  "v2.library.text": "Instances and favourite modpacks together in one place. Every adventure has its own space.",
+  "v2.discover.title": "Discover modpacks",
+  "v2.discover.text": "Find an experience that suits you. The Minekube catalogue is ready to explore right now.",
+  "v2.discover.link": "Explore modpacks →",
+  "v2.open.title": "Open development",
+  "v2.open.text": "Follow development, report a bug or get involved. We’re building the launcher with the community.",
+  "v2.open.link": "Visit GitHub ↗",
+  "v2.features.note": "The launcher is still in development. Previews show the intended design and features may change.",
+  "v2.download.tag": "DOWNLOAD OPTIONS",
+  "v2.download.title": "Ready, download, play.",
+  "v2.download.lead": "Choose your platform. Get the available installer directly from our GitHub."
+});
+Object.assign(window.MINEKUBE_PAGE_I18N.sk, {
+  "v2.beta": "VO VÝVOJI",
+  "v2.title": "Tvoj Minecraft.<br><em>Tvoje pravidlá.</em>",
+  "v2.lead": "Všetky tvoje modpacky a inštancie na jednom mieste. Minekube Launcher je domov pre tvoje ďalšie Minecraft dobrodružstvo.",
+  "v2.more": "Ďalšie možnosti stiahnutia",
+  "v2.free": "Zadarmo",
+  "v2.fromgithub": "Priamo z GitHubu",
+  "v2.features.tag": "JEDEN LAUNCHER. MNOŽSTVO MOŽNOSTÍ.",
+  "v2.features.title": "Všetko, čo potrebuješ.<br><em>Nič navyše.</em>",
+  "v2.features.lead": "Menej času nastavovaním. Viac času v tvojom svete.",
+  "v2.library.title": "Tvoja herná knižnica",
+  "v2.library.text": "Inštancie a obľúbené modpacky prehľadne na jednom mieste. Každé dobrodružstvo má svoj priestor.",
+  "v2.discover.title": "Objavuj modpacky",
+  "v2.discover.text": "Nájdi si zážitok, ktorý ti sadne. Katalóg Minekube je pripravený na prezeranie už teraz.",
+  "v2.discover.link": "Prezrieť modpacky →",
+  "v2.open.title": "Otvorený vývoj",
+  "v2.open.text": "Sleduj vývoj, nahlás chybu alebo sa zapoj. Launcher tvoríme spoločne s komunitou.",
+  "v2.open.link": "Pozrieť sa na GitHub ↗",
+  "v2.features.note": "Launcher je stále vo vývoji. Ukážky predstavujú zamýšľaný vzhľad a funkcie sa môžu meniť.",
+  "v2.download.tag": "MOŽNOSTI STIAHNUTIA",
+  "v2.download.title": "Pripraviť, stiahnuť, hrať.",
+  "v2.download.lead": "Vyber si svoju platformu. Dostupný inštalátor získaš priamo z nášho GitHubu."
+});
