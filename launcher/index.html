@@ -17,6 +17,7 @@
 <link href="../styles.css" rel="stylesheet"/>
 <link href="../design-plus.css" rel="stylesheet"/>
 <link href="launcher.css?v=20261028-2" rel="stylesheet"/>
+<link href="../apple.css?v=20261029-1" rel="stylesheet"/>
 <script>
 /* Motiv a jazyk se čtou dřív, než se stránka vykreslí — žádné bliknutí při startu. */
 (function () {
@@ -40,7 +41,7 @@
 })();
 </script>
 </head>
-<body class="launcher-redesign">
+<body class="launcher-redesign ap-launcher">
 <!-- ===================== SPRITE // IKONY PLATFORM =====================
      Značky macOS (Apple) a Linuxu (Tux) pocházejí z otevřené sady
      Simple Icons (CC0). Čtyřoknový znak Windows, tác se šipkou a stavové
@@ -290,7 +291,7 @@
 </div>
 
 <div class="lp-hero__visual">
-<figure class="lp-shot lp-shot--hero" data-tilt>
+<figure class="lp-shot lp-shot--hero" data-ap-scale data-tilt>
 <button aria-label="Zvětšit náhled hlavního okna launcheru" class="lp-open" data-gallery="hero" data-i18n-aria="lp.gallery.open.hero" data-lightbox type="button">
 <span class="lp-shot__frame">
 <img alt="Hlavní okno Minekube Launcheru s uvítací obrazovkou, tlačítkem pro vytvoření instance a panelem hráče." data-i18n-alt="lp.alt.hero" decoding="async" fetchpriority="high" height="900" src="img/hero-welcome.webp" width="1680"/>
@@ -827,5 +828,6 @@
 <script src="releases.js"></script>
 <script src="launcher.js"></script>
 <script src="../design-plus.js"></script>
+<script src="../apple.js?v=20261029-1"></script>
 </body>
 </html>

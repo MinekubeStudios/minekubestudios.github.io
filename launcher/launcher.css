@@ -70,7 +70,7 @@
 
   --lp-gutter: clamp(20px, 4.2vw, 56px);
   --lp-max: 1200px;
-  --lp-section-y: clamp(64px, 8vw, 118px);
+  --lp-section-y: clamp(78px, 9.5vw, 142px);
 
   --lp-ease: cubic-bezier(0.22, 0.9, 0.24, 0.99);
   --lp-spring: cubic-bezier(0.34, 1.56, 0.5, 1);
@@ -491,7 +491,7 @@
 
 .lp-hero {
   position: relative;
-  padding: clamp(36px, 5.4vw, 72px) 0 clamp(52px, 6vw, 84px);
+  padding: clamp(46px, 6.2vw, 92px) 0 clamp(56px, 7vw, 96px);
 }
 
 .lp-hero__glow {
@@ -521,9 +521,19 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-items: start;
+  gap: clamp(40px, 5.4vw, 70px);
+  text-align: center;
+}
+
+.lp-hero__copy {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: clamp(32px, 4.6vw, 66px);
+  max-width: 1040px;
+  width: 100%;
 }
 
 .lp-hero__copy,
@@ -572,7 +582,7 @@
 .launcher-page .lp-title {
   margin-top: 22px;
   font-family: var(--lp-font-display);
-  font-size: clamp(2.6rem, 5.1vw, 4.05rem);
+  font-size: clamp(2.7rem, 6.6vw, 5.35rem);
   font-weight: 700;
   line-height: 0.99;
   letter-spacing: -0.048em;
@@ -592,8 +602,9 @@
 }
 
 .lp-lead {
-  max-width: 47ch;
-  margin-top: 20px;
+  max-width: 44ch;
+  margin-inline: auto;
+  margin-top: 22px;
   color: var(--lp-muted);
   font-size: clamp(1rem, 1.1vw, 1.115rem);
   line-height: 1.68;
@@ -607,8 +618,9 @@
 .lp-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
-  margin-top: 30px;
+  margin-top: 32px;
 }
 
 .lp-actions .lp-btn--primary {
@@ -619,6 +631,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 8px 10px;
   margin-top: 16px;
   color: var(--lp-muted-2);
@@ -664,9 +677,12 @@
 .lp-trust {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 10px 22px;
-  margin-top: 28px;
-  padding-top: 22px;
+  width: 100%;
+  max-width: 780px;
+  margin-top: 30px;
+  padding-top: 24px;
   border-top: 1px solid var(--lp-line);
   color: var(--lp-muted);
   font-size: 0.82rem;
@@ -698,6 +714,8 @@
 /* Okno launcheru: 3D scéna, nálepky a náznak přiblížení. */
 .lp-hero__visual {
   position: relative;
+  width: 100%;
+  max-width: 1060px;
   perspective: 1200px;
 }
 
@@ -1282,10 +1300,13 @@
 
 .lp-head {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
-  align-items: end;
-  gap: clamp(20px, 4vw, 60px);
-  margin-bottom: clamp(32px, 4.4vw, 58px);
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-items: start;
+  gap: clamp(16px, 2vw, 22px);
+  max-width: 900px;
+  margin: 0 auto clamp(34px, 4.6vw, 62px);
+  text-align: center;
 }
 
 .lp-head__title {
@@ -1319,10 +1340,10 @@
 .launcher-page .lp-head h2,
 .launcher-page .lp-dl h2 {
   font-family: var(--lp-font-display);
-  font-size: clamp(1.95rem, 3.7vw, 2.95rem);
+  font-size: clamp(2rem, 4.4vw, 3.5rem);
   font-weight: 700;
-  line-height: 1.06;
-  letter-spacing: -0.038em;
+  line-height: 1.03;
+  letter-spacing: -0.042em;
   text-wrap: balance;
 }
 
@@ -1336,10 +1357,10 @@
 }
 
 .lp-head__lead {
-  max-width: 42ch;
+  max-width: 62ch;
   color: var(--lp-muted);
-  font-size: 0.98rem;
-  line-height: 1.7;
+  font-size: clamp(0.96rem, 1.2vw, 1.06rem);
+  line-height: 1.68;
 }
 
 /* ---------- 09 · Feature řádky a stage ---------- */
@@ -2883,7 +2904,7 @@ body.lp-lb-open {
   }
 
   .lp-hero__visual {
-    max-width: 780px;
+    max-width: 100%;
   }
 
   .lp-sticker--version {
@@ -2906,13 +2927,7 @@ body.lp-lb-open {
   }
 
   .lp-head {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
     gap: 16px;
-  }
-
-  .lp-head__lead {
-    max-width: 60ch;
   }
 
   .lp-row {

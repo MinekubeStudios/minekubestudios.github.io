@@ -1,0 +1,882 @@
+/* =============================================================
+   MINEKUBE STUDIOS // APPLE VRSTVA (v1)
+   -------------------------------------------------------------
+   Načítá se až po styles.css a design-plus.css na všech třech
+   stránkách (úvod, launcher, modpacky). Nekreslí nový web — mění
+   jeho rytmus, typografii a strukturu na „apple“ myšlení:
+
+     · jedna myšlenka na obrazovku, obrovský nadpis, málo slov,
+     · hodně vzduchu, sekce dýchají (clamp 88 – 164 px),
+     · produkt je hrdina, text mu jen sekunduje,
+     · dlaždice místo HUD panelů, klidné labely, žádný šum,
+     · scroll-driven scéna: lepivý produkt + tři kroky příběhu,
+     · pohyb je dlouhý a tichý (0.8 – 1.2 s), jen transform/opacity.
+
+   Vše je scoped na `body.ap-home`, `body.ap-packs` a `body.ap-launcher`,
+   takže staré komponenty zůstávají funkční a nová vrstva se dá kdykoli
+   vypnout odebráním třídy.
+
+   Obsah:
+     01 · Tokeny a rytmus
+     02 · Typografická škála
+     03 · Hero (úvod + katalog)
+     04 · Dlaždice (bývalý HUD panel)
+     05 · Sekční hlavičky
+     06 · Scroll-driven scéna
+     07 · Odhalování
+     08 · Responzivita
+     09 · Světlý motiv, redukce pohybu, tisk
+   ============================================================= */
+
+/* ---------- 01 · Tokeny a rytmus ---------- */
+
+.ap-home,
+.ap-packs,
+.ap-launcher {
+  --ap-ease: cubic-bezier(0.28, 0.11, 0.32, 1);
+  --ap-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ap-radius: clamp(20px, 2.4vw, 30px);
+  --ap-rhythm: clamp(88px, 11vw, 164px);
+  --ap-gap: clamp(14px, 1.8vw, 22px);
+  --ap-accent: var(--green, #ffae00);
+  --ap-accent-soft: var(--green-light, #ffd84f);
+  --ap-ink: var(--text, #fff8ef);
+  --ap-ink-muted: var(--muted, #c3afbd);
+  --ap-line: var(--border, rgba(255, 255, 255, 0.09));
+  /* Apple řeší nadpisy neutrálním groteskem s velmi těsným prokladem —
+     u nás to je Inter (ekvivalent SF Pro), Space Grotesk zůstává na
+     kickery, čísla kroků a HUD labely, kde drží identitu značky. */
+  --ap-font-display: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* `overflow-x: hidden` na body vytvoří scroll kontejner a zabije
+   position: sticky (lepivou scénu). `clip` dělá totéž vizuálně, ale
+   scroll kontejner nevytváří. Fallback níž necháváme beze změny. */
+@supports (overflow: clip) {
+  body.ap-home,
+  body.ap-packs,
+  body.ap-launcher {
+    overflow-x: clip;
+  }
+}
+
+:root[data-theme="light"] .ap-home,
+:root[data-theme="light"] .ap-packs,
+:root[data-theme="light"] .ap-launcher {
+  --ap-accent: #b06f00;
+  --ap-accent-soft: #8a5a00;
+}
+
+.ap-home .section,
+.ap-packs .section {
+  padding-block: var(--ap-rhythm);
+}
+
+/* ---------- 02 · Typografická škála ---------- */
+
+/* Systémový nadpis = Inter, tučně, těsný proklad. Jediná změna řezu,
+   která z „tech posteru“ udělá apple tón. Menší nadpisy v kartách
+   (h3) zůstávají Space Grotesk jako podpis značky. */
+.ap-home h1,
+.ap-home h2,
+.ap-packs h1,
+.ap-packs h2,
+.ap-launcher .lp-title,
+.ap-launcher .lp-head h2,
+.ap-step h3 {
+  font-family: var(--ap-font-display);
+  font-optical-sizing: auto;
+  font-weight: 700;
+  letter-spacing: -0.042em;
+}
+
+.ap-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--ap-accent-soft);
+  font-family: var(--plus-font-display, "Space Grotesk", sans-serif);
+  font-size: clamp(10.5px, 0.8vw, 12px);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.ap-kicker::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ap-accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ap-accent) 16%, transparent);
+}
+
+.ap-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin: 0 auto clamp(40px, 5.2vw, 76px);
+  max-width: 900px;
+  text-align: center;
+}
+
+.ap-head h2,
+.ap-head h3 {
+  margin: 0;
+  font-family: var(--ap-font-display);
+  font-size: clamp(31px, 4.6vw, 58px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.ap-head h2 em,
+.ap-head h3 em {
+  font-style: normal;
+  color: var(--ap-accent-soft);
+}
+
+.ap-lead {
+  max-width: 720px;
+  margin: 0;
+  color: var(--ap-ink-muted);
+  font-size: clamp(15px, 1.35vw, 18.5px);
+  line-height: 1.66;
+  text-wrap: pretty;
+}
+
+.ap-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ap-accent-soft);
+  font-size: 0.92rem;
+  font-weight: 650;
+  letter-spacing: -0.005em;
+  /* Apple odkazy mají velkorysý klikací pás — 20px vysoký text je na
+     dotyk málo. */
+  padding-block: 6px;
+  text-decoration: none;
+  transition: color 0.2s ease, gap 0.3s var(--ap-ease);
+}
+
+.ap-link:focus-visible {
+  outline: 2px solid var(--ap-accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.ap-link::after {
+  content: "›" / "";
+  font-size: 1.1em;
+  line-height: 1;
+  transition: transform 0.3s var(--ap-ease);
+}
+
+.ap-link:hover {
+  color: var(--ap-ink);
+  gap: 10px;
+}
+
+.ap-link:hover::after {
+  transform: translateX(2px);
+}
+
+/* ---------- 03 · Hero (úvod + katalog) ---------- */
+
+.ap-home .mk-intro,
+.ap-packs .mk-intro {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-items: start;
+  gap: clamp(42px, 5.4vw, 76px);
+  margin-bottom: var(--ap-rhythm);
+  padding-top: clamp(8px, 2vw, 28px);
+}
+
+.ap-home .mk-intro-copy,
+.ap-packs .mk-intro-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1040px;
+  text-align: center;
+}
+
+.ap-home .mk-intro .section-kicker,
+.ap-packs .mk-intro .section-kicker {
+  text-align: center;
+  color: var(--ap-accent-soft);
+  letter-spacing: 0.2em;
+}
+
+.ap-home .mk-intro h1,
+.ap-packs .mk-intro h1 {
+  margin-top: clamp(18px, 2vw, 26px);
+  /* 96 px je strop: delší lokalizace (EN/SK) se vejdou na dva řádky
+     a hero nepřeroste první obrazovku. */
+  font-size: clamp(40px, 8vw, 96px);
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: -0.048em;
+  text-wrap: balance;
+}
+
+.ap-packs .mk-intro h1 {
+  font-size: clamp(38px, 7vw, 92px);
+}
+
+.ap-home .mk-intro h1 > em,
+.ap-packs .mk-intro h1 > em {
+  margin-top: 0.04em;
+  background-size: 200% 100%;
+}
+
+.ap-home .mk-intro-lead,
+.ap-packs .mk-intro-lead {
+  max-width: 760px;
+  margin: clamp(22px, 2.6vw, 30px) auto 0;
+  font-size: clamp(16px, 1.5vw, 20.5px);
+  line-height: 1.62;
+  color: var(--ap-ink-muted);
+}
+
+.ap-home .mk-intro-actions,
+.ap-packs .mk-intro-actions {
+  justify-content: center;
+  gap: 14px;
+  margin-top: clamp(28px, 3.2vw, 38px);
+}
+
+/* Tři čísla pod hero — jako apple „highlights“, ne karty. */
+.ap-home .mk-intro-proof,
+.ap-packs .mk-intro-proof {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(26px, 4.6vw, 66px);
+  max-width: none;
+  margin-top: clamp(36px, 4.6vw, 56px);
+  padding-top: clamp(22px, 3vw, 32px);
+  border-top: 1px solid var(--ap-line);
+}
+
+.ap-home .mk-intro-proof > div,
+.ap-packs .mk-intro-proof > div {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  text-align: center;
+}
+
+.ap-home .mk-intro-proof strong,
+.ap-packs .mk-intro-proof strong {
+  color: var(--ap-ink);
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.ap-home .mk-intro-proof span,
+.ap-packs .mk-intro-proof span {
+  margin-top: 9px;
+  color: var(--ap-ink-muted);
+  font-size: clamp(9.5px, 0.72vw, 11px);
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ---------- 04 · Dlaždice (bývalý HUD panel) ---------- */
+
+.ap-home .mk-intro-panel,
+.ap-packs .mk-intro-panel {
+  width: 100%;
+  max-width: 1080px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.ap-home .mk-intro-panel::before,
+.ap-home .mk-intro-panel::after,
+.ap-packs .mk-intro-panel::before,
+.ap-packs .mk-intro-panel::after {
+  content: none;
+}
+
+/* Panel je teď jen mřížka bez rámu — nesmí ale ořezávat hover dlaždic. */
+.ap-home .mk-intro-panel,
+.ap-packs .mk-intro-panel {
+  overflow: visible;
+}
+
+.ap-home .mk-intro-panel-head,
+.ap-packs .mk-intro-panel-head {
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: clamp(20px, 2.4vw, 28px);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ap-ink-muted);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+.ap-home .mk-intro-panel-head b,
+.ap-packs .mk-intro-panel-head b {
+  color: var(--ap-accent-soft);
+}
+
+.ap-home .mk-intro-panel-foot,
+.ap-packs .mk-intro-panel-foot {
+  display: none;
+}
+
+.ap-home .mk-intro-modules,
+.ap-packs .mk-intro-modules {
+  display: grid;
+  gap: var(--ap-gap);
+  margin-top: 0;
+}
+
+.ap-home .mk-intro-modules {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ap-packs .mk-intro-modules {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Katalog míval poslední dlaždici přes celou šířku (2sloupcový grid).
+   Ve třech sloupcích by nechal díru, proto ji vracíme do mřížky. */
+.ap-packs .mk-intro-modules .mk-intro-module:last-child {
+  grid-column: auto;
+}
+
+@media (max-width: 900px) {
+  .ap-packs .mk-intro-modules {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ap-home .mk-intro-module,
+.ap-packs .mk-intro-module {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-height: clamp(140px, 15vw, 180px);
+  padding: clamp(20px, 2.2vw, 28px);
+  border: 1px solid var(--ap-line);
+  border-radius: var(--ap-radius);
+  background:
+    radial-gradient(circle at var(--surface-x, 50%) var(--surface-y, 50%), color-mix(in srgb, var(--ap-accent) 9%, transparent), transparent 44%),
+    radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, var(--ap-accent) 7%, transparent), transparent 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface, #160b1b) 94%, transparent), var(--surface, #160b1b));
+  text-align: left;
+  overflow: hidden;
+  isolation: isolate;
+  /* 3D tilt z app.js zůstává — jen se míchá s novým rytmem dlaždice. */
+  transform: perspective(900px) rotateX(var(--surface-rx, 0deg)) rotateY(var(--surface-ry, 0deg));
+  transition:
+    transform 0.5s var(--ap-ease),
+    border-color 0.3s ease,
+    box-shadow 0.4s ease;
+}
+
+.ap-home .mk-intro-module::after,
+.ap-packs .mk-intro-module::after {
+  content: "";
+  position: absolute;
+  inset: auto -30% -70% auto;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--ap-accent) 26%, transparent), transparent 68%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ap-home .mk-intro-module:hover,
+.ap-packs .mk-intro-module:hover {
+  transform: translateY(-4px) perspective(900px) rotateX(var(--surface-rx, 0deg)) rotateY(var(--surface-ry, 0deg));
+  border-color: color-mix(in srgb, var(--ap-accent) 42%, transparent);
+  box-shadow: 0 30px 60px -34px rgba(0, 0, 0, 0.85);
+}
+
+.ap-home .mk-intro-module:hover::after,
+.ap-packs .mk-intro-module:hover::after {
+  opacity: 1;
+}
+
+.ap-home .mk-intro-module > span,
+.ap-packs .mk-intro-module > span {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: auto;
+  /* base pravidlo centruje ikonu (align-self: center) — v nové
+     levostranné dlaždici musí zůstat vlevo. */
+  align-self: flex-start;
+  border: 1px solid color-mix(in srgb, var(--ap-accent) 32%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--ap-accent) 10%, transparent);
+  color: var(--ap-accent-soft);
+  transition: transform 0.5s var(--ap-ease);
+}
+
+.ap-home .mk-intro-module:hover > span,
+.ap-packs .mk-intro-module:hover > span {
+  transform: translateY(-2px) rotate(-6deg) scale(1.05);
+}
+
+.ap-home .mk-intro-module > span svg,
+.ap-packs .mk-intro-module > span svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ap-home .mk-intro-module b,
+.ap-packs .mk-intro-module b {
+  margin-top: 18px;
+  color: var(--ap-ink);
+  font-family: var(--plus-font-display, "Space Grotesk", sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+  /* Základní styl dlaždic je HUD: verzállky. Apple mluví malými písmeny. */
+  text-transform: none;
+}
+
+.ap-home .mk-intro-module small,
+.ap-packs .mk-intro-module small {
+  color: var(--ap-ink-muted);
+  font-size: 0.83rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.ap-packs .packs-panel-note {
+  margin-top: 18px;
+  text-align: center;
+  color: var(--ap-ink-muted);
+  font-size: 0.78rem;
+}
+
+/* ---------- 05 · Sekční hlavičky ---------- */
+
+.ap-home .section-heading,
+.ap-packs .section-heading {
+  margin-bottom: clamp(34px, 4vw, 58px);
+}
+
+.ap-home .section-heading h2,
+.ap-packs .section-heading h2 {
+  font-size: clamp(28px, 3.8vw, 50px);
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  font-weight: 650;
+}
+
+.ap-home .section-heading p,
+.ap-packs .section-heading p {
+  max-width: 720px;
+  color: var(--ap-ink-muted);
+  font-size: clamp(15px, 1.3vw, 17.5px);
+  line-height: 1.66;
+}
+
+/* ---------- 06 · Scroll-driven scéna ---------- */
+
+.ap-scene-block {
+  position: relative;
+  padding-block: clamp(72px, 9vw, 128px) var(--ap-rhythm);
+}
+
+.ap-scene {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
+  gap: clamp(30px, 4.6vw, 68px);
+  align-items: start;
+}
+
+.ap-scene__sticky {
+  position: sticky;
+  top: clamp(88px, 14vh, 140px);
+}
+
+.ap-scene__media {
+  position: relative;
+  margin: 0;
+  /* Snímky launcheru jsou 1680×900 — držíme jejich poměr, aby se
+     v rámu neořezávalo UI (dřívější chyba: cover v 16:10). */
+  aspect-ratio: 1680 / 900;
+  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.15));
+  border-radius: var(--ap-radius);
+  background:
+    radial-gradient(80% 80% at 50% 0%, color-mix(in srgb, var(--ap-accent) 10%, transparent), transparent 70%),
+    var(--surface, #160b1b);
+  box-shadow: var(--shadow, 0 24px 80px rgba(0, 0, 0, 0.38));
+  overflow: hidden;
+  transform: scale(var(--ap-scale, 1));
+  transition: transform 0.6s var(--ap-ease-out);
+}
+
+.ap-scene__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity 0.7s var(--ap-ease), transform 1.4s var(--ap-ease);
+}
+
+.ap-scene[data-step="0"] [data-step-frame="0"],
+.ap-scene[data-step="1"] [data-step-frame="1"],
+.ap-scene[data-step="2"] [data-step-frame="2"],
+.ap-scene[data-step="3"] [data-step-frame="3"] {
+  opacity: 1;
+  transform: none;
+}
+
+.ap-scene__dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ap-scene__dots i {
+  width: 26px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--ap-line);
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+.ap-scene__dots i::after {
+  content: "";
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: var(--ap-accent);
+  transition: transform 0.4s var(--ap-ease);
+}
+
+.ap-scene[data-step="0"] .ap-scene__dots i:nth-child(1)::after,
+.ap-scene[data-step="1"] .ap-scene__dots i:nth-child(2)::after,
+.ap-scene[data-step="2"] .ap-scene__dots i:nth-child(3)::after,
+.ap-scene[data-step="3"] .ap-scene__dots i:nth-child(4)::after {
+  transform: scaleX(1);
+}
+
+.ap-scene__steps {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: clamp(2vh, 6vh, 8vh) 0 clamp(8vh, 14vh, 18vh);
+  list-style: none;
+}
+
+/* Každý krok drží kus obrazovky — produkt vlevo se lepí a příběh
+   se odemyká postupně. Bez toho je scéna jen další dvousloupec. */
+.ap-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: clamp(240px, 44vh, 420px);
+  padding-left: 26px;
+  opacity: 0.32;
+  transform: translateY(10px);
+  transition: opacity 0.6s var(--ap-ease), transform 0.6s var(--ap-ease);
+}
+
+.ap-step::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  bottom: 0.2em;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--ap-line);
+}
+
+.ap-step.is-active {
+  opacity: 1;
+  transform: none;
+}
+
+.ap-step.is-active::before {
+  background: linear-gradient(180deg, var(--ap-accent-soft), color-mix(in srgb, var(--ap-accent) 30%, transparent));
+}
+
+.ap-step__num {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--ap-accent-soft);
+  font-family: var(--plus-font-display, "Space Grotesk", sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.ap-step h3 {
+  margin: 0;
+  font-family: var(--plus-font-display, "Space Grotesk", sans-serif);
+  font-size: clamp(21px, 2.3vw, 31px);
+  font-weight: 650;
+  line-height: 1.14;
+  letter-spacing: -0.03em;
+}
+
+.ap-step p {
+  margin: 10px 0 0;
+  max-width: 42ch;
+  color: var(--ap-ink-muted);
+  font-size: clamp(14px, 1.2vw, 16px);
+  line-height: 1.62;
+}
+
+.ap-step .ap-link {
+  margin-top: 14px;
+  font-size: 0.86rem;
+}
+
+/* ---------- 07 · Odhalování ---------- */
+
+html.ap-js [data-ap-reveal] {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.9s var(--ap-ease-out) var(--ap-delay, 0ms),
+    transform 0.9s var(--ap-ease-out) var(--ap-delay, 0ms);
+}
+
+html.ap-js [data-ap-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Produkt v hero se při prvním scrollu „usadí“ — jen když běží JS. */
+html.ap-js [data-ap-scale] {
+  transform: scale(var(--ap-scale, 1));
+  opacity: var(--ap-fade, 1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.ap-js [data-ap-scale] {
+    will-change: transform;
+  }
+}
+
+/* ---------- 08 · Responzivita ---------- */
+
+@media (max-width: 1024px) {
+  /* V jednom sloupci by mřížka dala každému dítěti vlastní řádek a
+     sticky by nemělo kam cestovat — proto blokový tok a snímek se
+     lepí přes celou výšku scény. */
+  .ap-scene {
+    display: block;
+  }
+
+  .ap-scene__sticky {
+    position: sticky;
+    top: clamp(76px, 11vh, 100px);
+    z-index: 2;
+  }
+
+  .ap-scene__steps {
+    margin-top: clamp(24px, 4vw, 40px);
+  }
+
+  .ap-scene__media {
+    aspect-ratio: 16 / 9;
+  }
+
+  .ap-scene__steps {
+    padding: 8px 0 clamp(40px, 8vh, 72px);
+  }
+
+  .ap-step {
+    min-height: 0;
+    padding-block: clamp(16px, 3vh, 28px);
+    opacity: 0.55;
+  }
+
+  .ap-step.is-active {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 720px) {
+  .ap-home .mk-intro h1,
+  .ap-packs .mk-intro h1 {
+    font-size: clamp(34px, 10.4vw, 54px);
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+
+  .ap-home .mk-intro-lead,
+  .ap-packs .mk-intro-lead {
+    font-size: 16px;
+  }
+
+  .ap-home .mk-intro-proof,
+  .ap-packs .mk-intro-proof {
+    gap: 22px 34px;
+  }
+
+  .ap-home .mk-intro-proof > div,
+  .ap-packs .mk-intro-proof > div {
+    flex: 1 1 40%;
+  }
+
+  .ap-home .mk-intro-proof strong,
+  .ap-packs .mk-intro-proof strong {
+    font-size: 26px;
+  }
+
+  .ap-home .mk-intro-modules,
+  .ap-packs .mk-intro-modules {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ap-home .mk-intro-module,
+  .ap-packs .mk-intro-module {
+    min-height: 0;
+  }
+
+  .ap-head {
+    gap: 12px;
+    margin-bottom: 30px;
+  }
+
+  .ap-head h2 {
+    font-size: clamp(27px, 8vw, 36px);
+  }
+
+  .ap-scene__media {
+    aspect-ratio: 16 / 10;
+    border-radius: 18px;
+  }
+
+  .ap-step {
+    padding-left: 16px;
+  }
+}
+
+/* ---------- 09 · Světlý motiv, redukce pohybu, tisk ---------- */
+
+:root[data-theme="light"] .ap-home .mk-intro-module,
+:root[data-theme="light"] .ap-packs .mk-intro-module {
+  background:
+    radial-gradient(circle at var(--surface-x, 50%) var(--surface-y, 50%), rgba(214, 91, 0, 0.1), transparent 44%),
+    radial-gradient(120% 120% at 100% 0%, rgba(255, 174, 0, 0.1), transparent 62%),
+    linear-gradient(180deg, #fffdf8, #fff3df);
+}
+
+:root[data-theme="light"] .ap-home .mk-intro-module:hover,
+:root[data-theme="light"] .ap-packs .mk-intro-module:hover {
+  box-shadow: 0 26px 50px -32px rgba(94, 34, 74, 0.45);
+}
+
+:root[data-theme="light"] .ap-scene__media {
+  background:
+    radial-gradient(80% 80% at 50% 0%, rgba(255, 174, 0, 0.16), transparent 70%),
+    #fffdf8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.ap-js [data-ap-reveal],
+  html.ap-js [data-ap-reveal].is-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  html.ap-js [data-ap-scale] {
+    transform: none;
+    opacity: 1;
+  }
+
+  .ap-scene__media,
+  .ap-scene__media img,
+  .ap-step {
+    transition-duration: 0.001ms;
+  }
+
+  .ap-scene__steps {
+    gap: 28px;
+    padding-block: 8px;
+  }
+
+  /* Bez animace nemá smysl předstírat tři fáze — ukážeme první snímek
+     a všechny kroky jako běžný seznam. */
+  .ap-scene__media img:not([data-step-frame="0"]) {
+    display: none;
+  }
+
+  .ap-step {
+    min-height: 0;
+    opacity: 1;
+    transform: none;
+  }
+
+  .ap-home .mk-intro-module:hover,
+  .ap-packs .mk-intro-module:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  .ap-scene__sticky {
+    position: static;
+  }
+
+  .ap-scene__media,
+  .ap-scene__dots {
+    display: none;
+  }
+
+  .ap-step {
+    opacity: 1;
+    transform: none;
+    break-inside: avoid;
+  }
+
+  html.ap-js [data-ap-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}

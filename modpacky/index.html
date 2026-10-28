@@ -15,6 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="../styles.css" rel="stylesheet"/>
 <link href="../design-plus.css" rel="stylesheet"/>
+<link href="../apple.css?v=20261029-1" rel="stylesheet"/>
 <script>
 /* Motiv a jazyk se čtou dřív, než se stránka vykreslí — žádné bliknutí při startu. */
 (function () {
@@ -37,7 +38,7 @@
 })();
 </script>
 </head>
-<body>
+<body class="ap-packs">
 <div aria-hidden="true" class="noise"></div>
 <div aria-hidden="true" class="scroll-progress" id="scrollProgress"><span></span></div>
 
@@ -261,7 +262,7 @@
 <section aria-labelledby="catalogTitle" class="section catalog catalog-clean-aligned" id="katalog">
 <div class="container">
 
-<div class="section-heading">
+<div class="section-heading" data-ap-reveal>
 <div>
 <span class="section-kicker" data-i18n="packs.catalog.kicker">KATALOG BALÍČKŮ</span>
 <h2 id="catalogTitle" data-i18n="packs.catalog.title">Najdi balíček pro svůj počítač</h2>
@@ -330,7 +331,7 @@
 <!-- ===================== INSTALACE ===================== -->
 <section class="section install-section" id="instalace">
 <div class="container">
-<div class="section-heading centered">
+<div class="section-heading centered" data-ap-reveal>
 <span class="section-kicker" data-i18n="packs.install.kicker">JAK NAINSTALOVAT</span>
 <h2 data-i18n="packs.install.title">Od stažení ke hraní ve čtyřech krocích</h2>
 <p data-i18n="packs.install.lead">Nepotřebuješ žádný instalátor ani účet.</p>
@@ -496,5 +497,6 @@
 <script src="releases.js"></script>
 <script src="modpacky.js"></script>
 <script src="../design-plus.js"></script>
+<script src="../apple.js?v=20261029-1"></script>
 </body>
 </html>
