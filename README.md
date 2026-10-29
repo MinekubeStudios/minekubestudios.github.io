@@ -14,13 +14,15 @@ ani `design-plus.css`** — každá je scoped na třídu v `<body>` nebo na
 2. **Scroll-driven scéna** — lepivý produkt a tři kroky, které se odemykají
    podle scrollu (kotva 42 % výšky okna) s indikátorem průběhu. Na mobilu
    blokový tok, aby sticky skutečně cestovalo.
-3. **3D kostka** (`cube.css` + `cube.js`, jen na úvodu) — skutečná krychle
-   z šesti CSS stěn (`preserve-3d`) s vlepenou značkou. Vlevo sloupec
-   pilulek jako na apple.com, vpravo produkt, který na volby reaguje:
-   **barvy** (5 palet), **povrch** (matný / sklo / drát), **světlo**
-   (zleva / zepředu / zprava) a **otáčení** (auto-rotace + tažení myší
-   i prstem se setrvačností). Jedna `requestAnimationFrame` smyčka běží
-   jen když je scéna na obrazovce a je co animovat.
+3. **3D kostka** (`cube.css` + `cube-webgl.js`, jen na úvodu) — skutečná
+   krychle vykreslovaná **WebGL**: zaoblený box (Minkowski součet), přesné
+   normály, procedurální studio se třemi světly, Fresnel a tonální
+   mapování, značka vyrytá texturou na každé stěně. Vlevo sloupec pilulek
+   jako na apple.com, vpravo produkt, který na volby reaguje: **barvy**
+   (5 palet), **povrch** (matný / sklo / drát), **světlo** (zleva / zepředu
+   / zprava) a **otáčení** (jemné kývání, po prvním tažení volné otáčení
+   se setrvačností). Když WebGL chybí, nastoupí `cube.js` s CSS krychlí
+   a statický `assets/cube-poster.webp` jako první snímek.
 4. **Přístupnost scény** — pilulky jsou tlačítka s `aria-expanded`
    a `aria-controls`, zavřené panely mají `inert` (mimo tab i čtečku),
    volby jsou skutečné radio buttony a `aria-pressed` tlačítka, přepínač

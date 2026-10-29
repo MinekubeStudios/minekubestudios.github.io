@@ -16,7 +16,7 @@
 <link href="styles.css" rel="stylesheet"/>
 <link href="design-plus.css" rel="stylesheet"/>
 <link href="apple.css?v=20261029-1" rel="stylesheet"/>
-<link href="cube.css?v=20261029-1" rel="stylesheet"/>
+<link href="cube.css?v=20261029-2" rel="stylesheet"/>
 <script>
 /* Motiv a jazyk se čtou dřív, než se stránka vykreslí — žádné bliknutí při startu. */
 (function () {
@@ -369,6 +369,8 @@
 
 <div class="cube-stage__visual" data-cube-drag="">
 <span aria-hidden="true" class="cube-halo"></span>
+<img alt="" aria-hidden="true" class="cube-poster" decoding="async" height="900" loading="lazy" src="assets/cube-poster.webp" width="900"/>
+<canvas aria-hidden="true" class="cube-canvas" data-cube-canvas="" height="900" width="900"></canvas>
 <div aria-hidden="true" class="cube" data-cube-object="">
 <div class="cube__face cube__face--front"><span class="cube__pane"></span><svg class="cube__mark" viewBox="0 0 48 48"><path d="M24 5 41 14.5v18L24 43 7 32.5v-18L24 5Z"></path><path d="M7 14.5 24 24l17-9.5M24 24v19"></path></svg></div>
 <div class="cube__face cube__face--back"><span class="cube__pane"></span><svg class="cube__mark" viewBox="0 0 48 48"><path d="M24 5 41 14.5v18L24 43 7 32.5v-18L24 5Z"></path><path d="M7 14.5 24 24l17-9.5M24 24v19"></path></svg></div>
@@ -772,6 +774,7 @@
 <script src="app.js"></script>
 <script src="design-plus.js"></script>
 <script src="apple.js?v=20261029-1"></script>
-<script src="cube.js?v=20261029-1"></script>
+<script src="cube-webgl.js?v=20261029-2"></script>
+<script src="cube.js?v=20261029-2"></script>
 </body>
 </html>

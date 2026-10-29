@@ -112,6 +112,8 @@
 
   function frame(now) {
     raf = 0;
+    /* WebGL scéna má vlastní smyčku — tahle by jen marnila framy. */
+    if (root.classList.contains("is-webgl")) return;
     const delta = last ? Math.min((now - last) / 1000, 0.06) : 0;
     last = now;
     let active = false;
@@ -159,6 +161,8 @@
   }
 
   dragArea.addEventListener("pointerdown", event => {
+    /* Když se rozjelo WebGL, otáčí kostkou cube-webgl.js. */
+    if (root.classList.contains("is-webgl")) return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
     dragging = true;
     pointerId = event.pointerId;
