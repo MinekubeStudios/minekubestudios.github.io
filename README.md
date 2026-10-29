@@ -1,4 +1,41 @@
-# Minekube Studios // Web (v10 — hravá stránka Launcheru s galerií)
+# Minekube Studios // Web (v11 — apple rytmus a 3D kostka)
+
+## v11 — **apple rytmus na celém webu a 3D kostka Minekube**
+
+Nové vrstvy `apple.css` / `apple.js` (celý web) a `cube.css` / `cube.js`
+(úvodní stránka) se načítají jako poslední a **nesahají do `styles.css`
+ani `design-plus.css`** — každá je scoped na třídu v `<body>` nebo na
+`[data-cube]`, takže se dá kdykoli vypnout odebráním jedné třídy.
+
+1. **Struktura a typografie** — hero je jedna centrovaná myšlenka (Inter
+   700, proklad −0,048 em, strop 96 px kvůli delším lokalizacím), HUD panel
+   se změnil v mřížku dlaždic bez rámu, sekce dýchají v rytmu
+   `clamp(88 px, 11 vw, 164 px)`. Space Grotesk zůstal na kickery a labely.
+2. **Scroll-driven scéna** — lepivý produkt a tři kroky, které se odemykají
+   podle scrollu (kotva 42 % výšky okna) s indikátorem průběhu. Na mobilu
+   blokový tok, aby sticky skutečně cestovalo.
+3. **3D kostka** (`cube.css` + `cube.js`, jen na úvodu) — skutečná krychle
+   z šesti CSS stěn (`preserve-3d`) s vlepenou značkou. Vlevo sloupec
+   pilulek jako na apple.com, vpravo produkt, který na volby reaguje:
+   **barvy** (5 palet), **povrch** (matný / sklo / drát), **světlo**
+   (zleva / zepředu / zprava) a **otáčení** (auto-rotace + tažení myší
+   i prstem se setrvačností). Jedna `requestAnimationFrame` smyčka běží
+   jen když je scéna na obrazovce a je co animovat.
+4. **Přístupnost scény** — pilulky jsou tlačítka s `aria-expanded`
+   a `aria-controls`, zavřené panely mají `inert` (mimo tab i čtečku),
+   volby jsou skutečné radio buttony a `aria-pressed` tlačítka, přepínač
+   je `role="switch"`. Kostka je dekorace (`aria-hidden`) — informace
+   nese jen panel. Bez JS zůstávají všechny panely otevřené.
+5. **Pohybu se nebojíme, ale nevnucujeme ho** — `prefers-reduced-motion`
+   vypne auto-rotaci i setrvačnost a odhalí poznámku, proč se kostka
+   netočí; tisk skryje 3D scénu a rozbalí panely.
+6. **Překlady** — 24 nových klíčů `cube.*` v CS / EN / SK vedle
+   `ap.scene.*`; test hlídá, že žádný v HTML použitý klíč nechybí.
+7. **Ověřeno** — `csstree-validator` bez chyby (`apple.css`, `cube.css`,
+   `launcher.css`), `html-validate` bez nálezů, `node --check` čistý,
+   `tools/cube_stage_test.mjs` má **24 scénářů**, `tools/launcher_page_test.mjs`
+   drží **18/18**. Prohlížeč v sandboxu není — sticky scéna, 3D a hover
+   jsou ověřené staticky (kaskáda, dopočet, jsdom), ne okem.
 
 ## v10 — **stránka Launcheru znovu od nuly: hravá, animovaná, s galerií**
 
