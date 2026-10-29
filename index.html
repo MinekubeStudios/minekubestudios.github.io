@@ -16,6 +16,7 @@
 <link href="styles.css" rel="stylesheet"/>
 <link href="design-plus.css" rel="stylesheet"/>
 <link href="apple.css?v=20261029-1" rel="stylesheet"/>
+<link href="cube.css?v=20261029-1" rel="stylesheet"/>
 <script>
 /* Motiv a jazyk se čtou dřív, než se stránka vykreslí — žádné bliknutí při startu. */
 (function () {
@@ -257,6 +258,134 @@
 </aside>
 </div>
 
+
+<!-- ---------- 3D KOSTKA (apple vzor: pilulky vlevo, produkt vpravo) ---------- -->
+<section aria-labelledby="cubeTitle" class="cube-stage" data-cube data-color="gold" data-finish="matte" data-light="front">
+<header class="ap-head" data-ap-reveal>
+<p class="ap-kicker" data-i18n="cube.kicker">Kostka Minekube</p>
+<h2 data-i18n="cube.title" id="cubeTitle">Kostka. <em>Z každé strany.</em></h2>
+<p class="ap-lead" data-i18n="cube.lead">Šest stěn, jeden ekosystém. Vyber barvu, povrch a světlo — nebo si kostku prostě otoč tažením.</p>
+</header>
+
+<div class="cube-stage__grid">
+<div class="cube-pills">
+
+<div class="cube-pill" data-cube-group="color">
+<button aria-controls="cubePanelColor" aria-expanded="true" class="cube-pill__btn" data-cube-toggle type="button">
+<span aria-hidden="true" class="cube-pill__mark"><span class="cube-pill__swatch"></span></span>
+<span class="cube-pill__label" data-i18n="cube.pill.color">Barvy</span>
+</button>
+<div class="cube-pill__panel" id="cubePanelColor">
+<div class="cube-pill__panel-inner">
+<div class="cube-pill__panel-body">
+<div aria-label="Barva kostky" class="cube-swatches" data-i18n-aria="cube.color.aria" role="radiogroup">
+<input checked="checked" class="cube-swatch-input" id="cubeColorGold" name="cubeColor" type="radio" value="gold"/>
+<label class="cube-swatch" for="cubeColorGold" style="--sw-a:#ffd84f; --sw-b:#ef6500;">
+<span aria-hidden="true" class="cube-swatch__dot"></span>
+<span class="cube-swatch__name" data-i18n="cube.color.gold">Zlatá</span>
+</label>
+<input class="cube-swatch-input" id="cubeColorFire" name="cubeColor" type="radio" value="fire"/>
+<label class="cube-swatch" for="cubeColorFire" style="--sw-a:#ffb36b; --sw-b:#c62c05;">
+<span aria-hidden="true" class="cube-swatch__dot"></span>
+<span class="cube-swatch__name" data-i18n="cube.color.fire">Ohňová</span>
+</label>
+<input class="cube-swatch-input" id="cubeColorPurple" name="cubeColor" type="radio" value="purple"/>
+<label class="cube-swatch" for="cubeColorPurple" style="--sw-a:#e79bff; --sw-b:#6b1cb5;">
+<span aria-hidden="true" class="cube-swatch__dot"></span>
+<span class="cube-swatch__name" data-i18n="cube.color.purple">Purpurová</span>
+</label>
+<input class="cube-swatch-input" id="cubeColorIce" name="cubeColor" type="radio" value="ice"/>
+<label class="cube-swatch" for="cubeColorIce" style="--sw-a:#b4f4ff; --sw-b:#2f6bd8;">
+<span aria-hidden="true" class="cube-swatch__dot"></span>
+<span class="cube-swatch__name" data-i18n="cube.color.ice">Ledová</span>
+</label>
+<input class="cube-swatch-input" id="cubeColorGraphite" name="cubeColor" type="radio" value="graphite"/>
+<label class="cube-swatch" for="cubeColorGraphite" style="--sw-a:#e6e6ee; --sw-b:#464652;">
+<span aria-hidden="true" class="cube-swatch__dot"></span>
+<span class="cube-swatch__name" data-i18n="cube.color.graphite">Grafit</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="cube-pill" data-cube-group="finish">
+<button aria-controls="cubePanelFinish" aria-expanded="true" class="cube-pill__btn" data-cube-toggle type="button">
+<span aria-hidden="true" class="cube-pill__mark"><svg class="cube-pill__plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg></span>
+<span class="cube-pill__label" data-i18n="cube.pill.finish">Povrch</span>
+</button>
+<div class="cube-pill__panel" id="cubePanelFinish">
+<div class="cube-pill__panel-inner">
+<div class="cube-pill__panel-body">
+<div aria-label="Povrch kostky" class="cube-seg" data-i18n-aria="cube.finish.aria" role="group">
+<button aria-pressed="true" class="cube-seg__btn" data-cube-choice="finish" data-i18n="cube.finish.matte" data-value="matte" type="button">Matný</button>
+<button aria-pressed="false" class="cube-seg__btn" data-cube-choice="finish" data-i18n="cube.finish.glass" data-value="glass" type="button">Sklo</button>
+<button aria-pressed="false" class="cube-seg__btn" data-cube-choice="finish" data-i18n="cube.finish.wire" data-value="wire" type="button">Drát</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="cube-pill" data-cube-group="light">
+<button aria-controls="cubePanelLight" aria-expanded="true" class="cube-pill__btn" data-cube-toggle type="button">
+<span aria-hidden="true" class="cube-pill__mark"><svg class="cube-pill__plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg></span>
+<span class="cube-pill__label" data-i18n="cube.pill.light">Světlo</span>
+</button>
+<div class="cube-pill__panel" id="cubePanelLight">
+<div class="cube-pill__panel-inner">
+<div class="cube-pill__panel-body">
+<div aria-label="Směr světla" class="cube-seg" data-i18n-aria="cube.light.aria" role="group">
+<button aria-pressed="false" class="cube-seg__btn" data-cube-choice="light" data-i18n="cube.light.left" data-value="left" type="button">Zleva</button>
+<button aria-pressed="true" class="cube-seg__btn" data-cube-choice="light" data-i18n="cube.light.front" data-value="front" type="button">Zepředu</button>
+<button aria-pressed="false" class="cube-seg__btn" data-cube-choice="light" data-i18n="cube.light.right" data-value="right" type="button">Zprava</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="cube-pill" data-cube-group="spin">
+<button aria-controls="cubePanelSpin" aria-expanded="true" class="cube-pill__btn" data-cube-toggle type="button">
+<span aria-hidden="true" class="cube-pill__mark"><svg class="cube-pill__plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg></span>
+<span class="cube-pill__label" data-i18n="cube.pill.spin">Otáčení</span>
+</button>
+<div class="cube-pill__panel" id="cubePanelSpin">
+<div class="cube-pill__panel-inner">
+<div class="cube-pill__panel-body">
+<label class="cube-switch">
+<input checked="checked" class="cube-switch__input" data-cube-spin="" role="switch" type="checkbox"/>
+<span aria-hidden="true" class="cube-switch__track"><span class="cube-switch__thumb"></span></span>
+<span class="cube-switch__label" data-i18n="cube.spin.label">Automatická rotace</span>
+</label>
+<p class="cube-note" data-cube-spin-note="" data-i18n="cube.spin.note" hidden="">Systém má vypnuté animace, kostka se proto sama neotáčí. Tažením ji otočíš i tak.</p>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="cube-stage__visual" data-cube-drag="">
+<span aria-hidden="true" class="cube-halo"></span>
+<div aria-hidden="true" class="cube" data-cube-object="">
+<div class="cube__face cube__face--front"><span class="cube__pane"></span><svg class="cube__mark" viewBox="0 0 48 48"><path d="M24 5 41 14.5v18L24 43 7 32.5v-18L24 5Z"></path><path d="M7 14.5 24 24l17-9.5M24 24v19"></path></svg></div>
+<div class="cube__face cube__face--back"><span class="cube__pane"></span><svg class="cube__mark" viewBox="0 0 48 48"><path d="M24 5 41 14.5v18L24 43 7 32.5v-18L24 5Z"></path><path d="M7 14.5 24 24l17-9.5M24 24v19"></path></svg></div>
+<div class="cube__face cube__face--right"><span class="cube__pane"></span><svg class="cube__mark" viewBox="0 0 48 48"><path d="M24 5 41 14.5v18L24 43 7 32.5v-18L24 5Z"></path><path d="M7 14.5 24 24l17-9.5M24 24v19"></path></svg></div>
+<div class="cube__face cube__face--left"><span class="cube__pane"></span><svg class="cube__mark" viewBox="0 0 48 48"><path d="M24 5 41 14.5v18L24 43 7 32.5v-18L24 5Z"></path><path d="M7 14.5 24 24l17-9.5M24 24v19"></path></svg></div>
+<div class="cube__face cube__face--top"><span class="cube__pane"></span><svg class="cube__mark" viewBox="0 0 48 48"><path d="M24 5 41 14.5v18L24 43 7 32.5v-18L24 5Z"></path><path d="M7 14.5 24 24l17-9.5M24 24v19"></path></svg></div>
+<div class="cube__face cube__face--bottom"><span class="cube__pane"></span><svg class="cube__mark" viewBox="0 0 48 48"><path d="M24 5 41 14.5v18L24 43 7 32.5v-18L24 5Z"></path><path d="M7 14.5 24 24l17-9.5M24 24v19"></path></svg></div>
+</div>
+<span aria-hidden="true" class="cube-floor"></span>
+</div>
+</div>
+
+<p class="cube-hint">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3.5 12h17M7.5 8 3.5 12l4 4M16.5 8l4 4-4 4"></path></svg>
+<span data-i18n="cube.hint">Kostkou otočíš tažením myší nebo prstem.</span>
+</p>
+</section>
 
 <!-- ---------- SCROLL-DRIVEN SCÉNA (apple vzor: lepivý produkt + kroky) ---------- -->
 <section aria-labelledby="apSceneTitle" class="ap-scene-block">
@@ -643,5 +772,6 @@
 <script src="app.js"></script>
 <script src="design-plus.js"></script>
 <script src="apple.js?v=20261029-1"></script>
+<script src="cube.js?v=20261029-1"></script>
 </body>
 </html>
