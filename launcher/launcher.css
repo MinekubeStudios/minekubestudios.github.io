@@ -468,6 +468,77 @@
   box-shadow: none;
 }
 
+/* ---------- 03b · Stahovací tlačítka (design z Modpacků) ---------- */
+
+/* Tlačítka „Stáhnout“ na této stránce používají úplně stejnou kostru jako
+   karty modpacků: .button.button-primary.download-ultimate. Vzhled, hover,
+   aura i částice tak drží styles.css — tady se řeší jen rozměry v layoutu
+   launcheru a stavy stahování, které Modpacky nemají. */
+.lp-dlbtn {
+  flex: 0 0 auto;
+  min-height: 48px;
+  font-size: 14px;
+}
+
+.lp-actions .lp-dlbtn {
+  min-width: 272px;
+}
+
+.lp-platform__actions .lp-dlbtn {
+  flex: 0 1 auto;
+  min-width: 216px;
+  max-width: 320px;
+}
+
+.lp-dlbtn:disabled {
+  cursor: progress;
+}
+
+.lp-dlbtn[data-state="loading"] {
+  cursor: progress;
+  animation-play-state: paused;
+}
+
+/* Během načítání se ikona schová a na jejím místě se točí spinner. */
+.lp-dlbtn[data-state="loading"] .download-icon {
+  opacity: 0;
+}
+
+.lp-dlbtn .lp-btn__spinner {
+  position: absolute;
+  z-index: 6;
+  top: 50%;
+  right: 14px;
+  display: none;
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  color: #2b1305;
+  transform: translateY(-50%);
+}
+
+.lp-dlbtn[data-state="loading"] .lp-btn__spinner {
+  display: block;
+}
+
+/* „Stahování zahájeno“ — tlačítko se na chvíli přelije do zelena. */
+.lp-dlbtn[data-state="started"] .download-fx {
+  background:
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, .5), transparent 26%),
+    linear-gradient(105deg, #d9ffe6 0%, #7bec9f 24%, #38c977 58%, #1a9d5e 100%);
+}
+
+.lp-dlbtn[data-state="error"] .download-fx {
+  background:
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, .5), transparent 26%),
+    linear-gradient(105deg, #ffe2d6 0%, #ff9f7f 30%, #f4593a 66%, #d8341f 100%);
+}
+
+.lp-dlbtn[data-state="error"] .download-label {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
 @keyframes lp-sheen {
   0% {
     transform: translate3d(-130%, 0, 0) rotate(6deg);
@@ -2993,6 +3064,11 @@ body.lp-lb-open {
     min-width: 0;
   }
 
+  .lp-actions .lp-dlbtn {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
   .lp-trust {
     gap: 8px 16px;
     font-size: 0.78rem;
@@ -3098,7 +3174,8 @@ body.lp-lb-open {
     border-radius: 11px;
   }
 
-  .lp-platform__actions .lp-btn {
+  .lp-platform__actions .lp-btn,
+  .lp-platform__actions .lp-dlbtn {
     flex: 1 1 100%;
   }
 

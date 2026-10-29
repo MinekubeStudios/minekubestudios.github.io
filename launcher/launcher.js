@@ -137,7 +137,7 @@
 
   /* ===================== PRVKY NA STRÁNCE ===================== */
 
-  const heroButton = document.querySelector(".lp-hero .lp-btn[data-launcher-download]");
+  const heroButton = document.querySelector(".lp-hero [data-launcher-download]");
   const heroLabel = heroButton?.querySelector("[data-os-label]") ?? null;
   const heroSub = document.querySelector("[data-os-sub]");
   const versionNodes = [...document.querySelectorAll("[data-launcher-version]")];
@@ -392,6 +392,12 @@
     });
   }
 
+  /* Krátká „energetická“ odezva tlačítka — stejná animace jako na Modpackách. */
+  function playDownloadAnimation(button) {
+    button.classList.add("download-animating");
+    window.setTimeout(() => button.classList.remove("download-animating"), 1500);
+  }
+
   function onDownloadClick(button) {
     const os = PLATFORMS[button.dataset.os] ? button.dataset.os : currentOS;
     const info = source.platform(os);
@@ -406,6 +412,7 @@
 
     const asset = source.asset(os);
     if (status.state === "ready" && asset) {
+      playDownloadAnimation(button);
       runDownload(button, os, asset);
       return;
     }
@@ -912,6 +919,47 @@
     });
   }
 
+  /* ---------- Magnet a náklon stahovacích tlačítek ---------- */
+
+  /* Stejné chování jako u „Stáhnout Modpack“: tlačítko se naklápí podle
+     kurzoru a jeho aura sleduje ukazatel. Čistě vizuální, bez dopadu na
+     přístupnost — při redukci pohybu nebo dotyku se nic neděje. */
+  function initDownloadButtons() {
+    const buttons = [...document.querySelectorAll(".download-ultimate")];
+    if (!buttons.length) return;
+
+    const reset = button => {
+      button.classList.remove("is-pointer-active");
+      button.style.setProperty("--tilt-x", "0deg");
+      button.style.setProperty("--tilt-y", "0deg");
+      button.style.setProperty("--magnet-x", "0px");
+      button.style.setProperty("--magnet-y", "0px");
+    };
+
+    buttons.forEach(button => {
+      button.addEventListener(
+        "pointermove",
+        event => {
+          if (prefersReduced() || !finePointer.matches) return;
+          const rect = button.getBoundingClientRect();
+          const x = (event.clientX - rect.left) / rect.width;
+          const y = (event.clientY - rect.top) / rect.height;
+          button.classList.add("is-pointer-active");
+          button.style.setProperty("--pointer-x", `${x * 100}%`);
+          button.style.setProperty("--pointer-y", `${y * 100}%`);
+          button.style.setProperty("--tilt-y", `${(x - 0.5) * 8}deg`);
+          button.style.setProperty("--tilt-x", `${(y - 0.5) * -8}deg`);
+          button.style.setProperty("--magnet-x", `${(x - 0.5) * 6}px`);
+          button.style.setProperty("--magnet-y", `${(y - 0.5) * 6}px`);
+        },
+        { passive: true }
+      );
+
+      button.addEventListener("pointerleave", () => reset(button));
+      button.addEventListener("blur", () => reset(button));
+    });
+  }
+
   /* ---------- 3D náklon hero okna ---------- */
 
   function initTilt() {
@@ -1341,6 +1389,7 @@
   }
 
   initFxToggle();
+  initDownloadButtons();
   initRipples();
   initDust();
   initSparkles();
