@@ -796,7 +796,34 @@ html.ap-js [data-ap-scale] {
   }
 }
 
+/* Hlavička na telefonech: Kou-fi tlačítko má min-width 184 px a spolu
+   s logem, přepínači a menu už se do 390 px nevejde — dřív kvůli němu
+   celá stránka přetékala o 58 px do strany. Odkaz na Store zůstává
+   v mobilním menu, takže se nic neztrácí. */
+@media (max-width: 760px) {
+  .ap-home .site-header .store-button,
+  .ap-packs .site-header .store-button,
+  .ap-launcher .site-header .store-button {
+    display: none;
+  }
+}
+
 /* ---------- 09 · Světlý motiv, redukce pohybu, tisk ---------- */
+
+/* styles.css obsahuje druhé pravidlo `body` s natvrdo tmavým
+   gradientem (přidávalo se kvůli katalogu). Přepínač motivu tak
+   přebarvil texty, ale plocha zůstala tmavá — světlý režim byl
+   nečitelný. Vracíme pozadí z tokenů, jen v teplejších odstínech,
+   aby zůstala značka. */
+:root[data-theme="light"] body {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(200, 60, 255, 0.07), transparent 31rem),
+    radial-gradient(circle at 84% 32%, rgba(255, 126, 0, 0.09), transparent 34rem),
+    linear-gradient(180deg, #fffaf2 0%, #fdf2e3 48%, #f8ead7 100%);
+  scrollbar-color: #b87400 #f8ead7;
+}
+
+
 
 :root[data-theme="light"] .ap-home .mk-intro-module,
 :root[data-theme="light"] .ap-packs .mk-intro-module {

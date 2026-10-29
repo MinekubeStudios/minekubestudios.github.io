@@ -11,10 +11,13 @@
      3. tlačítka povrchu a světla drží stav v aria-pressed,
      4. automatická rotace jde vypnout a kostka se pak nehýbe,
      5. bez JS by obsah zůstal otevřený (kontrola výchozího HTML),
-     6. překlady scény existují v cs / en / sk a opravdu se mění.
+     6. překlady scény existují v cs / en / sk a opravdu se mění,
+     7. WebGL vrstva má správný poměr hran (12) a nepřebíjí CSS fallback,
+     8. statický „první snímek“ a plátno mají v CSS nenulovou velikost.
    ============================================================= */
 
 import { createRequire } from "node:module";
+import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -167,6 +170,39 @@ if (stage) {
   window.eval('applyLanguage("cs")');
 
   check("Během běhu nevznikla žádná chyba v JS", errors.length === 0, errors.slice(0, 3).join(" | "));
+
+  /* ---------- 7 · Plátno a záložní snímek ---------- */
+
+  const canvas = stage.querySelector("[data-cube-canvas]");
+  const poster = stage.querySelector(".cube-poster");
+  check("Scéna má plátno pro WebGL", Boolean(canvas));
+  check("Scéna má statický první snímek", Boolean(poster));
+  check(
+    "Plátno i snímek jsou dekorativní (aria-hidden)",
+    canvas.getAttribute("aria-hidden") === "true" && poster.getAttribute("aria-hidden") === "true"
+  );
+  check(
+    "Snímek má vyplněné rozměry (žádný skok při načtení)",
+    poster.getAttribute("width") === "900" && poster.getAttribute("height") === "900"
+  );
+  check(
+    "Bez WebGL zůstane scéna bez třídy is-webgl",
+    !stage.classList.contains("is-webgl") || stage.dataset.cubeRenderer === "webgl"
+  );
+
+  const css = readFileSync(`${ROOT}cube.css`, "utf8");
+  check(
+    "CSS nedává plátnu pevnou šířku z kontejneru (dřív 0 × 0 px)",
+    !/\.cube-canvas[\s\S]{0,200}cqh/.test(css)
+  );
+  check(
+    "CSS schová CSS kostku, když běží WebGL",
+    /\.cube-stage\.is-webgl \.cube\b[\s\S]{0,120}visibility:\s*hidden/.test(css)
+  );
+  check(
+    "Světlý motiv má vlastní pozadí (tmavý gradient z styles.css)",
+    /:root\[data-theme="light"\] body\s*\{[\s\S]{0,400}linear-gradient/.test(readFileSync(`${ROOT}apple.css`, "utf8"))
+  );
 }
 
 /* ---------- 5 · Bez JS ---------- */

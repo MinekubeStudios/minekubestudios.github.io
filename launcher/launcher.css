@@ -134,6 +134,18 @@
   background: #b8003c;
 }
 
+/* Ikony jsou uložené ve skrytém sprite <svg> na začátku stránky.
+   styles.css dává každému <svg> display:block, takže sprite bez
+   rozměrů zabíral 150 px prázdného místa a odsouval hlavičku dolů.
+   Tohle je standardní vzor: nulová kreslicí plocha, žádný layout. */
+.mk-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 /* ---------- 02 · Základ a typografie ---------- */
 
 .launcher-page,
