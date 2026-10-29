@@ -265,7 +265,7 @@ test("Windows: najde instalátor v repozitáři a stáhne ho", async () => {
   assert.equal(Releases.status().state, "ready");
   assert.equal(Releases.isAvailable("windows"), true);
 
-  const hero = document.querySelector(".lp-hero .lp-btn[data-launcher-download]");
+  const hero = document.querySelector(".lp-hero [data-launcher-download]");
   assert.equal(hero.dataset.state, "idle");
   assert.equal(hero.dataset.os, "windows");
   assert.match(text(document, "[data-launcher-version]"), /^v1\.0\.0-local$/);
@@ -330,7 +330,7 @@ test("Návštěvník na macOS dostane Windows a slušné vysvětlení", async ()
   });
   const { document } = page;
 
-  assert.equal(document.querySelector(".lp-hero .lp-btn").dataset.os, "windows");
+  assert.equal(document.querySelector(".lp-hero .lp-dlbtn").dataset.os, "windows");
   assert.equal(document.querySelector("[data-os-label]").textContent.trim(), "Stáhnout pro Windows");
   assert.match(document.querySelector(".toast-message").textContent, /macOS/);
   assert.deepEqual(page.errors, []);
@@ -345,7 +345,7 @@ test("Když GitHub API mlčí, nastoupí záložní adresa", async () => {
   assert.equal(Releases.status().degraded, true);
   assert.equal(Releases.isAvailable("windows"), true);
 
-  const hero = document.querySelector(".lp-hero .lp-btn[data-launcher-download]");
+  const hero = document.querySelector(".lp-hero [data-launcher-download]");
   assert.equal(hero.dataset.state, "idle");
   assert.equal(document.querySelector("[data-launcher-state]").dataset.state, "ready");
   assert.match(text(document, "[data-launcher-state-label]"), /Záložní|Fallback/);
