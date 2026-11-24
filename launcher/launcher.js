@@ -700,6 +700,33 @@
       { rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
     );
     revealNodes.forEach(node => revealObserver.observe(node));
+
+    /* Pojistka: IntersectionObserver při rychlém skoku (kotva, obnovení
+       pozice, hledání v prohlížeči) občas snímek přeskočí a prvek zůstane
+       neviditelný. Po scrollu proto doběhne i přímá kontrola pozic. */
+    let revealPending = false;
+    const catchUp = () => {
+      if (revealPending) return;
+      revealPending = true;
+      setTimeout(() => {
+        revealPending = false;
+        const limit = innerHeight * 0.92;
+        revealNodes.forEach(node => {
+          if (node.classList.contains("is-in")) return;
+          const rect = node.getBoundingClientRect();
+          /* Odhalit, co je ve viewportu, ale i co už uživatel přejel
+             (rychlý skok na konec stránky observer občas mine). */
+          if (rect.top < limit) {
+            node.classList.add("is-in");
+            revealObserver.unobserve(node);
+          }
+        });
+      }, 120);
+    };
+    addEventListener("scroll", catchUp, { passive: true });
+    addEventListener("resize", catchUp, { passive: true });
+    addEventListener("load", catchUp, { once: true });
+    catchUp();
   }
 
   if (typeof motionQuery.addEventListener === "function") {
@@ -1297,6 +1324,8 @@
     const items = triggers.map(trigger => {
       const thumb = trigger.querySelector("img");
       const source = thumb.currentSrc || thumb.getAttribute("src") || "";
+      /* Plnohodnotná varianta leží v img/full/<stejná cesta>; náhledy
+         z podsložky shots/ tak zůstanou ve stejné struktuře. */
       const full = source.includes("/full/") ? source : source.replace(/(^|\/)img\//, "$1img/full/");
       return {
         trigger,
