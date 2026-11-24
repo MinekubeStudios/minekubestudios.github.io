@@ -1,0 +1,1039 @@
+/* =============================================================
+   MINEKUBE STUDIOS // LAUNCHER — MINECRAFT-LIKE VRSTVA (v11)
+   -------------------------------------------------------------
+   Načítá se jako POSLEDNÍ, aby přebila apple.css i starší verzi
+   launcher.css. Všechno je znovu uzavřené v `.launcher-page`,
+   takže se styl nepotká se zbytkem webu.
+
+   Obsah:
+     18 · Redukce pohybu, nucené barvy, tisk
+     19 · Náhledy rozhraní (okno launcheru, knihovna, import…)
+     20 · Minecraft-like vrstva (parallax, tabulka, kroky, carousel)
+   ============================================================= */
+
+/* ---------- 18 · Redukce pohybu, nucené barvy, tisk ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .launcher-page *,
+  .launcher-page *::before,
+  .launcher-page *::after,
+  .lp-lb *,
+  .lp-lb *::before,
+  .lp-lb *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .lp-js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .lp-btn:hover,
+  .lp-card:hover,
+  .lp-facts__list li:hover,
+  .lp-stage__window,
+  .lp-shot__frame {
+    transform: none;
+  }
+
+  .lp-facts__list li:hover .lp-facts__icon {
+    transform: none;
+  }
+
+  .lp-dust,
+  .lp-fx,
+  .lp-hero__aurora {
+    display: none;
+  }
+
+  .lp-faq__panel {
+    animation: none;
+  }
+
+  .lp-marquee__track {
+    animation: none;
+  }
+}
+
+/* Uživatel vypne efekty tlačítkem — pohyb zůstane jen u nezbytného. */
+.launcher-page[data-fx-state="off"] .lp-dust,
+.launcher-page[data-fx-state="off"] .lp-fx {
+  display: none;
+}
+
+.launcher-page[data-fx-state="off"] .lp-marquee__track,
+.launcher-page[data-fx-state="off"] .lp-platform__glow,
+.launcher-page[data-fx-state="off"] .lp-cta__ring,
+.launcher-page[data-fx-state="off"] .lp-hero__glow,
+.launcher-page[data-fx-state="off"] .lp-sticker,
+.launcher-page[data-fx-state="off"] .lp-stage__window,
+.launcher-page[data-fx-state="off"] .lp-eyebrow__pulse,
+.launcher-page[data-fx-state="off"] .lp-hero__aurora,
+.launcher-page[data-fx-state="off"] .lp-title em,
+.launcher-page[data-fx-state="off"] .lp-facts__icon,
+.launcher-page[data-fx-state="off"] .lp-hero__scroll-dot,
+.launcher-page[data-fx-state="off"] .lp-tag__spark {
+  animation: none !important;
+}
+
+@media (forced-colors: active) {
+  .launcher-page .lp-btn,
+  .launcher-page .lp-card,
+  .launcher-page .lp-platform,
+  .launcher-page .lp-stage,
+  .launcher-page .lp-facts__list li,
+  .launcher-page .lp-nav__link,
+  .launcher-page .lp-tab,
+  .lp-lb__dialog {
+    border: 1px solid CanvasText;
+  }
+
+  .lp-tabs__pill,
+  .lp-btn--primary {
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  .lp-lb__backdrop {
+    background: Canvas;
+  }
+}
+
+@media print {
+  .launcher-page::before,
+  .launcher-page::after,
+  .lp-dust,
+  .lp-fx,
+  .lp-nav,
+  .lp-marquee,
+  .lp-sticker,
+  .lp-skip,
+  .lp-hero__aurora,
+  .lp-hero__scroll,
+  .lp-shot__zoom,
+  .lp-lb {
+    display: none !important;
+  }
+
+  .launcher-page {
+    background: #fff;
+    color: #000;
+  }
+
+  .lp-btn,
+  .lp-card,
+  .lp-platform {
+    border: 1px solid #000;
+    box-shadow: none;
+  }
+
+  .lp-js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports not (background: color-mix(in srgb, #fff, #000)) {
+  .lp-btn--ghost,
+  .lp-card,
+  .lp-platform,
+  .lp-panel__facts,
+  .lp-version,
+  .lp-stage__chip,
+  .lp-eyebrow__badge,
+  .lp-tab,
+  .lp-nav__link.is-active,
+  .lp-fx-toggle[aria-pressed="true"],
+  .lp-shot__zoom,
+  .lp-sticker,
+  .lp-lb__nav,
+  .lp-lb__dialog {
+    background: var(--lp-surface-2);
+  }
+
+  .lp-btn[data-state="loading"],
+  .lp-btn[data-state="error"] {
+    background: var(--lp-surface-3);
+  }
+
+  .lp-facts__icon,
+  .lp-row__icon,
+  .lp-card__icon {
+    background: rgba(252, 192, 0, 0.16);
+  }
+
+  .lp-lb__backdrop {
+    background: rgba(5, 1, 10, 0.94);
+  }
+}
+
+/* =============================================================
+   20 · MINECRAFT-LIKE VRSTVA (parallax, tabulka, kroky, carousel)
+   -------------------------------------------------------------
+   Styl minecraft.net přeložený do Minekube palety:
+     · chunky display nadpisy (Baloo 2) + výrazný tracking,
+     · blokové rámečky s tvrdým stínem místo jemného glow,
+     · parallax scéna, která respektuje reduced motion,
+     · tabulka funkcí, tři kroky a carousel bez knihoven.
+
+   Vše je znovu uzavřené v `.launcher-page` a přebíjí starší
+   vrstvu jen tam, kde je to potřeba.
+   ============================================================= */
+
+.launcher-page {
+  --lp-font-chunky: "Baloo 2", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --lp-block-shadow: 6px 6px 0 rgba(0, 0, 0, 0.55);
+  --lp-block-shadow-gold: 6px 6px 0 rgba(252, 192, 0, 0.22);
+  --lp-block-radius: 10px;
+}
+
+/* ---------- 20a · Chunky typografie ---------- */
+
+.launcher-page .lp-title,
+.launcher-page .lp-head h2,
+.launcher-page .lp-fx-title,
+.launcher-page .lp-mc-title {
+  font-family: var(--lp-font-chunky);
+  font-weight: 800;
+  letter-spacing: -0.012em;
+  line-height: 1.02;
+}
+
+.launcher-page .lp-title {
+  font-size: clamp(2.6rem, 5.2vw, 5rem);
+  letter-spacing: -0.024em;
+  text-transform: none;
+}
+
+.launcher-page .lp-head h2 {
+  font-size: clamp(2rem, 3.6vw, 3.4rem);
+}
+
+/* Tvrdý, „blokový" podtrh u aktivních odkazů a tagů. */
+.launcher-page .lp-tag {
+  border-radius: 999px;
+  border-width: 1px;
+  letter-spacing: 0.16em;
+}
+
+/* ---------- 20b · Parallax hero ---------- */
+
+.lp-mc-hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-items: center;
+  min-height: clamp(560px, 82vh, 860px);
+  padding-block: clamp(48px, 7vw, 96px) clamp(64px, 8vw, 110px);
+  overflow: hidden;
+}
+
+.lp-mc-hero__scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Každá vrstva má vlastní hloubku; JS posouvá jen přes translate3d. */
+.lp-mc-layer {
+  position: absolute;
+  inset: -12% -6%;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+.lp-mc-layer--sky {
+  background:
+    radial-gradient(120% 90% at 50% 8%, rgba(252, 192, 0, 0.28), transparent 58%),
+    radial-gradient(80% 70% at 82% 22%, rgba(252, 0, 96, 0.24), transparent 62%),
+    linear-gradient(180deg, #1a0a16 0%, #140812 46%, #0b0509 100%);
+}
+
+.lp-mc-layer--glow {
+  background:
+    radial-gradient(46% 38% at 50% 34%, rgba(255, 216, 99, 0.34), transparent 70%);
+  filter: blur(6px);
+}
+
+/* Bloková „hora" na obzoru — osy, ne obrázek. */
+.lp-mc-layer--ridge {
+  inset: auto -6% -6% -6%;
+  height: 62%;
+  background:
+    linear-gradient(180deg, transparent 0%, #1b0c17 38%, #12070f 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 96px);
+  clip-path: polygon(
+    0 62%, 8% 58%, 8% 46%, 18% 46%, 18% 62%,
+    26% 62%, 26% 40%, 38% 40%, 38% 66%, 50% 66%,
+    50% 34%, 60% 34%, 60% 58%, 70% 58%, 70% 44%,
+    80% 44%, 80% 62%, 90% 62%, 90% 50%, 100% 50%,
+    100% 100%, 0 100%
+  );
+  opacity: 0.9;
+}
+
+.lp-mc-layer--near {
+  inset: auto -6% -10% -6%;
+  height: 34%;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 8.3333%),
+    linear-gradient(180deg, transparent, rgba(10, 4, 8, 0.92) 46%, #0a0509 100%);
+  clip-path: polygon(
+    0 78%, 12% 78%, 12% 52%, 24% 52%, 24% 74%,
+    36% 74%, 36% 44%, 52% 44%, 52% 70%,
+    64% 70%, 64% 50%, 78% 50%, 78% 76%,
+    88% 76%, 88% 58%, 100% 58%, 100% 100%, 0 100%
+  );
+}
+
+.lp-mc-layer--sparks {
+  background-image:
+    radial-gradient(2px 2px at 12% 22%, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(1.5px 1.5px at 32% 64%, rgba(255, 216, 99, 0.7), transparent 60%),
+    radial-gradient(2px 2px at 58% 18%, rgba(255, 255, 255, 0.4), transparent 60%),
+    radial-gradient(1.5px 1.5px at 74% 52%, rgba(252, 0, 96, 0.6), transparent 60%),
+    radial-gradient(1.5px 1.5px at 88% 30%, rgba(255, 255, 255, 0.45), transparent 60%);
+}
+
+.lp-mc-hero__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  align-items: center;
+  gap: clamp(28px, 4vw, 60px);
+}
+
+.lp-mc-hero__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 640px;
+}
+
+.lp-mc-hero__copy .lp-title {
+  margin: 14px 0 0;
+}
+
+.lp-mc-hero__copy .lp-lead {
+  margin-top: 16px;
+  max-width: 54ch;
+}
+
+.lp-mc-hero__copy .lp-actions {
+  margin-top: clamp(20px, 2.6vw, 30px);
+}
+
+/* „Disable animations" přepínač jako na minecraft.net. */
+.lp-mc-hero__motion {
+  position: absolute;
+  right: clamp(16px, 3vw, 32px);
+  bottom: clamp(16px, 2.4vw, 26px);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(10, 4, 8, 0.62);
+  color: var(--lp-muted);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.lp-mc-hero__motion:hover,
+.lp-mc-hero__motion:focus-visible {
+  color: var(--lp-text);
+  border-color: rgba(255, 255, 255, 0.34);
+}
+
+.lp-mc-hero__motion svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+/* Šipka „Dig deeper" -> scrollová pobídka. */
+.lp-mc-dig {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 22px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--lp-gold-soft);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.lp-mc-dig svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  animation: lp-mc-bob 1.8s ease-in-out infinite;
+}
+
+.lp-mc-dig:hover svg,
+.lp-mc-dig:focus-visible svg {
+  animation-play-state: paused;
+  transform: translateY(3px);
+}
+
+@keyframes lp-mc-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* Blokový rám kolem náhledu okna: tvrdý stín, žádný jemný glow. */
+.launcher-page .lp-app__window {
+  border-radius: var(--lp-block-radius);
+  box-shadow: var(--lp-block-shadow), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.launcher-page .lp-app:hover .lp-app__window {
+  box-shadow: var(--lp-block-shadow), 0 0 0 1px var(--lp-line-gold);
+}
+
+/* ---------- 20c · Vodorovné pásy sekcí (minecraft.net rytmus) ---------- */
+
+.lp-mc-band {
+  --lp-band-bg: rgba(255, 255, 255, 0.02);
+  position: relative;
+  padding-block: clamp(56px, 7.4vw, 104px);
+  background: var(--lp-band-bg);
+  border-block: 1px solid var(--lp-line);
+}
+
+.lp-mc-band--tint {
+  --lp-band-bg: linear-gradient(180deg, rgba(252, 192, 0, 0.05), rgba(252, 0, 96, 0.04));
+}
+
+.lp-mc-band--dark {
+  --lp-band-bg: #08040a;
+}
+
+/* ---------- 20d · Přepínatelné Platformy / Funkce + tabulka ---------- */
+
+.lp-mc-switch {
+  display: inline-flex;
+  gap: 4px;
+  padding: 5px;
+  margin: 0 auto 26px;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lp-mc-switch__btn {
+  padding: 10px 22px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--lp-muted);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.lp-mc-switch__btn[aria-selected="true"] {
+  background: linear-gradient(135deg, var(--lp-gold), var(--lp-orange));
+  color: #241209;
+}
+
+.lp-mc-pane[hidden] {
+  display: none;
+}
+
+.lp-mc-platforms {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(12px, 1.6vw, 20px);
+  margin-bottom: clamp(24px, 3vw, 36px);
+}
+
+.lp-mc-plat {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 20px;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.lp-mc-plat--live {
+  border-color: var(--lp-line-gold);
+  box-shadow: var(--lp-block-shadow-gold);
+  background: linear-gradient(160deg, rgba(252, 192, 0, 0.12), rgba(252, 0, 96, 0.06));
+}
+
+.lp-mc-plat__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lp-mc-plat__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--lp-gold-soft);
+}
+
+.lp-mc-plat__icon svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+  stroke: none;
+}
+
+.lp-mc-plat__name {
+  font-family: var(--lp-font-chunky);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.lp-mc-plat__state {
+  margin-left: auto;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--lp-muted-2);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lp-mc-plat--live .lp-mc-plat__state {
+  background: rgba(70, 209, 125, 0.16);
+  color: #7ce8aa;
+}
+
+.lp-mc-plat__note {
+  margin: 0;
+  color: var(--lp-muted-2);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+/* Tabulka jako na minecraft.net — na mobilu se mění ve skládané karty. */
+.lp-mc-tablewrap {
+  overflow: hidden;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.lp-mc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+
+.lp-mc-table caption {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--lp-line);
+  color: var(--lp-muted-2);
+  font-size: 0.76rem;
+  text-align: left;
+}
+
+.lp-mc-table th,
+.lp-mc-table td {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--lp-line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.lp-mc-table thead th {
+  color: var(--lp-muted-2);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lp-mc-table tbody tr:last-child td,
+.lp-mc-table tbody tr:last-child th {
+  border-bottom: 0;
+}
+
+.lp-mc-table tbody th {
+  color: var(--lp-text);
+  font-weight: 650;
+}
+
+.lp-mc-table td {
+  color: var(--lp-muted);
+}
+
+.lp-mc-yes,
+.lp-mc-no {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.lp-mc-yes {
+  color: #7ce8aa;
+}
+
+.lp-mc-no {
+  color: var(--lp-muted-2);
+}
+
+.lp-mc-yes svg,
+.lp-mc-no svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+/* ---------- 20e · Jak to funguje: tři kroky ---------- */
+
+.lp-mc-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2.2vw, 28px);
+  margin-top: clamp(28px, 3.4vw, 44px);
+}
+
+.lp-mc-step {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: clamp(20px, 2.4vw, 28px);
+  border: 1px solid var(--lp-line-strong);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.lp-mc-step__num {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--lp-gold), var(--lp-orange));
+  color: #241209;
+  font-family: var(--lp-font-chunky);
+  font-size: 1.3rem;
+  font-weight: 800;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.45);
+}
+
+.lp-mc-step h3 {
+  margin: 6px 0 0;
+  font-family: var(--lp-font-chunky);
+  font-size: 1.28rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.lp-mc-step p {
+  margin: 0;
+  color: var(--lp-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ---------- 20f · Carousel ---------- */
+
+.lp-mc-carousel {
+  position: relative;
+  margin-top: clamp(24px, 3vw, 36px);
+}
+
+.lp-mc-carousel__track {
+  display: grid;
+  grid-auto-flow: column;
+  /* Tři karty na širokém displeji; `1fr` by se roztáhlo podle celé šířky
+     tracku (a karty by zbyly úzké), proto pevný calc() s mezerami. */
+  grid-auto-columns: calc((100% - 2 * clamp(14px, 1.8vw, 22px)) / 3);
+  gap: clamp(14px, 1.8vw, 22px);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 6px;
+}
+
+.lp-mc-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.lp-mc-slide {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 0;
+  overflow: hidden;
+  scroll-snap-align: start;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.lp-mc-slide__art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  border-bottom: 1px solid var(--lp-line);
+  background:
+    radial-gradient(70% 70% at 30% 20%, rgba(252, 192, 0, 0.24), transparent 66%),
+    radial-gradient(70% 70% at 78% 78%, rgba(252, 0, 96, 0.24), transparent 66%),
+    #0d060c;
+}
+
+.lp-mc-slide__art svg {
+  width: 46px;
+  height: 46px;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.86);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-mc-slide__body {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 16px 18px 20px;
+}
+
+.lp-mc-slide h3 {
+  margin: 0;
+  font-family: var(--lp-font-chunky);
+  font-size: 1.06rem;
+  font-weight: 700;
+}
+
+.lp-mc-slide p {
+  margin: 0;
+  color: var(--lp-muted-2);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.lp-mc-carousel__nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.lp-mc-carousel__btn {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--lp-text);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+}
+
+.lp-mc-carousel__btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--lp-line-gold);
+}
+
+.lp-mc-carousel__btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.lp-mc-carousel__btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* ---------- 20g · Responzivita nové vrstvy ---------- */
+
+@media (max-width: 1080px) {
+  .lp-mc-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lp-mc-hero__copy {
+    max-width: 100%;
+  }
+
+  .lp-mc-platforms,
+  .lp-mc-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lp-mc-hero {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  /* Tabulka se rozpadne na karty: hlavička zmizí, řádky drží popisek vlevo. */
+  .lp-mc-tablewrap {
+    border: 0;
+    background: none;
+  }
+
+  .lp-mc-table,
+  .lp-mc-table tbody,
+  .lp-mc-table tr,
+  .lp-mc-table th,
+  .lp-mc-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .lp-mc-table thead,
+  .lp-mc-table caption {
+    display: none;
+  }
+
+  .lp-mc-table tbody tr {
+    margin-bottom: 10px;
+    border: 1px solid var(--lp-line-strong);
+    border-radius: var(--lp-block-radius);
+    background: rgba(255, 255, 255, 0.03);
+    overflow: hidden;
+  }
+
+  .lp-mc-table tbody th {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--lp-line);
+  }
+
+  .lp-mc-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 16px;
+    border-bottom: 1px solid var(--lp-line);
+  }
+
+  .lp-mc-table td:last-child {
+    border-bottom: 0;
+  }
+
+  /* Popisek sloupce si neseme v data-atributu. */
+  .lp-mc-table td::before {
+    content: attr(data-label);
+    color: var(--lp-muted-2);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .lp-mc-carousel__track {
+    grid-auto-columns: 86%;
+  }
+
+  .lp-mc-hero__motion {
+    position: static;
+    margin-top: 18px;
+    align-self: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-mc-layer,
+  .lp-mc-dig svg {
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .lp-mc-carousel__track {
+    scroll-behavior: auto;
+  }
+}
+
+/* ---------- 20h · Drobnosti, které vzešly z kontroly ---------- */
+
+/* `<code>` v krocích a tabulce musí zůstat uvnitř textu, ne jako blok. */
+.launcher-page .lp-mc-step code,
+.launcher-page .lp-mc-slide code {
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--lp-gold-soft);
+  font-family: var(--lp-font-mono);
+  font-size: 0.9em;
+}
+
+/* Aktivní přepínač v Platformách/Funkcích drží tmavý text jen na zlaté. */
+.lp-mc-switch__btn:not([aria-selected="true"]) {
+  color: var(--lp-muted);
+}
+
+/* Světlý režim: blokový stín nesmí být černý flek. */
+:root[data-theme="light"] .launcher-page {
+  --lp-block-shadow: 6px 6px 0 rgba(60, 20, 40, 0.16);
+  --lp-block-shadow-gold: 6px 6px 0 rgba(252, 192, 0, 0.3);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-layer--sky {
+  background:
+    radial-gradient(120% 90% at 50% 8%, rgba(252, 192, 0, 0.3), transparent 58%),
+    radial-gradient(80% 70% at 82% 22%, rgba(252, 0, 96, 0.18), transparent 62%),
+    linear-gradient(180deg, #fff6ef 0%, #ffe9e6 46%, #fff9f4 100%);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-layer--ridge {
+  background:
+    linear-gradient(180deg, transparent 0%, #ffe2d8 38%, #fff4ee 100%),
+    repeating-linear-gradient(90deg, rgba(120, 40, 80, 0.05) 0 2px, transparent 2px 96px);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-layer--near {
+  background:
+    repeating-linear-gradient(90deg, rgba(120, 40, 80, 0.06) 0 1px, transparent 1px 8.3333%),
+    linear-gradient(180deg, transparent, rgba(255, 246, 240, 0.9) 46%, #fffaf6 100%);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-hero__motion {
+  border-color: rgba(80, 30, 60, 0.2);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-plat,
+:root[data-theme="light"] .launcher-page .lp-mc-step,
+:root[data-theme="light"] .launcher-page .lp-mc-slide,
+:root[data-theme="light"] .launcher-page .lp-mc-tablewrap,
+:root[data-theme="light"] .launcher-page .lp-mc-table tbody tr {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-plat--live {
+  background: linear-gradient(160deg, rgba(252, 192, 0, 0.22), rgba(252, 0, 96, 0.1));
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-slide__art {
+  background:
+    radial-gradient(70% 70% at 30% 20%, rgba(252, 192, 0, 0.3), transparent 66%),
+    radial-gradient(70% 70% at 78% 78%, rgba(252, 0, 96, 0.24), transparent 66%),
+    #fff3ec;
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-slide__art svg {
+  stroke: rgba(60, 20, 40, 0.62);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-switch {
+  background: rgba(80, 30, 60, 0.06);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-plat__state {
+  background: rgba(80, 30, 60, 0.09);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-carousel__btn {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* ---------- 20i · Kolize v hero ---------- */
+
+/* Nálepka "Open source" sedí vlevo nad oknem vedle verze, aby se nikdy
+   nepotkala s přepínačem animací ani s tlačítky. */
+.launcher-page .lp-app {
+  margin-bottom: 0;
+  margin-top: 30px;
+}
+
+.launcher-page .lp-sticker--open {
+  right: auto;
+  left: 96px;
+  top: -14px;
+  bottom: auto;
+}
+
+/* Na mobilu jsou nálepky pod oknem zbytečné, obsah leží pod sebou. */
+@media (max-width: 1080px) {
+  .launcher-page .lp-sticker--open {
+    display: none;
+  }
+
+  .launcher-page .lp-app {
+    margin-bottom: 0;
+  }
+}
+
+/* ---------- 20j · Hero po opravě obalu: drobná doladění ---------- */
+
+/* Nadpis drží dvě řádky i na širokém displeji, ale nesmí přetéct. */
+@media (min-width: 1081px) {
+  .lp-mc-hero__copy .lp-title {
+    max-width: 15ch;
+  }
+}
+
+/* Přepínač animací patří k textu, ne doprostřed mezi sloupce. */
+@media (min-width: 761px) and (max-width: 1080px) {
+  .lp-mc-hero__motion {
+    position: static;
+    margin-top: 16px;
+  }
+}
+
+/* ---------- 20k · Rytmus stránky ---------- */
+
+/* Nové pásy a staré sekce mají stejný vertikální rytmus — jinak vznikají
+   mezi bloky velké prázdné díry (pás má vlastní padding, sekce taky). */
+.launcher-page {
+  --lp-section-y: clamp(56px, 6.4vw, 92px);
+}
+
+.launcher-page .lp-section {
+  padding-block: var(--lp-section-y);
+}
+
+/* Běžící pás a rychlá fakta tvoří jeden celek — bez dvojité mezery. */
+.launcher-page .lp-marquee + .lp-facts {
+  padding-top: clamp(18px, 2.2vw, 30px);
+}
+
+.launcher-page .lp-facts + .lp-nav {
+  margin-top: clamp(10px, 1.6vw, 20px);
+}

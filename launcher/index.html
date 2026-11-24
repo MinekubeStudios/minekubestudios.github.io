@@ -12,11 +12,12 @@
 <!-- Webfonty: Inter pro text, Space Grotesk pro nadpisy a HUD labely. Bez nich web běží na systémové zásobě. -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Baloo+2:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="../styles.css" rel="stylesheet"/>
 <link href="../design-plus.css" rel="stylesheet"/>
-<link href="launcher.css?v=20261124-2" rel="stylesheet"/>
+<link href="launcher.css?v=20261124-3" rel="stylesheet"/>
 <link href="../apple.css?v=20261029-1" rel="stylesheet"/>
+<link href="launcher-mc.css?v=20261124-3" rel="stylesheet"/>
 <script>
 /* Motiv a jazyk se čtou dřív, než se stránka vykreslí — žádné bliknutí při startu. */
 (function () {
@@ -43,150 +44,49 @@
 <body class="launcher-redesign ap-launcher">
 <a class="lp-skip" data-i18n="lp.skip" href="#top">Přeskočit na obsah</a>
 <div aria-hidden="true" class="lp-skip-scrim" id="lpSkipScrim"></div>
-<!-- ===================== SPRITE // IKONY PLATFORM =====================
-     Značky macOS (Apple) a Linuxu (Tux) pocházejí z otevřené sady
-     Simple Icons (CC0). Čtyřoknový znak Windows, tác se šipkou a stavové
-     piktogramy jsou vlastní kresba Minekube — všechno v jednom sprite,
-     aby se ikona stahovala jen jednou a dala se přebarvit přes currentColor. -->
+<!-- ===================== SPRITE // IKONY =====================
+     Jediný sprite pro celou stránku. Značky macOS (Apple) a Linuxu (Tux)
+     pocházejí z otevřené sady Simple Icons (CC0); zbytek je vlastní kresba
+     Minekube. Ikony se přebarvují přes currentColor. -->
 <svg aria-hidden="true" class="mk-sprite" focusable="false" xmlns="http://www.w3.org/2000/svg">
-<symbol id="mk-os-windows" viewBox="0 0 24 24">
-<rect height="8.1" rx="1.7" width="8.1" x="3" y="3"></rect>
+<symbol id="mk-os-windows" viewBox="0 0 24 24"><rect height="8.1" rx="1.7" width="8.1" x="3" y="3"></rect>
 <rect height="8.1" rx="1.7" width="8.1" x="12.9" y="3"></rect>
 <rect height="8.1" rx="1.7" width="8.1" x="3" y="12.9"></rect>
-<rect height="8.1" rx="1.7" width="8.1" x="12.9" y="12.9"></rect>
-</symbol>
+<rect height="8.1" rx="1.7" width="8.1" x="12.9" y="12.9"></rect></symbol>
 <symbol id="mk-os-macos" viewBox="0 0 24 24"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"></path></symbol>
 <symbol id="mk-os-linux" viewBox="0 0 24 24"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.4v.019c.002.089.008.179.02.267-.193-.067-.438-.135-.607-.202a1.635 1.635 0 01-.018-.2v-.02a1.772 1.772 0 01.15-.768c.082-.22.232-.406.43-.533a.985.985 0 01.594-.2zm-2.962.059h.036c.142 0 .27.048.399.135.146.129.264.288.344.465.09.199.14.4.153.667v.004c.007.134.006.2-.002.266v.08c-.03.007-.056.018-.083.024-.152.055-.274.135-.393.2.012-.09.013-.18.003-.267v-.015c-.012-.133-.04-.2-.082-.333a.613.613 0 00-.166-.267.248.248 0 00-.183-.064h-.021c-.071.006-.13.04-.186.132a.552.552 0 00-.12.27.944.944 0 00-.023.33v.015c.012.135.037.2.08.334.046.134.098.2.166.268.01.009.02.018.034.024-.07.057-.117.07-.176.136a.304.304 0 01-.131.068 2.62 2.62 0 01-.275-.402 1.772 1.772 0 01-.155-.667 1.759 1.759 0 01.08-.668 1.43 1.43 0 01.283-.535c.128-.133.26-.2.418-.2zm1.37 1.706c.332 0 .733.065 1.216.399.293.2.523.269 1.052.468h.003c.255.136.405.266.478.399v-.131a.571.571 0 01.016.47c-.123.31-.516.643-1.063.842v.002c-.268.135-.501.333-.775.465-.276.135-.588.292-1.012.267a1.139 1.139 0 01-.448-.067 3.566 3.566 0 01-.322-.198c-.195-.135-.363-.332-.612-.465v-.005h-.005c-.4-.246-.616-.512-.686-.71-.07-.268-.005-.47.193-.6.224-.135.38-.271.483-.336.104-.074.143-.102.176-.131h.002v-.003c.169-.202.436-.47.839-.601.139-.036.294-.065.466-.065zm2.8 2.142c.358 1.417 1.196 3.475 1.735 4.473.286.534.855 1.659 1.102 3.024.156-.005.33.018.513.064.646-1.671-.546-3.467-1.089-3.966-.22-.2-.232-.335-.123-.335.59.534 1.365 1.572 1.646 2.757.13.535.16 1.104.021 1.67.067.028.135.06.205.067 1.032.534 1.413.938 1.23 1.537v-.043c-.06-.003-.12 0-.18 0h-.016c.151-.467-.182-.825-1.065-1.224-.915-.4-1.646-.336-1.77.465-.008.043-.013.066-.018.135-.068.023-.139.053-.209.064-.43.268-.662.669-.793 1.187-.13.533-.17 1.156-.205 1.869v.003c-.02.334-.17.838-.319 1.35-1.5 1.072-3.58 1.538-5.348.334a2.645 2.645 0 00-.402-.533 1.45 1.45 0 00-.275-.333c.182 0 .338-.03.465-.067a.615.615 0 00.314-.334c.108-.267 0-.697-.345-1.163-.345-.467-.931-.995-1.788-1.521-.63-.4-.986-.87-1.15-1.396-.165-.534-.143-1.085-.015-1.645.245-1.07.873-2.11 1.274-2.763.107-.065.037.135-.408.974-.396.751-1.14 2.497-.122 3.854a8.123 8.123 0 01.647-2.876c.564-1.278 1.743-3.504 1.836-5.268.048.036.217.135.289.202.218.133.38.333.59.465.21.201.477.335.876.335.039.003.075.006.11.006.412 0 .73-.134.997-.268.29-.134.52-.334.74-.4h.005c.467-.135.835-.402 1.044-.7zm2.185 8.958c.037.6.343 1.245.882 1.377.588.134 1.434-.333 1.791-.765l.211-.01c.315-.007.577.01.847.268l.003.003c.208.199.305.53.391.876.085.4.154.78.409 1.066.486.527.645.906.636 1.14l.003-.007v.018l-.003-.012c-.015.262-.185.396-.498.595-.63.401-1.746.712-2.457 1.57-.618.737-1.37 1.14-2.036 1.191-.664.053-1.237-.2-1.574-.898l-.005-.003c-.21-.4-.12-1.025.056-1.69.176-.668.428-1.344.463-1.897.037-.714.076-1.335.195-1.814.12-.465.308-.797.641-.984l.045-.022zm-10.814.049h.01c.053 0 .105.005.157.014.376.055.706.333 1.023.752l.91 1.664.003.003c.243.533.754 1.064 1.189 1.637.434.598.77 1.131.729 1.57v.006c-.057.744-.48 1.148-1.125 1.294-.645.135-1.52.002-2.395-.464-.968-.536-2.118-.469-2.857-.602-.369-.066-.61-.2-.723-.4-.11-.2-.113-.602.123-1.23v-.004l.002-.003c.117-.334.03-.752-.027-1.118-.055-.401-.083-.71.043-.94.16-.334.396-.4.69-.533.294-.135.64-.202.915-.47h.002v-.002c.256-.268.445-.601.668-.838.19-.201.38-.336.663-.336zm7.159-9.074c-.435.201-.945.535-1.488.535-.542 0-.97-.267-1.28-.466-.154-.134-.28-.268-.373-.335-.164-.134-.144-.333-.074-.333.109.016.129.134.199.2.096.066.215.2.36.333.292.2.68.467 1.167.467.485 0 1.053-.267 1.398-.466.195-.135.445-.334.648-.467.156-.136.149-.267.279-.267.128.016.034.134-.147.332a8.097 8.097 0 01-.69.468zm-1.082-1.583V5.64c-.006-.02.013-.042.029-.05.074-.043.18-.027.26.004.063 0 .16.067.15.135-.006.049-.085.066-.135.066-.055 0-.092-.043-.141-.068-.052-.018-.146-.008-.163-.065zm-.551 0c-.02.058-.113.049-.166.066-.047.025-.086.068-.14.068-.05 0-.13-.02-.136-.068-.01-.066.088-.133.15-.133.08-.031.184-.047.259-.005.019.009.036.03.03.05v.02h.003z"></path></symbol>
 <symbol id="mk-github" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></symbol>
-<symbol id="mk-tray" viewBox="0 0 24 24">
-<path d="M12 2.9v10"></path>
+<symbol id="mk-tray" viewBox="0 0 24 24"><path d="M12 2.9v10"></path>
 <path d="m7.9 9.4 4.1 4.1 4.1-4.1"></path>
-<path d="M4.2 14.6v3.1a3.4 3.4 0 0 0 3.4 3.4h8.8a3.4 3.4 0 0 0 3.4-3.4v-3.1"></path>
-</symbol>
+<path d="M4.2 14.6v3.1a3.4 3.4 0 0 0 3.4 3.4h8.8a3.4 3.4 0 0 0 3.4-3.4v-3.1"></path></symbol>
 <symbol id="mk-check" viewBox="0 0 24 24"><path d="m5.2 12.6 4.3 4.3 9.3-10"></path></symbol>
-<symbol id="mk-clock" viewBox="0 0 24 24">
-<circle cx="12" cy="12" r="8.7"></circle>
-<path d="M12 6.9V12l3.2 2"></path>
-</symbol>
-<symbol id="mk-alert" viewBox="0 0 24 24">
-<path d="M12 3.4 2.7 19.6h18.6L12 3.4Z"></path>
-<path d="M12 9.7v4.1M12 16.8h.01"></path>
-</symbol>
-<symbol id="mk-package" viewBox="0 0 24 24">
-<path d="m12 2.9 8.4 4.4v9.4L12 21.1 3.6 16.7V7.3L12 2.9Z"></path>
-<path d="m3.6 7.3 8.4 4.4 8.4-4.4M12 11.7v9.4"></path>
-</symbol>
-<symbol id="lp-layers" viewBox="0 0 24 24">
-<path d="m12 3.1 8.6 4.7L12 12.5 3.4 7.8 12 3.1Z"></path>
+<symbol id="mk-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.7"></circle>
+<path d="M12 6.9V12l3.2 2"></path></symbol>
+<symbol id="mk-alert" viewBox="0 0 24 24"><path d="M12 3.4 2.7 19.6h18.6L12 3.4Z"></path>
+<path d="M12 9.7v4.1M12 16.8h.01"></path></symbol>
+<symbol id="mk-package" viewBox="0 0 24 24"><path d="m12 2.9 8.4 4.4v9.4L12 21.1 3.6 16.7V7.3L12 2.9Z"></path>
+<path d="m3.6 7.3 8.4 4.4 8.4-4.4M12 11.7v9.4"></path></symbol>
+<symbol id="lp-layers" viewBox="0 0 24 24"><path d="m12 3.1 8.6 4.7L12 12.5 3.4 7.8 12 3.1Z"></path>
 <path d="m3.4 12.3 8.6 4.7 8.6-4.7"></path>
-<path d="m3.4 16.7 8.6 4.7 8.6-4.7"></path>
-</symbol>
-<symbol id="lp-palette" viewBox="0 0 24 24">
-<path d="M12 3.3a8.7 8.7 0 1 0 0 17.4c1.3 0 2-.8 2-1.8 0-1-.9-1.7-.9-2.6 0-.8.7-1.5 1.6-1.5h1.5c2.5 0 4.4-1.7 4.4-4.1 0-4.1-3.8-7.4-8.6-7.4Z"></path>
-<path d="M8.2 9.4h.01M11.8 7.4h.01M15.6 9.6h.01M7.4 13.4h.01"></path>
-</symbol>
-<symbol id="lp-lock" viewBox="0 0 24 24">
-<rect height="9.6" rx="2.6" width="14.6" x="4.7" y="10.6"></rect>
+<path d="m3.4 16.7 8.6 4.7 8.6-4.7"></path></symbol>
+<symbol id="lp-palette" viewBox="0 0 24 24"><path d="M12 3.3a8.7 8.7 0 1 0 0 17.4c1.3 0 2-.8 2-1.8 0-1-.9-1.7-.9-2.6 0-.8.7-1.5 1.6-1.5h1.5c2.5 0 4.4-1.7 4.4-4.1 0-4.1-3.8-7.4-8.6-7.4Z"></path>
+<path d="M8.2 9.4h.01M11.8 7.4h.01M15.6 9.6h.01M7.4 13.4h.01"></path></symbol>
+<symbol id="lp-lock" viewBox="0 0 24 24"><rect height="9.6" rx="2.6" width="14.6" x="4.7" y="10.6"></rect>
 <path d="M8.5 10.6V8.1a3.5 3.5 0 0 1 7 0v2.5"></path>
-<path d="M12 14.6v2"></path>
-</symbol>
-<symbol id="lp-shield" viewBox="0 0 24 24">
-<path d="M12 3.2 5.2 6v5.5c0 4.1 2.8 7.6 6.8 9.3 4-1.7 6.8-5.2 6.8-9.3V6L12 3.2Z"></path>
-<path d="m9.2 12.1 2 2 3.7-4"></path>
-</symbol>
-<symbol id="lp-gauge" viewBox="0 0 24 24">
-<path d="M4.1 17.6a8.7 8.7 0 1 1 15.8 0"></path>
+<path d="M12 14.6v2"></path></symbol>
+<symbol id="lp-shield" viewBox="0 0 24 24"><path d="M12 3.2 5.2 6v5.5c0 4.1 2.8 7.6 6.8 9.3 4-1.7 6.8-5.2 6.8-9.3V6L12 3.2Z"></path>
+<path d="m9.2 12.1 2 2 3.7-4"></path></symbol>
+<symbol id="lp-gauge" viewBox="0 0 24 24"><path d="M4.1 17.6a8.7 8.7 0 1 1 15.8 0"></path>
 <path d="m12 13.6 3.7-3.8"></path>
-<circle cx="12" cy="14.8" r="1.5"></circle>
-</symbol>
-<symbol id="lp-code" viewBox="0 0 24 24">
-<path d="m9 8.1-4 3.9 4 3.9"></path>
-<path d="m15 8.1 4 3.9-4 3.9"></path>
-<path d="m13.4 5.5-2.8 13"></path>
-</symbol>
+<circle cx="12" cy="14.8" r="1.5"></circle></symbol>
 <symbol id="lp-play" viewBox="0 0 24 24"><path d="M8 5.6v12.8l10.4-6.4z"></path></symbol>
-<symbol id="lp-sparkle" viewBox="0 0 24 24">
-<path d="m11.2 3.3 1.8 4.9 4.9 1.8-4.9 1.8-1.8 4.9-1.8-4.9L4.5 10l4.9-1.8 1.8-4.9Z"></path>
-<path d="m18.4 15.4.9 2.3 2.3.9-2.3.9-.9 2.3-.9-2.3-2.3-.9 2.3-.9.9-2.3Z"></path>
-</symbol>
+<symbol id="lp-sparkle" viewBox="0 0 24 24"><path d="m11.2 3.3 1.8 4.9 4.9 1.8-4.9 1.8-1.8 4.9-1.8-4.9L4.5 10l4.9-1.8 1.8-4.9Z"></path>
+<path d="m18.4 15.4.9 2.3 2.3.9-2.3.9-.9 2.3-.9-2.3-2.3-.9 2.3-.9.9-2.3Z"></path></symbol>
 <symbol id="lp-cube" viewBox="0 0 24 24"><path d="M12 2.6 20.5 7v10L12 21.4 3.5 17V7Z"></path><path d="M3.5 7 12 11.4 20.5 7M12 11.4v10"></path></symbol>
 <symbol id="lp-import" viewBox="0 0 24 24"><path d="M12 3v10"></path><path d="m8 9 4 4 4-4"></path><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"></path></symbol>
 <symbol id="lp-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></symbol>
-<symbol id="lp-spark" viewBox="0 0 24 24"><path d="M12 3.2 13.7 9l5.8 1.7-5.8 1.7L12 18.2 10.3 12.4 4.5 10.7 10.3 9Z"></path></symbol>
 <symbol id="lp-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3.4 9h17.2M3.4 15h17.2"></path><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18Z"></path></symbol>
 <symbol id="lp-java" viewBox="0 0 24 24"><path d="M6 16.5c-2 .8-1.2 2.3 1.6 2.7 2.9.4 5.9.1 8.4-.8"></path><path d="M9.5 13c-1.4.7-.6 1.8 1 2.2 2 .5 4.6.2 6.4-.6"></path><path d="M13.8 3c-2.2 2.4 1.6 3.4.6 5.6-.7 1.6-2.6 2.3-3.6 3.6"></path><path d="M16.4 8.2c2.6 1.7-.2 3.6-1.4 5-.9 1.1-1.1 2.6-.3 3.6"></path></symbol>
-<symbol id="lp-terminal" viewBox="0 0 24 24"><rect height="16" rx="2.4" width="18" x="3" y="4"></rect><path d="m7 10 2.4 2.2L7 14.4M12.4 15h4.4"></path></symbol>
-<symbol id="lp-gauge" viewBox="0 0 24 24"><path d="M4.2 17a9 9 0 1 1 15.6 0"></path><path d="m12 12.8 4.2-3.8"></path><circle cx="12" cy="13.5" r="1.6"></circle></symbol>
-<symbol id="lp-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 1.9-1 1.5-2-.5-1.3.2-2.4 1.7-2.4H17a4 4 0 0 0 4-4C21 7.2 17 3 12 3Z"></path><circle cx="7.6" cy="10.6" r="1.1"></circle><circle cx="10.6" cy="7.4" r="1.1"></circle><circle cx="14.8" cy="7.8" r="1.1"></circle></symbol>
-<symbol id="lp-scan" viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"></path><path d="M7 12h10"></path></symbol>
-</svg><a class="lp-skip" data-i18n="lp.skip" href="#top">Přeskočit na obsah</a>
-<div aria-hidden="true" class="lp-skip-scrim" id="lpSkipScrim"></div>
-<!-- ===================== SPRITE // IKONY PLATFORM =====================
-     Značky macOS (Apple) a Linuxu (Tux) pocházejí z otevřené sady
-     Simple Icons (CC0). Čtyřoknový znak Windows, tác se šipkou a stavové
-     piktogramy jsou vlastní kresba Minekube — všechno v jednom sprite,
-     aby se ikona stahovala jen jednou a dala se přebarvit přes currentColor. -->
-<svg aria-hidden="true" class="mk-sprite" focusable="false" xmlns="http://www.w3.org/2000/svg">
-<symbol id="mk-os-windows" viewBox="0 0 24 24">
-<rect height="8.1" rx="1.7" width="8.1" x="3" y="3"></rect>
-<rect height="8.1" rx="1.7" width="8.1" x="12.9" y="3"></rect>
-<rect height="8.1" rx="1.7" width="8.1" x="3" y="12.9"></rect>
-<rect height="8.1" rx="1.7" width="8.1" x="12.9" y="12.9"></rect>
-</symbol>
-<symbol id="mk-os-macos" viewBox="0 0 24 24"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"></path></symbol>
-<symbol id="mk-os-linux" viewBox="0 0 24 24"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.4v.019c.002.089.008.179.02.267-.193-.067-.438-.135-.607-.202a1.635 1.635 0 01-.018-.2v-.02a1.772 1.772 0 01.15-.768c.082-.22.232-.406.43-.533a.985.985 0 01.594-.2zm-2.962.059h.036c.142 0 .27.048.399.135.146.129.264.288.344.465.09.199.14.4.153.667v.004c.007.134.006.2-.002.266v.08c-.03.007-.056.018-.083.024-.152.055-.274.135-.393.2.012-.09.013-.18.003-.267v-.015c-.012-.133-.04-.2-.082-.333a.613.613 0 00-.166-.267.248.248 0 00-.183-.064h-.021c-.071.006-.13.04-.186.132a.552.552 0 00-.12.27.944.944 0 00-.023.33v.015c.012.135.037.2.08.334.046.134.098.2.166.268.01.009.02.018.034.024-.07.057-.117.07-.176.136a.304.304 0 01-.131.068 2.62 2.62 0 01-.275-.402 1.772 1.772 0 01-.155-.667 1.759 1.759 0 01.08-.668 1.43 1.43 0 01.283-.535c.128-.133.26-.2.418-.2zm1.37 1.706c.332 0 .733.065 1.216.399.293.2.523.269 1.052.468h.003c.255.136.405.266.478.399v-.131a.571.571 0 01.016.47c-.123.31-.516.643-1.063.842v.002c-.268.135-.501.333-.775.465-.276.135-.588.292-1.012.267a1.139 1.139 0 01-.448-.067 3.566 3.566 0 01-.322-.198c-.195-.135-.363-.332-.612-.465v-.005h-.005c-.4-.246-.616-.512-.686-.71-.07-.268-.005-.47.193-.6.224-.135.38-.271.483-.336.104-.074.143-.102.176-.131h.002v-.003c.169-.202.436-.47.839-.601.139-.036.294-.065.466-.065zm2.8 2.142c.358 1.417 1.196 3.475 1.735 4.473.286.534.855 1.659 1.102 3.024.156-.005.33.018.513.064.646-1.671-.546-3.467-1.089-3.966-.22-.2-.232-.335-.123-.335.59.534 1.365 1.572 1.646 2.757.13.535.16 1.104.021 1.67.067.028.135.06.205.067 1.032.534 1.413.938 1.23 1.537v-.043c-.06-.003-.12 0-.18 0h-.016c.151-.467-.182-.825-1.065-1.224-.915-.4-1.646-.336-1.77.465-.008.043-.013.066-.018.135-.068.023-.139.053-.209.064-.43.268-.662.669-.793 1.187-.13.533-.17 1.156-.205 1.869v.003c-.02.334-.17.838-.319 1.35-1.5 1.072-3.58 1.538-5.348.334a2.645 2.645 0 00-.402-.533 1.45 1.45 0 00-.275-.333c.182 0 .338-.03.465-.067a.615.615 0 00.314-.334c.108-.267 0-.697-.345-1.163-.345-.467-.931-.995-1.788-1.521-.63-.4-.986-.87-1.15-1.396-.165-.534-.143-1.085-.015-1.645.245-1.07.873-2.11 1.274-2.763.107-.065.037.135-.408.974-.396.751-1.14 2.497-.122 3.854a8.123 8.123 0 01.647-2.876c.564-1.278 1.743-3.504 1.836-5.268.048.036.217.135.289.202.218.133.38.333.59.465.21.201.477.335.876.335.039.003.075.006.11.006.412 0 .73-.134.997-.268.29-.134.52-.334.74-.4h.005c.467-.135.835-.402 1.044-.7zm2.185 8.958c.037.6.343 1.245.882 1.377.588.134 1.434-.333 1.791-.765l.211-.01c.315-.007.577.01.847.268l.003.003c.208.199.305.53.391.876.085.4.154.78.409 1.066.486.527.645.906.636 1.14l.003-.007v.018l-.003-.012c-.015.262-.185.396-.498.595-.63.401-1.746.712-2.457 1.57-.618.737-1.37 1.14-2.036 1.191-.664.053-1.237-.2-1.574-.898l-.005-.003c-.21-.4-.12-1.025.056-1.69.176-.668.428-1.344.463-1.897.037-.714.076-1.335.195-1.814.12-.465.308-.797.641-.984l.045-.022zm-10.814.049h.01c.053 0 .105.005.157.014.376.055.706.333 1.023.752l.91 1.664.003.003c.243.533.754 1.064 1.189 1.637.434.598.77 1.131.729 1.57v.006c-.057.744-.48 1.148-1.125 1.294-.645.135-1.52.002-2.395-.464-.968-.536-2.118-.469-2.857-.602-.369-.066-.61-.2-.723-.4-.11-.2-.113-.602.123-1.23v-.004l.002-.003c.117-.334.03-.752-.027-1.118-.055-.401-.083-.71.043-.94.16-.334.396-.4.69-.533.294-.135.64-.202.915-.47h.002v-.002c.256-.268.445-.601.668-.838.19-.201.38-.336.663-.336zm7.159-9.074c-.435.201-.945.535-1.488.535-.542 0-.97-.267-1.28-.466-.154-.134-.28-.268-.373-.335-.164-.134-.144-.333-.074-.333.109.016.129.134.199.2.096.066.215.2.36.333.292.2.68.467 1.167.467.485 0 1.053-.267 1.398-.466.195-.135.445-.334.648-.467.156-.136.149-.267.279-.267.128.016.034.134-.147.332a8.097 8.097 0 01-.69.468zm-1.082-1.583V5.64c-.006-.02.013-.042.029-.05.074-.043.18-.027.26.004.063 0 .16.067.15.135-.006.049-.085.066-.135.066-.055 0-.092-.043-.141-.068-.052-.018-.146-.008-.163-.065zm-.551 0c-.02.058-.113.049-.166.066-.047.025-.086.068-.14.068-.05 0-.13-.02-.136-.068-.01-.066.088-.133.15-.133.08-.031.184-.047.259-.005.019.009.036.03.03.05v.02h.003z"></path></symbol>
-<symbol id="mk-github" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></symbol>
-<symbol id="mk-tray" viewBox="0 0 24 24">
-<path d="M12 2.9v10"></path>
-<path d="m7.9 9.4 4.1 4.1 4.1-4.1"></path>
-<path d="M4.2 14.6v3.1a3.4 3.4 0 0 0 3.4 3.4h8.8a3.4 3.4 0 0 0 3.4-3.4v-3.1"></path>
-</symbol>
-<symbol id="mk-check" viewBox="0 0 24 24"><path d="m5.2 12.6 4.3 4.3 9.3-10"></path></symbol>
-<symbol id="mk-clock" viewBox="0 0 24 24">
-<circle cx="12" cy="12" r="8.7"></circle>
-<path d="M12 6.9V12l3.2 2"></path>
-</symbol>
-<symbol id="mk-alert" viewBox="0 0 24 24">
-<path d="M12 3.4 2.7 19.6h18.6L12 3.4Z"></path>
-<path d="M12 9.7v4.1M12 16.8h.01"></path>
-</symbol>
-<symbol id="mk-package" viewBox="0 0 24 24">
-<path d="m12 2.9 8.4 4.4v9.4L12 21.1 3.6 16.7V7.3L12 2.9Z"></path>
-<path d="m3.6 7.3 8.4 4.4 8.4-4.4M12 11.7v9.4"></path>
-</symbol>
-<symbol id="lp-layers" viewBox="0 0 24 24">
-<path d="m12 3.1 8.6 4.7L12 12.5 3.4 7.8 12 3.1Z"></path>
-<path d="m3.4 12.3 8.6 4.7 8.6-4.7"></path>
-<path d="m3.4 16.7 8.6 4.7 8.6-4.7"></path>
-</symbol>
-<symbol id="lp-palette" viewBox="0 0 24 24">
-<path d="M12 3.3a8.7 8.7 0 1 0 0 17.4c1.3 0 2-.8 2-1.8 0-1-.9-1.7-.9-2.6 0-.8.7-1.5 1.6-1.5h1.5c2.5 0 4.4-1.7 4.4-4.1 0-4.1-3.8-7.4-8.6-7.4Z"></path>
-<path d="M8.2 9.4h.01M11.8 7.4h.01M15.6 9.6h.01M7.4 13.4h.01"></path>
-</symbol>
-<symbol id="lp-lock" viewBox="0 0 24 24">
-<rect height="9.6" rx="2.6" width="14.6" x="4.7" y="10.6"></rect>
-<path d="M8.5 10.6V8.1a3.5 3.5 0 0 1 7 0v2.5"></path>
-<path d="M12 14.6v2"></path>
-</symbol>
-<symbol id="lp-shield" viewBox="0 0 24 24">
-<path d="M12 3.2 5.2 6v5.5c0 4.1 2.8 7.6 6.8 9.3 4-1.7 6.8-5.2 6.8-9.3V6L12 3.2Z"></path>
-<path d="m9.2 12.1 2 2 3.7-4"></path>
-</symbol>
-<symbol id="lp-gauge" viewBox="0 0 24 24">
-<path d="M4.1 17.6a8.7 8.7 0 1 1 15.8 0"></path>
-<path d="m12 13.6 3.7-3.8"></path>
-<circle cx="12" cy="14.8" r="1.5"></circle>
-</symbol>
-<symbol id="lp-code" viewBox="0 0 24 24">
-<path d="m9 8.1-4 3.9 4 3.9"></path>
-<path d="m15 8.1 4 3.9-4 3.9"></path>
-<path d="m13.4 5.5-2.8 13"></path>
-</symbol>
-<symbol id="lp-play" viewBox="0 0 24 24"><path d="M8 5.6v12.8l10.4-6.4z"></path></symbol>
-<symbol id="lp-sparkle" viewBox="0 0 24 24">
-<path d="m11.2 3.3 1.8 4.9 4.9 1.8-4.9 1.8-1.8 4.9-1.8-4.9L4.5 10l4.9-1.8 1.8-4.9Z"></path>
-<path d="m18.4 15.4.9 2.3 2.3.9-2.3.9-.9 2.3-.9-2.3-2.3-.9 2.3-.9.9-2.3Z"></path>
-</symbol>
 </svg>
 <div aria-hidden="true" class="noise"></div>
 <div aria-hidden="true" class="scroll-progress" id="scrollProgress"><span></span></div>
@@ -329,11 +229,18 @@
 
 <main class="launcher-page" id="top" tabindex="-1">
 <!-- ===================== HERO ===================== -->
-<section aria-labelledby="launcherTitle" class="lp-hero" id="launcher">
+<section aria-labelledby="launcherTitle" class="lp-hero lp-mc-hero" data-mc-hero id="launcher">
 <canvas aria-hidden="true" class="lp-dust" data-dust></canvas>
+<div aria-hidden="true" class="lp-mc-hero__scene" data-mc-scene>
+<div class="lp-mc-layer lp-mc-layer--sky" data-mc-depth="0.04"></div>
+<div class="lp-mc-layer lp-mc-layer--glow" data-mc-depth="0.1"></div>
+<div class="lp-mc-layer lp-mc-layer--ridge" data-mc-depth="0.18"></div>
+<div class="lp-mc-layer lp-mc-layer--near" data-mc-depth="0.3"></div>
+<div class="lp-mc-layer lp-mc-layer--sparks" data-mc-depth="0.44"></div>
+</div>
 <div class="lp-hero__glow" aria-hidden="true"></div>
-<div class="lp-wrap lp-hero__grid">
-<div class="lp-hero__copy">
+<div class="lp-wrap lp-mc-hero__grid">
+<div class="lp-mc-hero__copy">
 <p class="lp-eyebrow">
 <span aria-hidden="true" class="lp-eyebrow__pulse"></span>
 <span data-i18n="lp.hero.kicker">Minekube Launcher</span>
@@ -374,6 +281,14 @@
 <li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.3L19 6.5"></path></svg><span data-i18n="lp.trust.telemetry">Bez telemetrie</span></li>
 <li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.3L19 6.5"></path></svg><span data-i18n="lp.trust.github">Přímo z GitHubu</span></li>
 </ul>
+<button class="lp-mc-dig" data-mc-dig type="button">
+<span data-i18n="lp.mc.dig">Ponoř se hloub</span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 4v14"></path><path d="m6 12 6 6 6-6"></path></svg>
+</button>
+<button aria-pressed="true" class="lp-mc-hero__motion" data-mc-motion type="button">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path><circle cx="12" cy="12" r="4"></circle></svg>
+<span data-mc-motion-label data-i18n="lp.mc.motion.on">Animace zapnuté</span>
+</button>
 </div>
 
 <div class="lp-hero__visual">
@@ -442,6 +357,128 @@
 <div aria-hidden="true" class="lp-hero__scroll">
 <span class="lp-hero__scroll-line"></span>
 <span class="lp-hero__scroll-dot"></span>
+</div>
+</section>
+
+<!-- ===================== PLATFORMY + FUNKCE (tabulka) ===================== -->
+<section aria-labelledby="lpPlatformTitle" class="lp-mc-band" id="platformy-prehled">
+<div class="lp-wrap">
+<header class="lp-head lp-head--center">
+<p class="lp-tag" data-reveal><span aria-hidden="true" class="lp-tag__spark">✦</span><span data-i18n="lp.mc.plat.tag">Platformy a funkce</span></p>
+<h2 data-i18n="lp.mc.plat.title" data-reveal id="lpPlatformTitle" style="--d:60ms">Jeden launcher. <em>Všechny edice.</em></h2>
+<p class="lp-head__lead" data-i18n="lp.mc.plat.lead" data-reveal style="--d:120ms">Minekube Launcher zvládne Javu i modpacky, které k ní patří. Tady je přehled toho, co dnes opravdu umí — bez „brzy" a bez hvězdiček.</p>
+</header>
+
+<div class="lp-mc-switch" data-mc-switch role="tablist">
+<button aria-controls="lpMcPanePlatforms" aria-selected="true" class="lp-mc-switch__btn" data-mc-switch-btn id="lpMcTabPlatforms" role="tab" type="button"><span data-i18n="lp.mc.tab.platforms">Platformy</span></button>
+<button aria-controls="lpMcPaneFeatures" aria-selected="false" class="lp-mc-switch__btn" data-mc-switch-btn id="lpMcTabFeatures" role="tab" type="button"><span data-i18n="lp.mc.tab.features">Funkce</span></button>
+</div>
+
+<div class="lp-mc-pane" data-mc-pane id="lpMcPanePlatforms" role="tabpanel">
+<div class="lp-mc-platforms">
+<article class="lp-mc-plat lp-mc-plat--live" data-reveal>
+<div class="lp-mc-plat__head">
+<span aria-hidden="true" class="lp-mc-plat__icon"><svg viewBox="0 0 24 24"><use href="#mk-os-windows"></use></svg></span>
+<h3 class="lp-mc-plat__name">Windows</h3>
+<span class="lp-mc-plat__state" data-i18n="lp.mc.plat.live">K dispozici</span>
+</div>
+<p class="lp-mc-plat__note" data-i18n="lp.mc.plat.win">Windows 10 a 11, 64bit instalátor. Stahuje se přímo z GitHub Releases.</p>
+</article>
+<article class="lp-mc-plat" data-reveal style="--d:80ms">
+<div class="lp-mc-plat__head">
+<span aria-hidden="true" class="lp-mc-plat__icon"><svg viewBox="0 0 24 24"><use href="#mk-os-macos"></use></svg></span>
+<h3 class="lp-mc-plat__name">macOS</h3>
+<span class="lp-mc-plat__state" data-i18n="lp.dl.planned.badge">V plánu</span>
+</div>
+<p class="lp-mc-plat__note" data-i18n="lp.mc.plat.mac">Sestavení pro Apple Silicon i Intel připravujeme. Až vyjde, objeví se tady samo.</p>
+</article>
+<article class="lp-mc-plat" data-reveal style="--d:160ms">
+<div class="lp-mc-plat__head">
+<span aria-hidden="true" class="lp-mc-plat__icon"><svg viewBox="0 0 24 24"><use href="#mk-os-linux"></use></svg></span>
+<h3 class="lp-mc-plat__name">Linux</h3>
+<span class="lp-mc-plat__state" data-i18n="lp.dl.planned.badge">V plánu</span>
+</div>
+<p class="lp-mc-plat__note" data-i18n="lp.mc.plat.linux">.AppImage a .deb plánujeme spolu s macOS. Launcher je postavený na Tauri, takže to není slepá ulička.</p>
+</article>
+</div>
+</div>
+
+<div class="lp-mc-pane" data-mc-pane hidden id="lpMcPaneFeatures" role="tabpanel">
+<div class="lp-mc-tablewrap">
+<table class="lp-mc-table">
+<caption data-i18n="lp.mc.table.caption">Porovnání toho, co Minekube Launcher umí dnes.</caption>
+<thead>
+<tr>
+<th scope="col" data-i18n="lp.mc.table.feature">Vlastnost</th>
+<th scope="col" data-i18n="lp.mc.table.how">Jak to funguje</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row" data-i18n="lp.mc.table.r1">Instance vedle sebe</th>
+<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r1.v">Vanilla, Fabric, Forge, NeoForge i Quilt</span></span></td>
+</tr>
+<tr>
+<th scope="row" data-i18n="lp.mc.table.r2">Modpacky</th>
+<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r2.v">.mrpack z Modrinthu i .zip z Prismu a MultiMC</span></span></td>
+</tr>
+<tr>
+<th scope="row" data-i18n="lp.mc.table.r3">Java</th>
+<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r3.v">Automaticky ke každé verzi, víc instalací vedle sebe</span></span></td>
+</tr>
+<tr>
+<th scope="row" data-i18n="lp.mc.table.r4">Účet</th>
+<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r4.v">Lokální profil, přihlášení zůstává v počítači</span></span></td>
+</tr>
+<tr>
+<th scope="row" data-i18n="lp.mc.table.r5">Telemetrie a reklamy</th>
+<td data-label="Jak to funguje"><span class="lp-mc-no"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></svg><span data-i18n="lp.mc.table.r5.v">Žádné — PostHog i reklamní okno jsou vypnuté</span></span></td>
+</tr>
+<tr>
+<th scope="row" data-i18n="lp.mc.table.r6">Vzhled</th>
+<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r6.v">Vlastní záře, pozadí, pohyb a úvodní obrazovka</span></span></td>
+</tr>
+<tr>
+<th scope="row" data-i18n="lp.mc.table.r7">Jazyk</th>
+<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r7.v">33 jazyků, čeština přeložená celá</span></span></td>
+</tr>
+<tr>
+<th scope="row" data-i18n="lp.mc.table.r8">Licence</th>
+<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r8.v">Open source pod GPL-3.0, kód na GitHubu</span></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===================== JAK TO FUNGUJE (tři kroky) ===================== -->
+<section aria-labelledby="lpHowTitle" class="lp-mc-band lp-mc-band--tint" id="jak-to-funguje">
+<div class="lp-wrap">
+<header class="lp-head lp-head--center">
+<p class="lp-tag" data-reveal><span aria-hidden="true" class="lp-tag__spark">✦</span><span data-i18n="lp.mc.how.tag">Jak to funguje</span></p>
+<h2 data-i18n="lp.mc.how.title" data-reveal id="lpHowTitle" style="--d:60ms">Tři kroky <em>ke hře.</em></h2>
+<p class="lp-head__lead" data-i18n="lp.mc.how.lead" data-reveal style="--d:120ms">Od instalace po první blok. Nic mezitím neřešíš — launcher si Javu, verzi i mody obstará sám.</p>
+</header>
+
+<ol class="lp-mc-steps">
+<li class="lp-mc-step" data-reveal>
+<span aria-hidden="true" class="lp-mc-step__num">1</span>
+<h3 data-i18n="lp.mc.how.s1.t">Nainstaluj launcher</h3>
+<p data-i18n="lp.mc.how.s1.p">Stáhni instalátor pro Windows přímo z GitHubu. Žádná registrace, žádná platba, žádné reklamní okno.</p>
+</li>
+<li class="lp-mc-step" data-reveal style="--d:100ms">
+<span aria-hidden="true" class="lp-mc-step__num">2</span>
+<h3 data-i18n="lp.mc.how.s2.t">Přines si svět</h3>
+<p data-i18n="lp.mc.how.s2.p">Vytvoř instanci, naimportuj <code>.mrpack</code> z Modrinthu, nebo přenes <code>.zip</code> z Prismu a MultiMC. Ikonu si launcher vezme s sebou.</p>
+</li>
+<li class="lp-mc-step" data-reveal style="--d:200ms">
+<span aria-hidden="true" class="lp-mc-step__num">3</span>
+<h3 data-i18n="lp.mc.how.s3.t">Hraj</h3>
+<p data-i18n="lp.mc.how.s3.p">Stiskni hrát. Launcher sám stáhne správnou Javu i chybějící mody a spustí hru — bez ručního nastavování.</p>
+</li>
+</ol>
 </div>
 </section>
 
@@ -938,6 +975,70 @@
 </div>
 </section>
 
+<!-- ===================== CAROUSEL // CO V LAUNCHERU NAJDEŠ ===================== -->
+<section aria-labelledby="lpCarouselTitle" class="lp-mc-band lp-mc-band--dark" id="co-najdes">
+<div class="lp-wrap">
+<header class="lp-head">
+<div class="lp-head__title">
+<p class="lp-tag" data-reveal><span aria-hidden="true" class="lp-tag__spark">✦</span><span data-i18n="lp.mc.car.tag">Co v launcheru najdeš</span></p>
+<h2 data-i18n="lp.mc.car.title" data-reveal id="lpCarouselTitle" style="--d:60ms">Projeď si <em>záložky.</em></h2>
+</div>
+<p class="lp-head__lead" data-i18n="lp.mc.car.lead" data-reveal style="--d:120ms">Šest míst, kam se v launcheru nejčastěji vracíš. Šipkami se posouváš, kolečkem myši taky.</p>
+</header>
+
+<div class="lp-mc-carousel" data-mc-carousel>
+<div aria-label="Záložky launcheru" class="lp-mc-carousel__track" data-mc-track tabindex="0">
+<article class="lp-mc-slide">
+<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#lp-layers"></use></svg></div>
+<div class="lp-mc-slide__body">
+<h3 data-i18n="lp.mc.car.1.t">Knihovna</h3>
+<p data-i18n="lp.mc.car.1.p">Instance, skupiny a hledání. Každá instance má vlastní profil, ikonu a mody.</p>
+</div>
+</article>
+<article class="lp-mc-slide">
+<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#mk-package"></use></svg></div>
+<div class="lp-mc-slide__body">
+<h3 data-i18n="lp.mc.car.2.t">Modpacky</h3>
+<p data-i18n="lp.mc.car.2.p">Modrinth katalog i soubory z disku. Mody se stahují paralelně a sdílí se mezi instancemi.</p>
+</div>
+</article>
+<article class="lp-mc-slide">
+<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#lp-java"></use></svg></div>
+<div class="lp-mc-slide__body">
+<h3 data-i18n="lp.mc.car.3.t">Java</h3>
+<p data-i18n="lp.mc.car.3.p">Víc instalací vedle sebe, každá verze hry si vezme tu svou. Uložiště jde uklidit jedním tlačítkem.</p>
+</div>
+</article>
+<article class="lp-mc-slide">
+<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#lp-palette"></use></svg></div>
+<div class="lp-mc-slide__body">
+<h3 data-i18n="lp.mc.car.4.t">Vizuál</h3>
+<p data-i18n="lp.mc.car.4.p">Záře, pozadí, profil pohybu a úvodní obrazovka. Efekty jdou vypnout jedním přepínačem.</p>
+</div>
+</article>
+<article class="lp-mc-slide">
+<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#lp-gauge"></use></svg></div>
+<div class="lp-mc-slide__body">
+<h3 data-i18n="lp.mc.car.5.t">Výkon</h3>
+<p data-i18n="lp.mc.car.5.p">Rychlé načítání, pozastavení na pozadí a kvalita renderu skinu. Všechno popsané, nic skryté.</p>
+</div>
+</article>
+<article class="lp-mc-slide">
+<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#lp-shield"></use></svg></div>
+<div class="lp-mc-slide__body">
+<h3 data-i18n="lp.mc.car.6.t">Soukromí</h3>
+<p data-i18n="lp.mc.car.6.p">Žádná telemetrie, anonymní identita a ochrana proti Log4Shell. Většina je zapnutá natrvalo.</p>
+</div>
+</article>
+</div>
+<div class="lp-mc-carousel__nav">
+<button aria-label="Předchozí" class="lp-mc-carousel__btn" data-mc-prev type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m14.5 5.5-7 6.5 7 6.5"></path></svg></button>
+<button aria-label="Další" class="lp-mc-carousel__btn" data-mc-next type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9.5 5.5 7 6.5-7 6.5"></path></svg></button>
+</div>
+</div>
+</div>
+</section>
+
 <!-- ===================== ČASTÉ OTÁZKY ===================== -->
 <section aria-labelledby="lpFaqTitle" class="lp-section lp-section--faq" id="faq">
 <div class="lp-wrap">
@@ -1123,10 +1224,10 @@
 
 <!-- Překlady stránky se načítají PŘED app.js, aby si je app.js převzala
      a fungoval jeden přepínač jazyka pro celý web. -->
-<script src="i18n.js?v=20261124-2"></script>
+<script src="i18n.js?v=20261124-3"></script>
 <script src="../app.js"></script>
 <script src="releases.js?v=20261124-1"></script>
-<script src="launcher.js?v=20261124-2"></script>
+<script src="launcher.js?v=20261124-3"></script>
 <script src="../design-plus.js"></script>
 <script src="../apple.js?v=20261029-1"></script>
 </body>

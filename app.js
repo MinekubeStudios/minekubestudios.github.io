@@ -649,7 +649,7 @@ function applyLanguage(lang, { notify = false } = {}) {
     const value = t(element.dataset.i18n);
     // Texty mohou obsahovat zalomení řádku a zvýraznění <strong>/<em>.
     // Povolena je pouze tahle trojice značek, všechno ostatní se escapuje.
-    element.innerHTML = /<\s*(br|strong|em)\s*\/?\s*>/.test(value)
+    element.innerHTML = /<\s*(br|strong|em|code)\s*\/?\s*>/.test(value)
       ? sanitizeMarkup(value)
       : escapeHtml(value);
   });
@@ -684,7 +684,7 @@ function applyLanguage(lang, { notify = false } = {}) {
 
 /* Povolí jen <br>, <strong>, <em> (bez atributů), všechno ostatní escapuje.
    Slovníky jsou sice naše, ale i tak je to pojistka proti vložené značce. */
-const ALLOWED_TAG = /^<\/?(?:br|strong|em)\s*\/?>$/i;
+const ALLOWED_TAG = /^<\/?(?:br|strong|em|code)\s*\/?>$/i;
 
 function sanitizeMarkup(value) {
   return String(value)
