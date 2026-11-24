@@ -890,6 +890,39 @@ document.addEventListener("keydown", event => {
     cancelKofiGate();
   }
 });
+
+/* Dialog je označený aria-modal, takže Tab nesmí utéct do stránky pod ním.
+   Bez toho se klávesnicí dostaneš na odkazy v pozadí a čtečka ztratí kontext. */
+document.addEventListener("keydown", event => {
+  if (event.key !== "Tab" || modalBackdrop.hidden) return;
+
+  const dialog = modalBackdrop.querySelector("[role='dialog']");
+  if (!dialog) return;
+
+  const focusable = Array.from(
+    dialog.querySelectorAll(
+      "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])"
+    )
+  ).filter(element => element.getClientRects().length > 0);
+
+  if (!focusable.length) return;
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  const active = document.activeElement;
+  const inside = dialog.contains(active);
+
+  if (!inside) {
+    event.preventDefault();
+    (event.shiftKey ? last : first).focus({ preventScroll: true });
+  } else if (event.shiftKey && active === first) {
+    event.preventDefault();
+    last.focus({ preventScroll: true });
+  } else if (!event.shiftKey && active === last) {
+    event.preventDefault();
+    first.focus({ preventScroll: true });
+  }
+});
 document.querySelectorAll("[data-dialog]").forEach(button => {
   button.addEventListener("click", () => openInfoModal(button.dataset.dialog));
 });

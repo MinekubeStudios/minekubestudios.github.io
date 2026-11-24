@@ -26,7 +26,9 @@
   .lp-js [data-reveal] {
     opacity: 1;
     transform: none;
-  }.lp-btn:hover,.lp-card:hover,.lp-facts__list li:hover{
+  }
+
+.lp-btn:hover,.lp-facts__list li:hover{
     transform: none;
   }
 
@@ -71,7 +73,6 @@
 
 @media (forced-colors: active) {
   .launcher-page .lp-btn,
-  .launcher-page .lp-card,
   .launcher-page .lp-platform,
   .launcher-page .lp-facts__list li,
   .launcher-page .lp-nav__link,
@@ -97,7 +98,6 @@
   }
 
   .lp-btn,
-  .lp-card,
   .lp-platform {
     border: 1px solid #000;
     box-shadow: none;
@@ -109,7 +109,15 @@
   }
 }
 
-@supports not (background: color-mix(in srgb, #fff, #000)) {.lp-btn--ghost,.lp-card,.lp-platform,.lp-version,.lp-eyebrow__badge,.lp-tab,.lp-nav__link.is-active,.lp-fx-toggle[aria-pressed="true"],.lp-sticker{
+@supports not (background: color-mix(in srgb, #fff, #000)) {
+  .lp-btn--ghost,
+  .lp-platform,
+  .lp-version,
+  .lp-eyebrow__badge,
+  .lp-tab,
+  .lp-nav__link.is-active,
+  .lp-fx-toggle[aria-pressed="true"],
+  .lp-sticker {
     background: var(--lp-surface-2);
   }
 
@@ -119,8 +127,7 @@
   }
 
   .lp-facts__icon,
-  .lp-row__icon,
-  .lp-card__icon {
+  .lp-row__icon {
     background: rgba(252, 192, 0, 0.16);
   }
 
@@ -1068,10 +1075,6 @@
   background: rgba(255, 255, 255, 0.022);
 }
 
-.launcher-page > .lp-section--alt {
-  background: linear-gradient(180deg, rgba(252, 192, 0, 0.045), rgba(252, 0, 96, 0.035));
-}
-
 /* Sekce, které drží vlastní tmavý pás, linky nepotřebují. */
 .launcher-page > .lp-section.lp-mc-band {
   border-block: 0;
@@ -1196,47 +1199,6 @@
 .launcher-page .lp-check li svg {
   fill: var(--lp-gold);
   stroke: none;
-}
-
-/* ---------- 21e · Nastavení: šest karet ---------- */
-
-.launcher-page .lp-cards {
-  gap: clamp(14px, 1.8vw, 22px);
-}
-
-.launcher-page .lp-card {
-  border: 1px solid var(--lp-line-strong);
-  border-radius: var(--lp-block-radius);
-  background: rgba(255, 255, 255, 0.035);
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.32);
-  transition: transform 0.2s var(--lp-ease), border-color 0.2s, background 0.2s;
-}
-
-.launcher-page .lp-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--lp-line-gold);
-  background: rgba(255, 255, 255, 0.055);
-}
-
-.launcher-page .lp-card__icon {
-  border-radius: 8px;
-  border: 1px solid rgba(252, 192, 0, 0.3);
-  background: linear-gradient(135deg, rgba(252, 192, 0, 0.18), rgba(252, 0, 96, 0.1));
-  color: var(--lp-gold-soft);
-}
-
-.launcher-page .lp-card h3 {
-  font-family: var(--lp-font-chunky);
-  font-size: 1.28rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.launcher-page .lp-card__meta {
-  border-top: 1px solid var(--lp-line);
-  color: var(--lp-muted-2);
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
 }
 
 /* ---------- 21f · Stažení: blokové karty platforem ---------- */
@@ -1429,12 +1391,7 @@
   background: rgba(120, 60, 90, 0.035);
 }
 
-:root[data-theme="light"] .launcher-page > .lp-section--alt {
-  background: linear-gradient(180deg, rgba(252, 192, 0, 0.14), rgba(252, 0, 96, 0.08));
-}
-
 :root[data-theme="light"] .launcher-page .lp-row,
-:root[data-theme="light"] .launcher-page .lp-card,
 :root[data-theme="light"] .launcher-page .lp-panel,
 :root[data-theme="light"] .launcher-page .lp-ui,
 :root[data-theme="light"] .launcher-page .lp-version,
@@ -1486,18 +1443,8 @@
     padding: 16px;
   }
 
-  .launcher-page .lp-cards {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .launcher-page .lp-faq__trigger {
     font-size: 0.98rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .launcher-page .lp-card:hover {
-    transform: none;
   }
 }
 
@@ -1505,7 +1452,6 @@
 
 /* Nadpisy v blocích mají mít vyvážené řádky, ne „drží" na konci. */
 .launcher-page .lp-row h3,
-.launcher-page .lp-card h3,
 .launcher-page .lp-panel__copy h3,
 .launcher-page .lp-faq__q {
   text-wrap: balance;
@@ -1607,14 +1553,12 @@
    slitý odstavec. */
 
 .launcher-page .lp-row h3,
-.launcher-page .lp-card h3,
 .launcher-page .lp-panel__copy h3 {
   margin-bottom: 0.72em;
   line-height: 1.12;
 }
 
 .launcher-page .lp-row__text,
-.launcher-page .lp-card p,
 .launcher-page .lp-panel__copy p {
   margin-top: 0;
 }
@@ -1627,4 +1571,272 @@
 .launcher-page .lp-row__text + .lp-bullets,
 .launcher-page .lp-row h3 + .lp-row__text {
   margin-top: 0.7em;
+}
+
+/* =============================================================
+   24 · STAHOVACÍ TLAČÍTKO — KLIDOVÁ LINKA A PULZ PO KLIKNUTÍ
+   -------------------------------------------------------------
+   Tlačítko „Stáhnout“ mělo osm generací efektů naskládaných přes
+   sebe (styles.css). V klidu se sice hýbalo, ale chyběla mu linka,
+   která by jej držela pohromadě, a kliknutí spouštělo detonaci,
+   která byla delší než samotné stažení.
+
+   Tahle vrstva přidává dvě věci a zbytek nechává být:
+
+     · .lp-dlbtn__line  — tenká světlá linka, která v klidu pravidelně
+                          přejede zleva doprava (čistě dekorativní),
+     · .lp-dlbtn.is-pulsing — jeden plynulý pulz po kliknutí: vlna
+                          z místa kliknutí, zablesknutí a doznění.
+
+   Obojí respektuje prefers-reduced-motion a vypnuté efekty.
+   ============================================================= */
+
+/* ---------- 24a · Linka v klidovém stavu ---------- */
+
+/* Tlačítko samo ořezávat nemůže: styles.css mu drží overflow: visible,
+   aby z něj mohl přetékat energetický glow (a to je jeho hlavní efekt).
+   Linku i vlnu proto schováme do vlastního ořezového rámečku, který
+   kopíruje zaoblení tlačítka. Nic jiného se v něm nekreslí. */
+.lp-dlbtn__clip {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Linka vede při spodní hraně, ne středem tlačítka. Středem by
+   procházela přes popisek a ikonu a vypadala jako artefakt, ne
+   jako záměrný detail. Takhle zdobí spodní lem a text nechá být. */
+.lp-dlbtn__line {
+  position: absolute;
+  left: 0;
+  bottom: 3px;
+  width: 30%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 20%,
+    rgba(255, 255, 255, 0.95) 55%,
+    rgba(255, 233, 150, 0.9) 78%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 6px rgba(255, 255, 255, 0.6),
+    0 0 12px rgba(255, 196, 64, 0.45);
+  opacity: 0;
+  transform: translate3d(-120%, 0, 0);
+  pointer-events: none;
+  animation: lp-line-idle 6.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Při najetí myší linka zrychlí a je výraznější — ale nepřestane. */
+.lp-dlbtn:hover .lp-dlbtn__line,
+.lp-dlbtn:focus-visible .lp-dlbtn__line {
+  animation-duration: 3.6s;
+}
+
+@keyframes lp-line-idle {
+  0% {
+    opacity: 0;
+    transform: translate3d(-120%, 0, 0) scaleX(0.7);
+  }
+  8% {
+    opacity: 0.5;
+  }
+  22% {
+    opacity: 0.95;
+  }
+  58% {
+    opacity: 0.9;
+  }
+  74% {
+    opacity: 0;
+    transform: translate3d(433%, 0, 0) scaleX(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(433%, 0, 0) scaleX(1.15);
+  }
+}
+
+/* ---------- 24b · Pulz po kliknutí ---------- */
+
+/* Vlna z místa kliknutí. Vlastní prvek, ne ::after — ten už zabírá
+   energetický rám z styles.css a nesmí o něj přijít.
+   Souřadnice dodává JS do --lp-pulse-x / -y. */
+.lp-dlbtn__wave {
+  position: absolute;
+  left: var(--lp-pulse-x, 50%);
+  top: var(--lp-pulse-y, 50%);
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 240, 190, 0.75) 32%,
+    rgba(255, 190, 60, 0.28) 62%,
+    transparent 72%
+  );
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+
+.lp-dlbtn.is-pulsing .lp-dlbtn__wave {
+  animation: lp-pulse-wave 0.9s cubic-bezier(0.16, 0.84, 0.2, 1) both;
+}
+
+/* Samotné tlačítko při pulzu jednou „dýchne" a zableskne se.
+   Specificita musí přebít klidovou animaci z styles.css
+   (.button[data-download].download-ultimate). */
+.button[data-download].download-ultimate.lp-dlbtn.is-pulsing {
+  animation: lp-pulse-body 0.9s cubic-bezier(0.16, 0.84, 0.2, 1) both;
+}
+
+.button[data-download].download-ultimate.lp-dlbtn.is-pulsing .download-fx {
+  animation: lp-pulse-glow 0.9s cubic-bezier(0.16, 0.84, 0.2, 1) both;
+}
+
+/* Spinner, který se objeví při načítání, pulz neruší. */
+.lp-dlbtn .lp-btn__spinner {
+  z-index: 7;
+}
+
+@keyframes lp-pulse-wave {
+  0% {
+    opacity: 0.85;
+    transform: scale(0);
+  }
+  45% {
+    opacity: 0.5;
+    transform: scale(14);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(26);
+  }
+}
+
+@keyframes lp-pulse-body {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  22% {
+    transform: scale(0.972);
+    filter: brightness(1.14);
+  }
+  46% {
+    transform: scale(1.028);
+    filter: brightness(1.2);
+  }
+  72% {
+    transform: scale(1.004);
+    filter: brightness(1.05);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes lp-pulse-glow {
+  0% {
+    filter: saturate(1.1) brightness(1);
+  }
+  38% {
+    filter: saturate(1.5) brightness(1.26);
+  }
+  100% {
+    filter: saturate(1.1) brightness(1);
+  }
+}
+
+/* ---------- 24b-2 · Čitelnost textu na tlačítku ----------
+
+   Bílý text na zlatém gradientu měl opticky slabý kontrast (axe ho
+   přes gradient nezměří, oko ano). Tmavý text se zlatou podložkou
+   drží čitelnost i na nejsvětlejším místě gradientu — stejný princip,
+   jaký používá styles.css pro základní tlačítko (#2b1305). */
+
+/* Pozor na specificitu: styles.css drží bílý text na stejném tlačítku
+   v několika generacích pravidel a ta pozdější mají na hover i na
+   „pointer active“ vyšší váhu než tři třídy. Proto tu jsou třídy čtyři
+   (lp-dlbtn navíc) a níž i shodné stavové třídy. */
+.button[data-download].download-ultimate.lp-dlbtn,
+.button[data-download].download-ultimate.lp-dlbtn .download-label {
+  color: #2a1204;
+  text-shadow: 0 1px 0 rgba(255, 246, 214, 0.7);
+}
+
+.button[data-download].download-ultimate.lp-dlbtn .download-label {
+  font-weight: 800;
+}
+
+/* Ikona šipky má stejnou barvu jako text. */
+.button[data-download].download-ultimate.lp-dlbtn .download-icon {
+  color: #2a1204;
+}
+
+/* Při najetí, fokusu a během pulzu text lehce ztmavne — pořád čitelný.
+   Selektor záměrně pokrývá i .is-pointer-active a .is-pulsing, protože
+   styles.css má bílou navázanou právě na ně. */
+.button[data-download].download-ultimate.lp-dlbtn:hover,
+.button[data-download].download-ultimate.lp-dlbtn:focus-visible,
+.button[data-download].download-ultimate.lp-dlbtn.is-pointer-active,
+.button[data-download].download-ultimate.lp-dlbtn.is-pulsing,
+.button[data-download].download-ultimate.lp-dlbtn:hover .download-label,
+.button[data-download].download-ultimate.lp-dlbtn:focus-visible .download-label,
+.button[data-download].download-ultimate.lp-dlbtn.is-pointer-active .download-label,
+.button[data-download].download-ultimate.lp-dlbtn.is-pulsing .download-label,
+.button[data-download].download-ultimate.lp-dlbtn:hover .download-icon,
+.button[data-download].download-ultimate.lp-dlbtn:focus-visible .download-icon {
+  color: #1c0b02;
+}
+
+/* ---------- 24b-3 · Vypnutí starší vrstvy textových animací ----------
+
+   styles.css animuje barvu popisku na hover (downloadLabelSharpGlow)
+   a přebarvuje ho na bílou. Animace má přednost před běžným pravidlem,
+   takže by přebila i tmavý text z 24b-2. V launcheru ji nahrazuje
+   vlastní pulz tlačítka, proto tu animaci rušíme — jinde v projektu
+   (Modpacky) zůstává beze změny. */
+
+.button[data-download].download-ultimate.lp-dlbtn .download-label,
+.button[data-download].download-ultimate.lp-dlbtn:hover .download-label,
+.button[data-download].download-ultimate.lp-dlbtn:focus-visible .download-label,
+.button[data-download].download-ultimate.lp-dlbtn.is-pointer-active .download-label {
+  animation: none;
+}
+
+/* ---------- 24c · Vypnuté efekty a redukce pohybu ---------- */
+
+/* Linku držíme i při vypnutých efektech — je to jemná dekorace,
+   ne „efekt“. Pulz ale patří mezi efekty, takže se vypne. */
+.launcher-page[data-fx-state="off"] .button[data-download].download-ultimate.lp-dlbtn.is-pulsing,
+.launcher-page[data-fx-state="off"] .lp-dlbtn.is-pulsing .lp-dlbtn__wave,
+.launcher-page[data-fx-state="off"] .lp-dlbtn.is-pulsing .download-fx {
+  animation: none;
+}
+
+.launcher-page[data-fx-state="off"] .lp-dlbtn__clip {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-dlbtn__line {
+    display: none;
+  }
+
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulsing,
+  .lp-dlbtn.is-pulsing .lp-dlbtn__wave,
+  .lp-dlbtn.is-pulsing .download-fx {
+    animation: none;
+  }
 }
