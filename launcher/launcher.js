@@ -1689,6 +1689,171 @@
     });
   }
 
+  /* ===================== MINECRAFT-LIKE VRSTVA (v11) =====================
+     Parallax hero, přepínač animací, přepínání Platformy/Funkce
+     a carousel. Všechno respektuje reduced motion i tlačítko Efekty. */
+
+  function initMcParallax() {
+    const hero = document.querySelector("[data-mc-hero]");
+    const scene = document.querySelector("[data-mc-scene]");
+    if (!hero || !scene || prefersReduced()) return;
+
+    const layers = [...scene.querySelectorAll("[data-mc-depth]")].map(node => ({
+      node,
+      depth: parseFloat(node.dataset.mcDepth) || 0
+    }));
+    if (!layers.length) return;
+
+    let ticking = false;
+    let visible = true;
+
+    const paint = () => {
+      ticking = false;
+      if (!visible || !fxOn()) return;
+      const rect = hero.getBoundingClientRect();
+      // Posun jen dokud je hero na obrazovce — mimo ni nic nepočítáme.
+      if (rect.bottom < -120 || rect.top > innerHeight + 120) return;
+      const progress = Math.min(Math.max(-rect.top / Math.max(rect.height, 1), 0), 1);
+      layers.forEach(({ node, depth }) => {
+        node.style.transform = `translate3d(0, ${(progress * depth * 260).toFixed(2)}px, 0)`;
+      });
+    };
+
+    const request = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(paint);
+    };
+
+    addEventListener("scroll", request, { passive: true });
+    addEventListener("resize", request, { passive: true });
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(entries => {
+        visible = entries.some(entry => entry.isIntersecting);
+        if (visible) request();
+      }, { threshold: 0 }).observe(hero);
+    }
+    request();
+  }
+
+  function initMcMotionToggle() {
+    const button = document.querySelector("[data-mc-motion]");
+    const label = button?.querySelector("[data-mc-motion-label]");
+    if (!button) return;
+
+    const sync = () => {
+      const on = !prefersReduced() && document.querySelector(".launcher-page")?.getAttribute("data-fx-state") !== "off";
+      button.setAttribute("aria-pressed", String(on));
+      if (label) {
+        label.textContent = translate(on ? "lp.mc.motion.on" : "lp.mc.motion.off", on ? "Animace zapnuté" : "Animace vypnuté");
+      }
+    };
+
+    button.addEventListener("click", () => {
+      const fxToggle = document.querySelector("[data-fx-toggle]");
+      if (fxToggle) fxToggle.click();
+      sync();
+    });
+
+    document.addEventListener("minekube:language", sync);
+    sync();
+  }
+
+  function initMcSwitch() {
+    const root = document.querySelector("[data-mc-switch]");
+    if (!root) return;
+    const tabs = [...root.querySelectorAll("[data-mc-switch-btn]")];
+    const panes = [...document.querySelectorAll("[data-mc-pane]")];
+    if (!tabs.length || !panes.length) return;
+
+    const select = (tab, { focus = false } = {}) => {
+      const target = tab.getAttribute("aria-controls");
+      tabs.forEach(item => {
+        const active = item === tab;
+        item.setAttribute("aria-selected", String(active));
+        item.tabIndex = active ? 0 : -1;
+      });
+      panes.forEach(pane => { pane.hidden = pane.id !== target; });
+      if (focus) tab.focus({ preventScroll: true });
+    };
+
+    tabs.forEach(tab => tab.addEventListener("click", () => select(tab)));
+    root.addEventListener("keydown", event => {
+      const index = tabs.indexOf(document.activeElement);
+      if (index === -1) return;
+      let next = null;
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % tabs.length;
+      else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index - 1 + tabs.length) % tabs.length;
+      else if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = tabs.length - 1;
+      if (next === null) return;
+      event.preventDefault();
+      select(tabs[next], { focus: true });
+    });
+  }
+
+  function initMcCarousel() {
+    const root = document.querySelector("[data-mc-carousel]");
+    if (!root) return;
+    const track = root.querySelector("[data-mc-track]");
+    const prev = root.querySelector("[data-mc-prev]");
+    const next = root.querySelector("[data-mc-next]");
+    if (!track) return;
+
+    const step = () => {
+      const slide = track.querySelector(".lp-mc-slide");
+      if (!slide) return track.clientWidth;
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      return slide.getBoundingClientRect().width + gap;
+    };
+
+    const sync = () => {
+      const max = track.scrollWidth - track.clientWidth - 1;
+      if (prev) prev.disabled = track.scrollLeft <= 1;
+      if (next) next.disabled = track.scrollLeft >= max;
+    };
+
+    const scrollBy = dir => {
+      track.scrollBy({ left: dir * step(), behavior: prefersReduced() ? "auto" : "smooth" });
+    };
+
+    prev?.addEventListener("click", () => scrollBy(-1));
+    next?.addEventListener("click", () => scrollBy(1));
+
+    track.addEventListener("keydown", event => {
+      if (event.key === "ArrowRight") { event.preventDefault(); scrollBy(1); }
+      else if (event.key === "ArrowLeft") { event.preventDefault(); scrollBy(-1); }
+    });
+
+    // Kolečko myši posouvá carousel jen dokud se dá, pak pustí stránku.
+    track.addEventListener("wheel", event => {
+      if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+      const max = track.scrollWidth - track.clientWidth;
+      if (max <= 0) return;
+      const atStart = track.scrollLeft <= 0 && event.deltaY < 0;
+      const atEnd = track.scrollLeft >= max - 1 && event.deltaY > 0;
+      if (atStart || atEnd) return;
+      event.preventDefault();
+      track.scrollLeft += event.deltaY;
+    }, { passive: false });
+
+    track.addEventListener("scroll", sync, { passive: true });
+    addEventListener("resize", sync, { passive: true });
+    sync();
+  }
+
+  function initMcDig() {
+    document.querySelectorAll("[data-mc-dig]").forEach(button => {
+      button.addEventListener("click", () => {
+        const target = document.querySelector("[data-mc-hero]")?.nextElementSibling;
+        if (!target) return;
+        const reduce = prefersReduced();
+        target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+      });
+    });
+  }
+
   initFxToggle();
   initDownloadButtons();
   initRipples();
@@ -1704,6 +1869,11 @@
   initCopyChecksum();
   initSkipLink();
   initVisibilityPause();
+  initMcParallax();
+  initMcMotionToggle();
+  initMcSwitch();
+  initMcCarousel();
+  initMcDig();
 
 
   /* ===================== START ===================== */
