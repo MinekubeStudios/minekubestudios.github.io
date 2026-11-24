@@ -48,6 +48,9 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 86px;
+  /* Dekorativní vrstvy (glow, částice, marquee) nesmí roztáhnout dokument do
+     strany. `clip` nevytváří scroll kontejner, takže sticky funguje dál. */
+  overflow-x: clip;
 }
 
 body {
@@ -448,6 +451,26 @@ svg {
   }
 }
 
+/* Na nejmenších telefonech se logo v hlavičce muselo zmenšit, jinak se
+   obsah hlavičky nevešel a stránka šla posouvat do strany. */
+@media (max-width: 380px) {
+  .brand-text-img {
+    height: 24px;
+    max-width: 92px;
+  }
+  .brand {
+    gap: 8px;
+  }
+  .header-actions {
+    gap: 5px;
+  }
+  .header-actions .icon-button,
+  .header-actions .menu-button {
+    width: 34px;
+    height: 34px;
+  }
+}
+
 .desktop-nav {
   display: flex;
   align-items: center;
@@ -497,6 +520,9 @@ svg {
 .menu-button {
   display: grid;
   place-items: center;
+  /* Bez tohohle se tři pruhy roztáhnou do výšky tlačítka a při otevření
+     se z nich nestane „X“, ale široký vé. */
+  align-content: center;
   border: 1px solid var(--border);
   border-radius: 11px;
   background: var(--surface);
