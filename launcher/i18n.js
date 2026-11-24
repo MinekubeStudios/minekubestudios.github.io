@@ -42,13 +42,17 @@ window.MINEKUBE_PAGE_I18N = {
     "lp.marquee.7": "33 jazyků, čeština 100 %",
     "lp.marquee.8": "Zdarma pro Windows",
     "lp.nav.aria": "Sekce stránky",
+    "lp.mc.switch.aria": "Obsah launcheru",
+    "lp.tour.tabs.aria": "Prohlídka launcheru",
+    "lp.carousel.aria": "Záložky launcheru",
+    "lp.carousel.prev": "Předchozí záložka",
+    "lp.carousel.next": "Další záložka",
+    "footer.community2.aria": "Minekube Ultra Performance na Game Jolt",
     "lp.nav.features": "Funkce",
     "lp.nav.tour": "Prohlídka",
     "lp.nav.download": "Stažení",
     "lp.fx.label": "Efekty",
     "lp.fx.aria": "Přepnout dekorativní efekty stránky",
-
-    /* ---- Galerie (lightbox) ---- */
 
     /* ---- Rychlá fakta ---- */
     "lp.facts.title": "Minekube Launcher v kostce",
@@ -328,13 +332,17 @@ window.MINEKUBE_PAGE_I18N = {
     "lp.marquee.7": "Czech and Slovak",
     "lp.marquee.8": "Free for Windows",
     "lp.nav.aria": "Page sections",
+    "lp.mc.switch.aria": "Launcher contents",
+    "lp.tour.tabs.aria": "Launcher tour",
+    "lp.carousel.aria": "Launcher tabs",
+    "lp.carousel.prev": "Previous tab",
+    "lp.carousel.next": "Next tab",
+    "footer.community2.aria": "Minekube Ultra Performance on Game Jolt",
     "lp.nav.features": "Features",
     "lp.nav.tour": "Tour",
     "lp.nav.download": "Download",
     "lp.fx.label": "Effects",
     "lp.fx.aria": "Toggle the page's decorative effects",
-
-    /* ---- Gallery (lightbox) ---- */
 
     "lp.facts.title": "Minekube Launcher at a glance",
     "lp.facts.1.title": "Instances side by side",
@@ -606,13 +614,17 @@ window.MINEKUBE_PAGE_I18N = {
     "lp.marquee.7": "Čeština a slovenčina",
     "lp.marquee.8": "Zdarma pre Windows",
     "lp.nav.aria": "Sekcie stránky",
+    "lp.mc.switch.aria": "Obsah launcheru",
+    "lp.tour.tabs.aria": "Prehliadka launcheru",
+    "lp.carousel.aria": "Záložky launcheru",
+    "lp.carousel.prev": "Predchádzajúca záložka",
+    "lp.carousel.next": "Ďalšia záložka",
+    "footer.community2.aria": "Minekube Ultra Performance na Game Jolt",
     "lp.nav.features": "Funkcie",
     "lp.nav.tour": "Prehliadka",
     "lp.nav.download": "Stiahnutie",
     "lp.fx.label": "Efekty",
     "lp.fx.aria": "Prepnúť dekoratívne efekty stránky",
-
-    /* ---- Galéria (lightbox) ---- */
 
     "lp.facts.title": "Minekube Launcher v skratke",
     "lp.facts.1.title": "Inštancie vedľa seba",

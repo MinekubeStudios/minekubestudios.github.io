@@ -16,10 +16,7 @@
 @media (prefers-reduced-motion: reduce) {
   .launcher-page *,
   .launcher-page *::before,
-  .launcher-page *::after,
-  .lp-lb *,
-  .lp-lb *::before,
-  .lp-lb *::after {
+  .launcher-page *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
@@ -29,13 +26,7 @@
   .lp-js [data-reveal] {
     opacity: 1;
     transform: none;
-  }
-
-  .lp-btn:hover,
-  .lp-card:hover,
-  .lp-facts__list li:hover,
-  .lp-stage__window,
-  .lp-shot__frame {
+  }.lp-btn:hover,.lp-card:hover,.lp-facts__list li:hover{
     transform: none;
   }
 
@@ -69,7 +60,6 @@
 .launcher-page[data-fx-state="off"] .lp-cta__ring,
 .launcher-page[data-fx-state="off"] .lp-hero__glow,
 .launcher-page[data-fx-state="off"] .lp-sticker,
-.launcher-page[data-fx-state="off"] .lp-stage__window,
 .launcher-page[data-fx-state="off"] .lp-eyebrow__pulse,
 .launcher-page[data-fx-state="off"] .lp-hero__aurora,
 .launcher-page[data-fx-state="off"] .lp-title em,
@@ -83,11 +73,9 @@
   .launcher-page .lp-btn,
   .launcher-page .lp-card,
   .launcher-page .lp-platform,
-  .launcher-page .lp-stage,
   .launcher-page .lp-facts__list li,
   .launcher-page .lp-nav__link,
-  .launcher-page .lp-tab,
-  .lp-lb__dialog {
+  .launcher-page .lp-tab {
     border: 1px solid CanvasText;
   }
 
@@ -97,24 +85,9 @@
     color: HighlightText;
   }
 
-  .lp-lb__backdrop {
-    background: Canvas;
-  }
 }
 
-@media print {
-  .launcher-page::before,
-  .launcher-page::after,
-  .lp-dust,
-  .lp-fx,
-  .lp-nav,
-  .lp-marquee,
-  .lp-sticker,
-  .lp-skip,
-  .lp-hero__aurora,
-  .lp-hero__scroll,
-  .lp-shot__zoom,
-  .lp-lb {
+@media print {.launcher-page::before,.launcher-page::after,.lp-dust,.lp-fx,.lp-nav,.lp-marquee,.lp-sticker,.lp-skip,.lp-hero__aurora,.lp-hero__scroll{
     display: none !important;
   }
 
@@ -136,21 +109,7 @@
   }
 }
 
-@supports not (background: color-mix(in srgb, #fff, #000)) {
-  .lp-btn--ghost,
-  .lp-card,
-  .lp-platform,
-  .lp-panel__facts,
-  .lp-version,
-  .lp-stage__chip,
-  .lp-eyebrow__badge,
-  .lp-tab,
-  .lp-nav__link.is-active,
-  .lp-fx-toggle[aria-pressed="true"],
-  .lp-shot__zoom,
-  .lp-sticker,
-  .lp-lb__nav,
-  .lp-lb__dialog {
+@supports not (background: color-mix(in srgb, #fff, #000)) {.lp-btn--ghost,.lp-card,.lp-platform,.lp-version,.lp-eyebrow__badge,.lp-tab,.lp-nav__link.is-active,.lp-fx-toggle[aria-pressed="true"],.lp-sticker{
     background: var(--lp-surface-2);
   }
 
@@ -165,9 +124,6 @@
     background: rgba(252, 192, 0, 0.16);
   }
 
-  .lp-lb__backdrop {
-    background: rgba(5, 1, 10, 0.94);
-  }
 }
 
 /* =============================================================
@@ -193,9 +149,7 @@
 /* ---------- 20a · Chunky typografie ---------- */
 
 .launcher-page .lp-title,
-.launcher-page .lp-head h2,
-.launcher-page .lp-fx-title,
-.launcher-page .lp-mc-title {
+.launcher-page .lp-head h2 {
   font-family: var(--lp-font-chunky);
   font-weight: 800;
   letter-spacing: -0.012em;
@@ -254,10 +208,11 @@
     linear-gradient(180deg, #1a0a16 0%, #140812 46%, #0b0509 100%);
 }
 
+/* Gradient je sám měkký — dřívější blur(6px) na ploše přes milion
+   pixelů jen spaloval snímky. Vizuálně je to stejné, jen levnější. */
 .lp-mc-layer--glow {
   background:
     radial-gradient(46% 38% at 50% 34%, rgba(255, 216, 99, 0.34), transparent 70%);
-  filter: blur(6px);
 }
 
 /* Bloková „hora" na obzoru — osy, ne obrázek. */
@@ -417,6 +372,10 @@
 }
 
 /* ---------- 20c · Vodorovné pásy sekcí (minecraft.net rytmus) ---------- */
+
+/* Tmavý pás zůstává tmavý i ve světlém motivu — je to záměrný
+   kontrastní blok (jako „dark band" na minecraft.net). Karty v něm
+   proto musí zůstat tmavé; světlé přebarvení je řešené níž. */
 
 .lp-mc-band {
   --lp-band-bg: rgba(255, 255, 255, 0.02);
@@ -961,6 +920,50 @@
   stroke: rgba(60, 20, 40, 0.62);
 }
 
+/* Karty v tmavém pásu: světlý motiv je nesmí přebarvit na bílo,
+   jinak text (stavěný na tmavé pozadí) zmizí. */
+/* Tmavý pás potřebuje i světlé tokeny — jinak v něm tmavý text
+   (nadpisy, perex) zmizí na tmavém podkladu. */
+:root[data-theme="light"] .launcher-page .lp-mc-band--dark {
+  --lp-text: #fff6ec;
+  --lp-muted: rgba(255, 246, 236, 0.78);
+  --lp-muted-2: rgba(255, 246, 236, 0.62);
+  --lp-line: rgba(255, 255, 255, 0.12);
+  --lp-line-strong: rgba(255, 255, 255, 0.2);
+  color: var(--lp-text);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-band--dark .lp-tag {
+  color: var(--lp-gold-soft);
+  border-color: rgba(252, 192, 0, 0.4);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-band--dark .lp-mc-slide {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-band--dark .lp-mc-slide p {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-band--dark .lp-mc-slide__art {
+  background:
+    radial-gradient(70% 70% at 30% 20%, rgba(252, 192, 0, 0.24), transparent 66%),
+    radial-gradient(70% 70% at 78% 78%, rgba(252, 0, 96, 0.24), transparent 66%),
+    #0d060c;
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-band--dark .lp-mc-slide__art svg {
+  stroke: rgba(255, 255, 255, 0.86);
+}
+
+:root[data-theme="light"] .launcher-page .lp-mc-band--dark .lp-mc-carousel__btn {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
 :root[data-theme="light"] .launcher-page .lp-mc-switch {
   background: rgba(80, 30, 60, 0.06);
 }
@@ -1036,4 +1039,592 @@
 
 .launcher-page .lp-facts + .lp-nav {
   margin-top: clamp(10px, 1.6vw, 20px);
+}
+
+/* =============================================================
+   21 · MINECRAFT VRSTVA PRO ZBYTEK STRÁNKY (v12)
+   -------------------------------------------------------------
+   Hero, Platformy/Funkce, Jak to funguje a carousel měly nový styl,
+   zbytek stránky (Funkce, Prohlídka, Nastavení, Stažení, FAQ, CTA)
+   zůstal ve staré „soft glow" podobě. Tahle vrstva je sjednocuje:
+
+     · blokové rámečky s tvrdým stínem místo jemného svitu,
+     · chunky display písmo na všech nadpisech,
+     · každá sekce má vlastní pás (barva pozadí + linka),
+     · stejný rytmus odstupů jako první čtvrtina.
+
+   Vše znovu uzavřené v `.launcher-page`, aby se styl nepotkal
+   se zbytkem webu.
+   ============================================================= */
+
+/* ---------- 21a · Střídání pásů ---------- */
+
+.launcher-page > .lp-section {
+  position: relative;
+  border-block: 1px solid var(--lp-line);
+}
+
+.launcher-page > .lp-section:nth-of-type(even) {
+  background: rgba(255, 255, 255, 0.022);
+}
+
+.launcher-page > .lp-section--alt {
+  background: linear-gradient(180deg, rgba(252, 192, 0, 0.045), rgba(252, 0, 96, 0.035));
+}
+
+/* Sekce, které drží vlastní tmavý pás, linky nepotřebují. */
+.launcher-page > .lp-section.lp-mc-band {
+  border-block: 0;
+}
+
+/* ---------- 21b · Hlavičky sekcí ---------- */
+
+.launcher-page .lp-head h2 {
+  font-family: var(--lp-font-chunky);
+  font-weight: 800;
+  letter-spacing: -0.012em;
+  line-height: 1.04;
+}
+
+.launcher-page .lp-head__lead {
+  max-width: 62ch;
+}
+
+.launcher-page .lp-tag {
+  padding: 7px 14px;
+  border: 1px solid rgba(252, 192, 0, 0.32);
+  border-radius: 6px;
+  background: rgba(252, 192, 0, 0.08);
+  color: var(--lp-gold-soft);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Tagy v nových pásech drží stejný tvar. */
+.launcher-page .lp-mc-hero .lp-eyebrow {
+  border-radius: 6px;
+}
+
+/* ---------- 21c · Funkce: řádky jako bloky ---------- */
+
+.launcher-page .lp-row {
+  padding: clamp(20px, 2.6vw, 30px);
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.launcher-page .lp-row + .lp-row {
+  margin-top: clamp(20px, 2.4vw, 30px);
+}
+
+.launcher-page .lp-row__icon {
+  border-radius: 8px;
+  border: 1px solid rgba(252, 192, 0, 0.3);
+  background: linear-gradient(135deg, rgba(252, 192, 0, 0.18), rgba(252, 0, 96, 0.1));
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.42);
+}
+
+.launcher-page .lp-row h3 {
+  font-family: var(--lp-font-chunky);
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.launcher-page .lp-bullets li::before {
+  background: var(--lp-gold);
+  box-shadow: 0 0 0 3px rgba(252, 192, 0, 0.16);
+}
+
+/* Náhledy rozhraní (CSS mocky) dostanou blokový rám. */
+.launcher-page .lp-ui {
+  border: 1px solid var(--lp-line-strong);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: var(--lp-block-shadow);
+}
+
+.launcher-page .lp-ui__card {
+  border-radius: 8px;
+  background: #0c070d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- 21d · Prohlídka (taby) ---------- */
+
+.launcher-page .lp-tabs {
+  border-radius: 8px;
+  border: 1px solid var(--lp-line-strong);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.launcher-page .lp-tabs__pill {
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--lp-gold), var(--lp-orange));
+}
+
+.launcher-page .lp-tab {
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.launcher-page .lp-panels {
+  margin-top: clamp(20px, 2.4vw, 28px);
+}
+
+.launcher-page .lp-panel {
+  padding: clamp(18px, 2.4vw, 26px);
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.launcher-page .lp-panel__copy h3 {
+  font-family: var(--lp-font-chunky);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.launcher-page .lp-panel .lp-ui {
+  box-shadow: none;
+}
+
+.launcher-page .lp-check li svg {
+  fill: var(--lp-gold);
+  stroke: none;
+}
+
+/* ---------- 21e · Nastavení: šest karet ---------- */
+
+.launcher-page .lp-cards {
+  gap: clamp(14px, 1.8vw, 22px);
+}
+
+.launcher-page .lp-card {
+  border: 1px solid var(--lp-line-strong);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.32);
+  transition: transform 0.2s var(--lp-ease), border-color 0.2s, background 0.2s;
+}
+
+.launcher-page .lp-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--lp-line-gold);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.launcher-page .lp-card__icon {
+  border-radius: 8px;
+  border: 1px solid rgba(252, 192, 0, 0.3);
+  background: linear-gradient(135deg, rgba(252, 192, 0, 0.18), rgba(252, 0, 96, 0.1));
+  color: var(--lp-gold-soft);
+}
+
+.launcher-page .lp-card h3 {
+  font-family: var(--lp-font-chunky);
+  font-size: 1.28rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.launcher-page .lp-card__meta {
+  border-top: 1px solid var(--lp-line);
+  color: var(--lp-muted-2);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- 21f · Stažení: blokové karty platforem ---------- */
+
+.launcher-page .lp-dl {
+  gap: clamp(24px, 3vw, 40px);
+}
+
+.launcher-page .lp-version,
+.launcher-page .lp-planned {
+  border: 1px solid var(--lp-line-strong);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.launcher-page .lp-platform {
+  border: 1px solid var(--lp-line-strong);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.launcher-page .lp-platform--primary {
+  border-color: var(--lp-line-gold);
+  background: linear-gradient(160deg, rgba(252, 192, 0, 0.12), rgba(252, 0, 96, 0.06));
+  box-shadow: var(--lp-block-shadow-gold);
+}
+
+.launcher-page .lp-platform--planned {
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.launcher-page .lp-platform h3 {
+  font-family: var(--lp-font-chunky);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.launcher-page .lp-platform__icon,
+.launcher-page .lp-badge {
+  border-radius: 6px;
+}
+
+.launcher-page .lp-badge {
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.launcher-page .lp-platform__hash,
+.launcher-page .lp-platform__file {
+  border: 1px solid var(--lp-line);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+:root[data-theme="light"] .launcher-page .lp-platform__hash,
+:root[data-theme="light"] .launcher-page .lp-platform__file {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+/* ---------- 21g · FAQ ---------- */
+
+.launcher-page .lp-faq__item {
+  border: 1px solid var(--lp-line-strong);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.26);
+  overflow: hidden;
+}
+
+.launcher-page .lp-faq__item[open] {
+  border-color: rgba(252, 192, 0, 0.42);
+  background: rgba(252, 192, 0, 0.05);
+}
+
+.launcher-page .lp-faq__trigger {
+  font-family: var(--lp-font-chunky);
+  font-size: 1.06rem;
+  font-weight: 700;
+}
+
+.launcher-page .lp-faq__panel {
+  border-top: 1px solid var(--lp-line);
+}
+
+.launcher-page .lp-faq__chevron {
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- 21h · Závěrečné CTA ---------- */
+
+.launcher-page .lp-cta {
+  border: 1px solid var(--lp-line-gold);
+  border-radius: var(--lp-block-radius);
+  background:
+    radial-gradient(90% 120% at 8% 10%, rgba(252, 192, 0, 0.16), transparent 62%),
+    radial-gradient(80% 110% at 92% 90%, rgba(252, 0, 96, 0.16), transparent 60%),
+    rgba(255, 255, 255, 0.03);
+  box-shadow: var(--lp-block-shadow-gold);
+}
+
+.launcher-page .lp-cta h2 {
+  font-family: var(--lp-font-chunky);
+  font-weight: 800;
+  letter-spacing: -0.012em;
+}
+
+.launcher-page .lp-splash {
+  border: 1px solid var(--lp-line-strong);
+  border-radius: var(--lp-block-radius);
+  background: #0c070d;
+}
+
+.launcher-page .lp-cta > .lp-cta__ring {
+  display: none;
+}
+
+/* ---------- 21i · Rychlá fakta + navigace sekcí ---------- */
+
+.launcher-page .lp-facts {
+  background: rgba(255, 255, 255, 0.02);
+  border-block: 1px solid var(--lp-line);
+}
+
+.launcher-page .lp-facts__list {
+  gap: clamp(10px, 1.4vw, 16px);
+}
+
+.launcher-page .lp-facts__list li {
+  border: 1px solid var(--lp-line);
+  border-radius: var(--lp-block-radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.launcher-page .lp-nav {
+  border-bottom: 1px solid var(--lp-line);
+  background: rgba(10, 5, 9, 0.86);
+  backdrop-filter: blur(12px);
+}
+
+.launcher-page .lp-nav__link {
+  border-radius: 6px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.launcher-page .lp-nav__link[aria-current="true"],
+.launcher-page .lp-nav__link.is-active {
+  background: rgba(252, 192, 0, 0.14);
+  color: var(--lp-gold-soft);
+}
+
+.launcher-page .lp-fx-toggle {
+  border-radius: 6px;
+}
+
+/* ---------- 21j · Tlačítka: blokový spodní stín ---------- */
+
+.launcher-page .lp-btn {
+  border-radius: 8px;
+  font-weight: 750;
+}
+
+.launcher-page .lp-btn--primary {
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.42);
+}
+
+.launcher-page .lp-btn--primary:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.42);
+}
+
+.launcher-page .lp-btn--ghost {
+  border: 1px solid var(--lp-line-strong);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.launcher-page .lp-btn--ghost:hover {
+  border-color: var(--lp-line-gold);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- 21k · Světlý režim pro nové plochy ---------- */
+
+:root[data-theme="light"] .launcher-page > .lp-section:nth-of-type(even) {
+  background: rgba(120, 60, 90, 0.035);
+}
+
+:root[data-theme="light"] .launcher-page > .lp-section--alt {
+  background: linear-gradient(180deg, rgba(252, 192, 0, 0.14), rgba(252, 0, 96, 0.08));
+}
+
+:root[data-theme="light"] .launcher-page .lp-row,
+:root[data-theme="light"] .launcher-page .lp-card,
+:root[data-theme="light"] .launcher-page .lp-panel,
+:root[data-theme="light"] .launcher-page .lp-ui,
+:root[data-theme="light"] .launcher-page .lp-version,
+:root[data-theme="light"] .launcher-page .lp-planned,
+:root[data-theme="light"] .launcher-page .lp-platform,
+:root[data-theme="light"] .launcher-page .lp-faq__item,
+:root[data-theme="light"] .launcher-page .lp-facts__list li {
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 4px 4px 0 rgba(60, 20, 40, 0.12);
+}
+
+:root[data-theme="light"] .launcher-page .lp-platform--primary {
+  background: linear-gradient(160deg, rgba(252, 192, 0, 0.24), rgba(252, 0, 96, 0.1));
+  box-shadow: var(--lp-block-shadow-gold);
+}
+
+/* Náhled rozhraní zůstává tmavý i ve světlém motivu — je to okno
+   launcheru a jeho vnitřní popisky jsou stavěné na tmavé pozadí.
+   (Dřívější přebití na bílo rozbilo čitelnost mocku.) */
+:root[data-theme="light"] .launcher-page .lp-ui__card {
+  background: #0c070d;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+:root[data-theme="light"] .launcher-page .lp-faq__item[open] {
+  background: rgba(252, 192, 0, 0.1);
+}
+
+:root[data-theme="light"] .launcher-page .lp-facts {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+:root[data-theme="light"] .launcher-page .lp-nav {
+  background: rgba(255, 250, 246, 0.9);
+}
+
+:root[data-theme="light"] .launcher-page .lp-cta {
+  background:
+    radial-gradient(90% 120% at 8% 10%, rgba(252, 192, 0, 0.3), transparent 62%),
+    radial-gradient(80% 110% at 92% 90%, rgba(252, 0, 96, 0.18), transparent 60%),
+    rgba(255, 255, 255, 0.7);
+}
+
+/* ---------- 21l · Responzivita ---------- */
+
+@media (max-width: 760px) {
+  .launcher-page .lp-row,
+  .launcher-page .lp-panel {
+    padding: 16px;
+  }
+
+  .launcher-page .lp-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .launcher-page .lp-faq__trigger {
+    font-size: 0.98rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .launcher-page .lp-card:hover {
+    transform: none;
+  }
+}
+
+/* ---------- 21m · Doladění po vizuální kontrole ---------- */
+
+/* Nadpisy v blocích mají mít vyvážené řádky, ne „drží" na konci. */
+.launcher-page .lp-row h3,
+.launcher-page .lp-card h3,
+.launcher-page .lp-panel__copy h3,
+.launcher-page .lp-faq__q {
+  text-wrap: balance;
+}
+
+/* První pás za hero nemá kreslit linku nahoru — hero už ji má. */
+.launcher-page > .lp-facts + .lp-section,
+.launcher-page > .lp-marquee + .lp-section {
+  border-top: 0;
+}
+
+/* Hash a název souboru: mono, ale čitelné i na tmavém pásu. */
+.launcher-page .lp-platform__hash,
+.launcher-page .lp-platform__file {
+  color: var(--lp-muted);
+}
+
+.launcher-page .lp-platform__hash b {
+  color: var(--lp-gold-soft);
+  letter-spacing: 0.08em;
+}
+
+/* Tlačítko „Znovu zkontrolovat" nemá vypadat jako primární akce. */
+.launcher-page .lp-refresh {
+  border-radius: 6px;
+  border: 1px solid var(--lp-line-strong);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.launcher-page .lp-refresh:hover {
+  border-color: var(--lp-line-gold);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Sticky navigace sekcí: drží barvu pásu, na kterém právě je. */
+.launcher-page .lp-nav__inner {
+  gap: clamp(10px, 1.6vw, 20px);
+}
+
+@media (max-width: 760px) {
+  /* Na mobilu nemá smysl držet sticky lištu sekcí přes celou šířku. */
+  .launcher-page .lp-nav {
+    position: static;
+    backdrop-filter: none;
+  }
+
+  .launcher-page .lp-faq__trigger {
+    padding-block: 14px;
+  }
+}
+
+/* ---------- 22 · Výkonnostní pojistky ----------
+
+   Dvě věci, které se na dlouhé stránce opravdu počítají:
+
+   1) Blur na vrstvě hero měl plochu přes milion pixelů. Gradient je
+      měkký sám o sobě, takže filtr jen spaloval snímky — pryč (viz 20b).
+   2) will-change: transform na pěti vrstvách drželo trvale promovaných
+      pět celoobrazovkových vrstev. Vrstvy se hýbou jen dokud je hero
+      na obrazovce, takže si je JS promotuje jen na tu dobu
+      (initMcParallax v launcher.js). Staticky tedy zůstává will-change: auto.
+*/
+
+.lp-mc-layer {
+  will-change: auto;
+}
+
+.lp-mc-hero__scene.is-moving .lp-mc-layer {
+  will-change: transform;
+}
+
+/* ---------- 22b · Drobnosti v pásu rychlých faktů ----------
+
+   Zúžený `strong` (chunky písmo) seděl na textu bez odsazení, takže
+   „Instance vedle sebe" a popisek pod ním splývaly. */
+
+.launcher-page .lp-fact__copy strong {
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.launcher-page .lp-fact__copy {
+  display: block;
+  min-width: 0;
+}
+
+/* Číslo faktu má mít pevnou šířku, aby se popisky zarovnaly. */
+.launcher-page .lp-fact__num {
+  flex: 0 0 auto;
+  min-width: 1.5ch;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 23 · Rytmus nadpisů v blocích ----------
+
+   Chunky písmo má velké vnitřní řádkování znaků, takže nadpisy
+   v blokových kartách potřebují o pár pixelů víc vzduchu než dřív
+   (Inter). Bez toho text přilepený pod nadpis vypadal jako jeden
+   slitý odstavec. */
+
+.launcher-page .lp-row h3,
+.launcher-page .lp-card h3,
+.launcher-page .lp-panel__copy h3 {
+  margin-bottom: 0.72em;
+  line-height: 1.12;
+}
+
+.launcher-page .lp-row__text,
+.launcher-page .lp-card p,
+.launcher-page .lp-panel__copy p {
+  margin-top: 0;
+}
+
+.launcher-page .lp-bullets {
+  margin-top: clamp(18px, 2vw, 24px);
+}
+
+/* První řádek textu hned pod nadpisem nemá dělat „těsný" blok. */
+.launcher-page .lp-row__text + .lp-bullets,
+.launcher-page .lp-row h3 + .lp-row__text {
+  margin-top: 0.7em;
 }
