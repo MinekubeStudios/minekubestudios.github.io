@@ -11,17 +11,17 @@
      2) obsah repozitáře    → instalátory nahrané přímo ve větvi main
      3) statická záloha     → poslední známá adresa (když API mlčí)
 
-   Platformy: Windows je „live“, macOS a Linux jsou „planned“ — web je
-   ukáže jako „v plánu“, i kdyby se soubor v repozitáři objevil. Až
-   vydáme .dmg / .AppImage, stačí v CONFIG.platformStatus přepsat
-   "planned" na "live" a celý web se přepne sám.
+   Platformy: Windows je „live“, Linux je „planned“ — web ho ukáže
+   jako „v plánu“, i kdyby se soubor v repozitáři objevil. Až vydáme
+   .AppImage, stačí v CONFIG.platformStatus přepsat "planned" na "live"
+   a celý web se přepne sám.
 
    Veřejné API (window.MinekubeLauncherReleases):
      .ready               → Promise vyřešená po prvním načtení
      .status()            → { state, source, version, degraded, fetchedAt, error }
      .asset(os)           → { name, url, size, digest, version } | null
      .platform(os)        → { id, status, available, asset }
-     .platforms()         → [ windows, macos, linux ]
+     .platforms()         → [ windows, linux ]
      .isAvailable(os)     → boolean
      .download(os)        → spustí stahování, vrací { ok, reason, asset }
      .refresh(force)      → nové načtení (force = ignorovat cache)
@@ -49,7 +49,6 @@ window.MinekubeLauncherReleases = (function () {
     /* Která platforma už vychází jako dostupná. */
     platformStatus: {
       windows: "live",
-      macos: "planned",
       linux: "planned"
     },
     /* Poslední záchrana, kdyby GitHub API odmítlo odpovědět
@@ -65,7 +64,7 @@ window.MinekubeLauncherReleases = (function () {
   };
 
   const SLUG = `${CONFIG.owner}/${CONFIG.repo}`;
-  const PLATFORM_ORDER = ["windows", "macos", "linux"];
+  const PLATFORM_ORDER = ["windows", "linux"];
 
   const URLS = {
     repo: `https://github.com/${SLUG}`,
@@ -84,7 +83,6 @@ window.MinekubeLauncherReleases = (function () {
 
   const PREFERENCE = {
     windows: [/-setup\.exe$/i, /\.exe$/i, /\.msi$/i, /\.zip$/i],
-    macos: [/\.dmg$/i, /\.pkg$/i, /\.app\.tar\.gz$/i, /\.zip$/i],
     linux: [/\.appimage$/i, /\.deb$/i, /\.rpm$/i, /\.zip$/i, /\.tar\.(gz|xz|zst)$/i, /\.tgz$/i]
   };
 
@@ -94,13 +92,10 @@ window.MinekubeLauncherReleases = (function () {
 
     /* Přípona mluví jasně. */
     if (/\.(exe|msi)$/.test(n)) return "windows";
-    if (/\.(dmg|pkg)$/.test(n)) return "macos";
     if (/\.(appimage|deb|rpm|snap|flatpakref)$/.test(n)) return "linux";
-    if (/\.app\.tar\.gz$/.test(n)) return "macos";
 
     /* A když ne přípona, tak název platformy. */
     if (/(^|[^a-z])(windows|win64|win32|win|msvc)([^a-z]|$)/.test(n)) return "windows";
-    if (/(macos|darwin|osx|apple|macbook)/.test(n)) return "macos";
     if (/(linux|ubuntu|debian|fedora|archlinux|manjaro|wayland)/.test(n)) return "linux";
 
     return null;
@@ -135,7 +130,7 @@ window.MinekubeLauncherReleases = (function () {
 
   /* Z hromady souborů vybere pro každou platformu ten nejlepší. */
   function pickBest(items) {
-    const best = { windows: null, macos: null, linux: null };
+    const best = { windows: null, linux: null };
 
     items.forEach(item => {
       const os = classify(item.name);
@@ -163,7 +158,7 @@ window.MinekubeLauncherReleases = (function () {
   /* Cache i API odpověď proženeeme jedním normalizátorem, ať UI nikdy
      nedostane prázdné jméno, neplatnou adresu nebo nečíselnou velikost. */
   function normalizeAssets(assets) {
-    const normalized = { windows: null, macos: null, linux: null };
+    const normalized = { windows: null, linux: null };
     PLATFORM_ORDER.forEach(os => {
       const item = assets && assets[os];
       if (!item || typeof item.url !== "string" || !/^https?:\/\//i.test(item.url)) return;
@@ -281,7 +276,7 @@ window.MinekubeLauncherReleases = (function () {
       const assets = pickBest(items);
       if (!hasAny(assets)) continue;
 
-      const headline = assets.windows || assets.macos || assets.linux;
+      const headline = assets.windows || assets.linux;
       return {
         assets,
         version: tag || headline.version,
@@ -311,13 +306,13 @@ window.MinekubeLauncherReleases = (function () {
     const assets = pickBest(items);
     if (!hasAny(assets)) return null;
 
-    const headline = assets.windows || assets.macos || assets.linux;
+    const headline = assets.windows || assets.linux;
     return { assets, version: headline.version, releaseUrl: URLS.repo, source: "repo" };
   }
 
   /* 3) Statická záchrana — poslední známá adresa přímo z repozitáře. */
   function loadFromFallback() {
-    const assets = { windows: null, macos: null, linux: null };
+    const assets = { windows: null, linux: null };
 
     Object.keys(CONFIG.fallback).forEach(os => {
       if (!PLATFORM_ORDER.includes(os)) return;
@@ -328,7 +323,7 @@ window.MinekubeLauncherReleases = (function () {
 
     if (!hasAny(assets)) return null;
 
-    const headline = assets.windows || assets.macos || assets.linux;
+    const headline = assets.windows || assets.linux;
     return { assets, version: headline.version, releaseUrl: URLS.repo, source: "fallback" };
   }
 
@@ -342,7 +337,7 @@ window.MinekubeLauncherReleases = (function () {
     degraded: false,
     fetchedAt: null,
     error: null,
-    assets: { windows: null, macos: null, linux: null }
+    assets: { windows: null, linux: null }
   };
 
   let resolveReady;
@@ -376,7 +371,7 @@ window.MinekubeLauncherReleases = (function () {
     state.degraded = true;
     state.fetchedAt = Date.now();
     state.error = error instanceof Error ? error.message : String(error || "neznámá chyba");
-    state.assets = { windows: null, macos: null, linux: null };
+    state.assets = { windows: null, linux: null };
     announce();
     resolveReady(state);
     return true;

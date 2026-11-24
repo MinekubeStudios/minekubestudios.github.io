@@ -9,7 +9,7 @@
      1. stáhne nejnovější Windows instalátor přímo z GitHubu,
      2. pravdivě popíše stav — „stahování zahájeno“, nikdy „hotovo“,
         protože dokončení hlásí prohlížeč, ne web,
-     3. ukáže macOS a Linux jako „v plánu“ a nic nestahuje,
+     3. ukáže Linux jako „v plánu“ a nic nestahuje,
      4. ošetří načítání, nedostupné API i záložní adresu souboru,
      5. přepíná prohlídku rozhraní (taby, klávesnice),
      6. odhaluje sekce při scrollu (s respektem k redukci pohybu),
@@ -58,8 +58,8 @@
       url: `${RELEASES_URL}/download/v1.2.1/Minekube.Launcher_1.2.1_x64-setup.exe`,
       digest: null
     };
-    const files = { windows, macos: null, linux: null };
-    const statuses = { windows: "live", macos: "planned", linux: "planned" };
+    const files = { windows, linux: null };
+    const statuses = { windows: "live", linux: "planned" };
 
     return {
       ready: Promise.resolve(),
@@ -92,7 +92,6 @@
 
   const PLATFORMS = {
     windows: { key: "lp.os.windows", sub: "lp.os.sub.windows", label: "Windows" },
-    macos: { key: "lp.os.macos", sub: "lp.os.sub.macos", label: "macOS" },
     linux: { key: "lp.os.linux", sub: "lp.os.sub.linux", label: "Linux" }
   };
 
@@ -215,11 +214,11 @@
 
   function detectOS() {
     const ua = navigator.userAgent || "";
-    /* iPadOS se hlásí jako macOS — dotykové zařízení s Mac UA bereme jako tablet. */
-    const touchMac = /Mac/i.test(ua) && navigator.maxTouchPoints > 1;
+    /* Launcher vychází pro Windows a Linux. Návštěvníka z jiné platformy
+       (macOS, iOS) bereme jako Windows — tlačítko musí zůstat použitelné,
+       i když si jeho systém instalátor nespustí. */
     if (/Android/i.test(ua)) return "linux";
-    if ((/Mac|iPhone|iPad/i.test(ua) || touchMac) && !/Linux/i.test(ua)) return "macos";
-    if (/Linux|X11|FreeBSD/i.test(ua)) return "linux";
+    if (/Linux|X11|FreeBSD/i.test(ua) && !/Android/i.test(ua)) return "linux";
     return "windows";
   }
 
@@ -486,10 +485,48 @@
     });
   }
 
-  /* Krátká „energetická“ odezva tlačítka — stejná animace jako na Modpackách. */
-  function playDownloadAnimation(button) {
-    button.classList.add("download-animating");
-    window.setTimeout(() => button.classList.remove("download-animating"), 1500);
+  /* ---------- Pulz stahovacího tlačítka ----------
+
+     Jeden plynulý pulz po kliknutí: vlna vyjde z místa, kde uživatel
+     opravdu klikl, tlačítko jednou „dýchne" a dozní. Nahrazuje původní
+     detonaci z styles.css, která byla delší než samotné stažení.
+
+     Třída is-pulsing se sype po 940 ms (délka animace). Opakované
+     kliknutí pulz restartuje — bez vynucení reflow by se animace
+     nepřehrála znovu. */
+
+  const PULSE_MS = 900;
+  const pulseTimers = new WeakMap();
+
+  function pulseDownloadButton(button, event) {
+    if (!button || prefersReduced() || !fxOn()) return;
+
+    if (event && typeof event.clientX === "number" && event.clientX + event.clientY > 0) {
+      const rect = button.getBoundingClientRect();
+      const x = Math.min(Math.max(event.clientX - rect.left, 0), rect.width);
+      const y = Math.min(Math.max(event.clientY - rect.top, 0), rect.height);
+      button.style.setProperty("--lp-pulse-x", `${x.toFixed(1)}px`);
+      button.style.setProperty("--lp-pulse-y", `${y.toFixed(1)}px`);
+    } else {
+      /* Klávesnice nemá souřadnice — pulz vyjde ze středu. */
+      button.style.removeProperty("--lp-pulse-x");
+      button.style.removeProperty("--lp-pulse-y");
+    }
+
+    button.classList.remove("is-pulsing");
+    /* Vynutí restart animace, aniž by cokoli měřilo layout. */
+    void button.offsetWidth;
+    button.classList.add("is-pulsing");
+
+    window.clearTimeout(pulseTimers.get(button));
+    pulseTimers.set(
+      button,
+      window.setTimeout(() => {
+        button.classList.remove("is-pulsing");
+        button.style.removeProperty("--lp-pulse-x");
+        button.style.removeProperty("--lp-pulse-y");
+      }, PULSE_MS + 40)
+    );
   }
 
   function onDownloadClick(button) {
@@ -506,7 +543,7 @@
 
     const asset = source.asset(os);
     if (status.state === "ready" && asset) {
-      playDownloadAnimation(button);
+      /* Pulz řeší posluchač kliknutí; stará detonace by se s ním bila. */
       runDownload(button, os, asset);
       return;
     }
@@ -515,7 +552,10 @@
   }
 
   downloadButtons.forEach(button => {
-    button.addEventListener("click", () => onDownloadClick(button));
+    button.addEventListener("click", event => {
+      pulseDownloadButton(button, event);
+      onDownloadClick(button);
+    });
   });
 
   retryButton?.addEventListener("click", () => {
@@ -580,8 +620,8 @@
 
   document.addEventListener("minekube:launcher-releases", onReleases);
 
-  /* Návštěvník z macOS/Linuxu: hlavní tlačítko musí zůstat použitelné,
-     takže mu jednou slušně řekneme, jak to je. */
+  /* Návštěvník z Linuxu: hlavní tlačítko musí zůstat použitelné, takže
+     mu jednou slušně řekneme, že sestavení je zatím v plánu. */
   function announceVisitorOS() {
     if (announcedVisitorOS) return;
     announcedVisitorOS = true;

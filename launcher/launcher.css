@@ -111,7 +111,7 @@
   filter: blur(30px) saturate(0.9);
 }
 
-:root[data-theme="light"] .launcher-page :is(.lp-card::after, .lp-platform::after) {
+:root[data-theme="light"] .launcher-page .lp-platform::after {
   opacity: 0.7;
 }
 
@@ -120,7 +120,7 @@
   color: #8a5a00;
 }
 
-:root[data-theme="light"] .launcher-page :is(.lp-facts__icon, .lp-row__icon, .lp-card__icon, .lp-tag__spark) {
+:root[data-theme="light"] .launcher-page :is(.lp-facts__icon, .lp-row__icon, .lp-tag__spark) {
   color: #8a5a00;
   border-color: rgba(138, 90, 0, 0.34);
 }
@@ -1435,105 +1435,7 @@
   text-underline-offset: 4px;
 }
 
-/* ---------- 10 · Karty se světelným bodem ---------- */
-
-.lp-cards {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(14px, 1.6vw, 20px);
-  margin-top: clamp(48px, 6vw, 84px);
-}
-
-.lp-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(20px, 2.4vw, 28px);
-  border: 1px solid var(--lp-line);
-  border-radius: var(--lp-radius);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--lp-surface) 94%, transparent), var(--lp-surface));
-  box-shadow: var(--lp-shadow-card);
-  overflow: hidden;
-  transition: border-color 0.24s ease, transform 0.36s var(--lp-spring), box-shadow 0.3s ease;
-}
-
-.lp-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    280px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(252, 192, 0, 0.16),
-    transparent 62%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.lp-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--lp-line-gold);
-}
-
-.lp-card:hover::before {
-  opacity: 1;
-}
-
-.lp-card > * {
-  position: relative;
-  z-index: 1;
-}
-
-.lp-card__icon {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 13px;
-  border: 1px solid var(--lp-line-gold);
-  background: color-mix(in srgb, var(--lp-gold) 12%, transparent);
-  color: var(--lp-gold-soft);
-  transition: transform 0.42s var(--lp-spring);
-}
-
-.lp-card:hover .lp-card__icon {
-  transform: rotate(-8deg) scale(1.08);
-}
-
-.lp-card__icon svg {
-  width: 21px;
-  height: 21px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.launcher-page .lp-card h3 {
-  margin-top: 18px;
-  font-family: var(--lp-font-display);
-  font-size: 1.12rem;
-  font-weight: 650;
-  line-height: 1.28;
-  letter-spacing: -0.02em;
-}
-
-.lp-card p {
-  margin-top: 10px;
-  color: var(--lp-muted);
-  font-size: 0.9rem;
-  line-height: 1.65;
-}
-
-.lp-card .lp-inline-link {
-  margin-top: auto;
-  padding-top: 18px;
-}
-
 /* Jemný gradientní proužek nahoře v kartě — sjednotí „sklo“ karet. */
-.lp-card::after,
 .lp-platform::after {
   content: "";
   position: absolute;
@@ -1550,8 +1452,7 @@
   pointer-events: none;
 }
 
-.lp-card:hover::after,
-.lp-platform:hover::after {
+.lp-platform:hover::after{
   opacity: 1;
 }
 
@@ -2689,10 +2590,6 @@
     order: 0;
   }
 
-  .lp-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .lp-panel {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2834,10 +2731,6 @@
 
   .lp-version__state {
     margin-left: 0;
-  }
-
-  .lp-cards {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .lp-tabs {
@@ -3854,44 +3747,6 @@
   padding-top: 4px;
   color: rgba(255, 255, 255, 0.36);
   font-size: 0.52rem;
-}
-
-/* ---------- 19c · Sekce Nastavení ---------- */
-
-.lp-section--alt {
-  background:
-    linear-gradient(180deg, transparent, color-mix(in srgb, var(--lp-surface) 55%, transparent) 18%, transparent);
-}
-
-.lp-card__icon {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  margin-bottom: 14px;
-  border: 1px solid var(--lp-line-gold);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--lp-gold) 12%, transparent);
-  color: var(--lp-gold-soft);
-}
-
-.lp-card__icon svg {
-  width: 19px;
-  height: 19px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.lp-card__meta {
-  display: block;
-  margin-top: auto;
-  padding-top: 14px;
-  color: var(--lp-muted-2);
-  font-size: 0.7rem;
-  letter-spacing: 0.02em;
 }
 
 /* ---------- 19d · Kontrolní seznam v panelech ---------- */
