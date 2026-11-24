@@ -1238,7 +1238,10 @@ html.mk-party .mk-plus-rain {
 
 :root[data-theme="light"] {
   --muted: #5f4657;
-  --muted-2: #8a6f81;
+  /* Bylo #8a6f81 — na podkladu patičky (#f8ead7) dávalo 3,8:1, což
+     neprošlo AA pro drobný text (copyright, trademark, #currentYear).
+     #7d5c6d drží 4,9:1 a odstín zůstává stejný. */
+  --muted-2: #7d5c6d;
 }
 
 :root[data-theme="light"] .mk-plus-mist {
