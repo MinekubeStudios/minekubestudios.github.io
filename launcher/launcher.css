@@ -26,17 +26,14 @@
      13 · Závěrečné CTA
      14 · Odhalování při scrollu
      15 · Světelné efekty (plátna, progress)
-     16 · Galerie / lightbox
      17 · Responzivita
      18 · Redukce pohybu, nucené barvy, tisk
    ============================================================= */
 
 /* ---------- 01 · Tokeny ---------- */
 
-/* Tokeny platí pro stránku i pro lightbox (ten leží mimo <main>,
-   aby ho nešlo omylem zamknout přes inert). */
-.launcher-page,
-.lp-lb {
+/* Tokeny platí pro celou stránku launcheru. */
+.launcher-page {
   --lp-bg: #0a0509;
   --lp-bg-soft: #120910;
   --lp-surface: #160f15;
@@ -88,7 +85,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-:root[data-theme="light"] :is(.launcher-page, .lp-lb) {
+:root[data-theme="light"] .launcher-page {
   --lp-bg: #fffaf2;
   --lp-bg-soft: #fdf1e0;
   --lp-surface: #fffefb;
@@ -108,9 +105,6 @@
 }
 
 /* Světlý motiv: dekorační gradienty musí být jemnější, jinak špiní bílou. */
-:root[data-theme="light"] .launcher-page .lp-hero__copy::before {
-  background: radial-gradient(50% 50% at 50% 40%, rgba(214, 138, 0, 0.14), transparent 70%);
-}
 
 :root[data-theme="light"] .launcher-page .lp-hero__aurora {
   opacity: 0.4;
@@ -121,12 +115,8 @@
   opacity: 0.7;
 }
 
-:root[data-theme="light"] .launcher-page .lp-shot--hero .lp-shot__frame::before {
-  opacity: 0.28;
-}
-
 /* Světlý motiv potřebuje tmavší akcenty, aby texty prošly AA kontrastem. */
-:root[data-theme="light"] :is(.launcher-page, .lp-lb) :is(.lp-tag, .lp-eyebrow, .lp-inline-link, .lp-dl__alias a, .lp-lb__kicker, .lp-fx-toggle[aria-pressed="true"] svg) {
+:root[data-theme="light"] .launcher-page :is(.lp-tag, .lp-eyebrow, .lp-inline-link, .lp-dl__alias a, .lp-fx-toggle[aria-pressed="true"] svg) {
   color: #8a5a00;
 }
 
@@ -142,14 +132,6 @@
 
 :root[data-theme="light"] .launcher-page .lp-dl__notes li::before {
   background: #8a5a00;
-}
-
-:root[data-theme="light"] .launcher-page .lp-panel__facts svg {
-  stroke: #8a5a00;
-}
-
-:root[data-theme="light"] .lp-lb .lp-lb__kicker i {
-  background: #b8003c;
 }
 
 /* Ikony jsou uložené ve skrytém sprite <svg> na začátku stránky.
@@ -169,16 +151,11 @@
 .launcher-page,
 .launcher-page *,
 .launcher-page *::before,
-.launcher-page *::after,
-.lp-lb,
-.lp-lb *,
-.lp-lb *::before,
-.lp-lb *::after {
+.launcher-page *::after {
   box-sizing: border-box;
 }
 
-.launcher-page img,
-.lp-lb img {
+.launcher-page img {
   display: block;
   max-width: 100%;
   height: auto;
@@ -626,43 +603,8 @@
   /* Na mobilu je plátno nad textem zbytečná zátěž — schová se v breakpointu. */
 }
 
-.lp-hero__grid {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  /* Dvousloupcový hero: text vlevo, okno launcheru vpravo. Na užších
-     displejích se pod sebe poskládá (viz sekce 17). */
-  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
-  align-items: center;
-  gap: clamp(32px, 4.4vw, 64px);
-  text-align: left;
-}
-
-.lp-hero__copy {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  max-width: 620px;
-  width: 100%;
-  padding-block: clamp(8px, 1.4vw, 20px);
-}
-
 /* Světelný podklad pod titulkem — jen barvy, žádný blur navíc. */
-.lp-hero__copy::before {
-  content: "";
-  position: absolute;
-  top: -8%;
-  left: -8%;
-  width: min(720px, 92vw);
-  height: 420px;
-  background: radial-gradient(50% 50% at 40% 40%, rgba(252, 192, 0, 0.13), transparent 72%);
-  pointer-events: none;
-  z-index: -1;
-}
-
-.lp-hero__copy,
-.lp-hero__visual {
+.lp-hero__visual{
   min-width: 0;
 }
 
@@ -863,184 +805,9 @@
   perspective: 1200px;
 }
 
-.lp-shot {
-  position: relative;
-  margin: 0;
-}
-
-.lp-shot--hero {
-  transform-style: preserve-3d;
-}
-
-.lp-shot__frame {
-  position: relative;
-  display: block;
-  border-radius: var(--lp-radius);
-  border: 1px solid var(--lp-line-strong);
-  background: var(--lp-surface);
-  padding: 6px;
-  box-shadow: var(--lp-shadow-window);
-  overflow: hidden;
-  transform:
-    rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translate3d(0, 0, 0);
-  transform-style: preserve-3d;
-  transition: transform 0.6s var(--lp-ease), box-shadow 0.4s ease;
-  will-change: transform;
-}
-
-.lp-shot--hero .lp-shot__frame::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), transparent 32%);
-  pointer-events: none;
-}
-
 /* Dekorační „druhá“ hrana, která oknu dá hloubku. */
-.lp-shot--hero .lp-shot__frame::before {
-  content: "";
-  position: absolute;
-  inset: -2px -2px auto;
-  height: 42%;
-  border-radius: inherit;
-  background: linear-gradient(
-    100deg,
-    rgba(255, 216, 99, 0.42),
-    rgba(252, 0, 96, 0.3) 46%,
-    transparent 78%
-  );
-  opacity: 0.5;
-  filter: blur(12px);
-  pointer-events: none;
-  z-index: -1;
-}
-
-.lp-shot__frame img {
-  width: 100%;
-  border-radius: calc(var(--lp-radius) - 6px);
-  transition: transform 0.6s var(--lp-ease);
-}
-
-.lp-shot__glare {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(
-    42% 60% at var(--gx, 50%) var(--gy, 0%),
-    rgba(255, 255, 255, 0.22),
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  pointer-events: none;
-  mix-blend-mode: screen;
-}
 
 /* Tlačítko přes celý obrázek = přístupný spouštěč galerie. */
-.lp-open {
-  position: relative;
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  border-radius: inherit;
-  text-align: left;
-  cursor: zoom-in;
-}
-
-.lp-open:focus-visible {
-  outline-offset: 4px;
-}
-
-.lp-open:hover .lp-shot__frame {
-  box-shadow: 0 50px 100px -34px rgba(0, 0, 0, 0.92), 0 0 0 1px var(--lp-line-gold);
-}
-
-.lp-open:hover .lp-shot__frame img,
-.lp-open:hover .lp-stage__window img {
-  transform: scale(1.012);
-}
-
-.lp-open:hover .lp-shot__glare {
-  opacity: 1;
-}
-
-.lp-shot__zoom {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 13px;
-  border: 1px solid var(--lp-line-strong);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--lp-bg) 74%, transparent);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  color: var(--lp-text);
-  font-family: var(--lp-font-display);
-  font-size: 0.72rem;
-  font-weight: 650;
-  letter-spacing: 0.02em;
-  opacity: 0;
-  transform: translateY(6px) scale(0.94);
-  transition: opacity 0.24s ease, transform 0.32s var(--lp-spring);
-  pointer-events: none;
-}
-
-.lp-shot__zoom svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.9;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.lp-open:hover .lp-shot__zoom,
-.lp-open:focus-visible .lp-shot__zoom {
-  opacity: 1;
-  transform: none;
-}
-
-.lp-shot__zoom--mini {
-  right: 10px;
-  bottom: 10px;
-  padding: 6px;
-  border-radius: 50%;
-}
-
-.lp-shot__zoom--mini svg {
-  width: 14px;
-  height: 14px;
-}
-
-.lp-shot figcaption {
-  margin-top: 12px;
-}
-
-.lp-caption {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--lp-muted-2);
-  font-size: 0.72rem;
-  line-height: 1.5;
-}
-
-.lp-caption::before {
-  content: "";
-  flex: 0 0 auto;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--lp-magenta);
-  opacity: 0.8;
-}
 
 /* Nálepky drží hravost a přitom nekryjí obsah. */
 .lp-sticker {
@@ -1668,118 +1435,6 @@
   text-underline-offset: 4px;
 }
 
-.lp-stage {
-  position: relative;
-  display: grid;
-  place-items: center;
-  min-height: clamp(280px, 34vw, 430px);
-  margin: 0;
-  padding: clamp(22px, 3vw, 42px);
-  border: 1px solid var(--lp-line);
-  border-radius: var(--lp-radius-xl);
-  background:
-    radial-gradient(70% 60% at 50% 12%, rgba(252, 146, 0, 0.18), transparent 70%),
-    radial-gradient(60% 60% at 86% 90%, rgba(252, 0, 96, 0.16), transparent 72%),
-    var(--lp-bg-soft);
-  overflow: hidden;
-  contain: paint;
-}
-
-.lp-stage::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-  background-size: 22px 22px;
-  mask-image: radial-gradient(75% 70% at 50% 50%, #000, transparent 78%);
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-.lp-stage__open {
-  position: relative;
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: zoom-in;
-  border-radius: var(--lp-radius-sm);
-}
-
-.lp-stage__window {
-  position: relative;
-  display: block;
-  width: fit-content;
-  max-width: 100%;
-  margin-inline: auto;
-  border-radius: var(--lp-radius-sm);
-  border: 1px solid var(--lp-line-strong);
-  background: var(--lp-surface);
-  padding: 5px;
-  box-shadow: var(--lp-shadow-window);
-  transform: rotate(-1.2deg);
-  transition: transform 0.5s var(--lp-spring), box-shadow 0.4s ease;
-  animation: lp-float 8s ease-in-out infinite;
-}
-
-.lp-stage__open:hover .lp-stage__window {
-  transform: rotate(0deg) translateY(-6px) scale(1.015);
-  animation-play-state: paused;
-}
-
-.lp-stage__window img {
-  border-radius: calc(var(--lp-radius-sm) - 5px);
-  width: auto;
-  max-width: 100%;
-  max-height: min(58vw, 400px);
-  margin-inline: auto;
-  transition: transform 0.5s var(--lp-ease);
-}
-
-.lp-stage__window--wide img {
-  width: 100%;
-  max-height: none;
-}
-
-.lp-stage__window--wide {
-  width: 100%;
-  transform: none;
-}
-
-.lp-stage__caption {
-  position: absolute;
-  left: 14px;
-  bottom: 12px;
-  right: 14px;
-  z-index: 2;
-  color: var(--lp-muted-2);
-  font-size: 0.68rem;
-  line-height: 1.4;
-}
-
-.lp-stage__chip {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border: 1px solid var(--lp-line-strong);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--lp-bg) 80%, transparent);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  color: var(--lp-muted);
-  font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transform: rotate(-2deg);
-}
-
 /* ---------- 10 · Karty se světelným bodem ---------- */
 
 .lp-cards {
@@ -1872,92 +1527,9 @@
   line-height: 1.65;
 }
 
-.lp-card__media {
-  position: relative;
-  display: block;
-  width: fit-content;
-  max-width: 100%;
-  margin: 20px auto 0;
-  padding: 0;
-  border: 1px solid var(--lp-line);
-  border-radius: var(--lp-radius-xs);
-  background: var(--lp-bg-soft);
-  overflow: hidden;
-  cursor: zoom-in;
-}
-
-.lp-card__media img {
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  max-height: min(58vw, 340px);
-  margin-inline: auto;
-  transition: transform 0.5s var(--lp-ease);
-}
-
-.lp-card__media:hover img {
-  transform: scale(1.03);
-}
-
-.lp-card__media .lp-shot__zoom--mini {
-  opacity: 1;
-  transform: none;
-}
-
 .lp-card .lp-inline-link {
   margin-top: auto;
   padding-top: 18px;
-}
-
-.lp-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 16px;
-}
-
-.lp-chips li {
-  padding: 5px 10px;
-  border: 1px solid var(--lp-line);
-  border-radius: 999px;
-  background: var(--lp-surface-2);
-  color: var(--lp-muted);
-  font-family: var(--lp-font-mono);
-  font-size: 0.7rem;
-  transition: transform 0.3s var(--lp-spring), border-color 0.2s ease;
-}
-
-.lp-chips li:hover {
-  transform: translateY(-2px);
-  border-color: var(--lp-line-gold);
-}
-
-.lp-code {
-  margin-top: 20px;
-  padding: 14px 16px;
-  border-radius: var(--lp-radius-xs);
-  border: 1px solid var(--lp-line);
-  background: #0c070d;
-  color: #e6d9e2;
-  font-family: var(--lp-font-mono);
-  font-size: 0.72rem;
-  line-height: 1.72;
-  overflow-x: auto;
-}
-
-:root[data-theme="light"] .lp-code {
-  background: #20141c;
-  color: #f4e7ee;
-}
-
-.lp-code b {
-  color: var(--lp-gold-soft);
-  font-weight: 600;
-}
-
-.lp-code i {
-  color: #ff8ba7;
-  font-style: normal;
 }
 
 /* Jemný gradientní proužek nahoře v kartě — sjednotí „sklo“ karet. */
@@ -1984,10 +1556,6 @@
 }
 
 /* ---------- 11 · Prohlídka ---------- */
-
-.lp-tour {
-  position: relative;
-}
 
 .lp-tabs {
   position: relative;
@@ -2078,56 +1646,6 @@
   align-items: start;
   gap: clamp(16px, 2.4vw, 28px);
   animation: lp-panel-in 0.45s var(--lp-ease);
-}
-
-.lp-panel__facts {
-  padding: clamp(20px, 2.4vw, 28px);
-  border: 1px solid var(--lp-line);
-  border-radius: var(--lp-radius);
-  background: var(--lp-surface);
-  box-shadow: var(--lp-shadow-card);
-}
-
-.launcher-page .lp-panel__facts h3 {
-  font-family: var(--lp-font-display);
-  font-size: 1.1rem;
-  font-weight: 650;
-  letter-spacing: -0.02em;
-}
-
-.lp-panel__facts ul {
-  display: grid;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.lp-panel__facts li {
-  display: flex;
-  gap: 10px;
-  color: var(--lp-muted);
-  font-size: 0.87rem;
-  line-height: 1.55;
-}
-
-.lp-panel__facts svg {
-  flex: 0 0 auto;
-  width: 16px;
-  height: 16px;
-  margin-top: 2px;
-  fill: none;
-  stroke: var(--lp-gold-soft);
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.lp-panel__note {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--lp-line);
-  color: var(--lp-muted-2);
-  font-size: 0.74rem;
-  line-height: 1.55;
 }
 
 /* ---------- 12 · Stažení ---------- */
@@ -2667,17 +2185,6 @@
   box-shadow: var(--lp-shadow-window);
 }
 
-.lp-cta__media .lp-open {
-  border-radius: calc(var(--lp-radius) - 5px);
-  overflow: hidden;
-}
-
-.lp-cta__frame {
-  display: block;
-  border-radius: calc(var(--lp-radius) - 5px);
-  overflow: hidden;
-}
-
 .lp-cta__media img {
   width: 100%;
   transition: transform 0.6s var(--lp-ease);
@@ -2745,319 +2252,6 @@
 
 .lp-fx.is-active {
   opacity: 1;
-}
-
-/* ---------- 16 · Galerie / lightbox ---------- */
-
-.lp-lb[hidden] {
-  display: none !important;
-}
-
-.lp-lb {
-  position: fixed;
-  inset: 0;
-  z-index: 2100;
-  display: grid;
-  place-items: center;
-  padding: clamp(10px, 3vw, 40px);
-  color: var(--lp-text);
-  font-family: var(--lp-font-body);
-  -webkit-font-smoothing: antialiased;
-}
-
-.lp-lb :focus-visible {
-  outline: 3px solid var(--lp-gold-soft);
-  outline-offset: 3px;
-}
-
-.lp-lb button {
-  font-family: inherit;
-  color: inherit;
-  cursor: pointer;
-}
-
-.lp-lb__backdrop {
-  position: absolute;
-  inset: 0;
-  background: color-mix(in srgb, #05010a 82%, transparent);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  backdrop-filter: blur(16px) saturate(1.2);
-  opacity: 0;
-  transition: opacity 0.34s ease;
-}
-
-.lp-lb__dialog {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: min(1240px, 100%);
-  max-height: calc(100vh - clamp(20px, 6vw, 80px));
-  max-height: calc(100dvh - clamp(20px, 6vw, 80px));
-  border: 1px solid var(--lp-line-strong);
-  border-radius: var(--lp-radius);
-  background: color-mix(in srgb, var(--lp-surface) 96%, transparent);
-  box-shadow: 0 60px 140px -50px rgba(0, 0, 0, 0.95);
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(22px) scale(0.94);
-  transition: opacity 0.32s ease, transform 0.42s var(--lp-spring);
-}
-
-.lp-lb.is-open .lp-lb__backdrop {
-  opacity: 1;
-}
-
-.lp-lb.is-open .lp-lb__dialog {
-  opacity: 1;
-  transform: none;
-}
-
-.lp-lb.is-closing .lp-lb__backdrop {
-  opacity: 0;
-}
-
-/* Obrázek, který se nepodaří načíst ani z plné, ani z náhledové verze,
-   nesmí nechat dialog prázdný — ukážeme srozumitelnou zprávu. */
-.lp-lb.is-error .lp-lb__stage::after {
-  content: "Náhled se nepodařilo načíst. Zkus to prosím znovu.";
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  padding: 14px 20px;
-  border: 1px solid var(--lp-line-strong);
-  border-radius: var(--lp-radius-sm);
-  background: color-mix(in srgb, var(--lp-surface-2) 92%, transparent);
-  color: var(--lp-muted);
-  font-size: 0.86rem;
-  text-align: center;
-  max-width: min(420px, 84vw);
-}
-
-.lp-lb.is-closing .lp-lb__dialog {
-  opacity: 0;
-  transform: translateY(14px) scale(0.96);
-}
-
-.lp-lb__bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--lp-line);
-  background: color-mix(in srgb, var(--lp-bg) 55%, transparent);
-}
-
-.lp-lb__kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 10px;
-  border: 1px solid var(--lp-line-gold);
-  border-radius: 999px;
-  color: var(--lp-gold-soft);
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.lp-lb__kicker i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--lp-magenta);
-}
-
-.lp-lb__title {
-  min-width: 0;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: var(--lp-font-display);
-  font-size: 0.98rem;
-  font-weight: 650;
-  letter-spacing: -0.01em;
-}
-
-.lp-lb__count {
-  color: var(--lp-muted-2);
-  font-family: var(--lp-font-mono);
-  font-size: 0.74rem;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.lp-lb__close {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid var(--lp-line-strong);
-  border-radius: 50%;
-  background: var(--lp-surface-2);
-  color: var(--lp-text);
-  transition: transform 0.35s var(--lp-spring), background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.lp-lb__close:hover {
-  transform: rotate(90deg);
-  border-color: var(--lp-line-gold);
-  background: color-mix(in srgb, var(--lp-gold) 16%, var(--lp-surface-2));
-}
-
-.lp-lb__close svg {
-  width: 17px;
-  height: 17px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-
-.lp-lb__stage {
-  position: relative;
-  display: grid;
-  place-items: center;
-  flex: 1 1 auto;
-  min-height: 0;
-  padding: clamp(12px, 2vw, 22px);
-  background:
-    radial-gradient(60% 60% at 50% 0%, rgba(252, 146, 0, 0.1), transparent 70%),
-    color-mix(in srgb, var(--lp-bg) 70%, transparent);
-  overflow: auto;
-  overscroll-behavior: contain;
-}
-
-.lp-lb__img {
-  display: block;
-  /* Atributy width="1" height="1" drží místo před načtením; skutečný
-     rozměr musí určit až poměr stran obrázku, ne atribut. */
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: min(72vh, 820px);
-  max-height: min(72dvh, 820px);
-  margin: auto;
-  border-radius: 12px;
-  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9);
-  cursor: zoom-in;
-  opacity: 0;
-  transform: scale(0.985);
-  transition: opacity 0.34s ease, transform 0.44s var(--lp-spring);
-  transform-origin: var(--zx, 50%) var(--zy, 50%);
-}
-
-.lp-lb__img.is-ready {
-  opacity: 1;
-  transform: none;
-}
-
-.lp-lb__img.is-zoomed {
-  cursor: zoom-out;
-  transform: scale(1.85);
-  border-radius: 8px;
-}
-
-.lp-lb__nav {
-  position: absolute;
-  top: 50%;
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  margin-top: -23px;
-  border: 1px solid var(--lp-line-strong);
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--lp-bg) 78%, transparent);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  color: var(--lp-text);
-  transition: transform 0.3s var(--lp-spring), background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
-  z-index: 2;
-}
-
-.lp-lb__nav svg {
-  width: 20px;
-  height: 20px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.9;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.lp-lb__nav--prev {
-  left: 12px;
-}
-
-.lp-lb__nav--next {
-  right: 12px;
-}
-
-.lp-lb__nav:hover {
-  border-color: var(--lp-line-gold);
-  background: color-mix(in srgb, var(--lp-gold) 20%, var(--lp-bg));
-}
-
-.lp-lb__nav--prev:hover {
-  transform: translateX(-3px);
-}
-
-.lp-lb__nav--next:hover {
-  transform: translateX(3px);
-}
-
-.lp-lb__spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: -17px 0 0 -17px;
-  width: 34px;
-  height: 34px;
-  border: 3px solid color-mix(in srgb, var(--lp-gold) 30%, transparent);
-  border-top-color: var(--lp-gold-soft);
-  border-radius: 50%;
-  animation: lp-spin 0.8s linear infinite;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
-.lp-lb.is-loading .lp-lb__spinner {
-  opacity: 1;
-}
-
-.lp-lb__foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 16px;
-  padding: 12px 16px;
-  border-top: 1px solid var(--lp-line);
-  background: color-mix(in srgb, var(--lp-bg) 45%, transparent);
-}
-
-.lp-lb__caption {
-  flex: 1;
-  min-width: 180px;
-  color: var(--lp-muted);
-  font-size: 0.8rem;
-  line-height: 1.5;
-}
-
-.lp-lb__hint {
-  color: var(--lp-muted-2);
-  font-size: 0.72rem;
-}
-
-body.lp-lb-open {
-  overflow: hidden;
-  touch-action: none;
-  overscroll-behavior: none;
 }
 
 @keyframes lp-panel-in {
@@ -3459,10 +2653,6 @@ body.lp-lb-open {
 /* ---------- 17 · Responzivita ---------- */
 
 @media (max-width: 1080px) {
-  .lp-hero__grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(34px, 6vw, 54px);
-  }
 
   .lp-hero__visual {
     max-width: 100%;
@@ -3529,14 +2719,6 @@ body.lp-lb-open {
   }
 
   .lp-dust {
-    display: none;
-  }
-
-  .lp-hero__copy::before {
-    height: 300px;
-  }
-
-  .lp-shot--hero .lp-shot__frame::before {
     display: none;
   }
 
@@ -3658,25 +2840,6 @@ body.lp-lb-open {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .lp-stage {
-    min-height: 0;
-    padding: 18px;
-  }
-
-  .lp-stage::before {
-    opacity: 0.25;
-  }
-
-  .lp-stage__caption {
-    position: static;
-    margin-top: 14px;
-    text-align: center;
-  }
-
-  .lp-stage__chip {
-    display: none;
-  }
-
   .lp-tabs {
     display: flex;
     width: 100%;
@@ -3726,55 +2889,6 @@ body.lp-lb-open {
     display: none;
   }
 
-  .lp-lb {
-    padding: 0;
-  }
-
-  .lp-lb__dialog {
-    width: 100%;
-    max-height: 100dvh;
-    height: 100%;
-    border-radius: 0;
-    border-inline: 0;
-  }
-
-  .lp-lb__bar {
-    padding: 10px 12px;
-  }
-
-  .lp-lb__title {
-    font-size: 0.86rem;
-  }
-
-  .lp-lb__kicker {
-    display: none;
-  }
-
-  .lp-lb__img {
-    max-height: 70dvh;
-  }
-
-  .lp-lb__nav {
-    width: 40px;
-    height: 40px;
-    margin-top: -20px;
-  }
-
-  .lp-lb__nav--prev {
-    left: 6px;
-  }
-
-  .lp-lb__nav--next {
-    right: 6px;
-  }
-
-  .lp-lb__hint {
-    display: none;
-  }
-
-  .lp-lb__img.is-zoomed {
-    transform: scale(2.1);
-  }
 }
 
 @media (max-width: 420px) {
@@ -3788,13 +2902,6 @@ body.lp-lb-open {
 
   .lp-meta__sep {
     display: none;
-  }
-
-  .lp-shot__zoom {
-    right: 10px;
-    bottom: 10px;
-    padding: 6px 10px;
-    font-size: 0.66rem;
   }
 }
 
@@ -3830,6 +2937,26 @@ body.lp-lb-open {
 
 :root[data-theme="light"] .launcher-page ~ .site-footer .footer-bottom > span {
   color: var(--muted);
+}
+
+/* Kontrast: sdílené --muted dávalo na krémové patičce jen 3.79:1,
+   což je pod hranicí AA pro drobný text. Ověřeno axe-core; tohle je
+   4.79:1 a vizuálně pořád „ztlumené". */
+:root[data-theme="light"] .launcher-page ~ .site-footer :is(p, .footer-link, .footer-soon, a:not(.brand), .footer-bottom, .footer-bottom > span) {
+  color: #7a5f71;
+}
+
+:root[data-theme="light"] .launcher-page ~ .site-footer .footer-soon::after {
+  color: #6b5062;
+  border-color: rgba(107, 80, 98, 0.34);
+}
+
+:root[data-theme="light"] .launcher-page ~ .site-footer .footer-grid h3 {
+  color: #6b5062;
+}
+
+:root[data-theme="light"] .launcher-page ~ .site-footer :is(a:not(.brand), .footer-link):hover {
+  color: #8a5a00;
 }
 
 @media (max-width: 720px) {
@@ -4831,13 +3958,6 @@ body.lp-lb-open {
   border-left: 1.6px solid #241209;
   border-bottom: 1.6px solid #241209;
   transform: rotate(-45deg);
-}
-
-.lp-shot__cap {
-  margin-top: 10px;
-  color: var(--lp-muted-2);
-  font-size: 0.72rem;
-  text-align: center;
 }
 
 /* ---------- 19e · Splash obrazovka v CTA ---------- */

@@ -952,7 +952,6 @@
       "pointermove",
       event => {
         if (event.pointerType === "touch" || !fxOn()) return;
-        if (document.body.classList.contains("lp-lb-open")) return;
         const now = performance.now();
         if (now - lastSpawn < 26) return;
         lastSpawn = now;
@@ -1139,39 +1138,7 @@
 
   /* ---------- Světlo sledující kurzor na kartách ---------- */
 
-  function initSpotlight() {
-    const cards = [...document.querySelectorAll(".lp-spot")];
-    if (!cards.length || !finePointer.matches || prefersReduced()) return;
 
-    cards.forEach(card => {
-      let queued = false;
-      let x = 0;
-      let y = 0;
-
-      card.addEventListener(
-        "pointermove",
-        event => {
-          if (!fxOn()) return;
-          const rect = card.getBoundingClientRect();
-          x = event.clientX - rect.left;
-          y = event.clientY - rect.top;
-          if (queued) return;
-          queued = true;
-          window.requestAnimationFrame(() => {
-            queued = false;
-            card.style.setProperty("--mx", `${x.toFixed(1)}px`);
-            card.style.setProperty("--my", `${y.toFixed(1)}px`);
-          });
-        },
-        { passive: true }
-      );
-
-      card.addEventListener("pointerleave", () => {
-        card.style.removeProperty("--mx");
-        card.style.removeProperty("--my");
-      });
-    });
-  }
 
   /* ---------- Nekonečný pás ---------- */
 
@@ -1301,300 +1268,6 @@
     }
   }
 
-  /* ---------- Galerie / lightbox ---------- */
-
-  function initLightbox() {
-    const root = document.querySelector("[data-lightbox-root]");
-    if (!root) return;
-
-    const dialog = root.querySelector("[data-lb-dialog]");
-    const image = root.querySelector("[data-lb-img]");
-    const titleNode = root.querySelector("[data-lb-title]");
-    const captionNode = root.querySelector("[data-lb-caption]");
-    const countNode = root.querySelector("[data-lb-count]");
-    const prevButton = root.querySelector("[data-lb-prev]");
-    const nextButton = root.querySelector("[data-lb-next]");
-    const stage = root.querySelector("[data-lb-stage]");
-    const closeButton = root.querySelector(".lp-lb__close");
-    const triggers = [...document.querySelectorAll("[data-lightbox]")].filter(trigger =>
-      trigger.querySelector("img")
-    );
-    if (!image || !triggers.length) return;
-
-    const items = triggers.map(trigger => {
-      const thumb = trigger.querySelector("img");
-      const source = thumb.currentSrc || thumb.getAttribute("src") || "";
-      /* Plnohodnotná varianta leží v img/full/<stejná cesta>; náhledy
-         z podsložky shots/ tak zůstanou ve stejné struktuře. */
-      const full = source.includes("/full/") ? source : source.replace(/(^|\/)img\//, "$1img/full/");
-      return {
-        trigger,
-        thumb,
-        full,
-        id: trigger.dataset.gallery || "",
-        fallback: source
-      };
-    });
-
-    let index = 0;
-    let lastFocus = null;
-    let closeTimer = 0;
-    let locked = [];
-
-    const label = item => {
-      const alt = item.thumb?.getAttribute("alt") || "";
-      const title = translate(`lp.lb.title.${item.id}`, alt || "Minekube Launcher");
-      return { title, caption: alt };
-    };
-
-    function paintText() {
-      const item = items[index];
-      if (!item) return;
-      const { title, caption } = label(item);
-      if (titleNode) titleNode.textContent = title;
-      if (captionNode) captionNode.textContent = caption;
-      if (countNode) countNode.textContent = `${index + 1} / ${items.length}`;
-    }
-
-    const preloaded = new Set();
-
-    function preload(target) {
-      if (!target || preloaded.has(target.full)) return;
-      preloaded.add(target.full);
-      const next = new Image();
-      next.decoding = "async";
-      next.src = target.full;
-    }
-
-    function show(nextIndex, { focusImage = false } = {}) {
-      index = (nextIndex + items.length) % items.length;
-      const item = items[index];
-      if (!item) return;
-      paintText();
-      root.classList.add("is-loading");
-      root.classList.remove("is-error");
-      image.classList.remove("is-ready", "is-zoomed");
-      image.setAttribute("aria-busy", "true");
-
-      const cleanup = () => {
-        image.onload = null;
-        image.onerror = null;
-        image.removeAttribute("aria-busy");
-      };
-
-      const loaded = () => {
-        cleanup();
-        root.classList.remove("is-loading", "is-error");
-        image.classList.add("is-ready");
-        preload(items[(index + 1) % items.length]);
-        preload(items[(index - 1 + items.length) % items.length]);
-      };
-
-      const failed = () => {
-        cleanup();
-        root.classList.remove("is-loading");
-        const fallback = item.fallback || item.full;
-        if (fallback && image.getAttribute("src") !== fallback) {
-          image.onload = loaded;
-          image.onerror = () => {
-            cleanup();
-            root.classList.remove("is-loading");
-            root.classList.add("is-error");
-          };
-          image.src = fallback;
-          return;
-        }
-        root.classList.add("is-error");
-        image.classList.remove("is-ready");
-      };
-
-      image.onload = loaded;
-      image.onerror = failed;
-
-      if (image.getAttribute("src") !== item.full) {
-        image.src = item.full;
-      } else if (image.complete) {
-        // Stejná adresa podruhé: prohlížeč už nic nenačítá, stav rozhodneme sami.
-        if (image.naturalWidth) loaded();
-        else failed();
-      } else {
-        window.requestAnimationFrame(() => {
-          if (!image.complete) return;
-          if (image.naturalWidth) loaded();
-          else failed();
-        });
-      }
-
-      image.alt = item.thumb?.getAttribute("alt") || "";
-      if (focusImage) image.focus({ preventScroll: true });
-    }
-
-    function open(position, trigger) {
-      window.clearTimeout(closeTimer);
-      lastFocus = trigger || document.activeElement;
-
-      /* Opakované kliknutí na spouštěč nesmí přidávat druhý keyboard
-         listener ani druhý zámek. Jen přepneme obrázek. */
-      if (!root.hidden && !root.classList.contains("is-closing")) {
-        show(position);
-        return;
-      }
-
-      root.hidden = false;
-      root.setAttribute("aria-hidden", "false");
-      root.classList.remove("is-closing", "is-error");
-      document.body.classList.add("lp-lb-open");
-      index = position;
-      show(position);
-      closeButton?.focus({ preventScroll: true });
-      locked = [
-        document.querySelector("main"),
-        document.querySelector(".site-header"),
-        document.querySelector(".site-footer"),
-        document.querySelector(".page-veil"),
-        document.getElementById("kofiGate")
-      ].filter(Boolean);
-      locked.forEach(node => {
-        try {
-          node.inert = true;
-        } catch {
-          /* starší prohlížeč */
-        }
-      });
-      window.requestAnimationFrame(() => root.classList.add("is-open"));
-      document.addEventListener("keydown", onKeydown);
-    }
-
-    function close() {
-      if (root.hidden) return;
-      root.classList.add("is-closing");
-      root.classList.remove("is-open", "is-loading");
-      document.removeEventListener("keydown", onKeydown);
-      document.body.classList.remove("lp-lb-open");
-      locked.forEach(node => {
-        try {
-          node.inert = false;
-        } catch {
-          /* ignorujeme */
-        }
-      });
-      locked = [];
-      image.classList.remove("is-zoomed");
-      image.removeAttribute("aria-busy");
-      window.clearTimeout(closeTimer);
-      closeTimer = window.setTimeout(
-        () => {
-          root.hidden = true;
-          root.setAttribute("aria-hidden", "true");
-          root.classList.remove("is-closing");
-          image.classList.remove("is-ready");
-        },
-        prefersReduced() ? 0 : 300
-      );
-      if (lastFocus && lastFocus.isConnected && typeof lastFocus.focus === "function") {
-        lastFocus.focus({ preventScroll: true });
-      }
-    }
-
-    function step(direction) {
-      image.classList.remove("is-zoomed");
-      show(index + direction);
-    }
-
-    function onKeydown(event) {
-      if (event.key === "Escape") {
-        event.stopPropagation();
-        close();
-        return;
-      }
-      if (event.key === "ArrowRight") {
-        event.preventDefault();
-        step(1);
-        return;
-      }
-      if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        step(-1);
-        return;
-      }
-      if (event.key !== "Tab" || !dialog) return;
-      const focusables = [...dialog.querySelectorAll("button, [href], [tabindex]:not([tabindex='-1'])")].filter(
-        node => !node.disabled && node.offsetParent !== null
-      );
-      if (!focusables.length) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      if (!dialog.contains(document.activeElement)) {
-        event.preventDefault();
-        (event.shiftKey ? last : first).focus();
-        return;
-      }
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    }
-
-    /* Zoom na klik s ohnisem v místě dotyku. */
-    image.addEventListener("click", event => {
-      const rect = image.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / rect.width) * 100;
-      const y = ((event.clientY - rect.top) / rect.height) * 100;
-      image.style.setProperty("--zx", `${Number.isFinite(x) ? x.toFixed(1) : 50}%`);
-      image.style.setProperty("--zy", `${Number.isFinite(y) ? y.toFixed(1) : 50}%`);
-      image.classList.toggle("is-zoomed");
-    });
-
-    /* Swipe na mobilu jen když není obrázek přiblížený. */
-    let touchStart = null;
-    stage?.addEventListener(
-      "touchstart",
-      event => {
-        if (image.classList.contains("is-zoomed")) return;
-        touchStart = event.touches[0] ? event.touches[0].clientX : null;
-      },
-      { passive: true }
-    );
-    stage?.addEventListener(
-      "touchend",
-      event => {
-        if (touchStart === null) return;
-        const touch = event.changedTouches[0];
-        const delta = touch ? touch.clientX - touchStart : 0;
-        touchStart = null;
-        if (Math.abs(delta) < 45) return;
-        step(delta < 0 ? 1 : -1);
-      },
-      { passive: true }
-    );
-
-    triggers.forEach((trigger, position) => {
-      trigger.addEventListener("click", () => open(position, trigger));
-    });
-
-    prevButton?.addEventListener("click", () => step(-1));
-    nextButton?.addEventListener("click", () => step(1));
-    root.querySelectorAll("[data-lb-close]").forEach(node => node.addEventListener("click", close));
-
-    image.addEventListener("keydown", event => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        image.classList.toggle("is-zoomed");
-      }
-    });
-
-    /* Po změně jazyka se překreslí popisky i alt texty. */
-    document.addEventListener("minekube:language", () => {
-      if (!root.hidden) {
-        paintText();
-        image.alt = items[index]?.thumb?.getAttribute("alt") || "";
-      }
-    });
-  }
-
   /* ---------- FAQ akordeon ----------
      Základ je nativní <details name="lp-faq">, takže akordeon funguje
      i bez JavaScriptu (a čtečky znají jeho stav samy). Tady jen doplníme
@@ -1707,12 +1380,23 @@
     let ticking = false;
     let visible = true;
 
+    /* Vrstvy držíme v kompozitoru jen po dobu, kdy je hero vidět
+       (will-change: transform v CSS). Mimo obrazovku je pustíme. */
+    const promote = on => scene.classList.toggle("is-moving", on);
+
     const paint = () => {
       ticking = false;
-      if (!visible || !fxOn()) return;
+      if (!visible || !fxOn()) {
+        promote(false);
+        return;
+      }
       const rect = hero.getBoundingClientRect();
       // Posun jen dokud je hero na obrazovce — mimo ni nic nepočítáme.
-      if (rect.bottom < -120 || rect.top > innerHeight + 120) return;
+      if (rect.bottom < -120 || rect.top > innerHeight + 120) {
+        promote(false);
+        return;
+      }
+      promote(true);
       const progress = Math.min(Math.max(-rect.top / Math.max(rect.height, 1), 0), 1);
       layers.forEach(({ node, depth }) => {
         node.style.transform = `translate3d(0, ${(progress * depth * 260).toFixed(2)}px, 0)`;
@@ -1732,6 +1416,7 @@
       new IntersectionObserver(entries => {
         visible = entries.some(entry => entry.isIntersecting);
         if (visible) request();
+        else promote(false);
       }, { threshold: 0 }).observe(hero);
     }
     request();
@@ -1860,11 +1545,9 @@
   initDust();
   initSparkles();
   initTilt();
-  initSpotlight();
   initMarquee();
   initSmoothScroll();
   initScrollUi();
-  initLightbox();
   initFaq();
   initCopyChecksum();
   initSkipLink();
