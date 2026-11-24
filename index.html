@@ -15,7 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="styles.css" rel="stylesheet"/>
 <link href="design-plus.css" rel="stylesheet"/>
-<link href="apple.css?v=20261029-1" rel="stylesheet"/>
+<link href="apple.css?v=20261124-1" rel="stylesheet"/>
 <link href="cube.css?v=20261029-2" rel="stylesheet"/>
 <script>
 /* Motiv a jazyk se čtou dřív, než se stránka vykreslí — žádné bliknutí při startu. */
@@ -185,7 +185,7 @@
 <section aria-labelledby="introTitle" class="about-section section mk-landing" id="projekt">
 <div class="container">
 
-<!-- ---------- INTRO (bývalá sekce Domů) ---------- -->
+<!-- ========== INTRO (bývalá sekce Domů) ========== -->
 <div class="mk-intro">
 <div class="mk-intro-copy">
 <span class="section-kicker">MINEKUBE STUDIOS // CZ/SK</span>
@@ -223,7 +223,7 @@
 </div>
 </div>
 
-<aside aria-label="Moduly ekosystému" class="mk-intro-panel">
+<div aria-label="Moduly ekosystému" class="mk-intro-panel" role="group">
 <div class="mk-intro-panel-head">
 <span><i aria-hidden="true"></i> MINEKUBE CORE</span>
 <b>ONLINE</b>
@@ -255,11 +255,11 @@
 <span><i aria-hidden="true"></i> FREE ACCESS</span>
 <span><i aria-hidden="true"></i> FUTURE READY</span>
 </div>
-</aside>
+</div>
 </div>
 
 
-<!-- ---------- 3D KOSTKA (apple vzor: pilulky vlevo, produkt vpravo) ---------- -->
+<!-- ========== 3D KOSTKA (apple vzor: pilulky vlevo, produkt vpravo) ========== -->
 <section aria-labelledby="cubeTitle" class="cube-stage" data-cube data-color="gold" data-finish="matte" data-light="front">
 <header class="ap-head" data-ap-reveal>
 <p class="ap-kicker" data-i18n="cube.kicker">Kostka Minekube</p>
@@ -389,7 +389,7 @@
 </p>
 </section>
 
-<!-- ---------- SCROLL-DRIVEN SCÉNA (apple vzor: lepivý produkt + kroky) ---------- -->
+<!-- ========== SCROLL-DRIVEN SCÉNA (apple vzor: lepivý produkt + kroky) ========== -->
 <section aria-labelledby="apSceneTitle" class="ap-scene-block">
 <header class="ap-head" data-ap-reveal>
 <p class="ap-kicker" data-i18n="ap.scene.kicker">Jeden ekosystém</p>
@@ -399,9 +399,44 @@
 <div class="ap-scene" data-ap-scene data-step="0">
 <div class="ap-scene__sticky">
 <figure class="ap-scene__media">
-<img alt="" data-step-frame="0" decoding="async" height="900" loading="lazy" src="launcher/img/hero-welcome.webp" width="1680"/>
-<img alt="" data-step-frame="1" decoding="async" height="644" loading="lazy" src="launcher/img/settings-appearance.webp" width="1200"/>
-<img alt="" data-step-frame="2" decoding="async" height="644" loading="lazy" src="launcher/img/settings-privacy.webp" width="1200"/>
+<!-- Tři kroky scény byly dřív <img> na soubory, které v repozitáři
+     nikdy nebyly (launcher/img/*.webp) — načetly se jako 404 a celý
+     rám zůstal prázdný. Náhledy rozhraní jsou záměrně CSS makety,
+     stejně jako v sekci Prohlídka launcheru: nic se nenačítá a nic
+     se netváří jako skutečný screenshot. -->
+<div aria-hidden="true" class="ap-mock" data-step-frame="0">
+<div class="ap-mock__bar"><i></i><i></i><i></i><b>Minekube Launcher</b></div>
+<div class="ap-mock__body">
+<div class="ap-mock__side"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="ap-mock__main">
+<div class="ap-mock__hero"><b></b><span></span><span></span><em></em></div>
+<div class="ap-mock__row"><i></i><i></i><i></i></div>
+</div>
+</div>
+</div>
+<div aria-hidden="true" class="ap-mock" data-step-frame="1">
+<div class="ap-mock__bar"><i></i><i></i><i></i><b>Nastavení · Vizuál</b></div>
+<div class="ap-mock__body">
+<div class="ap-mock__side"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="ap-mock__main ap-mock__main--settings">
+<div class="ap-mock__swatches"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="ap-mock__toggle"></div>
+<div class="ap-mock__toggle is-off"></div>
+<div class="ap-mock__toggle"></div>
+</div>
+</div>
+</div>
+<div aria-hidden="true" class="ap-mock" data-step-frame="2">
+<div class="ap-mock__bar"><i></i><i></i><i></i><b>Nastavení · Soukromí</b></div>
+<div class="ap-mock__body">
+<div class="ap-mock__side"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="ap-mock__main ap-mock__main--settings">
+<div class="ap-mock__line is-strong"></div>
+<div class="ap-mock__line"></div>
+<div class="ap-mock__lock"><svg viewBox="0 0 24 24"><rect height="9" rx="2" width="14" x="5" y="11"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg></div>
+</div>
+</div>
+</div>
 </figure>
 <div aria-hidden="true" class="ap-scene__dots"><i></i><i></i><i></i></div>
 </div>
@@ -426,7 +461,7 @@
 </div>
 </section>
 
-<!-- ---------- MANIFEST PROJEKTU ---------- -->
+<!-- ========== MANIFEST PROJEKTU ========== -->
 <div class="about-card" id="aboutCard">
 <div aria-hidden="true" class="about-ambient"><i></i><i></i><i></i><span></span></div>
 <div class="about-copy">
@@ -459,7 +494,7 @@
 <div class="emblem-ring ring-b"></div>
 </div>
 
-<!-- ---------- ROZBALITELNÉ: CELÉ INFORMACE A CÍL PROJEKTU ---------- -->
+<!-- ========== ROZBALITELNÉ: CELÉ INFORMACE A CÍL PROJEKTU ========== -->
 <div aria-hidden="true" class="about-manifest" id="aboutManifest" inert role="region">
 <div class="about-manifest-inner">
 <span class="section-kicker about-manifest-kicker" data-i18n="about.manifestKicker">POSLÁNÍ PROJEKTU</span>
@@ -502,7 +537,7 @@
 </div>
 </div>
 
-<!-- ---------- PRINCIPY ---------- -->
+<!-- ========== PRINCIPY ========== -->
 <div class="projekt-principles">
 <div class="section-heading centered" data-ap-reveal>
 <span class="section-kicker" data-i18n="principles.kicker">PRINCIPY PROJEKTU</span>
@@ -553,7 +588,7 @@
 </div>
 </div>
 
-<!-- ---------- STUDIO (bývalá samostatná sekce, nyní uvnitř O projektu) ---------- -->
+<!-- ========== STUDIO (bývalá samostatná sekce, nyní uvnitř O projektu) ========== -->
 <div class="mk-studio-block" id="ekosystem">
 <div class="section-heading" data-ap-reveal>
 <div>
@@ -702,7 +737,7 @@
 <footer class="site-footer">
 <div class="container footer-grid">
 <div>
-<a class="brand footer-brand" href="#top">
+<a aria-label="Minekube Studios — domovská stránka" class="brand footer-brand" data-i18n-aria="brand.aria" href="#top">
 <span aria-hidden="true" class="brand-mark">
 <img alt="" class="brand-icon" decoding="async" src="assets/minekube-original-logo.png"/>
 </span>

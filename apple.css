@@ -545,16 +545,213 @@
   transition: transform 0.6s var(--ap-ease-out);
 }
 
-.ap-scene__media img {
+/* Náhled rozhraní launcheru — CSS maketa, žádný obrázek.
+   Dřív tu byl <img> na soubor, který v repu nebyl, takže rám zůstal
+   prázdný. Maketa drží stejný poměr i chování při přepínání kroků. */
+.ap-mock {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--ap-font-body, system-ui, sans-serif);
+  background:
+    radial-gradient(90% 70% at 50% -10%, rgba(252, 192, 0, 0.14), transparent 62%),
+    linear-gradient(180deg, #1a0d22, #120818);
   opacity: 0;
   transform: scale(1.03);
   transition: opacity 0.7s var(--ap-ease), transform 1.4s var(--ap-ease);
+}
+
+.ap-mock__bar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ap-mock__bar i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.ap-mock__bar i:nth-child(1) { background: #ff6b5c; }
+.ap-mock__bar i:nth-child(2) { background: #ffc457; }
+.ap-mock__bar i:nth-child(3) { background: #5fce8a; }
+
+.ap-mock__bar b {
+  margin-left: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.ap-mock__body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.ap-mock__side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 0 0 17%;
+  padding: 16px 12px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.ap-mock__side i {
+  height: 9px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.ap-mock__side i:first-child {
+  background: rgba(252, 192, 0, 0.55);
+}
+
+.ap-mock__main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 18px 20px;
+}
+
+.ap-mock__hero {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 18px;
+  border: 1px solid rgba(252, 192, 0, 0.22);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(252, 192, 0, 0.16), rgba(252, 0, 96, 0.09));
+}
+
+.ap-mock__hero b {
+  width: 42%;
+  height: 15px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.ap-mock__hero span {
+  width: 68%;
+  height: 8px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.ap-mock__hero span + span { width: 52%; }
+
+.ap-mock__hero em {
+  width: 108px;
+  height: 26px;
+  margin-top: 6px;
+  border-radius: 7px;
+  background: linear-gradient(100deg, #ffd25a, #ff9b0b 55%, #e0409a);
+}
+
+.ap-mock__row {
+  display: flex;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.ap-mock__row i {
+  flex: 1 1 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+/* Krok 2 — přepínače a paleta */
+.ap-mock__main--settings {
+  gap: 14px;
+  padding-top: 22px;
+}
+
+.ap-mock__swatches {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.ap-mock__swatches i {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  background: linear-gradient(140deg, #ffd25a, #ff9b0b);
+}
+
+.ap-mock__swatches i:nth-child(2) { background: linear-gradient(140deg, #5fce8a, #1fb268); }
+.ap-mock__swatches i:nth-child(3) { background: linear-gradient(140deg, #6ad0ff, #2b7bff); }
+.ap-mock__swatches i:nth-child(4) { background: linear-gradient(140deg, #c98bff, #7c3aed); }
+.ap-mock__swatches i:nth-child(5) { background: linear-gradient(140deg, #ff9bce, #e0409a); }
+.ap-mock__swatches i:nth-child(6) { background: linear-gradient(140deg, #ffe9a8, #f5c33b); }
+
+.ap-mock__toggle {
+  position: relative;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ap-mock__toggle::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(140deg, #ffd25a, #ff9b0b);
+}
+
+.ap-mock__toggle.is-off::after {
+  right: auto;
+  left: 3px;
+  background: rgba(255, 255, 255, 0.32);
+}
+
+/* Krok 3 — soukromí */
+.ap-mock__line {
+  height: 9px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.ap-mock__line.is-strong {
+  width: 46%;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.ap-mock__lock {
+  display: grid;
+  place-items: center;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.ap-mock__lock svg {
+  width: 46px;
+  height: 46px;
+  fill: none;
+  stroke: rgba(252, 192, 0, 0.8);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .ap-scene[data-step="0"] [data-step-frame="0"],
@@ -858,7 +1055,7 @@ html.ap-js [data-ap-scale] {
   }
 
   .ap-scene__media,
-  .ap-scene__media img,
+  .ap-scene__media .ap-mock,
   .ap-step {
     transition-duration: 0.001ms;
   }
@@ -870,7 +1067,7 @@ html.ap-js [data-ap-scale] {
 
   /* Bez animace nemá smysl předstírat tři fáze — ukážeme první snímek
      a všechny kroky jako běžný seznam. */
-  .ap-scene__media img:not([data-step-frame="0"]) {
+  .ap-scene__media [data-step-frame]:not([data-step-frame="0"]) {
     display: none;
   }
 

@@ -35,7 +35,9 @@
   --border-strong: rgba(72, 25, 55, 0.18);
   --text: #281019;
   --muted: #705764;
-  --muted-2: #957888;
+  /* Bylo #957888 — kontrast 3,7:1 na světlém podkladu neprošel AA
+     (patička, copyright). #7d5c6d drží 5,4:1 a odstín zůstává. */
+  --muted-2: #7d5c6d;
   --green-deep: #d65b00;
   --green-glow: rgba(255, 174, 0, 0.16);
   --shadow: 0 24px 70px rgba(94, 34, 74, 0.14);
@@ -3388,6 +3390,15 @@ legend {
   content: "PŘIPRAVUJI…";
   position: absolute;
   inset: auto;
+  /* Bez tohohle se stavový text na úzkých tlačítkách rozlil přes
+     popisek — „Stáhnout" a „PŘIPRAVUJI…" se překrývaly. Text se
+     proto centruje v šířce popisku a přebytky se ořezávají. */
+  left: 0;
+  right: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
   font-size: .82em;
   letter-spacing: .08em;
   opacity: 0;

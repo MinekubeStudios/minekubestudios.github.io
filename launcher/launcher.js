@@ -487,46 +487,23 @@
 
   /* ---------- Pulz stahovacího tlačítka ----------
 
-     Jeden plynulý pulz po kliknutí: vlna vyjde z místa, kde uživatel
-     opravdu klikl, tlačítko jednou „dýchne" a dozní. Nahrazuje původní
-     detonaci z styles.css, která byla delší než samotné stažení.
+     Stejná odezva jako na Modpackách: třída .download-animating
+     spustí hotový pulz ze styles.css (downloadButtonImpactUltimate
+     0,98 s a jeho dozvuky). Žádná vlastní animace — jeden puls,
+     jedno chování napříč celým webem.
 
-     Třída is-pulsing se sype po 940 ms (délka animace). Opakované
-     kliknutí pulz restartuje — bez vynucení reflow by se animace
-     nepřehrála znovu. */
+     Třída se sype po 1500 ms, tedy s rezervou po nejdelší dozvuk
+     (animace samotná končí dřív). Opakované kliknutí puls restartuje;
+     bez vynucení reflow by se animace nepřehrála znovu. */
 
-  const PULSE_MS = 900;
-  const pulseTimers = new WeakMap();
+  const DOWNLOAD_FLASH_MS = 1500;
 
-  function pulseDownloadButton(button, event) {
-    if (!button || prefersReduced() || !fxOn()) return;
-
-    if (event && typeof event.clientX === "number" && event.clientX + event.clientY > 0) {
-      const rect = button.getBoundingClientRect();
-      const x = Math.min(Math.max(event.clientX - rect.left, 0), rect.width);
-      const y = Math.min(Math.max(event.clientY - rect.top, 0), rect.height);
-      button.style.setProperty("--lp-pulse-x", `${x.toFixed(1)}px`);
-      button.style.setProperty("--lp-pulse-y", `${y.toFixed(1)}px`);
-    } else {
-      /* Klávesnice nemá souřadnice — pulz vyjde ze středu. */
-      button.style.removeProperty("--lp-pulse-x");
-      button.style.removeProperty("--lp-pulse-y");
-    }
-
-    button.classList.remove("is-pulsing");
-    /* Vynutí restart animace, aniž by cokoli měřilo layout. */
+  function playDownloadAnimation(button) {
+    if (!button) return;
+    button.classList.remove("download-animating");
     void button.offsetWidth;
-    button.classList.add("is-pulsing");
-
-    window.clearTimeout(pulseTimers.get(button));
-    pulseTimers.set(
-      button,
-      window.setTimeout(() => {
-        button.classList.remove("is-pulsing");
-        button.style.removeProperty("--lp-pulse-x");
-        button.style.removeProperty("--lp-pulse-y");
-      }, PULSE_MS + 40)
-    );
+    button.classList.add("download-animating");
+    window.setTimeout(() => button.classList.remove("download-animating"), DOWNLOAD_FLASH_MS);
   }
 
   function onDownloadClick(button) {
@@ -541,9 +518,12 @@
 
     if (button.dataset.state === "loading") return;
 
+    /* Odezva patří sem: plánovaná platforma ani rozběhnuté načítání
+       pulz nedostanou, skutečné stažení ano. */
+    playDownloadAnimation(button);
+
     const asset = source.asset(os);
     if (status.state === "ready" && asset) {
-      /* Pulz řeší posluchač kliknutí; stará detonace by se s ním bila. */
       runDownload(button, os, asset);
       return;
     }
@@ -552,10 +532,7 @@
   }
 
   downloadButtons.forEach(button => {
-    button.addEventListener("click", event => {
-      pulseDownloadButton(button, event);
-      onDownloadClick(button);
-    });
+    button.addEventListener("click", () => onDownloadClick(button));
   });
 
   retryButton?.addEventListener("click", () => {

@@ -49,6 +49,23 @@
   .lp-marquee__track {
     animation: none;
   }
+
+  /* Pulz tlačítka Stáhnout je čistě dekorativní pohyb. */
+  .button.download-ultimate.lp-dlbtn.download-animating,
+  .button.download-ultimate.lp-dlbtn.download-animating::before,
+  .button.download-ultimate.lp-dlbtn.download-animating::after,
+  .button.download-ultimate.lp-dlbtn.download-animating .download-fx,
+  .button.download-ultimate.lp-dlbtn.download-animating .download-plasma,
+  .button.download-ultimate.lp-dlbtn.download-animating .download-sweep,
+  .button.download-ultimate.lp-dlbtn.download-animating .download-pulse-line,
+  .button.download-ultimate.lp-dlbtn.download-animating .download-icon,
+  .button.download-ultimate.lp-dlbtn.download-animating .download-icon-orbit,
+  .button.download-ultimate.lp-dlbtn.download-animating .download-icon svg,
+  .button.download-ultimate.lp-dlbtn.download-animating .download-label,
+  .button.download-ultimate.lp-dlbtn.download-animating .download-label::after,
+  .button.download-ultimate.lp-dlbtn.download-animating .download-particles i {
+    animation: none !important;
+  }
 }
 
 /* Uživatel vypne efekty tlačítkem — pohyb zůstane jen u nezbytného. */
@@ -68,6 +85,26 @@
 .launcher-page[data-fx-state="off"] .lp-facts__icon,
 .launcher-page[data-fx-state="off"] .lp-hero__scroll-dot,
 .launcher-page[data-fx-state="off"] .lp-tag__spark {
+  animation: none !important;
+}
+
+/* Pulz stahovacího tlačítka je „efekt“ — při vypnutých efektech
+   i při redukci pohybu se nesmí přehrát. Třída .download-animating
+   v launcheru spouští stejnou animaci jako Modpacky, takže ji tu
+   vypínáme jen pro tlačítka launcheru. */
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating::before,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating::after,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating .download-fx,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating .download-plasma,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating .download-sweep,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating .download-pulse-line,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating .download-icon,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating .download-icon-orbit,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating .download-icon svg,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating .download-label,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating .download-label::after,
+.launcher-page[data-fx-state="off"] .button.download-ultimate.lp-dlbtn.download-animating .download-particles i {
   animation: none !important;
 }
 
@@ -1574,189 +1611,22 @@
 }
 
 /* =============================================================
-   24 · STAHOVACÍ TLAČÍTKO — KLIDOVÁ LINKA A PULZ PO KLIKNUTÍ
+   24 · STAHOVACÍ TLAČÍTKO — PULZ JAKO NA MODPACKÁCH
    -------------------------------------------------------------
-   Tlačítko „Stáhnout“ mělo osm generací efektů naskládaných přes
-   sebe (styles.css). V klidu se sice hýbalo, ale chyběla mu linka,
-   která by jej držela pohromadě, a kliknutí spouštělo detonaci,
-   která byla delší než samotné stažení.
+   Tlačítko „Stáhnout“ používá stejnou odezvu jako tlačítka
+   v sekci Modpacky: třída .download-animating na něm spustí
+   hotový pulz z styles.css (downloadButtonImpactUltimate .98 s
+   + dozvuky v aura/border/plasma/ikoně).
 
-   Tahle vrstva přidává dvě věci a zbytek nechává být:
+   Dřív tu byla vlastní vrstva (klidová linka + vlna z místa
+   kliknutí). Ta je pryč — jeden pulz, jedno chování, stejné
+   napříč celým webem. Co zůstalo, je jen čitelnost textu (24b-2)
+   a vypnutí starší bílé animace popisku (24b-3), protože na
+   zlatém gradientu launcheru byl bílý text nečitelný.
 
-     · .lp-dlbtn__line  — tenká světlá linka, která v klidu pravidelně
-                          přejede zleva doprava (čistě dekorativní),
-     · .lp-dlbtn.is-pulsing — jeden plynulý pulz po kliknutí: vlna
-                          z místa kliknutí, zablesknutí a doznění.
-
-   Obojí respektuje prefers-reduced-motion a vypnuté efekty.
+   Skrývání pod prefers-reduced-motion a vypnutými efekty řeší
+   styles.css sám (media query i data-fx-state="off").
    ============================================================= */
-
-/* ---------- 24a · Linka v klidovém stavu ---------- */
-
-/* Tlačítko samo ořezávat nemůže: styles.css mu drží overflow: visible,
-   aby z něj mohl přetékat energetický glow (a to je jeho hlavní efekt).
-   Linku i vlnu proto schováme do vlastního ořezového rámečku, který
-   kopíruje zaoblení tlačítka. Nic jiného se v něm nekreslí. */
-.lp-dlbtn__clip {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  border-radius: inherit;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* Linka vede při spodní hraně, ne středem tlačítka. Středem by
-   procházela přes popisek a ikonu a vypadala jako artefakt, ne
-   jako záměrný detail. Takhle zdobí spodní lem a text nechá být. */
-.lp-dlbtn__line {
-  position: absolute;
-  left: 0;
-  bottom: 3px;
-  width: 30%;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.3) 20%,
-    rgba(255, 255, 255, 0.95) 55%,
-    rgba(255, 233, 150, 0.9) 78%,
-    transparent 100%
-  );
-  box-shadow:
-    0 0 6px rgba(255, 255, 255, 0.6),
-    0 0 12px rgba(255, 196, 64, 0.45);
-  opacity: 0;
-  transform: translate3d(-120%, 0, 0);
-  pointer-events: none;
-  animation: lp-line-idle 6.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-/* Při najetí myší linka zrychlí a je výraznější — ale nepřestane. */
-.lp-dlbtn:hover .lp-dlbtn__line,
-.lp-dlbtn:focus-visible .lp-dlbtn__line {
-  animation-duration: 3.6s;
-}
-
-@keyframes lp-line-idle {
-  0% {
-    opacity: 0;
-    transform: translate3d(-120%, 0, 0) scaleX(0.7);
-  }
-  8% {
-    opacity: 0.5;
-  }
-  22% {
-    opacity: 0.95;
-  }
-  58% {
-    opacity: 0.9;
-  }
-  74% {
-    opacity: 0;
-    transform: translate3d(433%, 0, 0) scaleX(1.15);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(433%, 0, 0) scaleX(1.15);
-  }
-}
-
-/* ---------- 24b · Pulz po kliknutí ---------- */
-
-/* Vlna z místa kliknutí. Vlastní prvek, ne ::after — ten už zabírá
-   energetický rám z styles.css a nesmí o něj přijít.
-   Souřadnice dodává JS do --lp-pulse-x / -y. */
-.lp-dlbtn__wave {
-  position: absolute;
-  left: var(--lp-pulse-x, 50%);
-  top: var(--lp-pulse-y, 50%);
-  width: 12px;
-  height: 12px;
-  margin: -6px 0 0 -6px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 240, 190, 0.75) 32%,
-    rgba(255, 190, 60, 0.28) 62%,
-    transparent 72%
-  );
-  opacity: 0;
-  transform: scale(0);
-  pointer-events: none;
-}
-
-.lp-dlbtn.is-pulsing .lp-dlbtn__wave {
-  animation: lp-pulse-wave 0.9s cubic-bezier(0.16, 0.84, 0.2, 1) both;
-}
-
-/* Samotné tlačítko při pulzu jednou „dýchne" a zableskne se.
-   Specificita musí přebít klidovou animaci z styles.css
-   (.button[data-download].download-ultimate). */
-.button[data-download].download-ultimate.lp-dlbtn.is-pulsing {
-  animation: lp-pulse-body 0.9s cubic-bezier(0.16, 0.84, 0.2, 1) both;
-}
-
-.button[data-download].download-ultimate.lp-dlbtn.is-pulsing .download-fx {
-  animation: lp-pulse-glow 0.9s cubic-bezier(0.16, 0.84, 0.2, 1) both;
-}
-
-/* Spinner, který se objeví při načítání, pulz neruší. */
-.lp-dlbtn .lp-btn__spinner {
-  z-index: 7;
-}
-
-@keyframes lp-pulse-wave {
-  0% {
-    opacity: 0.85;
-    transform: scale(0);
-  }
-  45% {
-    opacity: 0.5;
-    transform: scale(14);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(26);
-  }
-}
-
-@keyframes lp-pulse-body {
-  0% {
-    transform: scale(1);
-    filter: brightness(1);
-  }
-  22% {
-    transform: scale(0.972);
-    filter: brightness(1.14);
-  }
-  46% {
-    transform: scale(1.028);
-    filter: brightness(1.2);
-  }
-  72% {
-    transform: scale(1.004);
-    filter: brightness(1.05);
-  }
-  100% {
-    transform: scale(1);
-    filter: brightness(1);
-  }
-}
-
-@keyframes lp-pulse-glow {
-  0% {
-    filter: saturate(1.1) brightness(1);
-  }
-  38% {
-    filter: saturate(1.5) brightness(1.26);
-  }
-  100% {
-    filter: saturate(1.1) brightness(1);
-  }
-}
 
 /* ---------- 24b-2 · Čitelnost textu na tlačítku ----------
 
@@ -1784,17 +1654,15 @@
   color: #2a1204;
 }
 
-/* Při najetí, fokusu a během pulzu text lehce ztmavne — pořád čitelný.
-   Selektor záměrně pokrývá i .is-pointer-active a .is-pulsing, protože
-   styles.css má bílou navázanou právě na ně. */
+/* Při najetí, fokusu a během animace text lehce ztmavne — pořád čitelný.
+   Selektor pokrývá i .is-pointer-active, protože styles.css má bílou
+   navázanou právě na něj. */
 .button[data-download].download-ultimate.lp-dlbtn:hover,
 .button[data-download].download-ultimate.lp-dlbtn:focus-visible,
 .button[data-download].download-ultimate.lp-dlbtn.is-pointer-active,
-.button[data-download].download-ultimate.lp-dlbtn.is-pulsing,
 .button[data-download].download-ultimate.lp-dlbtn:hover .download-label,
 .button[data-download].download-ultimate.lp-dlbtn:focus-visible .download-label,
 .button[data-download].download-ultimate.lp-dlbtn.is-pointer-active .download-label,
-.button[data-download].download-ultimate.lp-dlbtn.is-pulsing .download-label,
 .button[data-download].download-ultimate.lp-dlbtn:hover .download-icon,
 .button[data-download].download-ultimate.lp-dlbtn:focus-visible .download-icon {
   color: #1c0b02;
@@ -1804,39 +1672,17 @@
 
    styles.css animuje barvu popisku na hover (downloadLabelSharpGlow)
    a přebarvuje ho na bílou. Animace má přednost před běžným pravidlem,
-   takže by přebila i tmavý text z 24b-2. V launcheru ji nahrazuje
-   vlastní pulz tlačítka, proto tu animaci rušíme — jinde v projektu
-   (Modpacky) zůstává beze změny. */
+   takže by přebila i tmavý text z 24b-2. V launcheru ji rušíme, protože
+   na zlatém gradientu byl bílý text nečitelný. Jinde v projektu
+   (Modpacky) zůstává beze změny — tam bílý text patří k tmavému podkladu. */
 
-.button[data-download].download-ultimate.lp-dlbtn .download-label,
-.button[data-download].download-ultimate.lp-dlbtn:hover .download-label,
-.button[data-download].download-ultimate.lp-dlbtn:focus-visible .download-label,
-.button[data-download].download-ultimate.lp-dlbtn.is-pointer-active .download-label {
+/* :not(.download-animating) je tu zásadní. Během pulzu musí popisek
+   animaci downloadLabelCommit pořád hrát — ta ho na okamžik schová
+   a místo něj ukáže stav „PŘIPRAVUJI…". Kdybych ji vypnul i tady,
+   oba texty by se vykreslily přes sebe a na úzkém tlačítku by vznikla
+   nečitelná kaše. Rušíme jen tu hoverovou (bílou), ne tuhle. */
+.button[data-download].download-ultimate.lp-dlbtn:hover:not(.download-animating) .download-label,
+.button[data-download].download-ultimate.lp-dlbtn:focus-visible:not(.download-animating) .download-label,
+.button[data-download].download-ultimate.lp-dlbtn.is-pointer-active:not(.download-animating) .download-label {
   animation: none;
-}
-
-/* ---------- 24c · Vypnuté efekty a redukce pohybu ---------- */
-
-/* Linku držíme i při vypnutých efektech — je to jemná dekorace,
-   ne „efekt“. Pulz ale patří mezi efekty, takže se vypne. */
-.launcher-page[data-fx-state="off"] .button[data-download].download-ultimate.lp-dlbtn.is-pulsing,
-.launcher-page[data-fx-state="off"] .lp-dlbtn.is-pulsing .lp-dlbtn__wave,
-.launcher-page[data-fx-state="off"] .lp-dlbtn.is-pulsing .download-fx {
-  animation: none;
-}
-
-.launcher-page[data-fx-state="off"] .lp-dlbtn__clip {
-  display: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .lp-dlbtn__line {
-    display: none;
-  }
-
-  .button[data-download].download-ultimate.lp-dlbtn.is-pulsing,
-  .lp-dlbtn.is-pulsing .lp-dlbtn__wave,
-  .lp-dlbtn.is-pulsing .download-fx {
-    animation: none;
-  }
 }
