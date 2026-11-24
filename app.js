@@ -224,7 +224,7 @@ const I18N = {
     "toast.warning.kicker": "UPOZORNĚNÍ",
     "toast.server.soon": "Komunitní server právě připravujeme — brzy.",
     "toast.lang.kicker": "JAZYK",
-    "toast.lang.changed": "Stránka je teraz v jazyce {lang}.",
+    "toast.lang.changed": "Stránka je nyní v jazyce {lang}.",
     "toast.download.kicker": "STAHOVÁNÍ",
     "toast.success.kicker": "HOTOVO",
     "toast.favorite.kicker": "OBLÍBENÉ"

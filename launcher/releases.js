@@ -160,6 +160,28 @@ window.MinekubeLauncherReleases = (function () {
 
   const hasAny = assets => PLATFORM_ORDER.some(os => Boolean(assets && assets[os]));
 
+  /* Cache i API odpověď proženeeme jedním normalizátorem, ať UI nikdy
+     nedostane prázdné jméno, neplatnou adresu nebo nečíselnou velikost. */
+  function normalizeAssets(assets) {
+    const normalized = { windows: null, macos: null, linux: null };
+    PLATFORM_ORDER.forEach(os => {
+      const item = assets && assets[os];
+      if (!item || typeof item.url !== "string" || !/^https?:\/\//i.test(item.url)) return;
+      const name = String(item.name || "").trim();
+      normalized[os] = {
+        name: name || item.url.split("/").pop() || "installer",
+        url: item.url,
+        size:
+          typeof item.size === "number" && Number.isFinite(item.size) && item.size > 0
+            ? item.size
+            : null,
+        digest: typeof item.digest === "string" && item.digest.trim() ? item.digest.trim() : null,
+        version: item.version || versionFrom(name) || null
+      };
+    });
+    return normalized;
+  }
+
   /* ===================== ÚLOŽIŠTĚ (bezpečné i v soukromém režimu) ===================== */
 
   const store = {
@@ -185,7 +207,9 @@ window.MinekubeLauncherReleases = (function () {
     try {
       const parsed = JSON.parse(raw);
       if (!parsed || typeof parsed.fetchedAt !== "number" || !parsed.assets) return null;
-      return parsed;
+      const assets = normalizeAssets(parsed.assets);
+      if (!hasAny(assets)) return null;
+      return { ...parsed, assets };
     } catch {
       return null;
     }
@@ -233,7 +257,14 @@ window.MinekubeLauncherReleases = (function () {
     const releases = await fetchJson(URLS.apiReleases);
     if (!Array.isArray(releases)) throw new Error("GitHub API vrátilo neočekávaný tvar dat.");
 
-    for (const release of releases) {
+    /* Stabilní vydání má přednost před pre-release. GitHub API je vrací
+       promíchané a bez tohoto třídění by web mohl nabízet beta build. */
+    const ordered = [
+      ...releases.filter(release => release && !release.draft && !release.prerelease),
+      ...releases.filter(release => release && !release.draft && release.prerelease)
+    ];
+
+    for (const release of ordered) {
       if (!release || release.draft) continue;
 
       const tag = release.tag_name ? String(release.tag_name).replace(/^v/i, "") : null;
@@ -323,7 +354,8 @@ window.MinekubeLauncherReleases = (function () {
     document.dispatchEvent(new CustomEvent("minekube:launcher-releases", { detail: status() }));
   }
 
-  function applyResult(result, fetchedAt = Date.now()) {
+  function applyResult(result, fetchedAt = Date.now(), token = requestId) {
+    if (token !== requestId) return false;
     state.status = "ready";
     state.source = result.source;
     state.version = result.version || null;
@@ -331,12 +363,14 @@ window.MinekubeLauncherReleases = (function () {
     state.degraded = result.source === "fallback" || result.degraded === true;
     state.fetchedAt = fetchedAt;
     state.error = null;
-    state.assets = result.assets;
+    state.assets = normalizeAssets(result.assets);
     announce();
     resolveReady(state);
+    return true;
   }
 
-  function applyFailure(error) {
+  function applyFailure(error, token = requestId) {
+    if (token !== requestId) return false;
     state.status = "error";
     state.source = null;
     state.degraded = true;
@@ -345,12 +379,17 @@ window.MinekubeLauncherReleases = (function () {
     state.assets = { windows: null, macos: null, linux: null };
     announce();
     resolveReady(state);
+    return true;
   }
 
   let inflight = null;
+  /* Každé načtení má vlastní token. „Zkusit znovu“ tak nemůže být přepsáno
+     starou, pomalejší odpovědí, která dorazí později. */
+  let requestId = 0;
 
   function load(force = false) {
     if (inflight) return inflight;
+    const token = ++requestId;
 
     inflight = (async function run() {
       const wantsFresh = force || new URLSearchParams(window.location.search).get(CONFIG.forceParam) === "refresh";
@@ -366,7 +405,8 @@ window.MinekubeLauncherReleases = (function () {
                když jde o běžné vydání z GitHubu. */
             source: cached.source && cached.source !== "cache" ? cached.source : "repo"
           },
-          cached.fetchedAt
+          cached.fetchedAt,
+          token
         );
         return state;
       }
@@ -389,15 +429,15 @@ window.MinekubeLauncherReleases = (function () {
       }
 
       if (!result) {
-        applyFailure(errors[0] || new Error("V repozitáři se nenašlo žádné sestavení."));
+        applyFailure(errors[0] || new Error("V repozitáři se nenašlo žádné sestavení."), token);
         return state;
       }
 
-      applyResult(result);
+      if (!applyResult(result, Date.now(), token)) return state;
       writeCache();
       return state;
     })().finally(() => {
-      inflight = null;
+      if (token === requestId) inflight = null;
     });
 
     return inflight;
@@ -478,7 +518,9 @@ window.MinekubeLauncherReleases = (function () {
   }
 
   function refresh(force = true) {
-    /* Ruční „zkusit znovu“ musí proběhnout i přes už běžící načtení. */
+    /* Ruční „zkusit znovu“ musí proběhnout i přes už běžící načtení.
+       Starý požadavek necháme doběhnout, ale jeho výsledek už UI nepřepíše. */
+    requestId += 1;
     inflight = null;
     state.status = "loading";
     announce();

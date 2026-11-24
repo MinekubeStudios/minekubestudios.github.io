@@ -28,7 +28,14 @@
       ? window.matchMedia("(prefers-reduced-motion: reduce)")
       : { matches: false };
 
+  const reducedDataQuery =
+    typeof window.matchMedia === "function"
+      ? window.matchMedia("(prefers-reduced-data: reduce)")
+      : { matches: false };
+  const saveData = Boolean(navigator.connection && navigator.connection.saveData);
+
   const prefersReduced = () => Boolean(motionQuery && motionQuery.matches);
+  const effectsDefault = () => !prefersReduced() && !reducedDataQuery.matches && !saveData;
 
   const translate = (key, fallback) => {
     const value = typeof t === "function" ? t(key) : key;
@@ -129,6 +136,37 @@
     window.setTimeout(() => link.remove(), 2000);
   }
 
+  /* Clipboard API nefunguje v každém kontextu (http, zastaralý prohlížeč,
+     zamítnuté oprávnění). Proto zůstává fallback přes dočasný textarea. */
+  async function copyText(text) {
+    if (!text) return false;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch {
+      /* zkusíme fallback */
+    }
+    try {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.top = "0";
+      area.style.left = "-9999px";
+      area.style.opacity = "0";
+      area.style.pointerEvents = "none";
+      document.body.appendChild(area);
+      area.select();
+      const copied = document.execCommand("copy");
+      area.remove();
+      return copied;
+    } catch {
+      return false;
+    }
+  }
+
   function describeAsset(asset) {
     if (!asset || !asset.name) return "";
     const size = formatSize(asset.size);
@@ -155,10 +193,18 @@
   const hintNode = document.querySelector("[data-launcher-hint]");
   const downloadButtons = [...document.querySelectorAll("[data-launcher-download]")];
   const startNote = document.querySelector("[data-launcher-start-note]");
+  const releaseLinks = [...document.querySelectorAll("[data-launcher-release]")];
+  const checkedNode = document.querySelector("[data-launcher-checked]");
+  const copyButtons = [...document.querySelectorAll("[data-launcher-copy]")];
+  const refreshButton = document.querySelector("[data-launcher-refresh]");
 
   let startedAt = 0;
   let announcedFallback = false;
   let announcedVisitorOS = false;
+  /* Hlavní tlačítko míří vždy na Windows — to je jediné vydané sestavení.
+     Systém návštěvníka používáme jen pro upozornění, aby věděl, že jeho
+     build teprve vzniká (a tlačítko mu přesto funguje). */
+  const visitorOS = detectOS();
   let currentOS = "windows";
 
   const setState = (node, state) => {
@@ -169,7 +215,10 @@
 
   function detectOS() {
     const ua = navigator.userAgent || "";
-    if (/Mac|iPhone|iPad/i.test(ua) && !/Linux/i.test(ua)) return "macos";
+    /* iPadOS se hlásí jako macOS — dotykové zařízení s Mac UA bereme jako tablet. */
+    const touchMac = /Mac/i.test(ua) && navigator.maxTouchPoints > 1;
+    if (/Android/i.test(ua)) return "linux";
+    if ((/Mac|iPhone|iPad/i.test(ua) || touchMac) && !/Linux/i.test(ua)) return "macos";
     if (/Linux|X11|FreeBSD/i.test(ua)) return "linux";
     return "windows";
   }
@@ -242,6 +291,9 @@
       hashRow.hidden = !short;
       if (short && asset?.digest) hashRow.setAttribute("title", asset.digest);
       else hashRow.removeAttribute("title");
+      copyButtons.forEach(button => {
+        button.disabled = !short;
+      });
     }
   }
 
@@ -255,6 +307,9 @@
     }
     if (Date.now() - startedAt < STARTED_HOLD_MS) {
       return translate("lp.dl.label.started", "Download started");
+    }
+    if (startedAt) {
+      return translate("lp.dl.label.again", "Download again");
     }
     return translate("lp.dl.label.download", "Download for {os}").replace("{os}", platformName(currentOS));
   }
@@ -299,8 +354,14 @@
     if (hintNode) {
       const label = heroLabelText(info, status);
       const sub = heroSub?.textContent || "";
-      const file = heroDescription ? `. ${heroDescription}` : "";
-      hintNode.textContent = [label, sub].filter(Boolean).join(" — ") + file;
+      const file = heroDescription || "";
+      const visitorInfo = source.platform(visitorOS);
+      const plannedHint =
+        visitorInfo && visitorInfo.planned && visitorOS !== currentOS
+          ? translate("lp.hint.planned", "{os} is planned — only the Windows build is available for now.")
+              .replace("{os}", platformName(visitorOS))
+          : "";
+      hintNode.textContent = [label, sub, plannedHint].filter(Boolean).join(" — ") + (file ? `. ${file}` : "");
     }
   }
 
@@ -326,6 +387,38 @@
       });
   }
 
+  function relativeTime(timestamp) {
+    if (!timestamp) return "";
+    const delta = Math.max(0, Date.now() - timestamp);
+    if (delta < 45000) return translate("lp.dl.checked.now", "just now");
+    const lang = document.documentElement.lang || "cs";
+    try {
+      const formatter = new Intl.RelativeTimeFormat(lang, { numeric: "auto" });
+      const minutes = Math.round(delta / 60000);
+      if (minutes < 60) return formatter.format(-minutes, "minute");
+      const hours = Math.round(minutes / 60);
+      if (hours < 24) return formatter.format(-hours, "hour");
+      return formatter.format(-Math.round(hours / 24), "day");
+    } catch {
+      return new Date(timestamp).toLocaleString(lang);
+    }
+  }
+
+  function renderReleaseMeta(status) {
+    releaseLinks.forEach(link => {
+      if (status.state === "ready" && status.releaseUrl) link.href = status.releaseUrl;
+    });
+
+    if (!checkedNode) return;
+    /* U záložní adresy jsme nic neověřovali — čas by lhal. */
+    const verified = status.state === "ready" && status.source !== "fallback";
+    const relative = verified && status.fetchedAt ? relativeTime(status.fetchedAt) : "";
+    checkedNode.textContent = relative
+      ? translate("lp.dl.checked", "Checked {time}").replace("{time}", relative)
+      : "";
+    checkedNode.hidden = !relative;
+  }
+
   function renderAll() {
     const status = source.status();
     const justStarted = Date.now() - startedAt < STARTED_HOLD_MS;
@@ -336,6 +429,7 @@
     renderFiles(status);
     renderHero(status);
     renderPlatformButtons(status);
+    renderReleaseMeta(status);
   }
 
   /* ===================== STAHOVÁNÍ ===================== */
@@ -438,6 +532,36 @@
 
   /* ===================== REAKCE NA NAČTENÍ VYDÁNÍ ===================== */
 
+  /* Ruční „zkontrolovat znovu“ přímo u nadpisu sekce — obchází 5minutovou
+     cache, aby se nové vydání objevilo hned. */
+  if (refreshButton) {
+    refreshButton.addEventListener("click", async () => {
+      if (refreshButton.disabled) return;
+      refreshButton.disabled = true;
+      refreshButton.classList.add("is-busy");
+      refreshButton.setAttribute("aria-busy", "true");
+      announce(translate("lp.toast.fetching", "Loading the release again…"), "system", 2400);
+
+      await refetch();
+      renderAll();
+
+      const status = source.status();
+      refreshButton.classList.remove("is-busy");
+      refreshButton.removeAttribute("aria-busy");
+      refreshButton.disabled = false;
+
+      if (status.state === "ready") {
+        announce(
+          translate("lp.toast.refreshed", "Checked. Latest release: v{version}").replace("{version}", status.version || "—"),
+          "success",
+          3600
+        );
+      } else {
+        announce(translate("lp.toast.retryFailed", "The release still will not load."), "warning", 4800);
+      }
+    });
+  }
+
   function onReleases() {
     renderAll();
     const status = source.status();
@@ -461,7 +585,7 @@
   function announceVisitorOS() {
     if (announcedVisitorOS) return;
     announcedVisitorOS = true;
-    const detected = detectOS();
+    const detected = visitorOS;
     if (detected === "windows") return;
     const info = source.platform(detected);
     if (!info || !info.planned) return;
@@ -594,7 +718,7 @@
 
   document.documentElement.classList.add("lp-js");
 
-  const fxOn = () => !prefersReduced() && pageRoot?.dataset.fx !== "off";
+  const fxOn = () => !prefersReduced() && !document.hidden && pageRoot?.getAttribute("data-fx-state") !== "off";
 
   /* Jeden rAF cyklus pro obě plátna — žádné souběžné smyčky. */
   const painter = (() => {
@@ -726,7 +850,7 @@
 
   function initSparkles() {
     if (!finePointer.matches) return;
-    const canvas = document.querySelector("[data-fx]");
+    const canvas = document.querySelector("canvas[data-fx]");
     if (!canvas) return;
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
@@ -828,8 +952,11 @@
     if (!button) return;
 
     const apply = (on, persist) => {
-      if (pageRoot) pageRoot.dataset.fx = on ? "on" : "off";
+      if (pageRoot) pageRoot.setAttribute("data-fx-state", on ? "on" : "off");
       button.setAttribute("aria-pressed", String(on));
+      document.querySelectorAll("canvas[data-fx], canvas[data-dust]").forEach(canvas => {
+        canvas.classList.toggle("is-active", on);
+      });
       if (persist) {
         try {
           localStorage.setItem(FX_KEY, on ? "on" : "off");
@@ -837,15 +964,10 @@
           /* soukromý režim — jen si to nepamatujeme */
         }
       }
-      if (on) {
-        painter.wake();
-      } else {
-        document.querySelector("[data-fx]")?.classList.remove("is-active");
-        document.querySelector("[data-dust]")?.classList.remove("is-active");
-      }
+      if (on) painter.wake();
     };
 
-    let on = !prefersReduced();
+    let on = effectsDefault();
     try {
       const saved = localStorage.getItem(FX_KEY);
       if (saved === "off") on = false;
@@ -856,25 +978,13 @@
 
     apply(on, false);
     button.disabled = false;
-    document.querySelectorAll("[data-fx], [data-dust]").forEach(canvas => {
-      canvas.classList.toggle("is-active", on);
-    });
 
     button.addEventListener("click", () => {
-      const next = button.getAttribute("aria-pressed") !== "true";
-      apply(next, true);
-      document.querySelectorAll("[data-fx], [data-dust]").forEach(canvas => {
-        canvas.classList.toggle("is-active", next);
-      });
+      apply(button.getAttribute("aria-pressed") !== "true", true);
     });
 
     const syncMotion = () => {
-      if (prefersReduced()) {
-        apply(false, false);
-        document.querySelectorAll("[data-fx], [data-dust]").forEach(canvas => {
-          canvas.classList.remove("is-active");
-        });
-      }
+      if (prefersReduced()) apply(false, false);
     };
 
     if (typeof motionQuery.addEventListener === "function") {
@@ -1114,11 +1224,32 @@
       tops.forEach((top, index) => {
         if (top <= line) activeIndex = index;
       });
+      if (activeIndex === -1 && tops.length) activeIndex = 0;
+      const list = nav?.querySelector(".lp-nav__list");
       targets.forEach(({ link }, index) => {
         const active = index === activeIndex;
+        const wasActive = link.classList.contains("is-active");
         link.classList.toggle("is-active", active);
         if (active) link.setAttribute("aria-current", "true");
         else link.removeAttribute("aria-current");
+
+        /* Na úzkém displeji se seznam posouvá — aktivní položka musí být
+           celá vidět. Posouváme jen samotný seznam, ne stránku. */
+        if (active && !wasActive && list && list.scrollWidth > list.clientWidth + 4) {
+          const pad = 14;
+          const start = link.offsetLeft;
+          const end = start + link.offsetWidth;
+          let left = list.scrollLeft;
+          if (start - pad < left) left = start - pad;
+          else if (end + pad > left + list.clientWidth) left = end + pad - list.clientWidth;
+          if (left !== list.scrollLeft) {
+            try {
+              list.scrollTo({ left: Math.max(0, left), behavior: prefersReduced() ? "auto" : "smooth" });
+            } catch {
+              list.scrollLeft = Math.max(0, left);
+            }
+          }
+        }
       });
     }
 
@@ -1196,8 +1327,11 @@
       if (countNode) countNode.textContent = `${index + 1} / ${items.length}`;
     }
 
+    const preloaded = new Set();
+
     function preload(target) {
-      if (!target) return;
+      if (!target || preloaded.has(target.full)) return;
+      preloaded.add(target.full);
       const next = new Image();
       next.decoding = "async";
       next.src = target.full;
@@ -1206,31 +1340,47 @@
     function show(nextIndex, { focusImage = false } = {}) {
       index = (nextIndex + items.length) % items.length;
       const item = items[index];
+      if (!item) return;
       paintText();
       root.classList.add("is-loading");
+      root.classList.remove("is-error");
       image.classList.remove("is-ready", "is-zoomed");
+      image.setAttribute("aria-busy", "true");
+
+      const cleanup = () => {
+        image.onload = null;
+        image.onerror = null;
+        image.removeAttribute("aria-busy");
+      };
 
       const loaded = () => {
-        root.classList.remove("is-loading");
+        cleanup();
+        root.classList.remove("is-loading", "is-error");
         image.classList.add("is-ready");
-        image.removeEventListener("load", loaded);
-        image.removeEventListener("error", failed);
         preload(items[(index + 1) % items.length]);
         preload(items[(index - 1 + items.length) % items.length]);
       };
 
       const failed = () => {
+        cleanup();
         root.classList.remove("is-loading");
-        if (image.getAttribute("src") !== item.fallback) {
-          image.src = item.fallback;
-          image.classList.add("is-ready");
+        const fallback = item.fallback || item.full;
+        if (fallback && image.getAttribute("src") !== fallback) {
+          image.onload = loaded;
+          image.onerror = () => {
+            cleanup();
+            root.classList.remove("is-loading");
+            root.classList.add("is-error");
+          };
+          image.src = fallback;
+          return;
         }
-        image.removeEventListener("load", loaded);
-        image.removeEventListener("error", failed);
+        root.classList.add("is-error");
+        image.classList.remove("is-ready");
       };
 
-      image.addEventListener("load", loaded);
-      image.addEventListener("error", failed);
+      image.onload = loaded;
+      image.onerror = failed;
 
       if (image.getAttribute("src") !== item.full) {
         image.src = item.full;
@@ -1238,6 +1388,12 @@
         // Stejná adresa podruhé: prohlížeč už nic nenačítá, stav rozhodneme sami.
         if (image.naturalWidth) loaded();
         else failed();
+      } else {
+        window.requestAnimationFrame(() => {
+          if (!image.complete) return;
+          if (image.naturalWidth) loaded();
+          else failed();
+        });
       }
 
       image.alt = item.thumb?.getAttribute("alt") || "";
@@ -1247,13 +1403,28 @@
     function open(position, trigger) {
       window.clearTimeout(closeTimer);
       lastFocus = trigger || document.activeElement;
+
+      /* Opakované kliknutí na spouštěč nesmí přidávat druhý keyboard
+         listener ani druhý zámek. Jen přepneme obrázek. */
+      if (!root.hidden && !root.classList.contains("is-closing")) {
+        show(position);
+        return;
+      }
+
       root.hidden = false;
-      root.classList.remove("is-closing");
+      root.setAttribute("aria-hidden", "false");
+      root.classList.remove("is-closing", "is-error");
       document.body.classList.add("lp-lb-open");
       index = position;
       show(position);
       closeButton?.focus({ preventScroll: true });
-      locked = [document.querySelector("main"), document.querySelector(".site-header"), document.querySelector(".site-footer")].filter(Boolean);
+      locked = [
+        document.querySelector("main"),
+        document.querySelector(".site-header"),
+        document.querySelector(".site-footer"),
+        document.querySelector(".page-veil"),
+        document.getElementById("kofiGate")
+      ].filter(Boolean);
       locked.forEach(node => {
         try {
           node.inert = true;
@@ -1280,16 +1451,18 @@
       });
       locked = [];
       image.classList.remove("is-zoomed");
+      image.removeAttribute("aria-busy");
       window.clearTimeout(closeTimer);
       closeTimer = window.setTimeout(
         () => {
           root.hidden = true;
+          root.setAttribute("aria-hidden", "true");
           root.classList.remove("is-closing");
           image.classList.remove("is-ready");
         },
         prefersReduced() ? 0 : 300
       );
-      if (lastFocus && typeof lastFocus.focus === "function") {
+      if (lastFocus && lastFocus.isConnected && typeof lastFocus.focus === "function") {
         lastFocus.focus({ preventScroll: true });
       }
     }
@@ -1322,6 +1495,11 @@
       if (!focusables.length) return;
       const first = focusables[0];
       const last = focusables[focusables.length - 1];
+      if (!dialog.contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+        return;
+      }
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last.focus();
@@ -1388,6 +1566,100 @@
     });
   }
 
+  /* ---------- FAQ akordeon ----------
+     Základ je nativní <details name="lp-faq">, takže akordeon funguje
+     i bez JavaScriptu (a čtečky znají jeho stav samy). Tady jen doplníme
+     výhradní otevírání pro prohlížeče bez podpory atributu `name`. */
+
+  function initFaq() {
+    const items = [...document.querySelectorAll(".lp-faq__item")];
+    if (!items.length) return;
+    if ("name" in HTMLDetailsElement.prototype) return;
+
+    items.forEach(item => {
+      const summary = item.querySelector("summary");
+      if (!summary) return;
+      summary.addEventListener("click", event => {
+        if (item.open) return; // zavírání necháme na prohlížeči
+        event.preventDefault();
+        items.forEach(other => {
+          if (other !== item) other.open = false;
+        });
+        item.open = true;
+      });
+    });
+  }
+
+  /* ---------- Kopírování SHA-256 otisku ---------- */
+
+  function initCopyChecksum() {
+    let resetTimer = 0;
+
+    const reset = () => {
+      window.clearTimeout(resetTimer);
+      copyButtons.forEach(button => {
+        button.classList.remove("is-copied");
+        button.querySelector("span")?.replaceChildren(document.createTextNode(translate("lp.dl.copy", "Copy")));
+      });
+    };
+
+    copyButtons.forEach(button => {
+      button.addEventListener("click", async () => {
+        /* Celý otisk bereme z dat, ne z okrájeného textu v UI. */
+        const digest = source.asset("windows")?.digest || "";
+        if (!digest) {
+          announce(translate("lp.dl.hash.missing", "No checksum is available yet."), "warning", 3600);
+          return;
+        }
+        const copied = await copyText(digest);
+        if (!copied) {
+          announce(translate("lp.dl.hash.failed", "The checksum could not be copied."), "warning", 4200);
+          return;
+        }
+        window.clearTimeout(resetTimer);
+        button.classList.add("is-copied");
+        button.querySelector("span")?.replaceChildren(document.createTextNode(translate("lp.dl.copied", "Copied")));
+        announce(translate("lp.dl.hash.copied", "SHA-256 checksum copied to the clipboard."), "success", 3200);
+        resetTimer = window.setTimeout(reset, 2200);
+      });
+    });
+
+    /* Přepnutí jazyka uprostřed kopírování nesmí nechat v tlačítku cizí text. */
+    document.addEventListener("minekube:language", reset);
+  }
+
+  /* ---------- Skip link: zvýraznění a čistý fokus ---------- */
+
+  function initSkipLink() {
+    const link = document.querySelector(".lp-skip");
+    const scrim = document.getElementById("lpSkipScrim");
+    const target = document.getElementById("top");
+    if (!link || !target) return;
+
+    const on = () => scrim?.classList.add("is-on");
+    const off = () => scrim?.classList.remove("is-on");
+
+    link.addEventListener("focus", on);
+    link.addEventListener("blur", off);
+    link.addEventListener("click", () => {
+      off();
+      /* Fokus přesuneme na obsah, aby klávesnice pokračovala tam,
+         a to bez skoku stránkou — na začátku už jsme. */
+      window.requestAnimationFrame(() => {
+        target.setAttribute("tabindex", "-1");
+        target.focus({ preventScroll: true });
+      });
+    });
+  }
+
+  /* ---------- Pauza efektů na pozadí ---------- */
+
+  function initVisibilityPause() {
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) painter.wake();
+    });
+  }
+
   initFxToggle();
   initDownloadButtons();
   initRipples();
@@ -1399,6 +1671,10 @@
   initSmoothScroll();
   initScrollUi();
   initLightbox();
+  initFaq();
+  initCopyChecksum();
+  initSkipLink();
+  initVisibilityPause();
 
 
   /* ===================== START ===================== */
