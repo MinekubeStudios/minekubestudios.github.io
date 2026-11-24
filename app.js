@@ -647,8 +647,11 @@ function applyLanguage(lang, { notify = false } = {}) {
 
   document.querySelectorAll("[data-i18n]").forEach(element => {
     const value = t(element.dataset.i18n);
-    // Texty obsahujú značku <strong>/<em> — povolené je iba zvýraznenie.
-    element.innerHTML = /<\s*(strong|em)\s*>/.test(value) ? value : escapeHtml(value);
+    // Texty mohou obsahovat zalomení řádku a zvýraznění <strong>/<em>.
+    // Povolena je pouze tahle trojice značek, všechno ostatní se escapuje.
+    element.innerHTML = /<\s*(br|strong|em)\s*\/?\s*>/.test(value)
+      ? sanitizeMarkup(value)
+      : escapeHtml(value);
   });
 
   document.querySelectorAll("[data-i18n-aria]").forEach(element => {
@@ -677,6 +680,22 @@ function applyLanguage(lang, { notify = false } = {}) {
   if (notify) {
     showToast(t("toast.lang.changed").replace("{lang}", meta.name), "language");
   }
+}
+
+/* Povolí jen <br>, <strong>, <em> (bez atributů), všechno ostatní escapuje.
+   Slovníky jsou sice naše, ale i tak je to pojistka proti vložené značce. */
+const ALLOWED_TAG = /^<\/?(?:br|strong|em)\s*\/?>$/i;
+
+function sanitizeMarkup(value) {
+  return String(value)
+    .split(/(<[^<>]*>)/g)
+    .map(part => {
+      if (!part.startsWith("<")) return escapeHtml(part);
+      if (!ALLOWED_TAG.test(part)) return escapeHtml(part);
+      const name = part.replace(/[<>/\s]/g, "").toLowerCase();
+      return part.startsWith("</") ? `</${name}>` : `<${name}>`;
+    })
+    .join("");
 }
 
 function escapeHtml(value) {
