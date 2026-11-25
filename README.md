@@ -1,4 +1,58 @@
-# Minekube Studios // Web (v16 — nový hero text a hloubkový audit chyb)
+# Minekube Studios // Web (v17 — launcher na vlastní doméně)
+
+## v17 — **launcher má vlastní doménu `minekubelauncher.github.io`**
+
+Stránka launcheru už není podsložkou tohoto webu. Přesunula se na
+samostatnou doménu **`minekubelauncher.github.io`** a s sebou si vzala
+všechno, co k životu potřebuje — na rodiče v `/` už nesahá ani jednou
+cestou.
+
+### Co se přesunulo
+
+| Co | Odkud | Kam |
+|---|---|---|
+| `styles.css`, `design-plus.css` | kořen | `launcher/shared/` |
+| `app.js`, `design-plus.js` | kořen | `launcher/shared/` |
+| logo, favicon, apple ikona | `assets/` | `launcher/shared/assets/` |
+| z `apple.css` (2 pravidla pro launcher) | kořen | `launcher/apple-launcher.css` |
+
+`launcher/` je teď **soběstačný adresář** — dá se vzít celý a nasadit
+jako root nové domény. Ověřeno izolovaným během: všech 41 assetů
+vrací 200, 0 chyb, 4 odstavce hero, 0 nepřeložených klíčů.
+
+### Co zůstalo být
+
+- **`apple.css`** z celého 28kB souboru launcher zajímaly **dvě
+  pravidla** (`overflow-x: clip` a barvy pro světlý motiv). Zbytek byl
+  scoped na `body.ap-home` / `body.ap-packs`. Opsaná do
+  `launcher/apple-launcher.css`.
+- **`design-plus.css`** launcher naopak **doopravdy používá** (brand,
+  tlačítka, scroll-progress, ikony motivu), takže se kopíruje celý.
+- **`apple.js`** launcher nepoužívá vůbec (jeho `ap-*` třídy na stránce
+  nejsou) — z launcheru odebrán.
+- **`design-plus.js`** zůstává: stará se o pozadí, jiskry, tlačítko
+  „zpět nahoru" i konami kód.
+
+### Odkazy
+
+- Domovský web i katalog modpacků odkazují na launcher **absolutně**
+  (`https://minekubelauncher.github.io/`), ne relativně.
+- Launcher naopak odkazuje zpět na web absolutně
+  (`https://minekubestudios.github.io/`), včetně kotvy `#projekt`
+  a katalogu `/modpacky/`.
+- `/launcher/` zmizel z `PAGE_TRANSITION_PATHS` — přechodový závoj
+  funguje jen v rámci jedné domény a cross-origin odkaz by stejně
+  odmítl.
+- V patičce launcheru přibyla jeho vlastní adresa
+  (`footer.launcherDomain`, cs/en/sk).
+
+### Ověřeno
+
+- **24/24 testů** — harness načítá skripty z `launcher/shared/`,
+  hlídá absolutní URL i překlad nového klíče.
+- `html-validate`: 0 chyb na `index.html` i `launcher/index.html`.
+- `csstree-validator`: čisté všechny čtyři styly.
+- Izolovaný běh launcheru: 0 chyb, hero 4 odstavce, 0 raw klíčů.
 
 ## v16 — **nový hero text, titulkový nadpis na dva řádky a audit celého webu**
 

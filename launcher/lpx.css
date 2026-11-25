@@ -2630,6 +2630,27 @@ html:not(.lp-js) .lpx [data-reveal] {
   line-height: 1.5;
 }
 
+/* Adresa launcheru — patří pod popis studia, ne mezi odkazy.
+   Monospace drží doménu čitelnou a odliší ji od běžného textu. */
+.launcher-page ~ .site-footer .footer-domain {
+  margin-top: 10px;
+  font-size: 12px !important;
+  letter-spacing: 0.01em;
+}
+
+.launcher-page ~ .site-footer .footer-domain a {
+  color: var(--lpx-gold-soft);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px !important;
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--lpx-gold-soft) 42%, transparent);
+}
+
+.launcher-page ~ .site-footer .footer-domain a:hover {
+  border-bottom-color: var(--lpx-gold-soft);
+}
+
+
 .launcher-page ~ .site-footer .footer-grid h3 {
   font-size: 11px;
   letter-spacing: 0.16em;
