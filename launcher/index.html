@@ -15,9 +15,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Baloo+2:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="../styles.css" rel="stylesheet"/>
 <link href="../design-plus.css" rel="stylesheet"/>
-<link href="launcher.css?v=20261125-1" rel="stylesheet"/>
+<link href="lpx.css?v=20261125-1" rel="stylesheet"/>
 <link href="../apple.css?v=20261124-1" rel="stylesheet"/>
-<link href="launcher-mc.css?v=20261125-7" rel="stylesheet"/>
+<link href="launcher-pulse.css?v=20261125-1" rel="stylesheet"/>
 <script>
 /* Motiv a jazyk se čtou dřív, než se stránka vykreslí — žádné bliknutí při startu. */
 (function () {
@@ -42,12 +42,7 @@
 </script>
 </head>
 <body class="launcher-redesign ap-launcher">
-<a class="lp-skip" data-i18n="lp.skip" href="#top">Přeskočit na obsah</a>
-<div aria-hidden="true" class="lp-skip-scrim" id="lpSkipScrim"></div>
-<!-- ===================== SPRITE // IKONY =====================
-     Jediný sprite pro celou stránku. Značky Windows a Linuxu (Tux)
-     pocházejí z otevřené sady Simple Icons (CC0); zbytek je vlastní kresba
-     Minekube. Ikony se přebarvují přes currentColor. -->
+<a class="lpx-skip" data-i18n="lp.skip" href="#top">Přeskočit na obsah</a>
 <svg aria-hidden="true" class="mk-sprite" focusable="false" xmlns="http://www.w3.org/2000/svg">
 <symbol id="mk-os-windows" viewBox="0 0 24 24"><rect height="8.1" rx="1.7" width="8.1" x="3" y="3"></rect>
 <rect height="8.1" rx="1.7" width="8.1" x="12.9" y="3"></rect>
@@ -226,29 +221,32 @@
 </nav>
 </header>
 
-<main class="launcher-page" id="top" tabindex="-1">
-<!-- ===================== HERO ===================== -->
-<section aria-labelledby="launcherTitle" class="lp-hero lp-mc-hero" data-mc-hero id="launcher">
-<canvas aria-hidden="true" class="lp-dust" data-dust></canvas>
-<div aria-hidden="true" class="lp-mc-hero__scene" data-mc-scene>
-<div class="lp-mc-layer lp-mc-layer--sky" data-mc-depth="0.04"></div>
-<div class="lp-mc-layer lp-mc-layer--glow" data-mc-depth="0.1"></div>
-<div class="lp-mc-layer lp-mc-layer--ridge" data-mc-depth="0.18"></div>
-<div class="lp-mc-layer lp-mc-layer--near" data-mc-depth="0.3"></div>
-<div class="lp-mc-layer lp-mc-layer--sparks" data-mc-depth="0.44"></div>
+<main class="launcher-page lpx" id="top" tabindex="-1">
+<!-- ===================== HERO =====================
+     Tapeta z archivu leží celá přes hero jako jemná atmosféra
+     (předpečená, ztmavená a rozostřená). Přes ni jde gradient,
+     takže text zůstává čitelný a fotka nikdy nesoupeří s obsahem. -->
+<section aria-labelledby="lpxTitle" class="lpx-hero" data-mc-hero id="launcher">
+<div aria-hidden="true" class="lpx-hero__scene" data-mc-scene>
+<div class="lpx-hero__backdrop" data-mc-depth="0.06"></div>
+<div class="lpx-hero__aura" data-mc-depth="0.12"></div>
+<div class="lpx-hero__grid-mask"></div>
+<div class="lpx-hero__sparks" data-mc-depth="0.4"></div>
 </div>
-<div class="lp-hero__glow" aria-hidden="true"></div>
-<div class="lp-wrap lp-mc-hero__grid">
-<div class="lp-mc-hero__copy">
-<p class="lp-eyebrow">
-<span aria-hidden="true" class="lp-eyebrow__pulse"></span>
+<canvas aria-hidden="true" class="lpx-dust" data-dust></canvas>
+
+<div class="lpx-wrap lpx-hero__grid">
+<div class="lpx-hero__copy">
+<p class="lpx-eyebrow">
+<img alt="" aria-hidden="true" class="lpx-eyebrow__icon" decoding="async" height="20" src="icons/torch.png" width="20"/>
 <span data-i18n="lp.hero.kicker">Minekube Launcher</span>
-<span class="lp-eyebrow__badge" data-i18n="lp.hero.badge">Open source · GPL-3.0</span>
+<span class="lpx-eyebrow__badge" data-i18n="lp.hero.badge">Open source · GPL-3.0</span>
 </p>
-<h1 class="lp-title" data-i18n="lp.hero.title" id="launcherTitle">Tvůj Minecraft.<br><em>Tvůj launcher.</em></h1>
-<p class="lp-lead" data-i18n="lp.hero.lead">Knihovna instancí, modpacky z Modrinthu a správa Javy v jednom okně. Bez reklam, bez telemetrie, s češtinou v základu. Zdarma pro Windows.</p>
-<div class="lp-actions">
-<button aria-describedby="lpDownloadHint" class="button button-primary download-ultimate lp-dlbtn" data-download="launcher" data-launcher-download data-os="windows" data-state="loading" type="button">
+<h1 class="lpx-title" data-i18n="lp.hero.title" id="lpxTitle">Tvůj Minecraft.<br><em>Tvůj launcher.</em></h1>
+<p class="lpx-lead" data-i18n="lp.hero.lead">Knihovna instancí, modpacky z Modrinthu a správa Javy v jednom okně. Bez reklam, bez telemetrie, s češtinou v základu. Zdarma pro Windows.</p>
+
+<div class="lpx-actions">
+<button aria-describedby="lpxDownloadHint" class="button button-primary download-ultimate lpx-download" data-download="launcher" data-launcher-download data-os="windows" data-state="loading" type="button">
 <span aria-hidden="true" class="download-fx">
 <span class="download-plasma"></span>
 <span class="download-matrix"></span>
@@ -256,148 +254,166 @@
 <span class="download-pulse-line"></span>
 <span class="download-particles"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
 </span>
-
 <span aria-hidden="true" class="lp-btn__spinner"></span>
 <span class="download-label" data-os-label>Stáhnout pro Windows</span>
 <span aria-hidden="true" class="download-icon"><span class="download-icon-orbit"></span><svg viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg></span>
 <span aria-hidden="true" class="download-hover-back"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
 </button>
-<a class="lp-btn lp-btn--ghost" data-scroll href="#funkce">
-<svg aria-hidden="true" class="lp-icon-solid" viewBox="0 0 24 24"><use href="#lp-play"></use></svg>
-<span class="lp-btn__label" data-i18n="lp.hero.secondary">Prohlédnout funkce</span>
+<a class="lpx-btn lpx-btn--ghost" data-scroll href="#funkce">
+<img alt="" aria-hidden="true" decoding="async" height="20" src="icons/pickaxe.png" width="20"/>
+<span data-i18n="lp.hero.secondary">Prohlédnout funkce</span>
 </a>
 </div>
-<p class="lp-meta">
+
+<p class="lpx-meta">
 <span data-os-sub>Windows 10+ · 64bit</span>
-<span aria-hidden="true" class="lp-meta__sep"></span>
+<span aria-hidden="true" class="lpx-meta__dot"></span>
 <span data-launcher-version>…</span>
-<span class="lp-meta__source" data-launcher-source hidden><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-github"></use></svg><span>GitHub Releases</span></span>
+<span aria-hidden="true" class="lpx-meta__dot"></span>
+<span data-launcher-source hidden><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-github"></use></svg><span>GitHub Releases</span></span>
 </p>
-<p class="lp-file" data-launcher-file="hero" hidden><span data-launcher-file-name></span></p>
-<p class="lp-visually-hidden" data-launcher-hint id="lpDownloadHint"></p>
-<ul class="lp-trust">
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.3L19 6.5"></path></svg><span data-i18n="lp.trust.free">Zdarma</span></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.3L19 6.5"></path></svg><a data-launcher-repo data-site-link="launcherRepo" href="https://github.com/MinekubeStudios/MinekubeLauncher" rel="noopener noreferrer" target="_blank"><span data-i18n="lp.trust.opensource">Open source</span> ↗</a></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.3L19 6.5"></path></svg><span data-i18n="lp.trust.telemetry">Bez telemetrie</span></li>
-<li><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.3L19 6.5"></path></svg><span data-i18n="lp.trust.github">Přímo z GitHubu</span></li>
+<p class="lpx-file" data-launcher-file="hero" hidden><span data-launcher-file-name></span></p>
+<p class="lpx-visually-hidden" data-launcher-hint id="lpxDownloadHint"></p>
+
+<ul class="lpx-trust">
+<li><img alt="" aria-hidden="true" decoding="async" height="18" src="icons/confirm.png" width="18"/><span data-i18n="lp.trust.free">Zdarma</span></li>
+<li><img alt="" aria-hidden="true" decoding="async" height="18" src="icons/bookshelf.png" width="18"/><a data-launcher-repo data-site-link="launcherRepo" href="https://github.com/MinekubeStudios/MinekubeLauncher" rel="noopener noreferrer" target="_blank"><span data-i18n="lp.trust.opensource">Open source</span> ↗</a></li>
+<li><img alt="" aria-hidden="true" decoding="async" height="18" src="icons/lock.png" width="18"/><span data-i18n="lp.trust.telemetry">Bez telemetrie</span></li>
+<li><img alt="" aria-hidden="true" decoding="async" height="18" src="icons/server-ping.png" width="18"/><span data-i18n="lp.trust.github">Přímo z GitHubu</span></li>
 </ul>
-<button class="lp-mc-dig" data-mc-dig type="button">
+
+<div class="lpx-hero__cta">
+<button class="lpx-dig" data-mc-dig type="button">
 <span data-i18n="lp.mc.dig">Ponoř se hloub</span>
 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 4v14"></path><path d="m6 12 6 6 6-6"></path></svg>
 </button>
-<button aria-pressed="true" class="lp-mc-hero__motion" data-mc-motion type="button">
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path><circle cx="12" cy="12" r="4"></circle></svg>
-<span data-mc-motion-label data-i18n="lp.mc.motion.on">Animace zapnuté</span>
+<button aria-pressed="true" class="lpx-motion" data-mc-motion type="button">
+<img alt="" aria-hidden="true" decoding="async" height="18" src="icons/toggle-on.png" width="18"/>
+<span data-i18n="lp.mc.motion.on" data-mc-motion-label>Animace zapnuté</span>
 </button>
 </div>
+</div>
 
-<div class="lp-hero__visual">
-<span aria-hidden="true" class="lp-hero__aurora"></span>
-<figure class="lp-app" data-ap-scale data-tilt>
-<div aria-hidden="true" class="lp-app__window">
-<div class="lp-app__bar">
-<span class="lp-app__dot"></span>
-<span class="lp-app__dot"></span>
-<span class="lp-app__dot"></span>
-<span class="lp-app__title">Minekube Launcher</span>
-<span class="lp-app__spacer"></span>
-<svg class="lp-app__glyph" viewBox="0 0 24 24"><use href="#mk-tray"></use></svg>
+<div class="lpx-hero__visual">
+<figure class="lpx-window" data-tilt>
+<div aria-hidden="true" class="lpx-window__frame">
+<div class="lpx-window__bar">
+<span class="lpx-window__dot"></span><span class="lpx-window__dot"></span><span class="lpx-window__dot"></span>
+<span class="lpx-window__title">Minekube Launcher</span>
+<span class="lpx-window__spacer"></span>
+<svg class="lpx-window__glyph" viewBox="0 0 24 24"><use href="#mk-tray"></use></svg>
 </div>
-<div class="lp-app__toolbar">
-<span class="lp-app__pill lp-app__pill--brand"><svg viewBox="0 0 24 24"><use href="#lp-cube"></use></svg>Přidat instanci</span>
-<span class="lp-app__pill">Složky</span>
-<span class="lp-app__pill">Nastavení</span>
-<span class="lp-app__pill">Nápověda</span>
-<span class="lp-app__pill lp-app__pill--updates">Aktualizace</span>
+<div class="lpx-window__body">
+<div class="lpx-window__rail">
+<span class="lpx-window__rail-btn is-active"><img alt="" decoding="async" height="22" src="icons/chest.png" width="22"/></span>
+<span class="lpx-window__rail-btn"><img alt="" decoding="async" height="22" src="icons/bookshelf.png" width="22"/></span>
+<span class="lpx-window__rail-btn"><img alt="" decoding="async" height="22" src="icons/folder.png" width="22"/></span>
+<span class="lpx-window__rail-btn"><img alt="" decoding="async" height="22" src="icons/star.png" width="22"/></span>
+<span class="lpx-window__rail-spacer"></span>
+<span class="lpx-window__rail-btn"><img alt="" decoding="async" height="22" src="icons/settings.png" width="22"/></span>
 </div>
-<div class="lp-app__body">
-<div class="lp-app__rail">
-<span class="lp-app__rail-btn is-active"><svg viewBox="0 0 24 24"><use href="#lp-cube"></use></svg></span>
-<span class="lp-app__rail-btn"><svg viewBox="0 0 24 24"><use href="#lp-layers"></use></svg></span>
-<span class="lp-app__rail-btn"><svg viewBox="0 0 24 24"><use href="#lp-import"></use></svg></span>
-<span class="lp-app__rail-btn"><svg viewBox="0 0 24 24"><use href="#lp-palette"></use></svg></span>
-<span class="lp-app__rail-spacer"></span>
-<span class="lp-app__rail-btn"><svg viewBox="0 0 24 24"><use href="#lp-sliders"></use></svg></span>
+<div class="lpx-window__main">
+<div class="lpx-window__search"><span class="lpx-window__search-dot"></span>Hledat instanci</div>
+<div class="lpx-window__cards">
+<span class="lpx-window__card is-active"><img alt="" decoding="async" height="26" src="icons/ender-pearl.png" width="26"/><span><b>1.21.4 · Fabric</b><small>Fabric · 32 modů</small></span></span>
+<span class="lpx-window__card"><img alt="" decoding="async" height="26" src="icons/chest.png" width="26"/><span><b>SMP s kamarády</b><small>NeoForge · 12 modů</small></span></span>
+<span class="lpx-window__card"><img alt="" decoding="async" height="26" src="icons/emerald-shield.png" width="26"/><span><b>Cobblemon</b><small>Modpack · 1.21.1</small></span></span>
 </div>
-<div class="lp-app__main">
-<div class="lp-app__welcome">
-<span class="lp-app__welcome-kicker">Minekube Launcher</span>
-<h3>Vítej v Minekube Launcheru</h3>
-<p>Připraveni začít hrát?</p>
-<span class="lp-app__cta"><svg viewBox="0 0 24 24"><use href="#lp-play"></use></svg>Vytvořit instanci</span>
-<span class="lp-app__hint">Stiskni <b>N</b> pro rychlé vytvoření instance</span>
+<span class="lpx-window__play"><img alt="" aria-hidden="true" decoding="async" height="20" src="icons/play.png" width="20"/><span data-i18n="lp.window.play">Hrát</span></span>
 </div>
-<div class="lp-app__escape">
-<span class="lp-app__escape-icon"><svg viewBox="0 0 24 24"><use href="#lp-import"></use></svg></span>
-<span class="lp-app__escape-copy"><strong>Opouštíš jiný launcher?</strong><span>Importovat z jiného launcheru</span></span>
-<span class="lp-app__escape-go">→</span>
-</div>
-</div>
-<div class="lp-app__side">
-<span class="lp-app__side-label">Playing as</span>
-<span class="lp-app__account"><i class="lp-app__avatar"></i><span><b>Player</b><small>Local account</small></span></span>
-<span class="lp-app__side-label">Instance</span>
-<span class="lp-app__none">No instance selected</span>
-<span class="lp-app__create">+ Create instance</span>
-<span class="lp-app__side-label">Game status</span>
-<span class="lp-app__status"><i></i>Nothing running</span>
+<div class="lpx-window__side">
+<span class="lpx-window__side-label">Playing as</span>
+<span class="lpx-window__account"><img alt="" decoding="async" height="28" src="icons/armor-full.png" width="28"/><span><b>Player</b><small>Local account</small></span></span>
+<span class="lpx-window__side-label">Java</span>
+<span class="lpx-window__java"><img alt="" decoding="async" height="16" src="icons/java-edition.png" width="76"/></span>
+<span class="lpx-window__side-label">Game status</span>
+<span class="lpx-window__status"><i></i>Nothing running</span>
 </div>
 </div>
 </div>
-<figcaption class="lp-app__caption" data-i18n="lp.shot.caption">Rozhraní Minekube Launcheru 1.2.1 — úvodní obrazovka po prvním spuštění.</figcaption>
+<figcaption class="lpx-window__caption" data-i18n="lp.shot.caption">Rozhraní Minekube Launcheru 1.2.1 — úvodní obrazovka po prvním spuštění.</figcaption>
 </figure>
-<span aria-hidden="true" class="lp-sticker lp-sticker--version"><i></i><span data-launcher-version>…</span></span>
-<span aria-hidden="true" class="lp-sticker lp-sticker--open">
-<svg viewBox="0 0 24 24"><use href="#mk-github"></use></svg>
-<span data-i18n="lp.sticker.open">Open source</span>
-</span>
+<span aria-hidden="true" class="lpx-sticker lpx-sticker--version"><img alt="" decoding="async" height="18" src="icons/star.png" width="18"/><span data-launcher-version>…</span></span>
+<span aria-hidden="true" class="lpx-sticker lpx-sticker--open"><img alt="" decoding="async" height="18" src="icons/gold-heart.png" width="18"/><span data-i18n="lp.sticker.open">Open source</span></span>
 </div>
-</div>
-
-<div aria-hidden="true" class="lp-hero__scroll">
-<span class="lp-hero__scroll-line"></span>
-<span class="lp-hero__scroll-dot"></span>
 </div>
 </section>
 
-<!-- ===================== PLATFORMY + FUNKCE (tabulka) ===================== -->
-<section aria-labelledby="lpPlatformTitle" class="lp-mc-band" id="platformy-prehled">
-<div class="lp-wrap">
-<header class="lp-head">
-<p class="lp-tag" data-reveal><span aria-hidden="true" class="lp-tag__spark">✦</span><span data-i18n="lp.mc.plat.tag">Platformy a funkce</span></p>
-<h2 data-i18n="lp.mc.plat.title" data-reveal id="lpPlatformTitle" style="--d:60ms">Jeden launcher. <em>Všechny edice.</em></h2>
-<p class="lp-head__lead" data-i18n="lp.mc.plat.lead" data-reveal style="--d:120ms">Minekube Launcher zvládne Javu i modpacky, které k ní patří. Tady je přehled toho, co dnes opravdu umí — bez „brzy" a bez hvězdiček.</p>
+<!-- ===================== RYCHLÁ FAKTA ===================== -->
+<section aria-labelledby="lpxFactsTitle" class="lpx-facts">
+<h2 class="lpx-visually-hidden" data-i18n="lp.facts.title" id="lpxFactsTitle">Minekube Launcher v kostce</h2>
+<div class="lpx-wrap">
+<ul class="lpx-facts__list">
+<li data-reveal><img alt="" aria-hidden="true" class="lpx-facts__icon" decoding="async" height="34" src="icons/chest.png" width="34"/><span class="lpx-facts__copy"><strong data-i18n="lp.facts.1.title">Instance vedle sebe</strong><span data-i18n="lp.facts.1.text">Vanilla, Fabric, Forge, NeoForge i Quilt</span></span></li>
+<li data-reveal style="--d:70ms"><img alt="" aria-hidden="true" class="lpx-facts__icon" decoding="async" height="34" src="icons/ender-chest.png" width="34"/><span class="lpx-facts__copy"><strong data-i18n="lp.facts.2.title">.mrpack i .zip</strong><span data-i18n="lp.facts.2.text">Modpacky, exporty z Prismu a MultiMC</span></span></li>
+<li data-reveal style="--d:140ms"><img alt="" aria-hidden="true" class="lpx-facts__icon" decoding="async" height="34" src="icons/anvil.png" width="34"/><span class="lpx-facts__copy"><strong data-i18n="lp.facts.3.title">Ticho po síti</strong><span data-i18n="lp.facts.3.text">Žádné reklamy, PostHog ani trackery</span></span></li>
+<li data-reveal style="--d:210ms"><img alt="" aria-hidden="true" class="lpx-facts__icon" decoding="async" height="34" src="icons/bucket.png" width="34"/><span class="lpx-facts__copy"><strong data-i18n="lp.facts.4.title">Java pod kontrolou</strong><span data-i18n="lp.facts.4.text">Vlastní instalace Javy pro každou verzi</span></span></li>
+</ul>
+</div>
+</section>
+
+<!-- ===================== NAVIGACE SEKCÍ ===================== -->
+<nav aria-label="Sekce stránky" class="lpx-nav" data-i18n-aria="lp.nav.aria">
+<div class="lpx-wrap lpx-nav__inner">
+<ul class="lpx-nav__list">
+<li><a class="lpx-nav__link" data-nav-link href="#funkce"><span data-i18n="lp.nav.features">Funkce</span></a></li>
+<li><a class="lpx-nav__link" data-nav-link href="#prohlidka"><span data-i18n="lp.nav.tour">Prohlídka</span></a></li>
+<li><a class="lpx-nav__link" data-nav-link href="#platformy"><span data-i18n="lp.nav.download">Stažení</span></a></li>
+<li><a class="lpx-nav__link" data-nav-link href="#faq"><span data-i18n="lp.nav.faq">Otázky</span></a></li>
+</ul>
+<button aria-pressed="true" class="lpx-fx" data-fx-toggle data-i18n-aria="lp.fx.aria" data-i18n-title="lp.fx.aria" type="button">
+<img alt="" aria-hidden="true" decoding="async" height="18" src="icons/star.png" width="18"/>
+<span data-i18n="lp.fx.label">Efekty</span>
+<span aria-hidden="true" class="lpx-fx__dot"></span>
+</button>
+</div>
+</nav>
+
+<!-- ===================== PLATFORMY + FUNKCE =====================
+     Pás má na pozadí tapetu Pevnosti — jen jako atmosféru pod
+     silným gradientem, aby tabulka zůstala čitelná. -->
+<section aria-labelledby="lpxPlatformTitle" class="lpx-band" id="platformy-prehled">
+<div aria-hidden="true" class="lpx-band__bg" style="--bg:url('wallpapers/atmo/stronghold.webp')"></div>
+<div class="lpx-wrap">
+<header class="lpx-head">
+<p class="lpx-tag" data-reveal><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/star.png" width="16"/><span data-i18n="lp.mc.plat.tag">Platformy a funkce</span></p>
+<h2 data-i18n="lp.mc.plat.title" data-reveal id="lpxPlatformTitle" style="--d:60ms">Jeden launcher. <em>Všechny edice.</em></h2>
+<p class="lpx-head__lead" data-i18n="lp.mc.plat.lead" data-reveal style="--d:120ms">Minekube Launcher zvládne Javu i modpacky, které k ní patří. Tady je přehled toho, co dnes opravdu umí — bez „brzy" a bez hvězdiček.</p>
 </header>
 
-<div aria-label="Obsah launcheru" class="lp-mc-switch" data-i18n-aria="lp.mc.switch.aria" data-mc-switch role="tablist">
-<button aria-controls="lpMcPanePlatforms" aria-selected="true" class="lp-mc-switch__btn" data-mc-switch-btn id="lpMcTabPlatforms" role="tab" type="button"><span data-i18n="lp.mc.tab.platforms">Platformy</span></button>
-<button aria-controls="lpMcPaneFeatures" aria-selected="false" class="lp-mc-switch__btn" data-mc-switch-btn id="lpMcTabFeatures" role="tab" tabindex="-1" type="button"><span data-i18n="lp.mc.tab.features">Funkce</span></button>
+<div aria-label="Obsah launcheru" class="lpx-switch" data-i18n-aria="lp.mc.switch.aria" data-mc-switch role="tablist">
+<button aria-controls="lpxPanePlatforms" aria-selected="true" class="lpx-switch__btn" data-mc-switch-btn id="lpxTabPlatforms" role="tab" type="button"><span data-i18n="lp.mc.tab.platforms">Platformy</span></button>
+<button aria-controls="lpxPaneFeatures" aria-selected="false" class="lpx-switch__btn" data-mc-switch-btn id="lpxTabFeatures" role="tab" tabindex="-1" type="button"><span data-i18n="lp.mc.tab.features">Funkce</span></button>
 </div>
 
-<div aria-labelledby="lpMcTabPlatforms" class="lp-mc-pane" data-mc-pane id="lpMcPanePlatforms" role="tabpanel">
-<div class="lp-mc-platforms">
-<article class="lp-mc-plat lp-mc-plat--live" data-reveal>
-<div class="lp-mc-plat__head">
-<span aria-hidden="true" class="lp-mc-plat__icon"><svg viewBox="0 0 24 24"><use href="#mk-os-windows"></use></svg></span>
-<h3 class="lp-mc-plat__name">Windows</h3>
-<span class="lp-mc-plat__state" data-i18n="lp.mc.plat.live">K dispozici</span>
+<div aria-labelledby="lpxTabPlatforms" class="lpx-pane" data-mc-pane id="lpxPanePlatforms" role="tabpanel">
+<div class="lpx-platforms">
+<article class="lpx-plat lpx-plat--live" data-reveal>
+<span aria-hidden="true" class="lpx-plat__icon"><img alt="" decoding="async" height="44" src="icons/windows.png" width="44"/></span>
+<div class="lpx-plat__body">
+<div class="lpx-plat__head">
+<h3 class="lpx-plat__name">Windows</h3>
+<span class="lpx-plat__state" data-i18n="lp.mc.plat.live">K dispozici</span>
 </div>
-<p class="lp-mc-plat__note" data-i18n="lp.mc.plat.win">Windows 10 a 11, 64bit instalátor. Stahuje se přímo z GitHub Releases.</p>
+<p class="lpx-plat__note" data-i18n="lp.mc.plat.win">Windows 10 a 11, 64bit instalátor. Stahuje se přímo z GitHub Releases.</p>
+</div>
 </article>
-<article class="lp-mc-plat" data-reveal style="--d:80ms">
-<div class="lp-mc-plat__head">
-<span aria-hidden="true" class="lp-mc-plat__icon"><svg viewBox="0 0 24 24"><use href="#mk-os-linux"></use></svg></span>
-<h3 class="lp-mc-plat__name">Linux</h3>
-<span class="lp-mc-plat__state" data-i18n="lp.dl.planned.badge">V plánu</span>
+<article class="lpx-plat" data-reveal style="--d:90ms">
+<span aria-hidden="true" class="lpx-plat__icon"><img alt="" decoding="async" height="44" src="icons/linux.png" width="44"/></span>
+<div class="lpx-plat__body">
+<div class="lpx-plat__head">
+<h3 class="lpx-plat__name">Linux</h3>
+<span class="lpx-plat__state lpx-plat__state--soon" data-i18n="lp.dl.planned.badge">V plánu</span>
 </div>
-<p class="lp-mc-plat__note" data-i18n="lp.mc.plat.linux">.AppImage a .deb jsou v plánu. Launcher je postavený na Tauri, takže to není slepá ulička.</p>
+<p class="lpx-plat__note" data-i18n="lp.mc.plat.linux">.AppImage a .deb jsou v plánu. Launcher je postavený na Tauri, takže to není slepá ulička.</p>
+</div>
 </article>
 </div>
 </div>
 
-<div aria-labelledby="lpMcTabFeatures" class="lp-mc-pane" data-mc-pane hidden id="lpMcPaneFeatures" role="tabpanel">
-<div class="lp-mc-tablewrap">
-<table class="lp-mc-table">
+<div aria-labelledby="lpxTabFeatures" class="lpx-pane" data-mc-pane hidden id="lpxPaneFeatures" role="tabpanel">
+<div class="lpx-tablewrap">
+<table class="lpx-table">
 <caption data-i18n="lp.mc.table.caption">Porovnání toho, co Minekube Launcher umí dnes.</caption>
 <thead>
 <tr>
@@ -408,35 +424,35 @@
 <tbody>
 <tr>
 <th scope="row" data-i18n="lp.mc.table.r1">Instance vedle sebe</th>
-<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r1.v">Vanilla, Fabric, Forge, NeoForge i Quilt</span></span></td>
+<td data-label="Jak to funguje"><span class="lpx-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r1.v">Vanilla, Fabric, Forge, NeoForge i Quilt</span></span></td>
 </tr>
 <tr>
 <th scope="row" data-i18n="lp.mc.table.r2">Modpacky</th>
-<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r2.v">.mrpack z Modrinthu i .zip z Prismu a MultiMC</span></span></td>
+<td data-label="Jak to funguje"><span class="lpx-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r2.v">.mrpack z Modrinthu i .zip z Prismu a MultiMC</span></span></td>
 </tr>
 <tr>
 <th scope="row" data-i18n="lp.mc.table.r3">Java</th>
-<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r3.v">Automaticky ke každé verzi, víc instalací vedle sebe</span></span></td>
+<td data-label="Jak to funguje"><span class="lpx-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r3.v">Automaticky ke každé verzi, víc instalací vedle sebe</span></span></td>
 </tr>
 <tr>
 <th scope="row" data-i18n="lp.mc.table.r4">Účet</th>
-<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r4.v">Lokální profil, přihlášení zůstává v počítači</span></span></td>
+<td data-label="Jak to funguje"><span class="lpx-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r4.v">Lokální profil, přihlášení zůstává v počítači</span></span></td>
 </tr>
 <tr>
 <th scope="row" data-i18n="lp.mc.table.r5">Telemetrie a reklamy</th>
-<td data-label="Jak to funguje"><span class="lp-mc-no"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></svg><span data-i18n="lp.mc.table.r5.v">Žádné — PostHog i reklamní okno jsou vypnuté</span></span></td>
+<td data-label="Jak to funguje"><span class="lpx-no"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></svg><span data-i18n="lp.mc.table.r5.v">Žádné — PostHog i reklamní okno jsou vypnuté</span></span></td>
 </tr>
 <tr>
 <th scope="row" data-i18n="lp.mc.table.r6">Vzhled</th>
-<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r6.v">Vlastní záře, pozadí, pohyb a úvodní obrazovka</span></span></td>
+<td data-label="Jak to funguje"><span class="lpx-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r6.v">Vlastní záře, pozadí, pohyb a úvodní obrazovka</span></span></td>
 </tr>
 <tr>
 <th scope="row" data-i18n="lp.mc.table.r7">Jazyk</th>
-<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r7.v">33 jazyků, čeština přeložená celá</span></span></td>
+<td data-label="Jak to funguje"><span class="lpx-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r7.v">33 jazyků, čeština přeložená celá</span></span></td>
 </tr>
 <tr>
 <th scope="row" data-i18n="lp.mc.table.r8">Licence</th>
-<td data-label="Jak to funguje"><span class="lp-mc-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r8.v">Open source pod GPL-3.0, kód na GitHubu</span></span></td>
+<td data-label="Jak to funguje"><span class="lpx-yes"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.mc.table.r8.v">Open source pod GPL-3.0, kód na GitHubu</span></span></td>
 </tr>
 </tbody>
 </table>
@@ -445,28 +461,32 @@
 </div>
 </section>
 
-<!-- ===================== JAK TO FUNGUJE (tři kroky) ===================== -->
-<section aria-labelledby="lpHowTitle" class="lp-mc-band lp-mc-band--tint" id="jak-to-funguje">
-<div class="lp-wrap">
-<header class="lp-head">
-<p class="lp-tag" data-reveal><span aria-hidden="true" class="lp-tag__spark">✦</span><span data-i18n="lp.mc.how.tag">Jak to funguje</span></p>
-<h2 data-i18n="lp.mc.how.title" data-reveal id="lpHowTitle" style="--d:60ms">Tři kroky <em>ke hře.</em></h2>
-<p class="lp-head__lead" data-i18n="lp.mc.how.lead" data-reveal style="--d:120ms">Od instalace po první blok. Nic mezitím neřešíš — launcher si Javu, verzi i mody obstará sám.</p>
+<!-- ===================== TŘI KROKY ===================== -->
+<section aria-labelledby="lpxHowTitle" class="lpx-band lpx-band--steps" id="jak-to-funguje">
+<div aria-hidden="true" class="lpx-band__bg" style="--bg:url('wallpapers/atmo/desert-temple.webp')"></div>
+<div class="lpx-wrap">
+<header class="lpx-head">
+<p class="lpx-tag" data-reveal><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/pickaxe.png" width="16"/><span data-i18n="lp.mc.how.tag">Jak to funguje</span></p>
+<h2 data-i18n="lp.mc.how.title" data-reveal id="lpxHowTitle" style="--d:60ms">Tři kroky <em>ke hře.</em></h2>
+<p class="lpx-head__lead" data-i18n="lp.mc.how.lead" data-reveal style="--d:120ms">Od instalace po první blok. Nic mezitím neřešíš — launcher si Javu, verzi i mody obstará sám.</p>
 </header>
 
-<ol class="lp-mc-steps">
-<li class="lp-mc-step" data-reveal>
-<span aria-hidden="true" class="lp-mc-step__num">1</span>
+<ol class="lpx-steps">
+<li class="lpx-step" data-reveal>
+<span aria-hidden="true" class="lpx-step__num">1</span>
+<img alt="" aria-hidden="true" class="lpx-step__icon" decoding="async" height="52" src="icons/download.png" width="52"/>
 <h3 data-i18n="lp.mc.how.s1.t">Nainstaluj launcher</h3>
 <p data-i18n="lp.mc.how.s1.p">Stáhni instalátor pro Windows přímo z GitHubu. Žádná registrace, žádná platba, žádné reklamní okno.</p>
 </li>
-<li class="lp-mc-step" data-reveal style="--d:100ms">
-<span aria-hidden="true" class="lp-mc-step__num">2</span>
+<li class="lpx-step" data-reveal style="--d:110ms">
+<span aria-hidden="true" class="lpx-step__num">2</span>
+<img alt="" aria-hidden="true" class="lpx-step__icon" decoding="async" height="52" src="icons/pickaxe.png" width="52"/>
 <h3 data-i18n="lp.mc.how.s2.t">Přines si svět</h3>
 <p data-i18n="lp.mc.how.s2.p">Vytvoř instanci, naimportuj <code>.mrpack</code> z Modrinthu, nebo přenes <code>.zip</code> z Prismu a MultiMC. Ikonu si launcher vezme s sebou.</p>
 </li>
-<li class="lp-mc-step" data-reveal style="--d:200ms">
-<span aria-hidden="true" class="lp-mc-step__num">3</span>
+<li class="lpx-step" data-reveal style="--d:220ms">
+<span aria-hidden="true" class="lpx-step__num">3</span>
+<img alt="" aria-hidden="true" class="lpx-step__icon" decoding="async" height="52" src="icons/play.png" width="52"/>
 <h3 data-i18n="lp.mc.how.s3.t">Hraj</h3>
 <p data-i18n="lp.mc.how.s3.p">Stiskni hrát. Launcher sám stáhne správnou Javu i chybějící mody a spustí hru — bez ručního nastavování.</p>
 </li>
@@ -475,250 +495,121 @@
 </section>
 
 <!-- ===================== BĚŽÍCÍ PÁS ===================== -->
-<div aria-hidden="true" class="lp-marquee">
-<div class="lp-marquee__track" data-marquee>
-<span class="lp-marquee__item"><svg viewBox="0 0 24 24"><use href="#lp-sparkle"></use></svg><span data-i18n="lp.marquee.1">Open source pod GPL-3.0</span></span>
-<span class="lp-marquee__item"><svg viewBox="0 0 24 24"><use href="#lp-shield"></use></svg><span data-i18n="lp.marquee.2">Bez reklam a telemetrie</span></span>
-<span class="lp-marquee__item"><svg viewBox="0 0 24 24"><use href="#lp-layers"></use></svg><span data-i18n="lp.marquee.3">Knihovna instancí</span></span>
-<span class="lp-marquee__item"><svg viewBox="0 0 24 24"><use href="#mk-package"></use></svg><span data-i18n="lp.marquee.4">Import z Prismu a MultiMC</span></span>
-<span class="lp-marquee__item"><svg viewBox="0 0 24 24"><use href="#lp-lock"></use></svg><span data-i18n="lp.marquee.5">Lokální účet</span></span>
-<span class="lp-marquee__item"><svg viewBox="0 0 24 24"><use href="#lp-palette"></use></svg><span data-i18n="lp.marquee.6">Vizuální studio</span></span>
-<span class="lp-marquee__item"><svg viewBox="0 0 24 24"><use href="#lp-globe"></use></svg><span data-i18n="lp.marquee.7">33 jazyků, čeština 100 %</span></span>
-<span class="lp-marquee__item"><svg viewBox="0 0 24 24"><use href="#mk-tray"></use></svg><span data-i18n="lp.marquee.8">Zdarma pro Windows</span></span>
+<div aria-hidden="true" class="lpx-marquee">
+<div class="lpx-marquee__track" data-marquee>
+<span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/star.png" width="18"/><span data-i18n="lp.marquee.1">Open source pod GPL-3.0</span></span>
+<span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/lock.png" width="18"/><span data-i18n="lp.marquee.2">Bez reklam a telemetrie</span></span>
+<span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/chest.png" width="18"/><span data-i18n="lp.marquee.3">Knihovna instancí</span></span>
+<span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/folder.png" width="18"/><span data-i18n="lp.marquee.4">Import z Prismu a MultiMC</span></span>
+<span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/heart.png" width="18"/><span data-i18n="lp.marquee.5">Lokální účet</span></span>
+<span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/bookshelf.png" width="18"/><span data-i18n="lp.marquee.6">Vizuální studio</span></span>
+<span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/infinity.png" width="18"/><span data-i18n="lp.marquee.7">33 jazyků, čeština 100 %</span></span>
+<span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/gold-heart.png" width="18"/><span data-i18n="lp.marquee.8">Zdarma pro Windows</span></span>
 </div>
 </div>
-
-<!-- ===================== RYCHLÁ FAKTA ===================== -->
-<section aria-labelledby="lpFactsTitle" class="lp-facts">
-<div class="lp-wrap">
-<h2 class="lp-visually-hidden" data-i18n="lp.facts.title" id="lpFactsTitle">Minekube Launcher v kostce</h2>
-<ul class="lp-facts__list">
-<li data-reveal style="--d:0ms"><span aria-hidden="true" class="lp-fact__num">01</span><span aria-hidden="true" class="lp-facts__icon"><svg viewBox="0 0 24 24"><use href="#lp-layers"></use></svg></span><span class="lp-fact__copy"><strong data-i18n="lp.facts.1.title">Instance vedle sebe</strong><span data-i18n="lp.facts.1.text">Vanilla, Fabric, Forge, NeoForge i Quilt</span></span></li>
-<li data-reveal style="--d:70ms"><span aria-hidden="true" class="lp-fact__num">02</span><span aria-hidden="true" class="lp-facts__icon"><svg viewBox="0 0 24 24"><use href="#mk-package"></use></svg></span><span class="lp-fact__copy"><strong data-i18n="lp.facts.2.title">.mrpack i .zip</strong><span data-i18n="lp.facts.2.text">Modpacky, exporty z Prismu a MultiMC</span></span></li>
-<li data-reveal style="--d:140ms"><span aria-hidden="true" class="lp-fact__num">03</span><span aria-hidden="true" class="lp-facts__icon"><svg viewBox="0 0 24 24"><use href="#lp-shield"></use></svg></span><span class="lp-fact__copy"><strong data-i18n="lp.facts.3.title">Ticho po síti</strong><span data-i18n="lp.facts.3.text">Žádné reklamy, PostHog ani trackery</span></span></li>
-<li data-reveal style="--d:210ms"><span aria-hidden="true" class="lp-fact__num">04</span><span aria-hidden="true" class="lp-facts__icon"><svg viewBox="0 0 24 24"><use href="#lp-java"></use></svg></span><span class="lp-fact__copy"><strong data-i18n="lp.facts.4.title">Java pod kontrolou</strong><span data-i18n="lp.facts.4.text">Vlastní instalace Javy pro každou verzi</span></span></li>
-</ul>
-</div>
-</section>
-
-<!-- ===================== NAVIGACE SEKCÍ ===================== -->
-<nav aria-label="Sekce stránky" class="lp-nav" data-i18n-aria="lp.nav.aria">
-<div class="lp-wrap lp-nav__inner">
-<ul class="lp-nav__list">
-<li><a class="lp-nav__link" data-nav-link href="#funkce"><span data-i18n="lp.nav.features">Funkce</span></a></li>
-<li><a class="lp-nav__link" data-nav-link href="#prohlidka"><span data-i18n="lp.nav.tour">Prohlídka</span></a></li>
-<li><a class="lp-nav__link" data-nav-link href="#platformy"><span data-i18n="lp.nav.download">Stažení</span></a></li>
-<li><a class="lp-nav__link" data-nav-link href="#studio"><span data-i18n="std.nav">Studio</span></a></li>
-<li><a class="lp-nav__link" data-nav-link href="#faq"><span data-i18n="lp.nav.faq">Otázky</span></a></li>
-</ul>
-<button aria-pressed="true" class="lp-fx-toggle" data-fx-toggle data-i18n-aria="lp.fx.aria" data-i18n-title="lp.fx.aria" type="button">
-<svg aria-hidden="true" viewBox="0 0 24 24"><use href="#lp-sparkle"></use></svg>
-<span data-i18n="lp.fx.label">Efekty</span>
-<span aria-hidden="true" class="lp-fx-toggle__dot"></span>
-</button>
-</div>
-</nav>
 
 <!-- ===================== FUNKCE ===================== -->
-<section aria-labelledby="lpFeaturesTitle" class="lp-section" id="funkce">
-<div class="lp-wrap">
-<header class="lp-head">
-<div class="lp-head__title">
-<p class="lp-tag" data-reveal><span aria-hidden="true" class="lp-tag__spark">✦</span><span data-i18n="lp.feat.tag">Co launcher umí</span></p>
-<h2 data-i18n="lp.feat.title" data-reveal id="lpFeaturesTitle" style="--d:60ms">Všechno pro hraní.<br><em>Nic, co překáží.</em></h2>
-</div>
-<p class="lp-head__lead" data-i18n="lp.feat.lead" data-reveal style="--d:120ms">Launcher je postavený na otevřeném základu Modrinth App. Zůstalo všechno, co hraní potřebuje, a zmizelo to, co jen zdržuje.</p>
+<section aria-labelledby="lpxFeaturesTitle" class="lpx-section" id="funkce">
+<div class="lpx-wrap">
+<header class="lpx-head">
+<p class="lpx-tag" data-reveal><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/bookshelf.png" width="16"/><span data-i18n="lp.feat.tag">Co launcher umí</span></p>
+<h2 data-i18n="lp.feat.title" data-reveal id="lpxFeaturesTitle" style="--d:60ms">Všechno pro hraní.<br><em>Nic, co překáží.</em></h2>
+<p class="lpx-head__lead" data-i18n="lp.feat.lead" data-reveal style="--d:120ms">Launcher je postavený na otevřeném základu Modrinth App. Zůstalo všechno, co hraní potřebuje, a zmizelo to, co jen zdržuje.</p>
 </header>
 
-<article class="lp-row" data-reveal>
-<div class="lp-row__body">
-<span aria-hidden="true" class="lp-row__icon"><svg viewBox="0 0 24 24"><use href="#lp-layers"></use></svg></span>
+<div class="lpx-cards">
+<article class="lpx-card" data-reveal>
+<span aria-hidden="true" class="lpx-card__icon"><img alt="" decoding="async" height="48" src="icons/chest.png" width="48"/></span>
 <h3 data-i18n="lp.library.title">Knihovna, která drží pohromadě</h3>
-<p class="lp-row__text" data-i18n="lp.library.text">Každá instance má vlastní profil, ikonu, verzi hry i načítací modul. Spustíš ji jedním kliknutím a nemusíš hledat, která verze Javy k ní patří.</p>
-<ul class="lp-bullets">
+<p data-i18n="lp.library.text">Každá instance má vlastní profil, ikonu, verzi hry i načítací modul. Spustíš ji jedním kliknutím a nemusíš hledat, která verze Javy k ní patří.</p>
+<ul class="lpx-bullets">
 <li data-i18n="lp.library.b1"><strong>Instance vedle sebe</strong> — vanilla, Fabric, Forge, NeoForge nebo Quilt.</li>
 <li data-i18n="lp.library.b2"><strong>Skupiny instancí</strong> — vlastní kolekce, hledání a přepínání pohledu na seznam.</li>
 <li data-i18n="lp.library.b3"><strong>Hrát naposledy</strong> — naposledy hrané světy nahoře na stránce Play.</li>
 </ul>
-</div>
-<figure class="lp-ui" data-reveal style="--d:120ms">
-<span aria-hidden="true" class="lp-ui__chip" data-i18n="lp.stage.chip">Knihovna instancí</span>
-<div aria-hidden="true" class="lp-ui__card">
-<div class="lp-lib">
-<div class="lp-lib__head">
-<span class="lp-lib__title">Knihovna</span>
-<span class="lp-lib__search">Hledat instanci</span>
-<span class="lp-lib__toggle is-on">▦</span>
-<span class="lp-lib__toggle">≡</span>
-</div>
-<div class="lp-lib__grid">
-<div class="lp-lib__item is-active"><span class="lp-lib__icon lp-lib__icon--fabric"></span><span class="lp-lib__name">1.21.4 · Fabric</span><span class="lp-lib__meta">Fabric · 32 modů</span></div>
-<div class="lp-lib__item"><span class="lp-lib__icon lp-lib__icon--smp"></span><span class="lp-lib__name">SMP s kamarády</span><span class="lp-lib__meta">NeoForge · 12 modů</span></div>
-<div class="lp-lib__item"><span class="lp-lib__icon lp-lib__icon--pack"></span><span class="lp-lib__name">Cobblemon</span><span class="lp-lib__meta">Modpack · 1.21.1</span></div>
-<div class="lp-lib__item"><span class="lp-lib__icon lp-lib__icon--vanilla"></span><span class="lp-lib__name">Vanilla snapshot</span><span class="lp-lib__meta">Vanilla · bez modů</span></div>
-</div>
-<div class="lp-lib__foot"><span>4 instance</span><span>Posledně hráno: dnes</span></div>
-</div>
-</div>
-</figure>
 </article>
 
-<article class="lp-row lp-row--flip" data-reveal>
-<div class="lp-row__body">
-<span aria-hidden="true" class="lp-row__icon"><svg viewBox="0 0 24 24"><use href="#mk-package"></use></svg></span>
+<article class="lpx-card" data-reveal style="--d:80ms">
+<span aria-hidden="true" class="lpx-card__icon"><img alt="" decoding="async" height="48" src="icons/folder.png" width="48"/></span>
 <h3 data-i18n="lp.import.title">Přijdeš odjinud? Nic neztratíš</h3>
-<p class="lp-row__text" data-i18n="lp.import.text">Launcher načte modpack z Modrinthu i archiv, který už máš doma. Import z Prism Launcheru nebo MultiMC pozná podle <code>instance.cfg</code> i tehdy, když je zabalený ve složce.</p>
-<ul class="lp-bullets">
+<p data-i18n="lp.import.text">Launcher načte modpack z Modrinthu i archiv, který už máš doma. Import z Prism Launcheru nebo MultiMC pozná podle <code>instance.cfg</code> i tehdy, když je zabalený ve složce.</p>
+<ul class="lpx-bullets">
 <li data-i18n="lp.import.b1"><strong>Formáty</strong> — <code>.mrpack</code>, <code>.zip</code> z Prismu a MultiMC.</li>
 <li data-i18n="lp.import.b2"><strong>Ikona instance</strong> — z exportu se přenese stejně jako v Prismu.</li>
 <li data-i18n="lp.import.b3"><strong>Obsah z Modrinthu</strong> — mody, modpacky a shadery na jeden klik.</li>
 </ul>
-</div>
-<figure class="lp-ui" data-reveal style="--d:120ms">
-<span aria-hidden="true" class="lp-ui__chip" data-i18n="lp.import.chip">Import instance</span>
-<div aria-hidden="true" class="lp-ui__card">
-<div class="lp-imp">
-<span class="lp-imp__title">Vytvořit instanci</span>
-<span class="lp-imp__opt is-active"><span class="lp-imp__radio"></span><span><b>Z Modrinthu</b><small>Vybrat modpack z katalogu</small></span></span>
-<span class="lp-imp__opt"><span class="lp-imp__radio"></span><span><b>Nahrát soubor</b><small>.zip / .mrpack z počítače</small></span></span>
-<span class="lp-imp__opt"><span class="lp-imp__radio"></span><span><b>Prázdná instance</b><small>Vybrat verzi hry a loader</small></span></span>
-<span class="lp-imp__drop">
-<svg viewBox="0 0 24 24"><use href="#lp-import"></use></svg>
-<b>Přetáhni soubor sem</b>
-<small>instance.cfg · mmc-pack.json · .mrpack</small>
-</span>
-</div>
-</div>
-</figure>
 </article>
 
-<article class="lp-row" data-reveal>
-<div class="lp-row__body">
-<span aria-hidden="true" class="lp-row__icon"><svg viewBox="0 0 24 24"><use href="#lp-shield"></use></svg></span>
+<article class="lpx-card" data-reveal style="--d:160ms">
+<span aria-hidden="true" class="lpx-card__icon"><img alt="" decoding="async" height="48" src="icons/lock.png" width="48"/></span>
 <h3 data-i18n="lp.privacy.title">Soukromí v základu</h3>
-<p class="lp-row__text" data-i18n="lp.privacy.text">Ve vidlici není ani jedno místo, které by se hlásilo domů. Reklamní okno je vypnuté, PostHog analytika zůstala jako prázdná funkce a sociální vrstva Modrinthu zmizela i s přáteli.</p>
-<ul class="lp-bullets">
-<li data-i18n="lp.privacy.b1"><strong>Lokální účet</strong> — hraješ bez přihlašování do cloudu.</li>
-<li data-i18n="lp.privacy.b2"><strong>Žádná reklama</strong> — ani panel, ani upozornění, ani upsell.</li>
-<li data-i18n="lp.privacy.b3"><strong>Discord presence je volba</strong> — ve výchozím stavu vypnutá.</li>
+<p data-i18n="lp.privacy.text">Ve vidlici není ani jedno místo, které by se hlásilo domů. Reklamní okno je vypnuté, PostHog analytika zůstala jako prázdná funkce a sociální vrstva Modrinthu zmizela i s přáteli.</p>
+<ul class="lpx-bullets">
+<li data-i18n="lp.privacy.b1"><strong>Žádná telemetrie</strong> — analytika je vypnutá v kódu, ne v nastavení.</li>
+<li data-i18n="lp.privacy.b2"><strong>Anonymní identita</strong> — bez systémového ID a ID instalace.</li>
+<li data-i18n="lp.privacy.b3"><strong>Log4Shell</strong> — ochrana herního procesu je zapnutá natrvalo.</li>
 </ul>
-</div>
-<figure class="lp-ui" data-reveal style="--d:120ms">
-<span aria-hidden="true" class="lp-ui__chip" data-i18n="lp.privacy.chip">Soukromí</span>
-<div aria-hidden="true" class="lp-ui__card">
-<div class="lp-priv">
-<span class="lp-priv__title">Tvoje data patří tobě</span>
-<span class="lp-priv__row"><i class="lp-priv__ok"></i><span><b>Žádná telemetrie</b><small>PostHog je trvale vypnutý</small></span><span class="lp-priv__state">Vždy</span></span>
-<span class="lp-priv__row"><i class="lp-priv__ok"></i><span><b>Žádné reklamy</b><small>Reklamní okno se nenačte</small></span><span class="lp-priv__state">Vždy</span></span>
-<span class="lp-priv__row"><i class="lp-priv__ok"></i><span><b>Žádné sledování polohy</b><small>Bez zjišťování podle IP</small></span><span class="lp-priv__state">Vždy</span></span>
-<span class="lp-priv__row"><i class="lp-priv__off"></i><span><b>Discord Rich Presence</b><small>Zapneš jen kdybys chtěl</small></span><span class="lp-priv__toggle"></span></span>
-</div>
-</div>
-</figure>
 </article>
 
-<article class="lp-row lp-row--flip" data-reveal>
-<div class="lp-row__body">
-<span aria-hidden="true" class="lp-row__icon"><svg viewBox="0 0 24 24"><use href="#lp-palette"></use></svg></span>
-<h3 data-i18n="lp.look.title">Vizuál, který si řídíš ty</h3>
-<p class="lp-row__text" data-i18n="lp.look.text">Nastavení Vizuál je nová sekce, která v originálním launcheru nebyla. Vypínač animací, jarní pohyb, záře textů i atmosféra na pozadí — a všechno jde vypnout jedním přepínačem.</p>
-<ul class="lp-bullets">
-<li data-i18n="lp.look.b1"><strong>Animace launcheru</strong> — hlavní vypínač pro slabé stroje.</li>
-<li data-i18n="lp.look.b2"><strong>Vylepšené efekty</strong> — jarní, plynulé přechody na GPU.</li>
-<li data-i18n="lp.look.b3"><strong>Záře a atmosféra</strong> — zlatá, magenta, nebo žádná.</li>
+<article class="lpx-card" data-reveal style="--d:80ms">
+<span aria-hidden="true" class="lpx-card__icon"><img alt="" decoding="async" height="48" src="icons/bell.png" width="48"/></span>
+<h3 data-i18n="lp.theme.title">Vzhled, který zůstane tvůj</h3>
+<p data-i18n="lp.theme.text">Nastavení Vizuál přišlo s vidlicí: záře textů, pozadí, profil pohybu i vlastní úvodní obrazovka. Efekty jdou vypnout jedním přepínačem a launcher si volbu pamatuje.</p>
+<ul class="lpx-bullets">
+<li data-i18n="lp.theme.b1"><strong>Záře a pozadí</strong> — tři palety a vlastní obrázek.</li>
+<li data-i18n="lp.theme.b2"><strong>Profil pohybu</strong> — zklidněný režim pro slabší notebooky.</li>
+<li data-i18n="lp.theme.b3"><strong>Úvodní obrazovka</strong> — splash s vlastním logem.</li>
 </ul>
-</div>
-<figure class="lp-ui" data-reveal style="--d:120ms">
-<span aria-hidden="true" class="lp-ui__chip" data-i18n="lp.look.chip">Vizuál</span>
-<div aria-hidden="true" class="lp-ui__card">
-<div class="lp-vis">
-<span class="lp-vis__title">Launcher, který ožívá</span>
-<span class="lp-vis__row"><b>Animace launcheru</b><span class="lp-vis__toggle is-on"></span></span>
-<span class="lp-vis__row"><b>Vylepšené optimalizované animace</b><span class="lp-vis__toggle is-on"></span></span>
-<span class="lp-vis__row"><b>Vylepšené optimalizované efekty</b><span class="lp-vis__toggle is-on"></span></span>
-<span class="lp-vis__label">Záře textů a ovládacích prvků</span>
-<span class="lp-vis__seg"><span class="is-active">Vypnuto</span><span>Zlatá</span><span>Magenta</span></span>
-<span class="lp-vis__label">Profil pohybu</span>
-<span class="lp-vis__seg"><span class="is-active">Plynulý</span><span>Jemný</span><span>Vypnutý</span></span>
-</div>
-</div>
-</figure>
 </article>
 
-<article class="lp-row" data-reveal>
-<div class="lp-row__body">
-<span aria-hidden="true" class="lp-row__icon"><svg viewBox="0 0 24 24"><use href="#lp-java"></use></svg></span>
-<h3 data-i18n="lp.java.title">Java a soubory bez hádání</h3>
-<p class="lp-row__text" data-i18n="lp.java.text">Launcher sám pozná, kterou Javu instance potřebuje, a umí jich držet několik vedle sebe. Ke každé se dostaneš jedním kliknutím z lišty Složky.</p>
-<ul class="lp-bullets">
-<li data-i18n="lp.java.b1"><strong>Více instalací Javy</strong> — 8, 17 i 21 vedle sebe.</li>
-<li data-i18n="lp.java.b2"><strong>Složky po ruce</strong> — instance, ikony, Java i kořen launcheru.</li>
-<li data-i18n="lp.java.b3"><strong>Správa zdrojů</strong> — sdílené soubory a mazání nepoužívaných.</li>
+<article class="lpx-card" data-reveal style="--d:160ms">
+<span aria-hidden="true" class="lpx-card__icon"><img alt="" decoding="async" height="48" src="icons/bucket.png" width="48"/></span>
+<h3 data-i18n="lp.java.title">Java bez ručního nastavování</h3>
+<p data-i18n="lp.java.text">Každá verze hry si vezme přesně tu Javu, kterou potřebuje. Instalace stojí vedle sebe a jedno tlačítko uklidí, co už nikdo nepoužívá.</p>
+<ul class="lpx-bullets">
+<li data-i18n="lp.java.b1"><strong>Více instalací Javy</strong> — vedle sebe, bez konfliktů.</li>
+<li data-i18n="lp.java.b2"><strong>Automatické stažení</strong> — launcher pozná, co hra chce.</li>
+<li data-i18n="lp.java.b3"><strong>Úklid úložiště</strong> — nepoužívané verze jedním klikem.</li>
 </ul>
-</div>
-<figure class="lp-ui" data-reveal style="--d:120ms">
-<span aria-hidden="true" class="lp-ui__chip" data-i18n="lp.java.chip">Instalace Javy</span>
-<div aria-hidden="true" class="lp-ui__card">
-<div class="lp-java">
-<span class="lp-java__title">Java 21 <small>Microsoft Build of OpenJDK</small></span>
-<span class="lp-java__row"><i class="lp-java__ok"></i><span><b>Java 21</b><small>Pro Minecraft 1.20.5+</small></span><span class="lp-java__ver">21.0.5</span></span>
-<span class="lp-java__row"><i class="lp-java__ok"></i><span><b>Java 17</b><small>Pro Minecraft 1.17 – 1.20.4</small></span><span class="lp-java__ver">17.0.13</span></span>
-<span class="lp-java__row"><i class="lp-java__ok"></i><span><b>Java 8</b><small>Pro starší modpacky</small></span><span class="lp-java__ver">1.8.0_432</span></span>
-<span class="lp-java__foot"><span>Složka Javy</span><span>Obnovit</span></span>
-</div>
-</div>
-</figure>
 </article>
+
+<article class="lpx-card" data-reveal style="--d:240ms">
+<span aria-hidden="true" class="lpx-card__icon"><img alt="" decoding="async" height="48" src="icons/server-ping.png" width="48"/></span>
+<h3 data-i18n="lp.online.title">Online, i když nejsi doma</h3>
+<p data-i18n="lp.online.text">Launcher se vejde na Windows 10 i 11. Mody a modpacky tahá z veřejného Modrinth API, takže katalog je pořád aktuální — a čeština je přeložená celá.</p>
+<ul class="lpx-bullets">
+<li data-i18n="lp.online.b1"><strong>33 jazyků</strong> — čeština a slovenština kompletní.</li>
+<li data-i18n="lp.online.b2"><strong>Modrinth API</strong> — aktuální verze modů i modpacků.</li>
+<li data-i18n="lp.online.b3"><strong>GPL-3.0</strong> — kód si můžeš přečíst i upravit.</li>
+</ul>
+</article>
+</div>
 </div>
 </section>
 
-<!-- ===================== PROHLÍDKA ===================== -->
-<section aria-labelledby="lpTourTitle" class="lp-section" id="prohlidka">
-<div class="lp-wrap">
-<header class="lp-head">
-<p class="lp-tag" data-reveal><span aria-hidden="true" class="lp-tag__spark">✦</span><span data-i18n="lp.tour.tag">Prohlídka rozhraní</span></p>
-<h2 data-i18n="lp.tour.title" data-reveal id="lpTourTitle" style="--d:60ms">Podívej se <em>dovnitř</em>.</h2>
-<p class="lp-head__lead" data-i18n="lp.tour.lead" data-reveal style="--d:120ms">Tři záložky nastavení, které v launcheru opravdu najdeš. Náhledy níž věrně kopírují rozložení z verze 1.2.1.</p>
+<!-- ===================== PROHLÍDKA ROZHRANÍ ===================== -->
+<section aria-labelledby="lpxTourTitle" class="lpx-section lpx-section--tour" id="prohlidka">
+<div class="lpx-wrap">
+<header class="lpx-head">
+<p class="lpx-tag" data-reveal><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/chest.png" width="16"/><span data-i18n="lp.tour.tag">Prohlídka rozhraní</span></p>
+<h2 data-i18n="lp.tour.title" data-reveal id="lpxTourTitle" style="--d:60ms">Podívej se <em>dovnitř.</em></h2>
+<p class="lpx-head__lead" data-i18n="lp.tour.lead" data-reveal style="--d:120ms">Tři záložky nastavení, které v launcheru opravdu najdeš. Náhledy níž věrně kopírují rozložení z verze 1.2.1.</p>
 </header>
 
-<div aria-label="Prohlídka launcheru" class="lp-tabs" data-i18n-aria="lp.tour.tabs.aria" data-reveal role="tablist">
-<span aria-hidden="true" class="lp-tabs__pill" data-tab-pill></span>
-<button aria-controls="lpPanelLook" aria-selected="true" class="lp-tab is-active" data-tab="look" id="lpTabLook" role="tab" type="button"><span data-i18n="lp.tour.tab1">Vizuál</span></button>
-<button aria-controls="lpPanelPerf" aria-selected="false" class="lp-tab" data-tab="perf" id="lpTabPerf" role="tab" tabindex="-1" type="button"><span data-i18n="lp.tour.tab2">Výkon</span></button>
-<button aria-controls="lpPanelPriv" aria-selected="false" class="lp-tab" data-tab="priv" id="lpTabPriv" role="tab" tabindex="-1" type="button"><span data-i18n="lp.tour.tab3">Soukromí</span></button>
+<div class="lpx-tour">
+<div aria-label="Prohlídka launcheru" class="lpx-tabs" data-i18n-aria="lp.tour.tabs.aria" role="tablist">
+<button aria-controls="lpxPanelLook" aria-selected="true" class="lpx-tab is-active" id="lpxTabLook" role="tab" type="button"><img alt="" aria-hidden="true" decoding="async" height="18" src="icons/star.png" width="18"/><span data-i18n="lp.tour.tab1">Vizuál</span></button>
+<button aria-controls="lpxPanelPerf" aria-selected="false" class="lpx-tab" id="lpxTabPerf" role="tab" tabindex="-1" type="button"><img alt="" aria-hidden="true" decoding="async" height="18" src="icons/lightning-focus.png" width="18"/><span data-i18n="lp.tour.tab2">Výkon</span></button>
+<button aria-controls="lpxPanelPriv" aria-selected="false" class="lpx-tab" id="lpxTabPriv" role="tab" tabindex="-1" type="button"><img alt="" aria-hidden="true" decoding="async" height="18" src="icons/lock.png" width="18"/><span data-i18n="lp.tour.tab3">Soukromí</span></button>
 </div>
 
-<div class="lp-panels">
-<div aria-labelledby="lpTabLook" class="lp-panel is-active" data-panel="look" id="lpPanelLook" role="tabpanel">
-<figure class="lp-ui lp-ui--settings">
-<div aria-hidden="true" class="lp-ui__card">
-<div class="lp-set">
-<span class="lp-set__hero">
-<span class="lp-set__hero-kicker">Minekube visual studio</span>
-<span class="lp-set__hero-title">Launcher, který ožívá</span>
-<span class="lp-set__hero-text">Animace, efekty a záře na jednom místě.</span>
-</span>
-<span class="lp-set__row"><b>Animace launcheru</b><span class="lp-vis__toggle is-on"></span></span>
-<span class="lp-set__row"><b>Vylepšené optimalizované animace</b><span class="lp-vis__toggle is-on"></span></span>
-<span class="lp-set__row"><b>Vylepšené optimalizované efekty</b><span class="lp-vis__toggle is-on"></span></span>
-<span class="lp-set__label">Záře textů a ovládacích prvků</span>
-<span class="lp-vis__seg"><span>Vypnuto</span><span class="is-active">Zlatá</span><span>Magenta</span></span>
-<span class="lp-set__label">Profil pohybu</span>
-<span class="lp-vis__seg"><span class="is-active">Plynulý</span><span>Jemný</span><span>Vypnutý</span></span>
-<span class="lp-set__label">Atmosféra pozadí</span>
-<span class="lp-set__swatches">
-<span class="is-active lp-set__swatch--gold"></span>
-<span class="lp-set__swatch--magenta"></span>
-<span class="lp-set__swatch--studios"></span>
-<span class="lp-set__swatch--pvp"></span>
-</span>
-</div>
-</div>
-</figure>
-<div class="lp-panel__copy">
+<div class="lpx-panels">
+<div aria-labelledby="lpxTabLook" class="lpx-panel is-active" id="lpxPanelLook" role="tabpanel">
+<div class="lpx-panel__art"><img alt="" aria-hidden="true" decoding="async" height="120" src="icons/star.png" width="120"/></div>
+<div class="lpx-panel__copy">
 <h3 data-i18n="lp.tour.h1">Nastavení Vizuál</h3>
 <p data-i18n="lp.tour.p1">Nová sekce, kterou originální launcher neměl. Vypínač animací zvládne i slabý notebook, vylepšené efekty naopak rozhýbou každé tlačítko.</p>
-<ul class="lp-check">
+<ul class="lpx-check">
 <li data-i18n="lp.tour.l1a">Animace launcheru a vylepšené efekty</li>
 <li data-i18n="lp.tour.l1b">Záře textů: vypnuto, zlatá, nebo magenta</li>
 <li data-i18n="lp.tour.l1c">Profil pohybu a úvodní obrazovka</li>
@@ -726,31 +617,12 @@
 </div>
 </div>
 
-<div aria-labelledby="lpTabPerf" class="lp-panel" data-panel="perf" id="lpPanelPerf" role="tabpanel" hidden>
-<figure class="lp-ui lp-ui--settings">
-<div aria-hidden="true" class="lp-ui__card">
-<div class="lp-set">
-<span class="lp-set__hero">
-<span class="lp-set__hero-kicker">Performance</span>
-<span class="lp-set__hero-title">Rychlý, lehký a tichý</span>
-<span class="lp-set__hero-text">Launcher, který nekonkuruje hře o procesor.</span>
-</span>
-<span class="lp-set__row"><b>Rychlé načítání</b><span class="lp-vis__toggle is-on"></span></span>
-<span class="lp-set__note">Načtená data zůstanou platná několik minut místo pár sekund.</span>
-<span class="lp-set__row"><b>Pozastavit činnost na pozadí</b><span class="lp-vis__toggle is-on"></span></span>
-<span class="lp-set__note">Když je launcher skrytý, přestane stahovat a počítat.</span>
-<span class="lp-set__label">Kvalita renderu skinu</span>
-<span class="lp-vis__seg"><span>Nízká</span><span class="is-active">Vysoká</span><span>Ultra</span></span>
-<span class="lp-set__meter"><span style="width:34%"></span></span>
-<span class="lp-set__row"><b>Paměť v cache</b><span class="lp-set__value">412 MB</span></span>
-<span class="lp-set__action">Uvolnit paměť</span>
-</div>
-</div>
-</figure>
-<div class="lp-panel__copy">
+<div aria-labelledby="lpxTabPerf" class="lpx-panel" id="lpxPanelPerf" role="tabpanel" hidden>
+<div class="lpx-panel__art"><img alt="" aria-hidden="true" decoding="async" height="120" src="icons/lightning-focus.png" width="120"/></div>
+<div class="lpx-panel__copy">
 <h3 data-i18n="lp.tour.h2">Výkon a paměť</h3>
 <p data-i18n="lp.tour.p2">Rychlé načítání drží navštívené stránky v paměti, aby se launcher vracel okamžitě. Tlačítko Uvolnit paměť je zase okamžitě zahodí.</p>
-<ul class="lp-check">
+<ul class="lpx-check">
 <li data-i18n="lp.tour.l2a">Rychlé načítání s jasně popsanou cenou</li>
 <li data-i18n="lp.tour.l2b">Pozastavení činnosti na pozadí</li>
 <li data-i18n="lp.tour.l2c">Kvalita renderu skinu a uvolnění paměti</li>
@@ -758,27 +630,12 @@
 </div>
 </div>
 
-<div aria-labelledby="lpTabPriv" class="lp-panel" data-panel="priv" id="lpPanelPriv" role="tabpanel" hidden>
-<figure class="lp-ui lp-ui--settings">
-<div aria-hidden="true" class="lp-ui__card">
-<div class="lp-set">
-<span class="lp-set__hero">
-<span class="lp-set__hero-kicker">Minekube Shield</span>
-<span class="lp-set__hero-title">Tvoje data patří tobě</span>
-<span class="lp-set__hero-text">Vestavěný blokátor sledování a telemetrie.</span>
-</span>
-<span class="lp-set__row lp-set__row--state"><span class="lp-priv__ok"></span><span><b>Žádné hlášení stahování</b><small>Odehraný čas ani připojení na servery</small></span><em>Vždy</em></span>
-<span class="lp-set__row lp-set__row--state"><span class="lp-priv__ok"></span><span><b>Anonymní identita</b><small>Neposílá se systém, e-mail ani ID instalace</small></span><em>Vždy</em></span>
-<span class="lp-set__row lp-set__row--state"><span class="lp-priv__ok"></span><span><b>Žádné zjišťování polohy</b><small>Podle IP adresy tě nikdo neměří</small></span><em>Vždy</em></span>
-<span class="lp-set__row lp-set__row--state"><span class="lp-priv__ok"></span><span><b>Ochrana proti Log4Shell</b><small>Hra je chráněná proti útoku typu Log4Shell</small></span><em>Vždy</em></span>
-<span class="lp-set__row"><b>Discord Rich Presence</b><span class="lp-vis__toggle"></span></span>
-</div>
-</div>
-</figure>
-<div class="lp-panel__copy">
+<div aria-labelledby="lpxTabPriv" class="lpx-panel" id="lpxPanelPriv" role="tabpanel" hidden>
+<div class="lpx-panel__art"><img alt="" aria-hidden="true" decoding="async" height="120" src="icons/lock.png" width="120"/></div>
+<div class="lpx-panel__copy">
 <h3 data-i18n="lp.tour.h3">Soukromí bez přepínačů</h3>
 <p data-i18n="lp.tour.p3">Většina ochrany je trvale zapnutá a nejde vypnout. Discord Rich Presence zůstává volbou a ve výchozím stavu je vypnutá.</p>
-<ul class="lp-check">
+<ul class="lpx-check">
 <li data-i18n="lp.tour.l3a">Žádná telemetrie, žádné hlášení stahování</li>
 <li data-i18n="lp.tour.l3b">Anonymní identita — bez systému a ID instalace</li>
 <li data-i18n="lp.tour.l3c">Ochrana hry proti Log4Shell</li>
@@ -787,433 +644,264 @@
 </div>
 </div>
 </div>
+</div>
+</section>
+
+<!-- ===================== CAROUSEL ===================== -->
+<section aria-labelledby="lpxCarouselTitle" class="lpx-band lpx-band--carousel" id="co-najdes">
+<div aria-hidden="true" class="lpx-band__bg" style="--bg:url('wallpapers/atmo/crimson-forest.webp')"></div>
+<div class="lpx-wrap">
+<header class="lpx-head">
+<p class="lpx-tag" data-reveal><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/mouse.png" width="16"/><span data-i18n="lp.mc.car.tag">Co v launcheru najdeš</span></p>
+<h2 data-i18n="lp.mc.car.title" data-reveal id="lpxCarouselTitle" style="--d:60ms">Projeď si <em>záložky.</em></h2>
+<p class="lpx-head__lead" data-i18n="lp.mc.car.lead" data-reveal style="--d:120ms">Šest míst, kam se v launcheru nejčastěji vracíš. Šipkami se posouváš, kolečkem myši taky.</p>
+</header>
+
+<div class="lpx-carousel" data-mc-carousel>
+<div aria-label="Záložky launcheru" class="lpx-carousel__track" data-i18n-aria="lp.carousel.aria" data-mc-track tabindex="0">
+<article class="lpx-slide">
+<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/chest.png" width="40"/>
+<h3 data-i18n="lp.mc.car.1.t">Knihovna</h3>
+<p data-i18n="lp.mc.car.1.p">Instance, skupiny a hledání. Každá instance má vlastní profil, ikonu a mody.</p>
+</article>
+<article class="lpx-slide">
+<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/ender-chest.png" width="40"/>
+<h3 data-i18n="lp.mc.car.2.t">Modpacky</h3>
+<p data-i18n="lp.mc.car.2.p">Modrinth katalog i soubory z disku. Mody se stahují paralelně a sdílí se mezi instancemi.</p>
+</article>
+<article class="lpx-slide">
+<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/bucket.png" width="40"/>
+<h3 data-i18n="lp.mc.car.3.t">Java</h3>
+<p data-i18n="lp.mc.car.3.p">Víc instalací vedle sebe, každá verze hry si vezme tu svou. Uložiště jde uklidit jedním tlačítkem.</p>
+</article>
+<article class="lpx-slide">
+<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/bell.png" width="40"/>
+<h3 data-i18n="lp.mc.car.4.t">Vizuál</h3>
+<p data-i18n="lp.mc.car.4.p">Záře, pozadí, profil pohybu a úvodní obrazovka. Efekty jdou vypnout jedním přepínačem.</p>
+</article>
+<article class="lpx-slide">
+<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/lightning-focus.png" width="40"/>
+<h3 data-i18n="lp.mc.car.5.t">Výkon</h3>
+<p data-i18n="lp.mc.car.5.p">Rychlé načítání, pozastavení na pozadí a kvalita renderu skinu. Všechno popsané, nic skryté.</p>
+</article>
+<article class="lpx-slide">
+<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/lock.png" width="40"/>
+<h3 data-i18n="lp.mc.car.6.t">Soukromí</h3>
+<p data-i18n="lp.mc.car.6.p">Žádná telemetrie, anonymní identita a ochrana proti Log4Shell. Většina je zapnutá natrvalo.</p>
+</article>
+</div>
+<div class="lpx-carousel__nav">
+<button aria-label="Předchozí záložka" class="lpx-carousel__btn" data-i18n-aria="lp.carousel.prev" data-mc-prev type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m14.5 5.5-7 6.5 7 6.5"></path></svg></button>
+<img alt="" aria-hidden="true" class="lpx-carousel__mark" decoding="async" height="24" src="icons/mouse.png" width="24"/>
+<button aria-label="Další záložka" class="lpx-carousel__btn" data-i18n-aria="lp.carousel.next" data-mc-next type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9.5 5.5 7 6.5-7 6.5"></path></svg></button>
+</div>
+</div>
+</div>
 </section>
 
 <!-- ===================== STAŽENÍ ===================== -->
-<section aria-labelledby="lpDownloadTitle" class="lp-section" id="platformy">
-<div class="lp-wrap lp-dl">
-<div class="lp-dl__intro">
-<p class="lp-tag" data-reveal><span aria-hidden="true" class="lp-tag__spark">✦</span><span data-i18n="lp.dl.tag">Stažení</span></p>
-<h2 data-i18n="lp.dl.title" data-reveal id="lpDownloadTitle" style="--d:60ms">Stáhni a hraj.</h2>
-<p class="lp-head__lead" data-i18n="lp.dl.lead" data-reveal style="--d:120ms">Instalátor bere web přímo z našeho GitHub repozitáře, takže vždy dostaneš nejnovější vydání. Launcher je pro Windows, Linux je v plánu.</p>
-<div class="lp-version" data-reveal style="--d:180ms">
-<span class="lp-version__label" data-i18n="lp.dl.version">Aktuální verze</span>
-<span class="lp-version__value" data-launcher-version>…</span>
-<span class="lp-version__state" data-launcher-state data-state="loading"><i aria-hidden="true"></i><span data-launcher-state-label>Zjišťuji…</span></span>
-<button class="lp-refresh" data-i18n-aria="lp.dl.refresh" data-i18n-title="lp.dl.refresh" data-launcher-refresh type="button">
+<section aria-labelledby="lpxDownloadTitle" class="lpx-section lpx-section--download" id="platformy">
+<div class="lpx-wrap">
+<header class="lpx-head">
+<p class="lpx-tag" data-reveal><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/download.png" width="16"/><span data-i18n="lp.dl.tag">Stažení</span></p>
+<h2 data-i18n="lp.dl.title" data-reveal id="lpxDownloadTitle" style="--d:60ms">Stáhni a hraj.</h2>
+<p class="lpx-head__lead" data-i18n="lp.dl.lead" data-reveal style="--d:120ms">Instalátor bere web přímo z našeho GitHub repozitáře, takže vždy dostaneš nejnovější vydání. Launcher je pro Windows, Linux je v plánu.</p>
+</header>
+
+<div class="lpx-dl">
+<div class="lpx-dl__side">
+<div class="lpx-version" data-reveal>
+<span class="lpx-version__label" data-i18n="lp.dl.version">Aktuální verze</span>
+<span class="lpx-version__value" data-launcher-version>…</span>
+<span class="lpx-version__state" data-launcher-state data-state="loading"><i aria-hidden="true"></i><span data-launcher-state-label>Zjišťuji…</span></span>
+<button aria-label="Znovu zkontrolovat verzi" class="lpx-refresh" data-i18n-aria="lp.dl.refresh" data-i18n-title="lp.dl.refresh" data-launcher-refresh type="button">
 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1"></path><path d="M20.6 4.2v5.2h-5.2"></path></svg>
-<span data-i18n="lp.dl.refresh">Znovu zkontrolovat</span>
 </button>
 </div>
-<p class="lp-version__checked" data-launcher-checked hidden></p>
-<ul class="lp-dl__notes">
+<p class="lpx-version__checked" data-launcher-checked hidden></p>
+<ul class="lpx-notes">
 <li data-i18n="lp.dl.note1">Stahování jde přímo z GitHubu — žádný prostředník ani reklamní přesměrování.</li>
 <li data-i18n="lp.dl.note2">Když GitHub API neodpovídá, web použije poslední známou adresu instalátoru.</li>
 <li data-i18n="lp.dl.note3">Stahování spouští tvůj prohlížeč; dokončení hlásí on, ne tato stránka.</li>
 </ul>
-<p class="lp-dl__alias">
+<p class="lpx-alias">
 <span data-i18n="lp.dl.alias">Všechna vydání a poznámky k verzi najdeš na</span>
 <a data-launcher-release data-site-link="launcherReleases" href="https://github.com/MinekubeStudios/MinekubeLauncher/releases" rel="noopener noreferrer" target="_blank"><span data-i18n="lp.dl.alias.link">GitHub Releases</span> ↗</a>
 </p>
-<div class="lp-planned">
-<p class="lp-planned__title" data-i18n="lp.dl.planned.title">Připravujeme</p>
+<div class="lpx-plannedbox">
+<p class="lpx-plannedbox__title" data-i18n="lp.dl.planned.title">Připravujeme</p>
 <ul>
-<li><span class="lp-badge lp-badge--planned"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-clock"></use></svg><span data-i18n="lp.dl.planned.badge">V plánu</span></span><span data-i18n="lp.dl.planned.2">Sestavení pro Linux (.AppImage, .deb)</span></li>
-<li><span class="lp-badge lp-badge--planned"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-clock"></use></svg><span data-i18n="lp.dl.planned.badge">V plánu</span></span><span data-i18n="lp.dl.planned.3">Katalog Minekube modpacků přímo v launcheru</span></li>
+<li><span class="lpx-badge lpx-badge--planned"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-clock"></use></svg><span data-i18n="lp.dl.planned.badge">V plánu</span></span><span data-i18n="lp.dl.planned.2">Sestavení pro Linux (.AppImage, .deb)</span></li>
+<li><span class="lpx-badge lpx-badge--planned"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-clock"></use></svg><span data-i18n="lp.dl.planned.badge">V plánu</span></span><span data-i18n="lp.dl.planned.3">Katalog Minekube modpacků přímo v launcheru</span></li>
 </ul>
 </div>
 </div>
 
-<div class="lp-platforms">
-<article aria-labelledby="lpWinTitle" class="lp-platform lp-platform--primary lp-spot" data-reveal style="--d:80ms">
-<span aria-hidden="true" class="lp-platform__glow"></span>
-<span aria-hidden="true" class="lp-platform__icon"><svg viewBox="0 0 24 24"><use href="#mk-os-windows"></use></svg></span>
-<div class="lp-platform__body">
-<div class="lp-platform__head">
-<h3 data-i18n="lp.dl.win" id="lpWinTitle">Windows</h3>
-<span class="lp-badge lp-badge--live"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.dl.live">K dispozici</span></span>
+<div class="lpx-platforms lpx-platforms--dl">
+<article aria-labelledby="lpxWinTitle" class="lpx-platform lpx-platform--primary" data-reveal style="--d:80ms">
+<span aria-hidden="true" class="lpx-platform__icon"><img alt="" decoding="async" height="52" src="icons/windows.png" width="52"/></span>
+<div class="lpx-platform__body">
+<div class="lpx-platform__head">
+<h3 data-i18n="lp.dl.win" id="lpxWinTitle">Windows</h3>
+<span class="lpx-badge lpx-badge--live"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-check"></use></svg><span data-i18n="lp.dl.live">K dispozici</span></span>
 </div>
-<p class="lp-platform__meta" data-i18n="lp.dl.win.meta">Windows 10 a 11 · 64bit instalátor (.exe)</p>
-<div aria-hidden="true" class="lp-skeleton" data-launcher-skeleton="windows"><span></span><span></span></div>
-<p class="lp-platform__file" data-launcher-file="windows" hidden><span data-launcher-file-name></span></p>
-<div class="lp-platform__hash" data-launcher-hash hidden>
+<p class="lpx-platform__meta" data-i18n="lp.dl.win.meta">Windows 10 a 11 · 64bit instalátor (.exe)</p>
+<div aria-hidden="true" class="lpx-skeleton" data-launcher-skeleton="windows"><span></span><span></span></div>
+<p class="lpx-platform__file" data-launcher-file="windows" hidden><span data-launcher-file-name></span></p>
+<div class="lpx-hash" data-launcher-hash hidden>
 <b>SHA-256</b>
-<span class="lp-platform__hash-value" data-launcher-hash-value></span>
-<button class="lp-copy" data-launcher-copy type="button"><span data-i18n="lp.dl.copy">Kopírovat</span></button>
+<span class="lpx-hash__value" data-launcher-hash-value></span>
+<button class="lpx-copy" data-launcher-copy type="button"><span data-i18n="lp.dl.copy">Kopírovat</span></button>
 </div>
-<div class="lp-alert" data-launcher-error hidden role="status">
+<div class="lpx-alert" data-launcher-error hidden role="status">
 <svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-alert"></use></svg>
 <div>
 <strong data-i18n="lp.dl.error.title">Vydání se nepodařilo načíst</strong>
 <span data-i18n="lp.dl.error.text">GitHub teď neodpovídá. Zkus to znovu, nebo si instalátor stáhni přímo z repozitáře.</span>
-<button class="lp-btn lp-btn--quiet" data-launcher-retry type="button"><span data-i18n="lp.dl.error.retry">Zkusit znovu</span></button>
+<button class="lpx-btn lpx-btn--quiet" data-launcher-retry type="button"><span data-i18n="lp.dl.error.retry">Zkusit znovu</span></button>
 </div>
 </div>
 </div>
-<div class="lp-platform__actions">
-<button class="button button-primary download-ultimate lp-dlbtn" data-download="launcher" data-launcher-download data-os="windows" data-state="loading" type="button">
+<div class="lpx-platform__actions">
+<button class="button button-primary download-ultimate lpx-download lpx-download--card" data-download="launcher" data-launcher-download data-os="windows" data-state="loading" type="button">
 <span aria-hidden="true" class="download-fx">
 <span class="download-plasma"></span>
-<span class="download-matrix"></span>
 <span class="download-sweep"></span>
 <span class="download-pulse-line"></span>
 <span class="download-particles"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
 </span>
-
 <span aria-hidden="true" class="lp-btn__spinner"></span>
 <span class="download-label" data-i18n="lp.dl.win.button">Stáhnout instalátor</span>
 <span aria-hidden="true" class="download-icon"><span class="download-icon-orbit"></span><svg viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg></span>
-<span aria-hidden="true" class="download-hover-back"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
 </button>
-<p aria-live="polite" class="lp-start-note" data-launcher-start-note hidden>
+<p aria-live="polite" class="lpx-start-note" data-launcher-start-note hidden>
 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.3L19 6.5"></path></svg>
 <span data-i18n="lp.dl.started.note" data-launcher-start-text>Stahování zahájeno — průběh a dokončení hlásí tvůj prohlížeč.</span>
 </p>
 </div>
 </article>
 
-<article aria-labelledby="lpLinuxTitle" class="lp-platform lp-platform--planned" data-reveal style="--d:240ms">
-<span aria-hidden="true" class="lp-platform__icon"><svg viewBox="0 0 24 24"><use href="#mk-os-linux"></use></svg></span>
-<div class="lp-platform__body">
-<div class="lp-platform__head">
-<h3 id="lpLinuxTitle">Linux</h3>
-<span class="lp-badge lp-badge--planned"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-clock"></use></svg><span data-i18n="lp.dl.planned.badge">V plánu</span></span>
+<article aria-labelledby="lpxLinuxTitle" class="lpx-platform lpx-platform--planned" data-reveal style="--d:200ms">
+<span aria-hidden="true" class="lpx-platform__icon"><img alt="" decoding="async" height="52" src="icons/linux.png" width="52"/></span>
+<div class="lpx-platform__body">
+<div class="lpx-platform__head">
+<h3 id="lpxLinuxTitle">Linux</h3>
+<span class="lpx-badge lpx-badge--planned"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-clock"></use></svg><span data-i18n="lp.dl.planned.badge">V plánu</span></span>
 </div>
-<p class="lp-platform__meta" data-i18n="lp.dl.linux.meta">.AppImage a .deb jsou v plánu</p>
-</div>
-<div class="lp-platform__status" id="lpLinuxStatus">
+<p class="lpx-platform__meta" data-i18n="lp.dl.linux.meta">.AppImage a .deb jsou v plánu</p>
+<p class="lpx-platform__status" id="lpxLinuxStatus">
 <svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-clock"></use></svg>
 <span data-i18n="lp.dl.planned.note">Až sestavení vyjde, objeví se tady samo — nic nemusíš měnit.</span>
+</p>
 </div>
-<div class="lp-platform__actions">
-<button aria-describedby="lpLinuxStatus" class="lp-btn" data-launcher-download data-os="linux" data-state="planned" type="button">
-<svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-clock"></use></svg>
+<div class="lpx-platform__actions">
+<button aria-describedby="lpxLinuxStatus" class="lpx-btn lpx-btn--quiet" data-launcher-download data-os="linux" data-state="planned" type="button">
+<img alt="" aria-hidden="true" decoding="async" height="18" src="icons/linux.png" width="18"/>
 <span data-i18n="lp.dl.planned.button">V plánu</span>
 </button>
 </div>
 </article>
 </div>
 </div>
-</section>
-
-<!-- ===================== CAROUSEL // CO V LAUNCHERU NAJDEŠ ===================== -->
-<section aria-labelledby="lpCarouselTitle" class="lp-mc-band lp-mc-band--dark" id="co-najdes">
-<div class="lp-wrap">
-<header class="lp-head">
-<div class="lp-head__title">
-<p class="lp-tag" data-reveal><span aria-hidden="true" class="lp-tag__spark">✦</span><span data-i18n="lp.mc.car.tag">Co v launcheru najdeš</span></p>
-<h2 data-i18n="lp.mc.car.title" data-reveal id="lpCarouselTitle" style="--d:60ms">Projeď si <em>záložky.</em></h2>
-</div>
-<p class="lp-head__lead" data-i18n="lp.mc.car.lead" data-reveal style="--d:120ms">Šest míst, kam se v launcheru nejčastěji vracíš. Šipkami se posouváš, kolečkem myši taky.</p>
-</header>
-
-<div class="lp-mc-carousel" data-mc-carousel>
-<div aria-label="Záložky launcheru" class="lp-mc-carousel__track" data-i18n-aria="lp.carousel.aria" data-mc-track tabindex="0">
-<article class="lp-mc-slide">
-<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#lp-layers"></use></svg></div>
-<div class="lp-mc-slide__body">
-<h3 data-i18n="lp.mc.car.1.t">Knihovna</h3>
-<p data-i18n="lp.mc.car.1.p">Instance, skupiny a hledání. Každá instance má vlastní profil, ikonu a mody.</p>
-</div>
-</article>
-<article class="lp-mc-slide">
-<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#mk-package"></use></svg></div>
-<div class="lp-mc-slide__body">
-<h3 data-i18n="lp.mc.car.2.t">Modpacky</h3>
-<p data-i18n="lp.mc.car.2.p">Modrinth katalog i soubory z disku. Mody se stahují paralelně a sdílí se mezi instancemi.</p>
-</div>
-</article>
-<article class="lp-mc-slide">
-<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#lp-java"></use></svg></div>
-<div class="lp-mc-slide__body">
-<h3 data-i18n="lp.mc.car.3.t">Java</h3>
-<p data-i18n="lp.mc.car.3.p">Víc instalací vedle sebe, každá verze hry si vezme tu svou. Uložiště jde uklidit jedním tlačítkem.</p>
-</div>
-</article>
-<article class="lp-mc-slide">
-<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#lp-palette"></use></svg></div>
-<div class="lp-mc-slide__body">
-<h3 data-i18n="lp.mc.car.4.t">Vizuál</h3>
-<p data-i18n="lp.mc.car.4.p">Záře, pozadí, profil pohybu a úvodní obrazovka. Efekty jdou vypnout jedním přepínačem.</p>
-</div>
-</article>
-<article class="lp-mc-slide">
-<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#lp-gauge"></use></svg></div>
-<div class="lp-mc-slide__body">
-<h3 data-i18n="lp.mc.car.5.t">Výkon</h3>
-<p data-i18n="lp.mc.car.5.p">Rychlé načítání, pozastavení na pozadí a kvalita renderu skinu. Všechno popsané, nic skryté.</p>
-</div>
-</article>
-<article class="lp-mc-slide">
-<div aria-hidden="true" class="lp-mc-slide__art"><svg viewBox="0 0 24 24"><use href="#lp-shield"></use></svg></div>
-<div class="lp-mc-slide__body">
-<h3 data-i18n="lp.mc.car.6.t">Soukromí</h3>
-<p data-i18n="lp.mc.car.6.p">Žádná telemetrie, anonymní identita a ochrana proti Log4Shell. Většina je zapnutá natrvalo.</p>
-</div>
-</article>
-</div>
-<div class="lp-mc-carousel__nav">
-<button aria-label="Předchozí záložka" class="lp-mc-carousel__btn" data-i18n-aria="lp.carousel.prev" data-mc-prev type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m14.5 5.5-7 6.5 7 6.5"></path></svg></button>
-<button aria-label="Další záložka" class="lp-mc-carousel__btn" data-i18n-aria="lp.carousel.next" data-mc-next type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9.5 5.5 7 6.5-7 6.5"></path></svg></button>
-</div>
-</div>
-</div>
-</section>
-
-<!-- ===================== VIZUÁLNÍ STUDIO // TAPETY A IKONY =====================
-     Skutečné tapety z WebBackgrounds V1–V3 a ikony z WebIcons se
-     nasadí přímo tady: vlevo ovládání, vpravo opravdová maketa
-     launcheru, na které je volba hned vidět. Celá logika bydlí
-     v launcher.js (data) a studio.js (chování). Volba tapety i ikony
-     je skutečný radio button, takže ji formulářové prvky znají i bez
-     našeho kódu; přepínání tabů je nadstavba. -->
-<section aria-labelledby="lpStudioTitle" class="lp-mc-band lp-mc-band--studio" id="studio" data-studio>
-<div class="lp-wrap">
-<header class="lp-head">
-<div class="lp-head__title">
-<p class="lp-tag" data-reveal><span aria-hidden="true" class="lp-tag__spark">✦</span><span data-i18n="std.tag">Vizuální studio</span></p>
-<h2 data-i18n="std.title" data-reveal id="lpStudioTitle" style="--d:60ms">Vyber si <em>tapetu i ikony.</em></h2>
-</div>
-<p class="lp-head__lead" data-i18n="std.lead" data-reveal style="--d:120ms">Čtrnáct pozadí z naší sbírky, vlastní obrázek a osmačtyřicet ikon ze hry. Klikni a hned vidíš, jak to bude v launcheru vypadat — volba si tě zapamatuje.</p>
-</header>
-
-<div class="lp-studio" data-reveal>
-<div class="lp-studio__control">
-
-<div aria-label="Co si vybíráš" class="lp-studio__tabs" data-i18n-aria="std.tabs.aria" data-studio-tablist role="tablist">
-<button aria-controls="lpStudioLook" aria-selected="true" class="lp-studio__tab" data-studio-tab="look" id="lpStudioTabLook" role="tab" type="button">
-<img alt="" aria-hidden="true" decoding="async" height="24" src="icons/star.png" width="24"/>
-<span data-i18n="std.tab.look">Vzhled launcheru</span>
-</button>
-<button aria-controls="lpStudioIcons" aria-selected="false" class="lp-studio__tab" data-studio-tab="icons" id="lpStudioTabIcons" role="tab" tabindex="-1" type="button">
-<img alt="" aria-hidden="true" decoding="async" height="24" src="icons/chest.png" width="24"/>
-<span data-i18n="std.tab.icons">Ikony launcheru</span>
-</button>
-</div>
-
-<div aria-labelledby="lpStudioTabLook" class="lp-studio__panel" data-studio-panel="look" id="lpStudioLook" role="tabpanel">
-
-<div class="lp-studio__row">
-<span class="lp-studio__row-label" data-i18n="std.wp.heading">Tapety</span>
-<span class="lp-studio__count" data-studio-count-wp>16 pozadí</span>
-</div>
-
-<div class="lp-studio__grid" data-studio-grid></div>
-
-<div class="lp-studio__upload" data-studio-drop>
-<span aria-hidden="true" class="lp-studio__upload-icon"><svg viewBox="0 0 24 24"><use href="#mk-tray"></use></svg></span>
-<div class="lp-studio__upload-copy">
-<strong data-i18n="std.wp.own">Vlastní pozadí</strong>
-<span data-i18n="std.wp.own.hint">PNG, JPG nebo WebP. Přetáhni soubor sem nebo vyber z disku.</span>
-</div>
-<button class="lp-btn lp-btn--quiet lp-studio__upload-btn" data-studio-upload type="button">
-<span data-i18n="std.wp.own.pick">Vybrat obrázek</span>
-</button>
-<input accept="image/*" aria-label="Vlastní obrázek pozadí" class="lp-studio__file" data-i18n-aria="std.wp.own.aria" data-studio-file type="file"/>
-<div class="lp-studio__custom-thumb" data-studio-custom-thumb></div>
-<button class="lp-studio__custom-remove" data-studio-custom-remove data-i18n="std.wp.own.remove" hidden type="button">Odebrat</button>
-</div>
-
-</div>
-
-<div aria-labelledby="lpStudioTabIcons" class="lp-studio__panel" data-studio-panel="icons" hidden id="lpStudioIcons" role="tabpanel">
-
-<div class="lp-studio__search">
-<span aria-hidden="true" class="lp-studio__search-icon"><svg viewBox="0 0 24 24"><circle cx="10.6" cy="10.6" r="6.1"></circle><path d="m15.2 15.2 4.6 4.6"></path></svg></span>
-<label class="lp-visually-hidden" data-i18n="std.search" for="lpStudioSearch">Hledat ikonu</label>
-<input autocomplete="off" class="lp-studio__search-input" data-studio-search id="lpStudioSearch" placeholder="Hledat ikonu…" data-i18n-placeholder="std.search.ph" spellcheck="false" type="search"/>
-<span class="lp-studio__count" data-studio-count></span>
-</div>
-
-<div aria-label="Rodiny ikon" class="lp-studio__families" data-i18n-aria="std.family.aria" role="group">
-<button aria-pressed="true" class="lp-studio__family is-active" data-studio-family="all" type="button"><span data-i18n="std.family.all">Vše</span></button>
-<button aria-pressed="false" class="lp-studio__family" data-studio-family="emblems" type="button"><span data-studio-family-label="emblems">Emblémy</span></button>
-<button aria-pressed="false" class="lp-studio__family" data-studio-family="ui" type="button"><span data-studio-family-label="ui">Rozhraní</span></button>
-<button aria-pressed="false" class="lp-studio__family" data-studio-family="hearts" type="button"><span data-studio-family-label="hearts">Srdce</span></button>
-<button aria-pressed="false" class="lp-studio__family" data-studio-family="system" type="button"><span data-studio-family-label="system">Systém</span></button>
-</div>
-
-<div class="lp-studio__icons" data-studio-icons></div>
-<p class="lp-studio__empty" data-i18n="std.empty" data-studio-empty hidden>Nic takového tu není. Zkus jiné slovo nebo rodinu.</p>
-
-</div>
-
-</div>
-
-<div class="lp-studio__stage-wrap">
-<div class="lp-studio__shot" data-studio-stage data-mode="look" data-wallpaper="lobby">
-<div aria-hidden="true" class="lp-studio__shot-bar">
-<span class="lp-app__dot"></span><span class="lp-app__dot"></span><span class="lp-app__dot"></span>
-<span class="lp-app__title">Minekube Launcher</span>
-<span class="lp-app__spacer"></span>
-<svg class="lp-app__glyph" viewBox="0 0 24 24"><use href="#mk-tray"></use></svg>
-</div>
-<div aria-hidden="true" class="lp-studio__shot-tiles" data-studio-tiles hidden></div>
-<div class="lp-studio__shot-body">
-<div aria-hidden="true" class="lp-studio__shot-side">
-<span class="lp-studio__shot-side-btn is-active"><svg viewBox="0 0 24 24"><use href="#lp-cube"></use></svg></span>
-<span class="lp-studio__shot-side-btn"><svg viewBox="0 0 24 24"><use href="#lp-layers"></use></svg></span>
-<span class="lp-studio__shot-side-btn"><svg viewBox="0 0 24 24"><use href="#mk-package"></use></svg></span>
-<span class="lp-studio__shot-side-btn"><svg viewBox="0 0 24 24"><use href="#lp-palette"></use></svg></span>
-<span class="lp-studio__shot-side-spacer"></span>
-<span class="lp-studio__shot-side-btn"><svg viewBox="0 0 24 24"><use href="#lp-sliders"></use></svg></span>
-</div>
-<div class="lp-studio__shot-main">
-<p class="lp-studio__shot-kicker" data-i18n="std.stage.kicker">Zkušební okno</p>
-<p class="lp-studio__shot-name" data-studio-stage-name>Hráč</p>
-<span class="lp-studio__shot-avatar" data-studio-stage-avatar><span class="lp-studio__shot-avatar-icon" data-studio-stage-icon></span></span>
-<div class="lp-studio__shot-card">
-<span class="lp-studio__shot-card-icon" aria-hidden="true"><span data-studio-stage-icon></span></span>
-<div class="lp-studio__shot-card-copy">
-<strong data-i18n="std.stage.card">Moje instance</strong>
-<span data-i18n="std.stage.card.sub">Vanilla 1.21.4 · připraveno</span>
-</div>
-<button class="lp-studio__shot-play" type="button" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#lp-play"></use></svg><span data-i18n="std.play">Hrát</span></button>
-</div>
-</div>
-</div>
-<p class="lp-studio__status" data-studio-status role="status"></p>
-</div>
-
-<div class="lp-studio__stage-tools">
-<label class="lp-studio__switch">
-<input data-studio-tile-check type="checkbox"/>
-<span aria-hidden="true" class="lp-studio__switch-track"><span class="lp-studio__switch-thumb"></span></span>
-<span data-i18n="std.stage.tiles">Dlaždice z ikony</span>
-</label>
-<label class="lp-studio__size">
-<span data-i18n="std.stage.size">Velikost</span>
-<input aria-describedby="lpStudioSizeValue" class="lp-studio__size-input" data-studio-size max="96" min="32" step="2" type="range" value="52"/>
-<output class="lp-studio__size-value" data-studio-size-value id="lpStudioSizeValue">52 px</output>
-</label>
-<label class="lp-studio__name">
-<span data-i18n="std.stage.name">Jméno v launcheru</span>
-<input autocomplete="off" class="lp-studio__name-input" data-studio-name maxlength="18" placeholder="Player" type="text"/>
-</label>
-<div class="lp-studio__stage-actions">
-<button class="lp-btn lp-btn--quiet" data-studio-download-icon type="button">
-<svg aria-hidden="true" viewBox="0 0 24 24"><use href="#mk-tray"></use></svg>
-<span data-i18n="std.download.icon">Stáhnout ikonu</span>
-</button>
-<button class="lp-btn lp-btn--ghost" data-studio-reset type="button">
-<svg aria-hidden="true" viewBox="0 0 24 24"><use href="#lp-sliders"></use></svg>
-<span data-i18n="std.reset">Zpět na výchozí</span>
-</button>
-</div>
-</div>
-</div>
-</div>
 </div>
 </section>
 
 <!-- ===================== ČASTÉ OTÁZKY ===================== -->
-<section aria-labelledby="lpFaqTitle" class="lp-section lp-section--faq" id="faq">
-<div class="lp-wrap">
-<header class="lp-head">
-<div class="lp-head__title">
-<p class="lp-tag" data-reveal><span aria-hidden="true" class="lp-tag__spark">✦</span><span data-i18n="lp.faq.tag">Časté otázky</span></p>
-<h2 data-i18n="lp.faq.title" data-reveal id="lpFaqTitle" style="--d:60ms">Než klikneš na <em>stažení.</em></h2>
-</div>
-<p class="lp-head__lead" data-i18n="lp.faq.lead" data-reveal style="--d:120ms">Krátké a poctivé odpovědi na to, co se lidé ptají nejčastěji. Když něco chybí, ozvi se na GitHubu.</p>
+<section aria-labelledby="lpxFaqTitle" class="lpx-section lpx-section--faq" id="faq">
+<div class="lpx-wrap">
+<header class="lpx-head">
+<p class="lpx-tag" data-reveal><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/lock.png" width="16"/><span data-i18n="lp.faq.tag">Časté otázky</span></p>
+<h2 data-i18n="lp.faq.title" data-reveal id="lpxFaqTitle" style="--d:60ms">Než klikneš na <em>stažení.</em></h2>
+<p class="lpx-head__lead" data-i18n="lp.faq.lead" data-reveal style="--d:120ms">Krátké a poctivé odpovědi na to, co se lidé ptají nejčastěji. Když něco chybí, ozvi se na GitHubu.</p>
 </header>
-<div class="lp-faq" data-reveal>
-<details class="lp-faq__item" name="lp-faq" open>
-<summary class="lp-faq__trigger">
-<span class="lp-faq__q" data-i18n="lp.faq.q1">Je launcher opravdu zdarma?</span>
-<span aria-hidden="true" class="lp-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
+<div class="lpx-faq" data-reveal>
+<details class="lpx-faq__item" name="lp-faq" open>
+<summary class="lpx-faq__trigger">
+<span class="lpx-faq__q" data-i18n="lp.faq.q1">Je launcher opravdu zdarma?</span>
+<span aria-hidden="true" class="lpx-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
 </summary>
-<div class="lp-faq__panel" data-i18n="lp.faq.a1">Ano. Je zdarma pro Windows a jeho kód je otevřený pod licencí GPL-3.0. Nejsou v něm reklamy ani placené funkce — a protože jde o fork Modrinth Appu, podmínky licence mu nedovolí jinak.</div>
+<div class="lpx-faq__panel" data-i18n="lp.faq.a1">Ano. Je zdarma pro Windows a jeho kód je otevřený pod licencí GPL-3.0. Nejsou v něm reklamy ani placené funkce — a protože jde o fork Modrinth Appu, podmínky licence mu nedovolí jinak.</div>
 </details>
-<details class="lp-faq__item" name="lp-faq">
-<summary class="lp-faq__trigger">
-<span class="lp-faq__q" data-i18n="lp.faq.q2">Odkud se instalátor stahuje?</span>
-<span aria-hidden="true" class="lp-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
+<details class="lpx-faq__item" name="lp-faq">
+<summary class="lpx-faq__trigger">
+<span class="lpx-faq__q" data-i18n="lp.faq.q2">Odkud se instalátor stahuje?</span>
+<span aria-hidden="true" class="lpx-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
 </summary>
-<div class="lp-faq__panel" data-i18n="lp.faq.a2">Přímo z GitHub Releases našeho repozitáře. Web jen zjistí nejnovější verzi a předá ti odkaz — žádný prostředník ani reklamní přesměrování.</div>
+<div class="lpx-faq__panel" data-i18n="lp.faq.a2">Přímo z GitHub Releases našeho repozitáře. Web jen zjistí nejnovější verzi a předá ti odkaz — žádný prostředník ani reklamní přesměrování.</div>
 </details>
-<details class="lp-faq__item" name="lp-faq">
-<summary class="lp-faq__trigger">
-<span class="lp-faq__q" data-i18n="lp.faq.q3">Půjde launcher na Linux?</span>
-<span aria-hidden="true" class="lp-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
+<details class="lpx-faq__item" name="lp-faq">
+<summary class="lpx-faq__trigger">
+<span class="lpx-faq__q" data-i18n="lp.faq.q3">Půjde launcher na Linux?</span>
+<span aria-hidden="true" class="lpx-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
 </summary>
-<div class="lp-faq__panel" data-i18n="lp.faq.a3">Ano. Launcher je postavený na Tauri, takže linuxové sestavení (.AppImage a .deb) je v plánu. Jakmile vyjde, objeví se v sekci stažení samo — nic měnit nemusíš.</div>
+<div class="lpx-faq__panel" data-i18n="lp.faq.a3">Ano. Launcher je postavený na Tauri, takže linuxové sestavení (.AppImage a .deb) je v plánu. Jakmile vyjde, objeví se v sekci stažení samo — nic měnit nemusíš.</div>
 </details>
-<details class="lp-faq__item" name="lp-faq">
-<summary class="lp-faq__trigger">
-<span class="lp-faq__q" data-i18n="lp.faq.q4">Sbírá launcher moje data?</span>
-<span aria-hidden="true" class="lp-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
+<details class="lpx-faq__item" name="lp-faq">
+<summary class="lpx-faq__trigger">
+<span class="lpx-faq__q" data-i18n="lp.faq.q4">Sbírá launcher moje data?</span>
+<span aria-hidden="true" class="lpx-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
 </summary>
-<div class="lp-faq__panel" data-i18n="lp.faq.a4">Ne. Analytika PostHog je v kódu trvale vypnutá a reklamní okno se nenačítá. Launcher ale používá Modrinth API pro mody a metadata, takže s Modrinth servery komunikuje — přihlašovací údaje k účtu ale zůstávají na tvém počítači.</div>
+<div class="lpx-faq__panel" data-i18n="lp.faq.a4">Ne. Analytika PostHog je v kódu trvale vypnutá a reklamní okno se nenačítá. Launcher ale používá Modrinth API pro mody a metadata, takže s Modrinth servery komunikuje — přihlašovací údaje k účtu ale zůstávají na tvém počítači.</div>
 </details>
-<details class="lp-faq__item" name="lp-faq">
-<summary class="lp-faq__trigger">
-<span class="lp-faq__q" data-i18n="lp.faq.q5">Přenese se mi nastavení z Prism Launcheru nebo MultiMC?</span>
-<span aria-hidden="true" class="lp-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
+<details class="lpx-faq__item" name="lp-faq">
+<summary class="lpx-faq__trigger">
+<span class="lpx-faq__q" data-i18n="lp.faq.q5">Přenese se mi nastavení z Prism Launcheru nebo MultiMC?</span>
+<span aria-hidden="true" class="lpx-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
 </summary>
-<div class="lp-faq__panel" data-i18n="lp.faq.a5">Instance z Prismu a MultiMC naimportuješ jako <code>.zip</code> s <code>instance.cfg</code> a <code>mmc-pack.json</code> — i když jsou zabalené ve složce. Launcher přenese i ikonu instance. Modpacky z Modrinthu jdou jako <code>.mrpack</code>.</div>
+<div class="lpx-faq__panel" data-i18n="lp.faq.a5">Instance z Prismu a MultiMC naimportuješ jako <code>.zip</code> s <code>instance.cfg</code> a <code>mmc-pack.json</code> — i když jsou zabalené ve složce. Launcher přenese i ikonu instance. Modpacky z Modrinthu jdou jako <code>.mrpack</code>.</div>
 </details>
-<details class="lp-faq__item" name="lp-faq">
-<summary class="lp-faq__trigger">
-<span class="lp-faq__q" data-i18n="lp.faq.q6">Je launcher postavený na Modrinth Appu?</span>
-<span aria-hidden="true" class="lp-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
+<details class="lpx-faq__item" name="lp-faq">
+<summary class="lpx-faq__trigger">
+<span class="lpx-faq__q" data-i18n="lp.faq.q6">Je launcher postavený na Modrinth Appu?</span>
+<span aria-hidden="true" class="lpx-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
 </summary>
-<div class="lp-faq__panel" data-i18n="lp.faq.a6">Ano. Minekube Launcher je otevřená vidlice Modrinth Appu postavená na Tauri (Rust) a Vue 3. Minekube přidává vlastní vzhled, češtinu, nastavení Vizuál a úpravy, které z launcheru odstranily reklamy a telemetrii. S Modrinth ani Mojang nejsme spojeni.</div>
+<div class="lpx-faq__panel" data-i18n="lp.faq.a6">Ano. Minekube Launcher je otevřená vidlice Modrinth Appu postavená na Tauri (Rust) a Vue 3. Minekube přidává vlastní vzhled, češtinu, nastavení Vizuál a úpravy, které z launcheru odstranily reklamy a telemetrii. S Modrinth ani Mojang nejsme spojeni.</div>
 </details>
-<details class="lp-faq__item" name="lp-faq">
-<summary class="lp-faq__trigger">
-<span class="lp-faq__q" data-i18n="lp.faq.q7">Jak nahlásím chybu nebo nápad?</span>
-<span aria-hidden="true" class="lp-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
+<details class="lpx-faq__item" name="lp-faq">
+<summary class="lpx-faq__trigger">
+<span class="lpx-faq__q" data-i18n="lp.faq.q7">Jak nahlásím chybu nebo nápad?</span>
+<span aria-hidden="true" class="lpx-faq__chevron"><svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"></path></svg></span>
 </summary>
-<div class="lp-faq__panel"><span data-i18n="lp.faq.a7">Nejlépe jako issue v repozitáři na GitHubu. Přilož verzi launcheru a co nejvíc detailů — veřejný kód znamená, že se oprava dostane ke všem.</span> <a class="lp-inline-link" data-launcher-repo data-site-link="launcherRepo" href="https://github.com/MinekubeStudios/MinekubeLauncher" rel="noopener noreferrer" target="_blank"><span data-i18n="lp.faq.a7.link">Otevřít repozitář</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 12h15"></path><path d="m13 6 6 6-6 6"></path></svg></a></div>
+<div class="lpx-faq__panel"><span data-i18n="lp.faq.a7">Nejlépe jako issue v repozitáři na GitHubu. Přilož verzi launcheru a co nejvíc detailů — veřejný kód znamená, že se oprava dostane ke všem.</span> <a class="lpx-inline" data-launcher-repo data-site-link="launcherRepo" href="https://github.com/MinekubeStudios/MinekubeLauncher" rel="noopener noreferrer" target="_blank"><span data-i18n="lp.faq.a7.link">Otevřít repozitář</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 12h15"></path><path d="m13 6 6 6-6 6"></path></svg></a></div>
 </details>
 </div>
 </div>
 </section>
 
 <!-- ===================== ZÁVĚREČNÉ CTA ===================== -->
-<section aria-labelledby="lpCtaTitle" class="lp-section lp-section--tight" id="dalsi">
-<div class="lp-wrap">
-<div class="lp-cta" data-reveal>
-<span aria-hidden="true" class="lp-cta__ring"></span>
-<div class="lp-cta__copy">
-<h2 data-i18n="lp.cta.title" id="lpCtaTitle">Chceš nejdřív vidět, co se dá hrát?</h2>
+<section aria-labelledby="lpxCtaTitle" class="lpx-band lpx-band--cta" id="dalsi">
+<div aria-hidden="true" class="lpx-band__bg" style="--bg:url('wallpapers/atmo/lobby-s.webp')"></div>
+<div class="lpx-wrap">
+<div class="lpx-cta" data-reveal>
+<div class="lpx-cta__copy">
+<p class="lpx-tag"><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/plus.png" width="16"/><span data-i18n="lp.cta.tag">Další krok</span></p>
+<h2 data-i18n="lp.cta.title" id="lpxCtaTitle">Chceš nejdřív vidět, co se dá hrát?</h2>
 <p data-i18n="lp.cta.text">Projdi si katalog Minekube modpacků — od vanilla+ po PvP. Launcher je pak načte za tebe.</p>
-<div class="lp-cta__actions">
-<a class="lp-btn lp-btn--primary lp-btn--spark" href="../modpacky/">
-<svg aria-hidden="true" viewBox="0 0 24 24"><use href="#lp-sparkle"></use></svg>
-<span class="lp-btn__label" data-i18n="lp.cta.modpacks">Procházet modpacky</span>
-<svg aria-hidden="true" class="lp-btn__arrow" viewBox="0 0 24 24"><path d="M4 12h15"></path><path d="m13 6 6 6-6 6"></path></svg>
+<div class="lpx-cta__actions">
+<a class="lpx-btn lpx-btn--primary lpx-btn--spark" href="../modpacky/">
+<img alt="" aria-hidden="true" decoding="async" height="20" src="icons/ender-chest.png" width="20"/>
+<span data-i18n="lp.cta.modpacks">Procházet modpacky</span>
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 12h15"></path><path d="m13 6 6 6-6 6"></path></svg>
 </a>
-<a class="lp-btn lp-btn--ghost" data-launcher-repo data-site-link="launcherRepo" href="https://github.com/MinekubeStudios/MinekubeLauncher" rel="noopener noreferrer" target="_blank">
-<svg aria-hidden="true" class="lp-icon-solid" viewBox="0 0 24 24"><use href="#mk-github"></use></svg>
-<span class="lp-btn__label" data-i18n="lp.cta.repo">Repozitář launcheru</span>
+<a class="lpx-btn lpx-btn--ghost" data-launcher-repo data-site-link="launcherRepo" href="https://github.com/MinekubeStudios/MinekubeLauncher" rel="noopener noreferrer" target="_blank">
+<svg aria-hidden="true" class="lpx-btn__solid" viewBox="0 0 24 24"><use href="#mk-github"></use></svg>
+<span data-i18n="lp.cta.repo">Repozitář launcheru</span>
 </a>
 </div>
-<p class="lp-cta__legal">
+<p class="lpx-cta__legal">
 <span data-i18n="lp.cta.legal">Minekube Launcher vychází z otevřeného Modrinth Appu (GPL-3.0) a mody i modpacky načítá z veřejného Modrinth API. Nejsme s Modrinth ani Mojang spojeni.</span>
 <a data-i18n="lp.cta.license" href="https://github.com/MinekubeStudios/MinekubeLauncher/blob/main/COPYING.md" rel="noopener noreferrer" target="_blank">Licence GPL-3.0</a>
 </p>
 </div>
-<figure class="lp-cta__media">
-<div class="lp-splash" aria-hidden="true">
-<div class="lp-splash__nebula lp-splash__nebula--gold"></div>
-<div class="lp-splash__nebula lp-splash__nebula--magenta"></div>
-<div class="lp-splash__stage">
-<img alt="" class="lp-splash__logo" decoding="async" height="72" loading="lazy" src="img/wordmark-sm.png" width="128"/>
-<div class="lp-splash__track"><span class="lp-splash__fill"></span></div>
-<span class="lp-splash__msg">Načítám knihovnu…</span>
+<div aria-hidden="true" class="lpx-cta__art">
+<img alt="" class="lpx-cta__icon" decoding="async" height="150" src="icons/ender-chest.png" width="150"/>
+<img alt="" class="lpx-cta__icon lpx-cta__icon--b" decoding="async" height="110" src="icons/chest.png" width="110"/>
+<img alt="" class="lpx-cta__icon lpx-cta__icon--c" decoding="async" height="92" src="icons/pickaxe.png" width="92"/>
 </div>
-</div>
-<figcaption data-i18n="lp.shot.splash">Úvodní obrazovka — přesně tak, jak ji uvidíš při startu.</figcaption>
-</figure>
 </div>
 </div>
 </section>
 </main>
-
-<!-- ===================== SVĚTELNÉ EFEKTY ===================== -->
-<canvas aria-hidden="true" class="lp-fx" data-fx></canvas>
-
 
 <!-- ===================== FOOTER ===================== -->
 <footer class="site-footer">
@@ -1291,11 +979,10 @@
 
 <!-- Překlady stránky se načítají PŘED app.js, aby si je app.js převzala
      a fungoval jeden přepínač jazyka pro celý web. -->
-<script src="i18n.js?v=20261125-2"></script>
+<script src="i18n.js?v=20261125-3"></script>
 <script src="../app.js"></script>
 <script src="releases.js?v=20261124-2"></script>
-<script src="launcher.js?v=20261125-6"></script>
-<script src="studio.js?v=20261125-3"></script>
+<script src="launcher.js?v=20261125-7"></script>
 <script src="../design-plus.js"></script>
 <script src="../apple.js?v=20261029-1"></script>
 </body>
