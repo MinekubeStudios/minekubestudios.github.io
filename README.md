@@ -1,4 +1,49 @@
-# Minekube Studios // Web (v17 — launcher na vlastní doméně)
+# Minekube Studios // Web (v18 — připravené nasazení launcheru na vlastní doménu)
+
+## v18 — **launcher má připravené nasazení na vlastní doménu**
+
+Stránka launcheru **zůstává v `launcher/`** a funguje na
+`https://minekubestudios.github.io/launcher/` jako dřív — tam se
+vyvíjí. Přibyla ale možnost nasadit ji na **`minekubelauncher.github.io`**
+jako samostatný web. Připravené je to celé, chybí jen založit repozitář.
+
+### `launcher-deploy/`
+
+| Soubor | Co dělá |
+|---|---|
+| `build.sh` | sestaví `launcher-site.tar.gz` z `launcher/` |
+| `JAK-NASADIT.md` | tři způsoby nasazení |
+| `README.md` | zkrácený přehled |
+
+`build.sh` vezme celou stránku ze `launcher/`, přidá GitHub Actions
+workflow pro Pages, `.nojekyll` a testy s cestami přepsanými do rootu
+nového repa. Tarball je build artefakt (1,6 MB) a je v `.gitignore`.
+
+### Ověřeno
+
+- `build.sh` → 97 položek, 1,6 MB
+- rozbalený balíček **projde 24/24 testy**
+- `launcher/` v hlavním repu zůstává plná stránka — 781 řádků,
+  53 ikon, 14 tapet, **24/24 testů**, otevřená v jsdom bez chyb
+
+### Odkazy
+
+Hlavička, patička i modpacky míří na launcher **absolutně** na
+`https://minekubelauncher.github.io/`. Launcher odkazuje zpět na
+`https://minekubestudios.github.io/`. `/launcher/` je odebrán
+z `PAGE_TRANSITION_PATHS` — cross-origin odkaz by přechodový závoj
+stejně odmítl.
+
+### Co musíš udělat
+
+1. Založit repo **`minekubelauncher/minekubelauncher.github.io`**
+   — můj token nemá oprávnění `CreateRepository`.
+2. Spustit `launcher-deploy/build.sh` a podle `JAK-NASADIT.md`
+   obsah nahrát.
+
+Aby adresa byla přesně `minekubelauncher.github.io`, musí se účet
+jmenovat `minekubelauncher` — ten zatím neexistuje. Alternativy
+(i varianta „nechat launcher v hlavním repu") jsou v návodu.
 
 ## v17 — **launcher má vlastní doménu `minekubelauncher.github.io`**
 
