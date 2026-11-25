@@ -1598,228 +1598,259 @@
    prosvětlení bez pohybu.
    ============================================================= */
 
-/* ---------- 24a · Gamma burst — vrstvy ----------
+/* ---------- 24 · Rázový pulz ----------
 
-   Rázový pulz: tlačítko se nejdřív stáhne (jako nádech před
-   úderem) a vzápětí exploduje — vyšlehne dvanáct světelných
-   paprsků do všech stran a popisek se rozsvítí.
+   Pulz není ozdoba nalepená zvenčí. Je to rozehrání toho, co tlačítko
+   už má: jeho vlastní energetické vrstvy (download-fx, plasma, sweep,
+   pulse-line, svatozář, rám, ikona, šipka) se při kliknutí nabijí,
+   udeří a zase se srovnají.
 
-   Proč takhle:
-   - Paprsky jsou vlastní prvky .lp-dlbtn__ray, ne pseudo-elementy.
-     ::before a ::after už zabírá energetický rám ze styles.css.
-   - Vrstva paprsků .lp-dlbtn__rays má overflow: hidden, takže
-     světlo neuteče mimo tlačítko a nepřekáží okolnímu layoutu.
-   - Animuje se jen scale a opacity — žádné přerastrování textu
-     a žádný layout shift.
-   - Celé je to aria-hidden a pointer-events: none.
+   Systém je hotový ve styles.css — pravidla pro .download-animating
+   a keyframes downloadButtonImpactV2, downloadAuraDetonateV2,
+   downloadBorderDetonateV2, downloadSurfaceChargeV2 a další. Tenhle
+   launcher je jen aktivuje (styles.css je společný s Modpacky, takže
+   se do něj nezasahuje).
 
-   Paprsek = tenký pruh s transform-origin vlevo, otočený o svůj
-   úhel a roztažený scaleX. Díky tomu jich dvanáct stojí jeden
-   prvek a žádný obrázek. */
+   Nad tlačítkem navíc vylétne explozivní vrstva .lp-pulse-burst.
+   Je position: fixed a z-index 10050, tedy mimo tlačítko — proto ji
+   neoreže filter ani overflow tlačítka. Vytváří ji launcher.js.
 
-/* Paprsky musí vyletět VEN z tlačítka. Jenže jakmile tlačítko
-   dostane `filter` (rozsvícení při úderu), prohlížeč z něj udělá
-   samostatnou vrstvu a všechno, co přesahuje jeho obrys, ořízne —
-   paprsky pak zůstanou uvězněné uvnitř a efekt zmizí.
+   Barvy nejsou zlaté. Tlačítko mluví neonovou energií oranžová →
+   zelená → fialová → růžová, a pulz drží stejnou řeč. */
 
-   Proto je vrstva paprsků v DOM poslední a má vlastní kontext výš
-   než tlačítko: `position: absolute` + `inset: 0` ji sice drží na
-   tlačítku, ale díky `z-index` a `will-change` se neúčastní
-   filtrované vrstvy. Ořez zajišťuje jen samotný `overflow` tlačítka,
-   který je `visible`. */
-/* Obal kolem tlačítka existuje jen proto, aby vrstva paprsků mohla
-   ležet VEDLE tlačítka, ne v něm. `filter` na tlačítku (rozsvícení
-   při úderu) totiž vytvoří samostatnou vrstvu a všechno, co přesahuje
-   jeho obrys, ořeže — paprsky by zůstaly uvězněné uvnitř a efekt
-   by zmizel. Obal je proto jen neutrální positioning kontext. */
-.lp-dlbtn-shell {
-  position: relative;
-  display: inline-flex;
-  isolation: isolate;
-}
-
-.lp-dlbtn-shell > .lp-dlbtn {
-  position: relative;
-  z-index: 2;
-}
-
-.lp-dlbtn__rays {
-  position: absolute;
-  inset: 0;
-  /* POD tlačítkem, ne nad ním. Paprsky vycházejí ze středu, takže
-     nad tlačítkem by přes něj přejížděly a zesvětlily podklad pod
-     textem — kontrast popisku pak spadl na 4,2:1. Pod tlačítkem
-     vyčnívají ven stejně dobře a text zůstane nedotčený. */
-  z-index: 1;
-  border-radius: inherit;
-  overflow: visible;
-  pointer-events: none;
-  opacity: 0;
-}
-
-.lp-dlbtn__ray {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 18px;
-  height: 14px;
-  margin: -7px 0 0 -9px;
-  border-radius: 7px;
-  transform-origin: 0 50%;
-  background: linear-gradient(
-    90deg,
-    #ffffff 0%,
-    #ffffff 34%,
-    #fffbd0 55%,
-    #ffdd6a 76%,
-    rgba(255, 180, 50, 0.35) 92%,
-    transparent 100%
-  );
-  box-shadow: 0 0 16px rgba(255, 248, 200, 1),
-    0 0 34px rgba(255, 200, 70, 0.85), 0 0 60px rgba(255, 160, 40, 0.45);
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-/* ---------- 24b · Samotný pulz ---------- */
-
-/* :has() vybere obal podle stavu tlačítka — paprsky jsou jeho
-   sourozenec, takže na ně nejde dosáhnout z tlačítka přímo.
-   Prohlížeče bez :has() pulz jen nezobrazí paprsky; tlačítko
-   samotné se rozsvítí dál. */
-.lp-dlbtn-shell:has(> .lp-dlbtn.is-pulse) .lp-dlbtn__rays {
-  animation: lpRaysFade 900ms ease-out both;
-}
-
-.lp-dlbtn-shell:has(> .lp-dlbtn.is-pulse) .lp-dlbtn__ray {
-  animation: lpRayBurst 900ms cubic-bezier(0.1, 0.8, 0.25, 1) both;
-}
-
-/* Tlačítko: stáhne se a pak udeří. Šest tříd, aby se pravidlo
-   dostalo přes klidovou downloadFusionIdle ze styles.css. */
+/* Aktivace vnitřních vrstev tlačítka. Specificita je tu vyšší než
+   v styles.css, aby se pravidla prosadila i proti klidové
+   downloadFusionIdle. */
 .button[data-download].download-ultimate.lp-dlbtn.is-pulse {
-  animation: lpGammaBurst 900ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+  animation: downloadButtonImpactV2 1.28s cubic-bezier(0.14, 0.86, 0.18, 1) both;
 }
 
-/* Rozsvícení popisku — uživatel si ho vyžádal. */
-.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-label {
-  animation: lpLabelFlash 900ms ease-out both;
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse::before {
+  animation: downloadAuraDetonateV2 1.24s cubic-bezier(0.08, 0.72, 0.16, 1) both;
 }
 
-/* Během výbuchu je kolem tlačítka hodně světla — i přes něj musí
-   popisek zůstat tmavý. Bílý text ani prosvětlený podklad
-   nepřipadají v úvahu, kontrast by spadl pod 4,5:1. */
-.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-label,
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse::after {
+  animation: downloadBorderDetonateV2 1.28s cubic-bezier(0.08, 0.76, 0.16, 1) both;
+}
+
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-fx {
+  animation: downloadSurfaceChargeV2 1.28s cubic-bezier(0.12, 0.82, 0.16, 1) both;
+}
+
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-plasma {
+  animation: downloadPlasmaDetonateV2 1.18s cubic-bezier(0.08, 0.72, 0.16, 1) both;
+}
+
+/* Sweep a pulsní linka se záměrně NEHRAJÍ. Systém ve styles.css je
+   navržený pro jiné tlačítko: při této velikosti (256 × 54 px)
+   proříznou popisek tvrdým žlutým pruhem a z nápisu udělají
+   nečitelnou kaši. Pulz bez nich je čistší a profesionálnější —
+   energie jde z rámu a z vnitřních vrstev, ne přes text. */
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-sweep,
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-pulse-line {
+  display: none;
+}
+
+/* Ikona: rámeček vyšlehne, oběžnice se roztočí, šipka vystřelí. */
 .button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-icon {
+  border-color: transparent;
+  animation: downloadIconLaunchContainerV2 1.18s cubic-bezier(0.12, 0.84, 0.18, 1) both;
+}
+
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-icon-orbit {
+  opacity: 1;
+  animation: downloadIconOrbitLaunchV2 1.08s cubic-bezier(0.12, 0.84, 0.18, 1) both;
+}
+
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-icon svg {
+  animation: downloadArrowLaunchV2 1.12s cubic-bezier(0.12, 0.84, 0.18, 1) both;
+}
+
+/* Popisek zůstává tmavý i při výbuchu — bílý by na rozzářeném
+   podkladu zmizel. */
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-label {
   color: #1a0a01;
 }
 
-@keyframes lpRaysFade {
+/* ---------- 24a · Explozivní vrstva nad tlačítkem ----------
+
+   Není to kruh ani paprsky odnikud. Je to OBDRYS TLAČÍTKA.
+   Tlačítko má vlastní energetický rám (.download-ultimate::after,
+   inset -1px, border-radius 13px). Při kliknutí se tenhle rám
+   odlepí, zvětší se přesně o stejný poměr a rozejde se do stran —
+   jako když se z tlačítka uvolní jeho vlastní silové pole.
+
+   Proto sedí do struktury tlačítka: stejný tvar, stejný radius,
+   stejná barva, jen jiný měřítko a jiný čas. Nic nalepeného.
+
+   Vrstva je position: fixed a z-index 12000, takže ji neoreže
+   ani filter, ani overflow tlačítka (256 × 54 px by rám o šířce
+   600 px nikdy nepustilo ven).
+
+   Animace jsou jen DVĚ. Starší pokus měl 25 samostatných prvků
+   a na stránce s 86 běžícími animacemi se kompozitor zahltil. */
+
+.lp-pulse-burst {
+  position: fixed;
+  z-index: 12000;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Rám — přesně technikou tlačítka: padding + content-box maska.
+   Tlačítko kreslí svůj energetický rám takhle (.download-ultimate::after),
+   takže pulz kreslí svůj rám stejně. Odtud ta shoda — není to
+   napodobenina, je to stejný postup.
+
+   Dva rámy, dvě úlohy:
+
+   ::before — bílý záblesk na hraně. Drží se těsně u tlačítka a je
+   vidět hlavně v prvních 120 ms. To je ten okamžik dopadu.
+
+   ::after — fialová slupka, která se odlepí a rozevře. Fialová
+   proto, že tlačítko má fialovou na pravém konci své vlastní
+   gradientové řady — a protože žlutá na žluté není vidět. Tahle
+   vrstva dělá z pulzu čitelný útvar, ne jen další záři.
+
+   Škálování je rovnoměrné (x i y stejně), aby tvar zůstal
+   zaobleným obdélníkem a nedeformoval se do brambory. */
+.lp-pulse-burst::before,
+.lp-pulse-burst::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--burst-w, 256px);
+  height: var(--burst-h, 54px);
+  margin: calc(var(--burst-h, 54px) / -2) 0 0 calc(var(--burst-w, 256px) / -2);
+  border-radius: 13px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0;
+}
+
+/* Záblesk na hraně — bílý, tenký, hned pryč.
+   Tloušťka 1,5 px je stejná jako u rámu tlačítka. Silnější
+   vypadá jako banda, ne jako linka. */
+.lp-pulse-burst::before {
+  padding: 1.5px;
+  background: linear-gradient(105deg,
+    rgba(255, 255, 255, 1),
+    rgba(255, 250, 224, 1) 30%,
+    rgba(255, 236, 158, 1) 54%,
+    rgba(255, 255, 255, 1));
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.98))
+    drop-shadow(0 0 12px rgba(255, 232, 150, 0.9))
+    drop-shadow(0 0 30px rgba(255, 180, 40, 0.55));
+  animation: lpPulseEdge 0.8s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+}
+
+/* Fialová slupka — odlepí se a rozevře. Nese energii ven.
+   Taky tenká: 2 px. Škálování ji samo zesílí, jak roste. */
+.lp-pulse-burst::after {
+  padding: 2px;
+  background: linear-gradient(105deg,
+    rgba(255, 240, 170, 0.98),
+    rgba(255, 176, 76, 0.96) 18%,
+    rgba(255, 92, 172, 0.96) 40%,
+    rgba(214, 84, 255, 0.96) 60%,
+    rgba(140, 104, 255, 0.92) 80%,
+    rgba(214, 84, 255, 0.8));
+  filter: drop-shadow(0 0 4px rgba(226, 130, 255, 0.95))
+    drop-shadow(0 0 14px rgba(196, 72, 255, 0.8))
+    drop-shadow(0 0 36px rgba(150, 60, 255, 0.5));
+  animation: lpPulseShell 1.24s cubic-bezier(0.06, 0.72, 0.12, 1) 90ms forwards;
+}
+
+/* Dopad: hrana blikne a rozejde se jen nepatrně. Krátké a tvrdé. */
+@keyframes lpPulseEdge {
   0% {
-    opacity: 0;
-  }
-  8% {
     opacity: 1;
+    transform: scale(1);
   }
-  62% {
-    opacity: 1;
+  30% {
+    opacity: 0.9;
+    transform: scale(1.055);
   }
   100% {
     opacity: 0;
+    transform: scale(1.16);
   }
 }
 
-@keyframes lpRayBurst {
+/* Slupka: rozevře se rovnoměrně a vyhasne. */
+@keyframes lpPulseShell {
   0% {
     opacity: 0;
-    transform: rotate(var(--ray-angle, 0deg)) translateX(0) scaleX(0);
-    height: 14px;
+    transform: scale(1);
   }
-  14% {
-    opacity: 0;
-  }
-  20% {
+  12% {
     opacity: 1;
-    transform: rotate(var(--ray-angle, 0deg)) translateX(40px) scaleX(11);
-    height: 22px;
   }
   38% {
-    opacity: 1;
-    height: 10px;
-  }
-  62% {
-    opacity: 1;
-    height: 6px;
+    opacity: 0.94;
+    transform: scale(1.26);
   }
   100% {
     opacity: 0;
-    transform: rotate(var(--ray-angle, 0deg)) translateX(440px) scaleX(3.4);
-    height: 2px;
+    transform: scale(2.05);
   }
 }
 
-@keyframes lpGammaBurst {
-  0% {
-    scale: 1;
-    filter: brightness(1);
-  }
-  /* Stažení před úderem — bez něj výbuch nemá z čeho vycházet. */
-  16% {
-    scale: 0.93;
-    filter: brightness(1.22) saturate(1.3);
-  }
-  /* Samotný úder. */
-  34% {
-    scale: 1.19;
-    /* Jas záměrně níž než dřív — při 1,95 podklad zbělal a tmavý
-       text na něm ztratil kontrast. Sílu úderu nese rozkmit
-       a paprsky, ne vybělení tlačítka. */
-    filter: brightness(1.34) saturate(1.5);
-  }
-  60% {
-    scale: 1.015;
-    filter: brightness(1.12);
-  }
-  78% {
-    scale: 1.028;
-  }
-  100% {
-    scale: 1;
-    filter: brightness(1);
-  }
+/* Světlý motiv: fialová na světlém podkladu ztrácí tělo. Slupka
+   dostane sytější barvy a pevnější obrys, aby pulz byl vidět
+   stejně zřetelně jako v tmavém motivu. */
+:root[data-theme="light"] .lp-pulse-burst::after,
+html[data-theme="light"] .lp-pulse-burst::after {
+  padding: 2.5px;
+  background: linear-gradient(105deg,
+    rgba(255, 214, 80, 1),
+    rgba(255, 132, 30, 1) 18%,
+    rgba(226, 52, 140, 1) 40%,
+    rgba(160, 44, 232, 1) 60%,
+    rgba(112, 66, 232, 1) 80%,
+    rgba(140, 44, 220, 1));
+  filter: drop-shadow(0 0 4px rgba(180, 60, 240, 0.7))
+    drop-shadow(0 0 14px rgba(150, 40, 220, 0.5))
+    drop-shadow(0 0 32px rgba(120, 40, 200, 0.32));
 }
 
-@keyframes lpLabelFlash {
-  0%,
-  100% {
-    text-shadow: 0 1px 0 rgba(255, 246, 214, 0.7);
-  }
-  34% {
-    text-shadow: 0 1px 0 rgba(255, 252, 232, 0.98),
-      0 0 16px rgba(255, 248, 210, 0.95), 0 0 30px rgba(255, 196, 64, 0.8);
-  }
-}
+/* Světelný polštář se záměrně nepoužívá. Zkoušel jsem ho a na
+   tmavém pozadí dělal špinavý hnědočervený prstenec uvnitř
+   fialové slupky — vypadalo to jako dvojitý rám, ne jako záře.
+   Dva čisté rámy nesou víc než tři špinavé. */
 
 /* ---------- 24b-1 · Redukce pohybu ----------
 
-   Bez pohybu zůstane jen prosvětlení a rozsvícený popisek — pořád
-   je poznat, že klik proběhl, ale nic neexploduje. */
+   Bez pohybu zůstane jen prosvětlení — pořád je poznat, že klik
+   proběhl, ale nic nelétá ani neexploduje. */
 
 @media (prefers-reduced-motion: reduce) {
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulse,
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulse::before,
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulse::after,
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-fx,
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-plasma,
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-sweep,
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-pulse-line,
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-icon,
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-icon-orbit,
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-icon svg {
+    animation: none;
+  }
+
   .button[data-download].download-ultimate.lp-dlbtn.is-pulse {
-    animation: none;
-    filter: brightness(1.45) saturate(1.3);
+    filter: brightness(1.35) saturate(1.25);
   }
 
-  .lp-dlbtn-shell .lp-dlbtn__rays,
-  .lp-dlbtn-shell .lp-dlbtn__ray {
+  .lp-pulse-burst {
     display: none;
-  }
-
-  .button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-label {
-    animation: none;
-    text-shadow: 0 1px 0 rgba(255, 252, 232, 0.95),
-      0 0 14px rgba(255, 248, 210, 0.9);
   }
 }
 
