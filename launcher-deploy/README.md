@@ -4,6 +4,8 @@ Tenhle adresář obsahuje **nástroje pro nasazení**, ne web samotný.
 
 - **[JAK-NASADIT.md](./JAK-NASADIT.md)** — tři způsoby, jak stránku
   dostat na novou doménu.
+- **[JAK-SMAZAT-WEB.md](./JAK-SMAZAT-WEB.md)** — jak uklidit neúplný web
+  nahraný omylem do kořene repa `MinekubeLauncher`.
 - **`build.sh`** — sestaví `launcher-site.tar.gz` z `launcher/`.
 
 ## Rychle
