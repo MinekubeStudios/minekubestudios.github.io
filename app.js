@@ -209,6 +209,7 @@ const I18N = {
     "footer.discord.aria": "Discord — doplň vlastní odkaz",
     "footer.github.aria": "GitHub — doplň vlastní odkaz",
     "footer.copyright": "Minekube Studios. Demo web.",
+    "footer.launcherDomain": "Launcher běží na vlastní adrese:",
     "footer.trademark": "Minecraft je ochranná známka společnosti Mojang Studios.",
     "modal.closeAria": "Zavřít detail",
     "modal.badge": "DEMONSTRAČNÍ OBSAH",
@@ -403,6 +404,7 @@ const I18N = {
     "footer.github.aria": "GitHub — add your own link",
     "footer.copyright": "Minekube Studios. Demo website.",
     "footer.trademark": "Minecraft is a trademark of Mojang Studios.",
+    "footer.launcherDomain": "The launcher runs on its own address:",
     "modal.closeAria": "Close detail",
     "modal.badge": "DEMO CONTENT",
     "modal.note": "Rewrite this text to match your real project.",
@@ -596,6 +598,7 @@ const I18N = {
     "footer.github.aria": "GitHub — doplň vlastný odkaz",
     "footer.copyright": "Minekube Studios. Demo web.",
     "footer.trademark": "Minecraft je ochranná známka spoločnosti Mojang Studios.",
+    "footer.launcherDomain": "Launcher beží na vlastnej adrese:",
     "modal.closeAria": "Zavrieť detail",
     "modal.badge": "DEMONŠTRAČNÝ OBSAH",
     "modal.note": "Tento text uprav podľa skutočného projektu.",
@@ -1476,7 +1479,10 @@ function initializeManifestToggle() {
    v inline skriptu hlavičky) — takže přechod působí jako jedna plynulá akce.
    Při prefers-reduced-motion se nic neanimuje a odkazy fungují normálně. */
 
-const PAGE_TRANSITION_PATHS = ["/", "/modpacky/", "/launcher/"];
+/* Launcher má vlastní doménu (minekubelauncher.github.io), takže se
+   do přechodového závoje na tomto webu nedostane — odkazy na něj jsou
+   cross-origin a `link.origin` je stejně odmítne. */
+const PAGE_TRANSITION_PATHS = ["/", "/modpacky/"];
 const PAGE_TRANSITION_MS = 430;
 
 function normalizeTransitionPath(pathname) {

@@ -57,10 +57,12 @@ const read = file => readFileSync(ROOT + file, "utf8");
    kterou pak používá launcher.js). */
 const SCRIPT_FILES = {
   "i18n.js": "launcher/i18n.js",
-  "../app.js": "app.js",
+  /* Launcher má od v17 vlastní doménu (minekubelauncher.github.io), takže
+     si sdílené soubory veze v launcher/shared/ — na rodiče už nesahá. */
+  "shared/app.js": "launcher/shared/app.js",
   "releases.js": "launcher/releases.js",
   "launcher.js": "launcher/launcher.js",
-  "../design-plus.js": "design-plus.js"
+  "shared/design-plus.js": "launcher/shared/design-plus.js"
 };
 
 /* Cache-busting ?v= v src nesmí test rozbít. */
@@ -421,9 +423,11 @@ test("Každý překladový klíč existuje ve všech třech jazycích", async ()
   }
 
   // Klíče sdílené hlavičky a patičky patří do app.js — musí tam být taky.
-  const appDictionary = read("app.js");
+  /* Launcher má vlastní doménu, takže sdílené překlady hlavičky a patičky
+     vozí jeho kopie app.js v launcher/shared/. */
+  const appDictionary = read("launcher/shared/app.js");
   const missingShared = [...sharedKeys].filter(key => !appDictionary.includes(`"${key}"`));
-  assert.deepEqual(missingShared, [], "chybí sdílené překlady v app.js");
+  assert.deepEqual(missingShared, [], "chybí sdílené překlady v launcher/shared/app.js");
 
   // Dynamické klíče, které skládá launcher.js.
   const dynamic = [
@@ -619,7 +623,12 @@ test("Odkazy na repozitář, katalog a navigaci sedí", async () => {
     assert.match(link.getAttribute("rel"), /noopener/);
   });
 
-  assert.equal(document.querySelector(".lpx-cta .lpx-btn--primary").getAttribute("href"), "../modpacky/");
+  /* Launcher běží na vlastní doméně, takže odkazy do zbytku webu
+     musejí být absolutní — relativní by na nové doméně vedly do prázdna. */
+  assert.equal(
+    document.querySelector(".lpx-cta .lpx-btn--primary").getAttribute("href"),
+    "https://minekubestudios.github.io/modpacky/"
+  );
 
   const releases = document.querySelector('[data-site-link="launcherReleases"]');
   assert.equal(releases.getAttribute("href"), "https://github.com/MinekubeStudios/MinekubeLauncher/releases");
@@ -633,7 +642,9 @@ test("Odkazy na repozitář, katalog a navigaci sedí", async () => {
   });
 
   // Launcher musí být dosažitelný z navigace domů i z katalogu modpacků.
-  for (const [file, expected] of [["index.html", "launcher/"], ["modpacky/index.html", "../launcher/"]]) {
+  // Od v17 běží na vlastní doméně, takže obě stránky odkazují absolutně.
+  const LAUNCHER_URL = "https://minekubelauncher.github.io/";
+  for (const [file, expected] of [["index.html", LAUNCHER_URL], ["modpacky/index.html", LAUNCHER_URL]]) {
     const dom = new JSDOM(read(file));
     const links = [...dom.window.document.querySelectorAll(".desktop-nav a, .mobile-nav a")]
       .filter(link => link.querySelector('[data-i18n="nav.launcher"]'));
