@@ -13,7 +13,7 @@
      4. ošetří načítání, nedostupné API i záložní adresu souboru,
      5. přepíná prohlídku rozhraní (taby, klávesnice),
      6. odhaluje sekce při scrollu (s respektem k redukci pohybu),
-     7. překládá popisky obrázků přes data-i18n-alt.
+     7. po přepnutí jazyka překreslí všechny dynamické texty.
    ============================================================= */
 
 (function () {
@@ -197,11 +197,7 @@
 
   const heroButton = document.querySelector(".lpx-hero [data-launcher-download]");
   const heroLabel = heroButton?.querySelector("[data-os-label]") ?? null;
-  const heroSub = document.querySelector("[data-os-sub]");
   const versionNodes = [...document.querySelectorAll("[data-launcher-version]")];
-  const sourceNodes = [...document.querySelectorAll("[data-launcher-source]")];
-  const heroFileRow = document.querySelector('[data-launcher-file="hero"]');
-  const heroFileName = heroFileRow?.querySelector("[data-launcher-file-name]") ?? null;
   const cardFileRows = [...document.querySelectorAll('[data-launcher-file="windows"]')];
   const hashRow = document.querySelector("[data-launcher-hash]");
   const hashValue = hashRow?.querySelector("[data-launcher-hash-value]") ?? null;
@@ -255,20 +251,7 @@
     });
   }
 
-  function renderSource(status) {
-    const key =
-      status.source === "releases"
-        ? "lp.dl.source.releases"
-        : status.source === "repo"
-          ? "lp.dl.source.repo"
-          : "lp.dl.source.fallback";
 
-    sourceNodes.forEach(node => {
-      const label = node.querySelector("span");
-      if (label) label.textContent = translate(key, "GitHub");
-      node.hidden = status.state !== "ready";
-    });
-  }
 
   function renderStatusLine(status) {
     if (!stateNode) return;
@@ -360,27 +343,22 @@
       heroLabel.textContent = heroLabelText(info, status);
     }
 
-    if (heroSub) {
-      if (info.planned) heroSub.textContent = translate("lp.os.sub.planned", "Build in progress");
-      else if (status.state === "loading") heroSub.textContent = translate("lp.dl.state.loading", "Checking…");
-      else if (!asset) heroSub.textContent = translate("lp.dl.state.error", "Unavailable");
-      else {
-        const parts = [translate(PLATFORMS[currentOS]?.sub, "")].filter(Boolean);
-        const size = formatSize(asset.size);
-        if (size) parts.push(size);
-        const ext = fileExtension(asset.name);
-        if (ext) parts.push(ext);
-        heroSub.textContent = parts.join(" · ");
-      }
-    }
-
+    /* Popis souboru pro čtečku (tlačítko má na něj aria-describedby).
+       Vizuální stavový řádek pod tlačítkem je pryč, takže tenhle text
+       je jediné místo, kde se velikost a název souboru ještě objeví. */
     const heroDescription = info.planned || status.state !== "ready" ? "" : describeAsset(asset);
-    if (heroFileName) heroFileName.textContent = heroDescription;
-    if (heroFileRow) heroFileRow.hidden = !heroDescription;
 
     if (hintNode) {
       const label = heroLabelText(info, status);
-      const sub = heroSub?.textContent || "";
+      const sub = info.planned
+        ? translate("lp.os.sub.planned", "Build in progress")
+        : status.state === "loading"
+          ? translate("lp.dl.state.loading", "Checking…")
+          : !asset
+            ? translate("lp.dl.state.error", "Unavailable")
+            : [translate(PLATFORMS[currentOS]?.sub, ""), formatSize(asset.size), fileExtension(asset.name)]
+                .filter(Boolean)
+                .join(" · ");
       const file = heroDescription || "";
       const visitorInfo = source.platform(visitorOS);
       const plannedHint =
@@ -476,7 +454,6 @@
     const justStarted = Date.now() - startedAt < STARTED_HOLD_MS;
     if (startNote) startNote.hidden = !justStarted;
     renderVersion(status);
-    renderSource(status);
     renderStatusLine(status);
     renderFiles(status);
     renderHero(status);
@@ -889,7 +866,6 @@
     tourPanels.forEach(panel => {
       panel.hidden = panel.id !== id;
     });
-    syncTabPill();
     if (focus) tab.focus({ preventScroll: true });
   }
 
@@ -898,25 +874,6 @@
   });
 
   const tourList = document.querySelector(".lpx-tabs");
-  const tabPill = tourList?.querySelector("[data-tab-pill]") ?? null;
-
-  function syncTabPill() {
-    if (!tabPill || !tourList) return;
-    const active = tourTabs.find(tab => tab.getAttribute("aria-selected") === "true");
-    if (!active || !active.offsetWidth) {
-      tabPill.style.opacity = "0";
-      return;
-    }
-    tabPill.style.opacity = "1";
-    tabPill.style.width = `${active.offsetWidth}px`;
-    tabPill.style.transform = `translateX(${active.offsetLeft}px)`;
-  }
-
-  syncTabPill();
-  window.addEventListener("resize", () => window.requestAnimationFrame(syncTabPill), { passive: true });
-  if (document.fonts && typeof document.fonts.ready === "object") {
-    document.fonts.ready.then(syncTabPill).catch(() => {});
-  }
   tourList?.addEventListener("keydown", event => {
     const index = tourTabs.indexOf(document.activeElement);
     if (index === -1) return;
@@ -930,22 +887,12 @@
     selectTour(tourTabs[next], { focus: true });
   });
 
-  /* ===================== PŘEKLADY OBRÁZKŮ ===================== */
+  /* ===================== PŘEKLAD PO ZA BĚHU ===================== */
 
-  function syncAltTexts() {
-    document.querySelectorAll("[data-i18n-alt]").forEach(node => {
-      const value = typeof t === "function" ? t(node.dataset.i18nAlt) : node.dataset.i18nAlt;
-      if (value && value !== node.dataset.i18nAlt) node.setAttribute("alt", value);
-    });
-  }
+  /* Stránka nemá ani jednu dekorativní ikonu s překládaným alt
+     (všechny nesou alt=""), takže tu dřív byl syncAltTexts bez práce. */
 
-  document.addEventListener("minekube:language", () => {
-    syncAltTexts();
-    syncTabPill();
-    renderAll();
-  });
-
-  syncAltTexts();
+  document.addEventListener("minekube:language", renderAll);
 
   /* ===================== ODHALOVÁNÍ PŘI SCROLLU ===================== */
 
@@ -1150,102 +1097,6 @@
 
   /* ---------- Jiskry pod kurzorem ---------- */
 
-  function initSparkles() {
-    if (!finePointer.matches) return;
-    const canvas = document.querySelector("canvas[data-fx]");
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: true });
-    if (!ctx) return;
-
-    const COLORS = ["252, 192, 0", "252, 0, 96", "251, 122, 18", "255, 255, 255"];
-    const MAX = 110;
-    const parts = [];
-    let width = 0;
-    let height = 0;
-    let lastSpawn = 0;
-
-    function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-
-    function burst(x, y, count) {
-      if (!fxOn()) return;
-      for (let i = 0; i < count; i += 1) {
-        if (parts.length >= MAX) break;
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 0.05 + Math.random() * 0.2;
-        parts.push({
-          x,
-          y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 0.04,
-          life: 0,
-          ttl: 480 + Math.random() * 520,
-          r: 1 + Math.random() * 2.1,
-          fill: `rgb(${COLORS[Math.floor(Math.random() * COLORS.length)]})`
-        });
-      }
-      painter.wake();
-    }
-
-    function frame(dt) {
-      if (!parts.length) return false;
-      ctx.clearRect(0, 0, width, height);
-      for (let i = parts.length - 1; i >= 0; i -= 1) {
-        const p = parts[i];
-        p.life += dt;
-        if (p.life >= p.ttl) {
-          parts.splice(i, 1);
-          continue;
-        }
-        p.vy += 0.00032 * dt;
-        p.vx *= 0.995;
-        p.vy *= 0.995;
-        p.x += p.vx * dt;
-        p.y += p.vy * dt;
-        const k = 1 - p.life / p.ttl;
-        ctx.globalAlpha = k * k;
-        ctx.fillStyle = p.fill;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * (0.35 + k), 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-      return true;
-    }
-
-    resize();
-    window.addEventListener("resize", resize, { passive: true });
-    painter.add(frame);
-
-    window.addEventListener(
-      "pointermove",
-      event => {
-        if (event.pointerType === "touch" || !fxOn()) return;
-        const now = performance.now();
-        if (now - lastSpawn < 26) return;
-        lastSpawn = now;
-        burst(event.clientX, event.clientY, Math.random() < 0.22 ? 2 : 1);
-      },
-      { passive: true }
-    );
-
-    document.querySelectorAll(".lpx-btn--spark, .lp-btn--spark").forEach(button => {
-      button.addEventListener("click", event => {
-        if (!fxOn()) return;
-        const rect = button.getBoundingClientRect();
-        const x = event.clientX || rect.left + rect.width / 2;
-        const y = event.clientY || rect.top + rect.height / 2;
-        burst(x, y, 16);
-      });
-    });
-  }
-
   /* ---------- Přepínač efektů ---------- */
 
   function initFxToggle() {
@@ -1255,7 +1106,7 @@
     const apply = (on, persist) => {
       if (pageRoot) pageRoot.setAttribute("data-fx-state", on ? "on" : "off");
       button.setAttribute("aria-pressed", String(on));
-      document.querySelectorAll("canvas[data-fx], canvas[data-dust]").forEach(canvas => {
+      document.querySelectorAll("canvas[data-dust]").forEach(canvas => {
         canvas.classList.toggle("is-active", on);
       });
       if (persist) {
@@ -1525,18 +1376,13 @@
   /* ---------- Skip link: zvýraznění a čistý fokus ---------- */
 
   function initSkipLink() {
-    const link = document.querySelector(".lp-skip");
-    const scrim = document.getElementById("lpSkipScrim");
+    /* Odkaz se jmenuje .lpx-skip — dřív tu byl starý .lp-skip, takže
+       se handler vůbec nepřipojil a fokus po kliknutí zůstal na odkazu. */
+    const link = document.querySelector(".lpx-skip");
     const target = document.getElementById("top");
     if (!link || !target) return;
 
-    const on = () => scrim?.classList.add("is-on");
-    const off = () => scrim?.classList.remove("is-on");
-
-    link.addEventListener("focus", on);
-    link.addEventListener("blur", off);
     link.addEventListener("click", () => {
-      off();
       /* Fokus přesuneme na obsah, aby klávesnice pokračovala tam,
          a to bez skoku stránkou — na začátku už jsme. */
       window.requestAnimationFrame(() => {
@@ -1676,76 +1522,6 @@
     sync();
   }
 
-  function initMcCarousel() {
-    const root = document.querySelector("[data-mc-carousel]");
-    if (!root) return;
-    const track = root.querySelector("[data-mc-track]");
-    const prev = root.querySelector("[data-mc-prev]");
-    const next = root.querySelector("[data-mc-next]");
-    if (!track) return;
-
-    const step = () => {
-      const slide = track.querySelector(".lpx-slide");
-      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-      const width = slide ? slide.getBoundingClientRect().width : 0;
-      /* Šířka dlaždice může být 0 (skrytá sekce, ještě nevykresleno,
-         testovací prostředí bez layoutu). Posun o nulu by carousel
-         „zasekl", proto v tom případě skočíme o kus tracku. */
-      if (width > 1) return width + gap;
-      return Math.max(1, Math.round(track.clientWidth * 0.92));
-    };
-
-    const sync = () => {
-      const max = track.scrollWidth - track.clientWidth - 1;
-      if (prev) prev.disabled = track.scrollLeft <= 1;
-      if (next) next.disabled = track.scrollLeft >= max;
-    };
-
-    const scrollBy = dir => {
-      track.scrollBy({ left: dir * step(), behavior: prefersReduced() ? "auto" : "smooth" });
-    };
-
-    prev?.addEventListener("click", () => scrollBy(-1));
-    next?.addEventListener("click", () => scrollBy(1));
-
-    track.addEventListener("keydown", event => {
-      if (event.key === "ArrowRight") { event.preventDefault(); scrollBy(1); }
-      else if (event.key === "ArrowLeft") { event.preventDefault(); scrollBy(-1); }
-    });
-
-    // Kolečko myši posouvá carousel jen dokud se dá, pak pustí stránku.
-    track.addEventListener("wheel", event => {
-      if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
-      const max = track.scrollWidth - track.clientWidth;
-      if (max <= 0) return;
-      const atStart = track.scrollLeft <= 0 && event.deltaY < 0;
-      const atEnd = track.scrollLeft >= max - 1 && event.deltaY > 0;
-      if (atStart || atEnd) return;
-      event.preventDefault();
-      track.scrollLeft += event.deltaY;
-    }, { passive: false });
-
-    track.addEventListener("scroll", sync, { passive: true });
-    addEventListener("resize", sync, { passive: true });
-    sync();
-  }
-
-  function initMcDig() {
-    document.querySelectorAll("[data-mc-dig]").forEach(button => {
-      button.addEventListener("click", () => {
-        /* „Ponoř se hloub" skočí na první obsahovou sekci pod hero.
-           Dřív mířil na pás platforem, ten je pryč — teď je to
-           „Tři kroky ke hře", nebo cokoli, co za hero přijde. */
-        const target =
-          document.getElementById("jak-to-funguje") ||
-          document.querySelector("[data-mc-hero]")?.nextElementSibling;
-        if (!target) return;
-        const reduce = prefersReduced();
-        target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-      });
-    });
-  }
-
   /* ===================== VEŘEJNÉ ROZHRANÍ PRO TESTY =====================
      Stránka nemá žádnou galerii ani studio — API drží jen to, co
      potřebují testy a co by mohlo využít jiné rozšíření. */
@@ -1762,7 +1538,6 @@
   initDownloadButtons();
   initRipples();
   initDust();
-  initSparkles();
   initTilt();
   initMarquee();
   initSmoothScroll();
@@ -1773,8 +1548,6 @@
   initDownloadIdlePause();
   initMcParallax();
   initMcMotionToggle();
-  initMcCarousel();
-  initMcDig();
 
 
   /* ===================== START ===================== */

@@ -1,4 +1,46 @@
-# Minekube Studios // Web (v14 — launcher bez lišty sekcí a pásu platforem)
+# Minekube Studios // Web (v15 — launcher bez Tří kroků a carouselu)
+
+## v15 — **stránka Launcheru bez „Tří kroků“ a carouselu, tapety zůstaly**
+
+Dvě další sekce, které opakovaly obsah, jsou pryč:
+
+1. **„Tři kroky ke hře“** (Nainstaluj → Přines si svět → Hraj) i s pásem
+   tapety Pouštního chrámu. Spolu s ní zmizel **přepínač „Ponoř se hloub“**
+   v hero — po smazání mířil na stejné místo jako sousední „Prohlédnout
+   funkce“.
+2. **„Projeď si záložky“** (carousel šesti dlaždic) i s ovládáním šipkami,
+   kolečkem a klávesnicí. Sekce „Co launcher umí“ ty záložky popisuje
+   v kartách.
+
+**Tapety z archivů zůstaly** — jen se přesunuly. Místo smazaných pásů
+dostaly tapetu sekce **Funkce** (`crimson-forest.webp`) a **Prohlídka**
+(`subdungeon.webp`) přes novou variantu `.lpx-section--atmo`. Ta si drží
+rytmus `.lpx-section`, přidá tapetu `z-index: -2`, na ni gradient a obsah
+posune do vlastní vrstvy. Ve světlém motivu má tapeta nižší krytí
+a gradient z krémova, aby text zůstal čitelný.
+
+### Opravené chyby (v15)
+
+* **Skip link nefungoval** — `launcher.js` hledal `.lp-skip`, ale odkaz
+  se jmenuje `.lpx-skip`. Handler se tedy nikdy nepřipojil a po kliknutí
+  zůstal fokus na odkazu místo na obsahu. (Ověřeno v jsdom: fokus teď
+  skončí na `#top`.)
+* **`syncTabPill` shazoval taby** — funkce se smazala s carouselem, ale
+  volala se dál z `selectTour`, takže každé přepnutí prohlídky vyhodilo
+  `ReferenceError`. Odstraněno i volání.
+* **`initSparkles` byl 95 řádků mrtvého kódu** — hledal
+  `canvas[data-fx]`, který na stránce není, takže se okamžitě vracel.
+  Odebrán i s vazbou v přepínači efektů.
+* **`renderSource`, `heroSub`, `heroFileRow`, hero souborový řádek** —
+  další zbytky po dřívějších smazáních; v HTML nebyly, v JS zůstaly.
+  Popis pro čtečku (velikost, formát, název souboru) se teď skládá
+  přímo v `renderHero`.
+* **`syncAltTexts`** — překládal `data-i18n-alt` obrázky, které stránka
+  nemá ani jeden.
+* **Nový test hlídá mrtvé selektory** — projde `launcher.js`, vytáhne
+  všechny `[data-*]`, `.třída` a `#id` selektory a ověří, že v DOM
+  existují. Přesně tahle třída chyb (skip link, syncTabPill) se dřív
+  neodhalila.
 
 ## v14 — **stránka Launcheru bez lišty sekcí, faktů a pásu platforem**
 

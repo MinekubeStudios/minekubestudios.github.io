@@ -381,7 +381,7 @@ test("Přepnutí jazyka překreslí dynamické texty i navigaci", async () => {
   assert.match(text(document, "[data-launcher-state-label]"), /Ready to download/);
   assert.equal(text(document, ".lpx-hero__cta [data-mc-motion-label]"), "Animations on");
   assert.match(text(document, ".lpx-cta h2"), /play first|see what/);
-  assert.match(text(document, '[data-i18n="lp.mc.how.title"]'), /Three steps|Three/);
+  assert.match(text(document, '[data-i18n="lp.tour.title"]'), /Look inside|inside/);
   assert.equal(text(document, ".lpx-cta h2"), "Want to see what there is to play first?");
 
   window.eval(`applyLanguage("sk")`);
@@ -516,35 +516,33 @@ test("Přepínač animací v hero je jediný a ovládá efekty", async () => {
   assert.deepEqual(page.errors, []);
 });
 
-test("Carousel „Co v launcheru najdeš“ jde ovládat myší i klávesnicí", async () => {
+test("Sekce „Tři kroky“ i carousel zmizely i se svou logikou", async () => {
   const page = await buildPage("repoOnly");
   const { document, window } = page;
 
-  const root = document.querySelector("[data-mc-carousel]");
-  const track = root.querySelector("[data-mc-track]");
-  const prev = root.querySelector("[data-mc-prev]");
-  const next = root.querySelector("[data-mc-next]");
-  assert.equal(track.querySelectorAll(".lpx-slide").length, 6);
-  assert.ok(prev && next, "obě šipky existují");
+  /* Oba bloky jsou pryč celé — včetně tlačítka „Ponoř se hloub“,
+     které na „Tři kroky“ skákalo. */
+  for (const selector of [
+    "[data-mc-carousel]",
+    "[data-mc-track]",
+    "[data-mc-prev]",
+    "[data-mc-next]",
+    "[data-mc-dig]",
+    ".lpx-dig",
+    ".lpx-carousel",
+    ".lpx-slide",
+    ".lpx-steps",
+    ".lpx-step"
+  ]) {
+    assert.equal(document.querySelector(selector), null, `${selector} mělo zmizet`);
+  }
+  assert.equal(document.getElementById("jak-to-funguje"), null);
+  assert.equal(document.getElementById("co-najdes"), null);
 
-  /* jsdom neumí layout, takže scrollBy jen zapíšeme. Rozhoduje směr
-     a to, že krok není nula — posun o nulu by carousel zasekl. */
-  const calls = [];
-  track.scrollBy = options => {
-    calls.push(options);
-    track.scrollLeft += options.left;
-  };
-  prev.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  next.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  assert.equal(calls.length, 2, "obě šipky musí carousellem pohnout");
-  assert.ok(calls[0].left < 0 && calls[1].left > 0, "šipky jdou proti sobě");
-  assert.ok(Math.abs(calls[1].left) >= 1, "krok nesmí být nula");
-
-  const before = calls.length;
-  track.dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
-  track.dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowLeft", bubbles: true }));
-  assert.equal(calls.length, before + 2, "klávesnice ovládá carousel");
-  assert.ok(calls[before].left > 0 && calls[before + 1].left < 0);
+  /* Po smazaném carouselu nesmí zůstat ani klíče, ani scroll handlery. */
+  assert.equal(window.MinekubeLauncherApi.translate("lp.mc.car.1.t"), "lp.mc.car.1.t");
+  assert.equal(window.MinekubeLauncherApi.translate("lp.mc.how.title"), "lp.mc.how.title");
+  assert.equal(window.MinekubeLauncherApi.translate("lp.carousel.prev"), "lp.carousel.prev");
   assert.deepEqual(page.errors, []);
 });
 
@@ -559,9 +557,9 @@ test("Nový design stojí na tapetách a pixelových ikonách, studio zmizelo", 
   assert.equal(window.MinekubeLauncherApi.WALLPAPERS, undefined, "API studia je pryč");
   assert.equal(window.MinekubeLauncherApi.ICONS, undefined);
 
-  /* Tapety: hero má předpečenou tapetu, pásy mají inline --bg. */
-  const bands = [...document.querySelectorAll("main .lpx-band")];
-  assert.ok(bands.length >= 3, "stránka má alespoň tři pásy s tapetou");
+  /* Tapety: hero má předpečenou tapetu, pásy i atmo sekce inline --bg. */
+  const bands = [...document.querySelectorAll("main .lpx-band, main .lpx-section--atmo")];
+  assert.ok(bands.length >= 3, `stránka má alespoň tři sekce s tapetou (${bands.length})`);
   const backgrounds = bands.map(band => {
     const bg = band.querySelector(".lpx-band__bg");
     assert.ok(bg, "pás bez vrstvy tapety");
@@ -646,6 +644,46 @@ test("Odkazy na repozitář, katalog a navigaci sedí", async () => {
   assert.deepEqual(page.errors, []);
 });
 
+test("JS neodkazuje na prvky, které na stránce nejsou", async () => {
+  /* Při mazání sekcí zůstaly v launcher.js selektory na prvky, které
+     už neexistují — skip link pak nikdy nefungoval a syncTabPill
+     házel ReferenceError. Tenhle test to hlídá plošně. */
+  const page = await buildPage("repoOnly");
+  const { document, window } = page;
+  const js = read("launcher/launcher.js");
+
+  /* 1) Každý data-* selektor z JS musí mít v DOM protějšek. */
+  const dataSelectors = [...new Set([...js.matchAll(/\[(data-[a-z0-9-]+)\]/g)].map(m => m[1]))];
+  assert.ok(dataSelectors.length > 10, "selektory se našly");
+  dataSelectors.forEach(name => {
+    assert.ok(document.querySelector(`[${name}]`), `JS hledá [${name}], ale v DOM není`);
+  });
+
+  /* 2) Odkazy na třídy, které JS používá jako háček, musí existovat
+        v HTML (kromě stavových tříd, které si JS sám přidává). */
+  /* Stavové třídy si JS přidává sám a některé prvky (přelití, ripple,
+     burst) vytváří až za běhu — ty v HTML být nemají. */
+  const stateClasses = new Set([
+    "is-active", "is-copied", "is-busy", "is-stuck", "is-in", "is-pulse",
+    "is-on", "is-pointer-active", "is-loading",
+    "lp-btn-flash", "lp-pulse-burst", "lp-ripple"
+  ]);
+  const hookClasses = [...new Set([...js.matchAll(/querySelector(?:All)?\(\s*"\.([\w-]+)/g)].map(m => m[1]))];
+  assert.ok(hookClasses.length > 5, "háčky se našly");
+  hookClasses.forEach(cls => {
+    if (stateClasses.has(cls)) return;
+    assert.ok(document.querySelector(`.${cls}`), `JS hledá .${cls}, ale v DOM není`);
+  });
+
+  /* 3) getElementById musí mířit na existující prvek (modalTitle
+        vkládá app.js až při otevření, ten je výjimka). */
+  const ids = [...new Set([...js.matchAll(/getElementById\("([^"]+)"\)/g)].map(m => m[1]))];
+  ids.forEach(id => {
+    assert.ok(document.getElementById(id), `JS hledá #${id}, ale v DOM není`);
+  });
+  assert.deepEqual(page.errors, []);
+});
+
 test("Stránka je sémantická a bez duplicitních ID", async () => {
   const dom = new JSDOM(HTML);
   const { document } = dom.window;
@@ -670,7 +708,7 @@ test("Stránka je sémantická a bez duplicitních ID", async () => {
     assert.ok(document.getElementById(panel.getAttribute("aria-labelledby")), "tabpanel bez platného aria-labelledby");
   });
   // Sekce stránky (bez smazaných bloků).
-  ["launcher", "jak-to-funguje", "funkce", "prohlidka", "co-najdes", "platformy", "faq", "dalsi"].forEach(id => {
+  ["launcher", "funkce", "prohlidka", "platformy", "faq", "dalsi"].forEach(id => {
     assert.ok(document.getElementById(id), `chybí sekce #${id}`);
   });
   // Smazané bloky se nesmí vrátit omylem.
