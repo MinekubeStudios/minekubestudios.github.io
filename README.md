@@ -1,4 +1,34 @@
-# Minekube Studios // Web (v18 — připravené nasazení launcheru na vlastní doménu)
+# Minekube Studios // Web (v19 — launcher zpět na funkční adrese)
+
+## v19 — **odkazy na launcher zpět na funkční adresu**
+
+Doména `minekubelauncher.github.io` **zatím neexistuje** — účet
+`minekubelauncher` na GitHubu není a repo `minekubelauncher.github.io`
+taky ne. Web přesto posílal 9 odkazů (hlavička, patička, CTA, modpacky)
+právě tam, takže každé kliknutí na „Launcher" skončilo na 404.
+
+Vráceno zpět na `launcher/`:
+
+| Soubor | Odkazů |
+|---|---|
+| `index.html` | 5× → `launcher/` |
+| `modpacky/index.html` | 3× → `../launcher/` |
+| `launcher/index.html` | doména v patičce → `./` |
+
+Dál vráceno:
+- `/launcher/` zpět do `PAGE_TRANSITION_PATHS` — je zase na stejné
+  doméně, takže přechodový závoj funguje.
+- Text v patičce launcheru (`footer.launcherDomain`) už netvrdí
+  „běží na vlastní adrese", ale „Launcher najdeš tady" (cs/en/sk).
+
+**Launcher je plně funkční na `https://minekubestudios.github.io/launcher/`.**
+
+### Přesun na vlastní doménu je pořád připravený
+
+`launcher-deploy/build.sh` sestaví balíček, který se dá nasadit jako
+root nové domény (87 souborů, 24/24 testů). Až účet
+`minekubelauncher` vznikne, stačí spustit `deploy.sh` a přepnout
+9 odkazů — je to jeden commit.
 
 ## v18 — **launcher má připravené nasazení na vlastní doménu**
 

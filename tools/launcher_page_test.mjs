@@ -57,8 +57,8 @@ const read = file => readFileSync(ROOT + file, "utf8");
    kterou pak používá launcher.js). */
 const SCRIPT_FILES = {
   "i18n.js": "launcher/i18n.js",
-  /* Launcher má od v17 vlastní doménu (minekubelauncher.github.io), takže
-     si sdílené soubory veze v launcher/shared/ — na rodiče už nesahá. */
+  /* Launcher si veze vlastní kopie sdílených souborů v launcher/shared/,
+     takže je připravený i na přesun na samostatnou doménu. */
   "shared/app.js": "launcher/shared/app.js",
   "releases.js": "launcher/releases.js",
   "launcher.js": "launcher/launcher.js",
@@ -642,9 +642,8 @@ test("Odkazy na repozitář, katalog a navigaci sedí", async () => {
   });
 
   // Launcher musí být dosažitelný z navigace domů i z katalogu modpacků.
-  // Od v17 běží na vlastní doméně, takže obě stránky odkazují absolutně.
-  const LAUNCHER_URL = "https://minekubelauncher.github.io/";
-  for (const [file, expected] of [["index.html", LAUNCHER_URL], ["modpacky/index.html", LAUNCHER_URL]]) {
+  // Běží ve stejnojmenné složce, takže obě stránky odkazují relativně.
+  for (const [file, expected] of [["index.html", "launcher/"], ["modpacky/index.html", "../launcher/"]]) {
     const dom = new JSDOM(read(file));
     const links = [...dom.window.document.querySelectorAll(".desktop-nav a, .mobile-nav a")]
       .filter(link => link.querySelector('[data-i18n="nav.launcher"]'));
