@@ -1,4 +1,42 @@
-# Minekube Studios // Web (v17 — launcher na vlastní doméně)
+# Minekube Studios // Web (v18 — launcher se vyvíjí na vlastní doméně)
+
+## v18 — **stránka launcheru se přesunula, tady zůstalo přesměrování**
+
+Launcher má od v17 vlastní doménu `minekubelauncher.github.io`. Aby
+nevznikly dvě rozešlé verze, je `launcher/` v tomhle repu **jen
+přesměrovávací stránka** (3,8 kB) — celá stránka se vyvíjí v novém
+repu `minekubelauncher/minekubelauncher.github.io`.
+
+Přesměrování je trojí, aby se nezaseklo nikde:
+
+| Vrstva | Co dělá |
+|---|---|
+| `<meta http-equiv="refresh">` | funguje i bez JavaScriptu |
+| `window.location.replace()` | záloha tam, kde meta refresh blokují |
+| `<a class="button">` | ruční odkaz, kdyby selhalo obojí |
+
+`replace` místo `assign` schválně — jinak by tlačítko Zpět vrátilo na
+mezistránku, která hned zase přesměruje. `canonical` + `noindex, follow`
+drží vyhledávače na jedné verzi.
+
+### Uklizeno
+
+- `launcher/` zhubl z **2,3 MB na 624 kB** — zůstaly jen čtyři assety
+  pro redirect (logo, favicon, apple ikona).
+- `tools/launcher_page_test.mjs` (1024 řádků, 24 testů) **odešel do
+  nového repa** — testuje stránku, která tam teď žije.
+- Místo něj je `tools/launcher_redirect_test.mjs` (6 testů): hlídá
+  cílovou adresu ve všech třech vrstvách, canonical/noindex, rozbité
+  relativní cesty a hlavně to, že se do `launcher/` nevrátily staré
+  soubory.
+
+### Co musíš udělat
+
+Nový repo `minekubelauncher/minekubelauncher.github.io` **ještě
+neexistuje** — dokud ho nezaložíš, odkazy na launcher jsou 404.
+Připravený je v `/tmp/launcher-site` (89 souborů, 2,3 MB) včetně
+workflow pro GitHub Actions a `deploy.sh`, který repo založí, pushne
+obsah a zapne Pages na jeden příkaz.
 
 ## v17 — **launcher má vlastní doménu `minekubelauncher.github.io`**
 
