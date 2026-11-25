@@ -1,11 +1,29 @@
-# Minekube Studios // Web (v19 — launcher zpět na funkční adrese)
+# Minekube Studios // Web (v20 — úklid webu v repu MinekubeLauncher)
+
+## v20 — **návod na úklid webu z repa MinekubeLauncher**
+
+Do `MinekubeStudios/MinekubeLauncher` (Rust/Tauri projekt) se omylem
+nahrálo **11 souborů webu do kořene** — a jen část. Chybělo `icons/`,
+`shared/`, `wallpapers/` i `img/`, takže ze 43 odkazů vedlo 37 do
+prázdna. `minekubelauncher.github.io` přitom **vůbec neběží**:
+organizace `minekubelauncher` má 0 repozitářů a Pages v MinekubeLauncheru
+jsou vypnuté — není co vypínat.
+
+Přibyl **[launcher-deploy/JAK-SMAZAT-WEB.md](launcher-deploy/JAK-SMAZAT-WEB.md)**
+se dvěma cestami, jak těch 11 souborů odstranit (GitHub UI, nebo jeden
+`git rm` + `git push`). Runtime webu se nemění — launcher dál běží na
+`https://minekubestudios.github.io/launcher/`.
+
+> Nástroje pro nasazení na vlastní doménu (`build.sh`, `JAK-NASADIT.md`)
+> zůstávají. Web do MinekubeLauncheru patří do **`docs/`**, nikdy do kořene.
 
 ## v19 — **odkazy na launcher zpět na funkční adresu**
 
-Doména `minekubelauncher.github.io` **zatím neexistuje** — účet
-`minekubelauncher` na GitHubu není a repo `minekubelauncher.github.io`
-taky ne. Web přesto posílal 9 odkazů (hlavička, patička, CTA, modpacky)
-právě tam, takže každé kliknutí na „Launcher" skončilo na 404.
+Doména `minekubelauncher.github.io` **zatím neexistuje** — v době psaní
+neexistoval účet `minekubelauncher` ani repo `minekubelauncher.github.io`,
+takže web posílal 9 odkazů (hlavička, patička, CTA, modpacky) na 404.
+*(Organizace `minekubelauncher` od té doby vznikla, ale má 0 repozitářů —
+adresa pořád nic neservíruje. Viz v20.)*
 
 Vráceno zpět na `launcher/`:
 
