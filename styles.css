@@ -8938,7 +8938,6 @@ body::before {
 }
 .store-button-label strong span {
   display:inline-block;
-  will-change:transform,filter,color;
   animation:storeTextIdle 2.6s ease-in-out infinite;
 }
 .store-button-label strong span:nth-child(2) { animation-delay:.08s; }
@@ -9053,7 +9052,7 @@ body::before {
 @keyframes storeOrbitTwo { from{transform:rotate(57deg)}to{transform:rotate(417deg)} }
 @keyframes storeOrbitThree { from{transform:rotate(-47deg)}to{transform:rotate(313deg)} }
 @keyframes storeLabelScan { 0%,18%{left:-50%;opacity:0}36%{opacity:1}76%{left:116%;opacity:.7}100%{left:116%;opacity:0} }
-@keyframes storeTextIdle { 0%,100%{transform:translateY(0);filter:brightness(1)}50%{transform:translateY(-.6px);filter:brightness(1.13)} }
+@keyframes storeTextIdle { 0%,100%{filter:brightness(1)}50%{filter:brightness(1.13)} }
 @keyframes storeTextWave { from{transform:translateY(1px) scaleY(.98)}to{transform:translateY(-3px) scaleY(1.07)} }
 @keyframes storeCornerSpark { 0%,34%{filter:drop-shadow(0 0 2px #6eefff)}42%,58%{filter:drop-shadow(0 0 7px #6eefff) drop-shadow(0 0 12px #ff61e2)}66%,100%{filter:drop-shadow(0 0 3px #6eefff)} }
 @keyframes storeFxLaunch {
