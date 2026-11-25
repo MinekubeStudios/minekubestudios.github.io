@@ -1,4 +1,48 @@
-# Minekube Studios // Web (v13 — launcher na tapetách z archivu, bez studia)
+# Minekube Studios // Web (v14 — launcher bez lišty sekcí a pásu platforem)
+
+## v14 — **stránka Launcheru bez lišty sekcí, faktů a pásu platforem**
+
+Na přání vypadly tři bloky, které jen opakovaly obsah okolo:
+
+1. **Pruh rychlých faktů** (Instance vedle sebe / .mrpack i .zip / Ticho
+   po síti / Java pod kontrolou) — hero i karty funkcí říkají totéž.
+2. **Lepivá lišta sekcí** (Funkce · Prohlídka · Stažení · Otázky) — na
+   stránce se dá skrolovat a hero má vlastní CTA. Přepínač „Efekty“
+   v liště byl jediný způsob, jak vypnout animace — po jeho smazání
+   zůstal ovládáním **přepínač v hero** („Animace zapnuté“), který
+   teď nese `data-fx-toggle` a `aria-pressed`.
+3. **Sekce „Jeden launcher. Všechny edice.“** i s přepínačem
+   Platformy/Funkce, tabulkou osmi vlastností a kartami Windows/Linux.
+   Platformy zůstávají v sekci Stažení, kde mají tlačítka.
+
+Ze stavového řádku pod tlačítkem zmizel i **řádek s verzí, velikostí
+a odkazem na GitHub Releases** i **název souboru**. Velikost, formát
+a název souboru ale nesmí zmizet pro čtečku — zůstaly ve skrytém
+`aria-describedby` popisu, který se plní dál.
+
+### Opravené chyby (v14)
+
+* **Responzivní pravidla od 860 px dolů byla mrtvá** — při mazání
+  sekcí se zapomněl uzavřít `@media (max-width: 1080px)`, takže všechna
+  užší rozložení (hero na jeden sloupec, karty 2×2, panel prohlídky,
+  tabulka, CTA) byla vnořená v blocích, které se nikdy neuplatnily.
+  Test na vyváženost závorek a zanoření `@media` to teď hlídá.
+* **`painter.wake()` mohl shodit inicializaci přepínače efektů** —
+  když prohlížeč nemá `requestAnimationFrame` (nebo ho blokuje),
+  výjimka utekla z `apply()` a přepínač zůstal viset bez listeneru
+  a s `disabled`. Volání je v `try/catch`, tlačítko funguje vždy.
+* **Prázdný 300×150 box v layoutu** — `<svg class="mk-sprite">` se
+  symboly neměl v žádném CSS pravidlo, takže si prohlížeč vyrobil
+  box a posunul jím obsah. `.mk-sprite` je `position: absolute` s 0 px.
+* **Mrtvé zbytky po smazaných blocích** — 6,5 kB CSS (`.lpx-facts`,
+  `.lpx-nav`, `.lpx-switch`, `.lpx-plat`, tabulka, `.lpx-meta`,
+  `.lpx-file`), dvě JS funkce (`initScrollUi`, `initMcSwitch`),
+  44 nepoužívaných překladových klíčů ve třech jazycích a tři mrtvé
+  selektory (`.lpx-screen`, `.lpx-fx__dot`, `.lpx-download__actions`).
+* **„Ponoř se hloub“ mířil na smazanou sekci** — teď skáče na
+  `#jak-to-funguje`.
+* **Přepínač animací hlásil špatný stav** — hero tlačítko volalo
+  `.click()` na druhý přepínač, který už neexistoval.
 
 ## v13 — **stránka Launcheru znovu: tapety z archivu, pixelové ikony, bez studia**
 
@@ -666,7 +710,7 @@ Původní popis šestého kola: blok v `site/styles.css` se jmenoval
 | `modpack-repo/` | **Obsah samostatného repozitáře s modpacky** (`packs/`, `manifest.json`, `tools/`, `.github/workflows/`, `docs/`) — nahrává ho `tools/create-modpack-repo.sh` |
 | `tools/create-modpack-repo.sh` | Založí `MinekubeStudios/modpacky` a nahraje do něj `modpack-repo/` |
 | `launcher/releases.js` | **Vydání launcheru z repozitáře `MinekubeStudios/MinekubeLauncher`** — GitHub Releases API → obsah repozitáře → statická záloha, cache v `localStorage`, událost `minekube:launcher-releases`, veřejné API `window.MinekubeLauncherReleases` |
-| `launcher/lpx.css` | Celý nový design stránky Launcheru (scoped `.lpx`): hero, pásy s tapetami, karty, prohlídka, platformy, FAQ, patička |
+| `launcher/lpx.css` | Celý nový design stránky Launcheru (scoped `.lpx`): hero, pásy s tapetami, karty, prohlídka, platformy, FAQ, patička; bez lišty sekcí a bez pásu platforem (v14) |
 | `launcher/launcher-pulse.css` | Exploze a přelití stahovacího tlačítka (`.lp-pulse-burst*`, `.lpx-download.is-pulse*`) |
 | `tools/releases_test.mjs` | Test napojení na repozitář (jsdom): manifest, záložní GitHub API, demo i stav bez sítě |
 | `tools/launcher_page_test.mjs` | Test stránky Launcher (jsdom, 20 scénářů): stahování z GitHubu, platformy v plánu, záložní adresa, jazyky, prohlídka, carousel, tapety a ikony |
