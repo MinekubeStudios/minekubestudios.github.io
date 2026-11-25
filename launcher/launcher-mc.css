@@ -2556,3 +2556,1114 @@
   color: #2a1204;
   animation: none;
 }
+
+/* ---------- 23 · Vizuální studio: tapety a ikony ----------
+
+   Sekce stojí na tokenech --lp-* z launcher.css, takže světlý motiv
+   i nucené barvy ji dostanou zdarma. Vše je uzavřené v `[data-studio]`.
+   Dlaždice s tapetou je <label> s opravdovým radio buttonem — klávesnice,
+   čtečka i vynucené barvy se chovají jako u každého jiného formuláře.
+
+   Struktura:
+     · .lp-studio            — dvousloupcová mřížka (ovládání | okno)
+     · .lp-studio__grid      — mřížka 14 tapet + gradient + žádná
+     · .lp-studio__icons     — mřížka 48 ikon s hledáním a rodinami
+     · .lp-studio__shot      — opravdová maketa launcheru
+*/
+
+.lp-mc-band--studio {
+  --lp-band-bg: linear-gradient(180deg, rgba(148, 40, 190, 0.12), rgba(252, 0, 96, 0.05) 52%, transparent);
+}
+
+.lp-studio {
+  display: grid;
+  grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+  gap: clamp(16px, 2.4vw, 30px);
+  margin-top: clamp(28px, 3.4vw, 44px);
+  align-items: start;
+}
+
+/* ---------- Ovládání ---------- */
+
+.lp-studio__control,
+.lp-studio__stage-wrap {
+  min-width: 0;
+}
+
+.lp-studio__control {
+  display: grid;
+  gap: 18px;
+  padding: clamp(14px, 1.8vw, 20px);
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.lp-studio__tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.lp-studio__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--lp-muted);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.lp-studio__tab img {
+  width: 20px;
+  height: 20px;
+  image-rendering: pixelated;
+  filter: saturate(0.65);
+  opacity: 0.8;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.lp-studio__tab[aria-selected="true"] {
+  background: linear-gradient(135deg, var(--lp-gold), var(--lp-orange));
+  color: #241209;
+}
+
+.lp-studio__tab[aria-selected="true"] img {
+  filter: none;
+  opacity: 1;
+}
+
+.lp-studio__tab:focus-visible {
+  outline: 3px solid var(--lp-focus, var(--lp-gold-soft));
+  outline-offset: 2px;
+}
+
+.lp-studio__panel[hidden] {
+  display: none;
+}
+
+.lp-studio__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lp-studio__row-label {
+  color: var(--lp-gold-soft);
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.lp-studio__count {
+  color: var(--lp-muted-2);
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---------- Mřížka tapet ---------- */
+
+.lp-studio__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+  max-height: min(46vh, 420px);
+  overflow-y: auto;
+  padding: 2px 4px 2px 2px;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+}
+
+.lp-studio__wp {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  cursor: pointer;
+  min-width: 0;
+}
+
+/* Radio button zůstává v dokumentu kvůli čtečce i Tabu, ale
+   vizuálně ho schová mřížka — vybraný stav nese rámeček. */
+.lp-studio__wp-input,
+.lp-studio__icon-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lp-studio__wp-frame {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 10px;
+  background: #0d060c;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s var(--lp-snap);
+}
+
+.lp-studio__wp-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s var(--lp-snap), filter 0.2s ease;
+  filter: saturate(0.92);
+}
+
+.lp-studio__wp:hover .lp-studio__wp-frame {
+  border-color: var(--lp-line-gold);
+  transform: translateY(-2px);
+}
+
+.lp-studio__wp:hover .lp-studio__wp-frame img {
+  transform: scale(1.04);
+}
+
+.lp-studio__wp-input:checked + .lp-studio__wp-frame {
+  border-color: var(--lp-gold);
+  box-shadow: 0 0 0 1px var(--lp-gold), 0 12px 26px -16px rgba(252, 146, 0, 0.72);
+}
+
+.lp-studio__wp-input:checked + .lp-studio__wp-frame img {
+  filter: none;
+}
+
+.lp-studio__wp-input:focus-visible + .lp-studio__wp-frame {
+  outline: 3px solid var(--lp-focus, var(--lp-gold-soft));
+  outline-offset: 2px;
+}
+
+.lp-studio__wp-check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--lp-gold);
+  color: #241209;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.18s ease, transform 0.24s var(--lp-spring);
+}
+
+.lp-studio__wp-check svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-studio__wp-input:checked + .lp-studio__wp-frame .lp-studio__wp-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.lp-studio__wp-swatch {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: rgb(var(--swatch));
+  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.5);
+}
+
+.lp-studio__wp-name {
+  display: block;
+  overflow: hidden;
+  color: var(--lp-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lp-studio__wp-input:checked ~ .lp-studio__wp-name {
+  color: var(--lp-text);
+}
+
+/* Gradient a „žádná“ — dvě poslední dlaždice bez fotky. */
+.lp-studio__wp--plain .lp-studio__wp-plain {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a0a16, #0b0509 62%, #2a0d22);
+}
+
+.lp-studio__wp--plain[data-slug="gradient"] .lp-studio__wp-plain {
+  background:
+    radial-gradient(80% 90% at 24% 18%, rgba(252, 192, 0, 0.55), transparent 62%),
+    radial-gradient(80% 90% at 78% 82%, rgba(252, 0, 96, 0.5), transparent 62%),
+    linear-gradient(135deg, #22102b, #0b0509);
+}
+
+.lp-studio__wp--plain[data-slug="none"] .lp-studio__wp-plain {
+  background: #0b0509;
+}
+
+.lp-studio__wp--plain[data-slug="none"] .lp-studio__wp-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+/* ---------- Vlastní obrázek ---------- */
+
+.lp-studio__upload {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px dashed var(--lp-line-strong);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.lp-studio__upload.is-dragover,
+.lp-studio__upload.is-active {
+  border-color: var(--lp-gold);
+  background: rgba(252, 192, 0, 0.08);
+}
+
+.lp-studio__upload.is-active {
+  border-style: solid;
+  box-shadow: 0 0 0 1px var(--lp-gold), 0 14px 30px -22px rgba(252, 146, 0, 0.9);
+}
+
+.lp-studio__upload-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--lp-gold-soft);
+}
+
+.lp-studio__upload-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-studio__upload-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lp-studio__upload-copy strong {
+  font-size: 0.86rem;
+}
+
+.lp-studio__upload-copy span {
+  color: var(--lp-muted-2);
+  font-size: 0.74rem;
+  line-height: 1.4;
+}
+
+.lp-studio__file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lp-studio__upload-btn {
+  min-height: 40px;
+  padding: 0 14px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.lp-studio__custom-thumb {
+  display: none;
+  grid-column: 1 / -1;
+  overflow: hidden;
+  border-radius: 10px;
+  aspect-ratio: 16 / 6;
+  background: #0d060c;
+}
+
+.lp-studio__custom-thumb.has-image {
+  display: block;
+}
+
+.lp-studio__custom-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lp-studio__custom-remove {
+  padding: 6px 12px;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 999px;
+  background: none;
+  color: var(--lp-danger);
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.lp-studio__custom-remove[hidden] {
+  display: none;
+}
+
+/* ---------- Hledání a rodiny ikon ---------- */
+
+.lp-studio__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.lp-studio__search-icon {
+  color: var(--lp-muted-2);
+}
+
+.lp-studio__search-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+}
+
+.lp-studio__search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--lp-text);
+  font: inherit;
+  font-size: 0.86rem;
+  outline: none;
+}
+
+.lp-studio__search-input::placeholder {
+  color: var(--lp-muted-2);
+}
+
+.lp-studio__search-input::-webkit-search-cancel-button {
+  filter: invert(0.8);
+}
+
+.lp-studio__families {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.lp-studio__family {
+  padding: 6px 12px;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 999px;
+  background: none;
+  color: var(--lp-muted);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.lp-studio__family:hover {
+  border-color: var(--lp-line-gold);
+  color: var(--lp-text);
+}
+
+.lp-studio__family[aria-pressed="true"] {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--lp-gold), var(--lp-orange));
+  color: #241209;
+}
+
+.lp-studio__icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+  max-height: min(46vh, 420px);
+  overflow-y: auto;
+  padding: 2px 4px 2px 2px;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+}
+
+.lp-studio__icon {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.lp-studio__icon[hidden] {
+  display: none;
+}
+
+.lp-studio__icon-frame {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  padding: 8px;
+  border: 1px solid var(--lp-line);
+  border-radius: 10px;
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.06), transparent 62%),
+    rgba(255, 255, 255, 0.02);
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s var(--lp-snap);
+}
+
+.lp-studio__icon-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
+}
+
+.lp-studio__icon:hover .lp-studio__icon-frame {
+  border-color: var(--lp-line-gold);
+  transform: translateY(-2px);
+}
+
+.lp-studio__icon-input:checked + .lp-studio__icon-frame {
+  border-color: var(--lp-gold);
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(252, 192, 0, 0.22), transparent 62%),
+    rgba(252, 192, 0, 0.06);
+  box-shadow: 0 0 0 1px var(--lp-gold), 0 10px 22px -14px rgba(252, 146, 0, 0.8);
+}
+
+.lp-studio__icon-input:focus-visible + .lp-studio__icon-frame {
+  outline: 3px solid var(--lp-focus, var(--lp-gold-soft));
+  outline-offset: 2px;
+}
+
+.lp-studio__icon-name {
+  display: block;
+  overflow: hidden;
+  color: var(--lp-muted-2);
+  font-size: 0.64rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lp-studio__icon-input:checked ~ .lp-studio__icon-name {
+  color: var(--lp-text);
+}
+
+.lp-studio__empty {
+  margin-top: 12px;
+  color: var(--lp-muted-2);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+/* ---------- Zkušební okno ---------- */
+
+.lp-studio__shot {
+  --std-tile: 52px;
+  --std-stage-tint: 120, 60, 190;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 18px;
+  background:
+    radial-gradient(80% 70% at 20% 12%, rgba(var(--std-stage-tint), 0.35), transparent 66%),
+    linear-gradient(160deg, #170b14, #0a0509 72%);
+  box-shadow: var(--lp-shadow-window);
+  min-height: 260px;
+}
+
+/* Vlastní nahraný obrázek má vlastní poměr stran — ořez drží okno. */
+.lp-studio__shot-img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lp-studio__shot[data-wallpaper="gradient"] {
+  background:
+    radial-gradient(80% 90% at 24% 18%, rgba(252, 192, 0, 0.5), transparent 62%),
+    radial-gradient(80% 90% at 78% 82%, rgba(252, 0, 96, 0.46), transparent 62%),
+    linear-gradient(135deg, #22102b, #0b0509);
+}
+
+.lp-studio__shot[data-wallpaper="none"] {
+  background: #0b0509;
+}
+
+.lp-studio__shot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(8, 4, 7, 0.5), rgba(8, 4, 7, 0.72));
+}
+
+.lp-studio__shot[data-wallpaper="none"]::after,
+.lp-studio__shot[data-wallpaper="gradient"]::after {
+  background: linear-gradient(180deg, rgba(8, 4, 7, 0.2), rgba(8, 4, 7, 0.55));
+}
+
+.lp-studio__shot-tiles {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-repeat: repeat;
+  background-size: var(--std-tile) var(--std-tile);
+  opacity: 0.5;
+  image-rendering: pixelated;
+}
+
+.lp-studio__shot-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 5, 9, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.lp-studio__shot-bar .lp-app__dot {
+  width: 8px;
+  height: 8px;
+}
+
+.lp-studio__shot-bar .lp-app__title {
+  margin-left: 6px;
+  color: rgba(253, 246, 241, 0.72);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.lp-studio__shot-bar .lp-app__glyph {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: rgba(253, 246, 241, 0.6);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-studio__shot-body {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  min-height: 208px;
+}
+
+.lp-studio__shot-side {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 12px 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 4, 7, 0.44);
+}
+
+.lp-studio__shot-side-btn {
+  display: grid;
+  place-items: center;
+  height: 30px;
+  border-radius: 8px;
+  color: rgba(253, 246, 241, 0.5);
+}
+
+.lp-studio__shot-side-btn.is-active {
+  background: linear-gradient(135deg, rgba(252, 192, 0, 0.9), rgba(251, 122, 18, 0.9));
+  color: #241209;
+}
+
+.lp-studio__shot-side-btn svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-studio__shot-side-spacer {
+  height: 6px;
+}
+
+.lp-studio__shot-main {
+  position: relative;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: clamp(16px, 2.4vw, 26px);
+  text-align: center;
+}
+
+.lp-studio__shot-kicker {
+  color: rgba(253, 246, 241, 0.55);
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.lp-studio__shot-name {
+  color: #fdf6f1;
+  font-family: "Baloo 2", "Space Grotesk", system-ui, sans-serif;
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+/* Avatar v okně: 84 px rámeček, do kterého se maluje vybraná ikona.
+   Ikona zůstává pixelová (image-rendering: pixelated), takže vypadá
+   stejně jako v launcheru. */
+.lp-studio__shot-avatar {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 18px;
+  background: rgba(10, 5, 9, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.lp-studio__shot-avatar-icon,
+.lp-studio__shot-card-icon > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  image-rendering: pixelated;
+}
+
+.lp-studio__shot-avatar-icon:not(.has-icon),
+.lp-studio__shot-card-icon > span:not(.has-icon) {
+  background-image: url("../assets/minekube-original-logo.png");
+  background-size: 78%;
+}
+
+.lp-studio__shot[data-mode="icons"] .lp-studio__shot-avatar {
+  border-color: rgba(252, 192, 0, 0.5);
+  box-shadow: 0 0 0 1px rgba(252, 192, 0, 0.28), 0 12px 30px -16px rgba(252, 146, 0, 0.8);
+}
+
+.lp-studio__shot-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 14px;
+  background: rgba(10, 5, 9, 0.6);
+  text-align: left;
+}
+
+.lp-studio__shot-card-icon {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  padding: 3px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.lp-studio__shot-card-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lp-studio__shot-card-copy strong {
+  overflow: hidden;
+  color: #fdf6f1;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lp-studio__shot-card-copy span {
+  overflow: hidden;
+  color: rgba(253, 246, 241, 0.55);
+  font-size: 0.7rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lp-studio__shot-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  margin-left: auto;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--lp-gold-soft), var(--lp-orange) 62%, #f24d0a);
+  color: #22110a;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: default;
+  box-shadow: 0 10px 22px -12px rgba(252, 146, 0, 0.9);
+  pointer-events: none;
+}
+
+.lp-studio__shot-play svg {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+  stroke: none;
+}
+
+.lp-studio__status {
+  margin: 0;
+  padding: 8px 14px 12px;
+  color: rgba(253, 246, 241, 0.62);
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+/* ---------- Nástroje pod oknem ---------- */
+
+.lp-studio__stage-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.lp-studio__switch,
+.lp-studio__size,
+.lp-studio__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--lp-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.lp-studio__switch {
+  cursor: pointer;
+}
+
+.lp-studio__switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.lp-studio__switch-track {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  transition: background 0.2s ease;
+}
+
+.lp-studio__switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #fdf6f1;
+  transition: transform 0.22s var(--lp-spring);
+}
+
+.lp-studio__switch input:checked + .lp-studio__switch-track {
+  background: linear-gradient(135deg, var(--lp-gold), var(--lp-orange));
+}
+
+.lp-studio__switch input:checked + .lp-studio__switch-track .lp-studio__switch-thumb {
+  transform: translateX(16px);
+}
+
+.lp-studio__switch input:focus-visible + .lp-studio__switch-track {
+  outline: 3px solid var(--lp-focus, var(--lp-gold-soft));
+  outline-offset: 2px;
+}
+
+.lp-studio__size-input {
+  width: 96px;
+  accent-color: var(--lp-gold);
+}
+
+.lp-studio__size-value {
+  min-width: 44px;
+  color: var(--lp-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-studio__name-input {
+  width: 108px;
+  padding: 5px 9px;
+  border: 1px solid var(--lp-line-strong);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.24);
+  color: var(--lp-text);
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.lp-studio__name-input:focus-visible,
+.lp-studio__search:focus-within {
+  outline: 2px solid var(--lp-focus, var(--lp-gold-soft));
+  outline-offset: 2px;
+}
+
+.lp-studio__stage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.lp-studio__stage-actions .lp-btn {
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 0.78rem;
+}
+
+.lp-studio__stage-actions .lp-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Světlý motiv ---------- */
+
+:root[data-theme="light"] .lp-mc-band--studio {
+  --lp-band-bg: linear-gradient(180deg, rgba(252, 192, 0, 0.1), rgba(252, 0, 96, 0.04) 52%, transparent);
+}
+
+:root[data-theme="light"] .lp-studio__control,
+:root[data-theme="light"] .lp-studio__stage-tools {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+:root[data-theme="light"] .lp-studio__tabs,
+:root[data-theme="light"] .lp-studio__search,
+:root[data-theme="light"] .lp-studio__name-input {
+  background: rgba(74, 26, 46, 0.05);
+}
+
+:root[data-theme="light"] .lp-studio__shot {
+  border-color: rgba(74, 26, 46, 0.2);
+}
+
+:root[data-theme="light"] .lp-studio__wp-frame {
+  border-color: rgba(74, 26, 46, 0.18);
+  background: #f6e8d8;
+}
+
+:root[data-theme="light"] .lp-studio__wp-swatch {
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.7);
+}
+
+:root[data-theme="light"] .lp-studio__icon-frame {
+  border-color: rgba(74, 26, 46, 0.13);
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(74, 26, 46, 0.05), transparent 62%),
+    #fffdf9;
+}
+
+:root[data-theme="light"] .lp-studio__switch-track {
+  background: rgba(74, 26, 46, 0.2);
+}
+
+:root[data-theme="light"] .lp-studio__search-input::-webkit-search-cancel-button {
+  filter: none;
+}
+
+/* ---------- Responzivita ---------- */
+
+@media (max-width: 980px) {
+  .lp-studio {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lp-studio__stage-wrap {
+    order: -1;
+  }
+
+  .lp-studio__grid,
+  .lp-studio__icons {
+    max-height: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .lp-studio__upload {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .lp-studio__upload-btn {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .lp-studio__shot-body {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .lp-studio__shot-play span {
+    display: none;
+  }
+
+  .lp-studio__stage-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .lp-studio__stage-actions .lp-btn {
+    flex: 1 1 auto;
+  }
+}
+
+/* ---------- Nucené barvy: rámečky musí zůstat vidět ---------- */
+
+@media (forced-colors: active) {
+  .lp-studio__wp-frame,
+  .lp-studio__icon-frame,
+  .lp-studio__shot,
+  .lp-studio__upload {
+    border-color: CanvasText;
+  }
+
+  .lp-studio__wp-input:checked + .lp-studio__wp-frame,
+  .lp-studio__icon-input:checked + .lp-studio__icon-frame {
+    outline: 3px solid Highlight;
+    outline-offset: 1px;
+  }
+
+  .lp-studio__wp-check,
+  .lp-studio__wp-swatch {
+    forced-color-adjust: none;
+  }
+
+  .lp-studio__shot::after {
+    display: none;
+  }
+}
+
+/* ---------- Tisk: ovládání pryč, okno zůstává ---------- */
+
+@media print {
+  .lp-studio__control,
+  .lp-studio__stage-tools {
+    display: none !important;
+  }
+
+  .lp-studio {
+    grid-template-columns: 1fr;
+  }
+
+  .lp-studio__shot {
+    box-shadow: none;
+    border: 1px solid #999;
+  }
+}
+
+/* ---------- Klid: studio bez přeletů ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-studio *,
+  .lp-studio *::before,
+  .lp-studio *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .lp-studio__wp:hover .lp-studio__wp-frame,
+  .lp-studio__icon:hover .lp-studio__icon-frame {
+    transform: none;
+  }
+
+  .lp-studio__wp:hover .lp-studio__wp-frame img {
+    transform: none;
+  }
+}
+
+[data-fx-state="off"] .lp-studio__wp-check {
+  transition: none;
+}

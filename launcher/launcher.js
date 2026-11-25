@@ -219,6 +219,7 @@
   const refreshButton = document.querySelector("[data-launcher-refresh]");
 
   let startedAt = 0;
+  let startedTimer = 0;
   let announcedFallback = false;
   let announcedVisitorOS = false;
   /* Hlavní tlačítko míří vždy na Windows — to je jediné vydané sestavení.
@@ -351,7 +352,13 @@
       heroButton.setAttribute("aria-busy", String(status.state === "loading"));
     }
 
-    if (heroLabel) heroLabel.textContent = heroLabelText(info, status);
+    /* Popisek hlavního tlačítka skládá tahle funkce. Statický
+       data-i18n text z HTML („Stáhnout pro Windows") se sem nesmí
+       vrátit — app.js překlady přepisuje při každém přepnutí jazyka. */
+    if (heroLabel) {
+      heroLabel.removeAttribute("data-i18n");
+      heroLabel.textContent = heroLabelText(info, status);
+    }
 
     if (heroSub) {
       if (info.planned) heroSub.textContent = translate("lp.os.sub.planned", "Build in progress");
@@ -404,6 +411,20 @@
         setState(button, loading ? "loading" : failed || !available ? "error" : "idle");
         button.disabled = loading;
         button.setAttribute("aria-busy", String(loading));
+        /* Popisek karet drží statický překlad (data-i18n). Když ale
+           vydání chybí, musí tlačítko říct „Zkusit znovu" — a zase se
+           vrátit, jakmile se data načtou. Klíč si pamatujeme, aby se
+           překlad po přepnutí jazyka nepokazil. */
+        const label = button.querySelector("[data-i18n]");
+        if (!label) return;
+        label.dataset.i18nKey ??= label.getAttribute("data-i18n") || "";
+        if (failed || (!available && !loading)) {
+          label.removeAttribute("data-i18n");
+          label.textContent = translate("lp.dl.error.retry", "Try again");
+        } else if (label.dataset.i18nKey && !label.hasAttribute("data-i18n")) {
+          label.setAttribute("data-i18n", label.dataset.i18nKey);
+          label.textContent = translate(label.dataset.i18nKey, label.textContent);
+        }
       });
   }
 
@@ -425,9 +446,17 @@
   }
 
   function renderReleaseMeta(status) {
-    releaseLinks.forEach(link => {
-      if (status.state === "ready" && status.releaseUrl) link.href = status.releaseUrl;
-    });
+    /* Odkaz na vydání se přepíše jen tehdy, když releases.js opravdu
+       zná adresu konkrétního vydání. Dřív tu zůstala záložní adresa
+       repozitáře i po úspěšném načtení a přebila odkaz na Releases. */
+    /* Přepisujeme jen adresu, která opravdu vede na vydání. U zdroje
+       z obsahu repa vrací releases.js adresu repozitáře — a ta by
+       z odkazu „GitHub Releases“ udělala jen odkaz na repo. */
+    if (status.state === "ready" && /\/releases/.test(status.releaseUrl || "")) {
+      releaseLinks.forEach(link => {
+        link.href = status.releaseUrl;
+      });
+    }
 
     if (!checkedNode) return;
     /* U záložní adresy jsme nic neověřovali — čas by lhal. */
@@ -450,6 +479,16 @@
     renderHero(status);
     renderPlatformButtons(status);
     renderReleaseMeta(status);
+
+    /* „Stahování zahájeno" drží 9 s a pak se tlačítko musí vrátit
+       k „Stáhnout znovu". Dřív to zařídil jednorázový setTimeout
+       jen u skutečného stahování, takže po selhání nebo u čerstvě
+       načtené stránky zůstal text viset. Jeden časovač na stav
+       to řeší pro všechny cesty. */
+    window.clearTimeout(startedTimer);
+    if (justStarted) {
+      startedTimer = window.setTimeout(renderAll, STARTED_HOLD_MS - (Date.now() - startedAt) + 60);
+    }
   }
 
   /* ===================== STAHOVÁNÍ ===================== */
@@ -480,8 +519,6 @@
     // Zahájení, ne dokončení: průběh a výsledek hlásí prohlížeč.
     announce(translate("lp.toast.start", "Download started: {file}").replace("{file}", asset.name), "download", 5200);
     renderAll();
-
-    window.setTimeout(renderAll, STARTED_HOLD_MS + 120);
   }
 
   function refetch() {
@@ -627,7 +664,21 @@
     ]);
   }
 
+  /* Co je „spuštěné" stahování? Ne stav tlačítka (ten se po 9 s vrací
+     do idle), ale tohle pole: drží osu, pro kterou je 220ms odklad
+     naplánovaný nebo běžící. Zabrání dvojímu stažení při dvojkliku
+     i pulzu, který se restartuje. */
+  let pendingOS = "";
+  let lastClickAt = 0;
+
   function onDownloadClick(button) {
+    /* Dvojklik (nebo klávesa Enter podržená) nesmí stáhnout dvakrát:
+       350 ms je kratší než nejrychlejší lidský dvojklik, ale delší než
+       jedno stisknutí Enteru. */
+    const now = Date.now();
+    if (now - lastClickAt < 350) return;
+    lastClickAt = now;
+
     const os = PLATFORMS[button.dataset.os] ? button.dataset.os : currentOS;
     const info = source.platform(os);
     const status = source.status();
@@ -637,7 +688,16 @@
       return;
     }
 
-    if (button.dataset.state === "loading") return;
+    if (pendingOS === os) return;
+    if (button.dataset.state === "loading" && status.state === "loading") return;
+
+    pendingOS = os;
+
+    /* Odezva hned: popisek se přepne na „Stahování zahájeno" ve stejném
+       snímku jako klik. Soubor startuje až po pulzu (220 ms), ale
+       uživatel nemá 220 ms koukat na tlačítko beze změny. */
+    startedAt = Date.now();
+    renderAll();
 
     /* Odezva patří sem: plánovaná platforma ani rozběhnuté načítání
        pulz nedostanou, skutečné stažení ano. */
@@ -652,13 +712,23 @@
        pulz dohraje. 220 ms je dost na to, aby prohlížeč vrstvu
        vykreslil, a zároveň tak málo, že stahování nepůsobí
        zpožděně. */
-    const asset = source.asset(os);
-    if (status.state === "ready" && asset) {
-      window.setTimeout(() => runDownload(button, os, asset), DOWNLOAD_DELAY_MS);
+    const asset = status.state === "ready" ? source.asset(os) : null;
+    const release = () => {
+      pendingOS = "";
+    };
+
+    if (asset) {
+      window.setTimeout(() => {
+        release();
+        runDownload(button, os, asset);
+      }, DOWNLOAD_DELAY_MS);
       return;
     }
 
-    window.setTimeout(() => retryThenDownload(button), DOWNLOAD_DELAY_MS);
+    window.setTimeout(() => {
+      release();
+      retryThenDownload(button);
+    }, DOWNLOAD_DELAY_MS);
   }
 
   /* ---------- Pulz přežije i přenačtení stránky ----------
@@ -700,11 +770,18 @@
 
   replayPulseIfPending();
 
-  downloadButtons.forEach(button => {
-    button.addEventListener("click", () => {
-      markPulse();
-      onDownloadClick(button);
-    });
+  /* Jediný posluchač na dokumentu. Dřív klik hlídaly tři posluchače
+     (inicializace stahování, tohle značkování a blok s tlačítky) a
+     stažení se rozjelo dvakrát — prohlížeč pak soubor stahoval dvakrát. */
+  document.addEventListener("click", event => {
+    const button = event.target.closest("[data-launcher-download]");
+    if (!button || button.disabled) return;
+    /* Ctrl/⌘/Shift/Alt klik a prostřední tlačítko si prohlížeč vykládá
+       jako „otevři jinde" — do stahování ani pulzu nemícháme. */
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    if (typeof event.button === "number" && event.button !== 0) return;
+    markPulse();
+    onDownloadClick(button);
   });
 
   retryButton?.addEventListener("click", () => {
@@ -1753,6 +1830,103 @@
       });
     });
   }
+
+  /* ===================== VIZUÁLNÍ STUDIO (v12) =====================
+     Data tapet a ikon bydlí tady, protože je stránka potřebuje i bez
+     zbytku studia (náhledy v hero) a protože se sem dostane dřív než
+     studio.js. Vykreslování a stav drží studio.js ve stejném uzávěru.
+
+     Tapety pocházejí z WebBackgrounds V1–V3, ikony z WebIcons + dvanáct
+     nových pixelových glyphů, které v archivu chyběly. Nic se nenačítá
+     samo: náhledy jsou lazy, velké soubory až při skutečném výběru. */
+
+  const WALLPAPERS = [
+    { slug: "lobby", label: "std.wp.lobby", hero: "wallpapers/hero/lobby.webp", thumb: "wallpapers/thumb/lobby.webp", tint: "168, 128, 220" },
+    { slug: "lobby-s", label: "std.wp.lobby-s", hero: "wallpapers/hero/lobby-s.webp", thumb: "wallpapers/thumb/lobby-s.webp", tint: "244, 162, 96" },
+    { slug: "desert-temple", label: "std.wp.desert-temple", hero: "wallpapers/hero/desert-temple.webp", thumb: "wallpapers/thumb/desert-temple.webp", tint: "236, 186, 92" },
+    { slug: "crimson-forest", label: "std.wp.crimson-forest", hero: "wallpapers/hero/crimson-forest.webp", thumb: "wallpapers/thumb/crimson-forest.webp", tint: "226, 90, 60" },
+    { slug: "cacti-canyon", label: "std.wp.cacti-canyon", hero: "wallpapers/hero/cacti-canyon.webp", thumb: "wallpapers/thumb/cacti-canyon.webp", tint: "240, 148, 88" },
+    { slug: "stronghold", label: "std.wp.stronghold", hero: "wallpapers/hero/stronghold.webp", thumb: "wallpapers/thumb/stronghold.webp", tint: "108, 186, 170" },
+    { slug: "blighted-citadel", label: "std.wp.blighted-citadel", hero: "wallpapers/hero/blighted-citadel.webp", thumb: "wallpapers/thumb/blighted-citadel.webp", tint: "152, 120, 240" },
+    { slug: "subdungeon", label: "std.wp.subdungeon", hero: "wallpapers/hero/subdungeon.webp", thumb: "wallpapers/thumb/subdungeon.webp", tint: "120, 200, 140" },
+    { slug: "java-edition", label: "std.wp.java-edition", hero: "wallpapers/hero/java-edition.webp", thumb: "wallpapers/thumb/java-edition.webp", tint: "128, 196, 232" },
+    { slug: "pc-bundle", label: "std.wp.pc-bundle", hero: "wallpapers/hero/pc-bundle.webp", thumb: "wallpapers/thumb/pc-bundle.webp", tint: "146, 200, 110" },
+    { slug: "tux", label: "std.wp.tux", hero: "wallpapers/hero/tux.webp", thumb: "wallpapers/thumb/tux.webp", tint: "128, 178, 240" },
+    { slug: "windows", label: "std.wp.windows", hero: "wallpapers/hero/windows.webp", thumb: "wallpapers/thumb/windows.webp", tint: "120, 168, 255" },
+    { slug: "tux-windows", label: "std.wp.tux-windows", hero: "wallpapers/hero/tux-windows.webp", thumb: "wallpapers/thumb/tux-windows.webp", tint: "120, 220, 190" },
+    { slug: "main-backdrop", label: "std.wp.main-backdrop", hero: "wallpapers/hero/main-backdrop.webp", thumb: "wallpapers/thumb/main-backdrop.webp", tint: "176, 150, 180" }
+  ];
+
+  const ICON_FAMILIES = ["emblems", "ui", "hearts", "system"];
+
+  const ICONS = [
+    /* --- emblémy z WebIcons --- */
+    { slug: "armor-full", family: "emblems", aliases: "armor brneni" },
+    { slug: "heart-full", family: "emblems", aliases: "heart srdce" },
+    { slug: "emerald-shield", family: "emblems", aliases: "emerald shield stit" },
+    { slug: "protection", family: "emblems", aliases: "protection ochrana" },
+    { slug: "swarm-resistance", family: "emblems", aliases: "swarm resistance odolnost" },
+    { slug: "shared-pain", family: "emblems", aliases: "shared pain bolest" },
+    { slug: "fire-focus", family: "emblems", aliases: "fire ohen focus" },
+    { slug: "lightning-focus", family: "emblems", aliases: "lightning blesk" },
+    { slug: "infinity", family: "emblems", aliases: "infinity nekonecno" },
+    { slug: "life-boost", family: "emblems", aliases: "life boost zivot" },
+    { slug: "blindness", family: "emblems", aliases: "blindness slepota" },
+    { slug: "flee", family: "emblems", aliases: "flee utek" },
+    { slug: "raid-omen", family: "emblems", aliases: "raid omen znameni" },
+    { slug: "trial-omen", family: "emblems", aliases: "trial omen znameni" },
+    { slug: "ender-pearl", family: "emblems", aliases: "ender pearl perla" },
+    /* --- rozhraní: archiv + nové glyphy --- */
+    { slug: "arrow-left", family: "ui", aliases: "arrow left sipka zpet" },
+    { slug: "arrow-left-lit", family: "ui", aliases: "arrow left sipka highlighted" },
+    { slug: "arrow-right", family: "ui", aliases: "arrow right sipka vpred" },
+    { slug: "arrow-right-lit", family: "ui", aliases: "arrow right sipka highlighted" },
+    { slug: "cancel", family: "ui", aliases: "cancel krizek zrusit" },
+    { slug: "confirm", family: "ui", aliases: "confirm fajfka potvrdit" },
+    { slug: "lock", family: "ui", aliases: "lock zamek" },
+    { slug: "locked", family: "ui", aliases: "locked zamek ikona" },
+    { slug: "search", family: "ui", aliases: "search hledani lupa" },
+    { slug: "mouse", family: "ui", aliases: "mouse mys" },
+    { slug: "mouse-right", family: "ui", aliases: "mouse right mys prave" },
+    { slug: "toggle-off", family: "ui", aliases: "toggle off prepinac" },
+    { slug: "toggle-on", family: "ui", aliases: "toggle on prepinac" },
+    { slug: "play", family: "ui", aliases: "play hrat start" },
+    { slug: "pause", family: "ui", aliases: "pause pauza" },
+    { slug: "home", family: "ui", aliases: "home dum domov" },
+    { slug: "trash", family: "ui", aliases: "trash kos smazat" },
+    { slug: "edit", family: "ui", aliases: "edit tuzka upravit" },
+    { slug: "plus", family: "ui", aliases: "plus pridat" },
+    { slug: "folder", family: "ui", aliases: "folder slozka" },
+    { slug: "star", family: "ui", aliases: "star hvezda oblibene" },
+    { slug: "download", family: "ui", aliases: "download stahnout" },
+    { slug: "bookshelf", family: "ui", aliases: "bookshelf knihovna" },
+    { slug: "chest", family: "ui", aliases: "chest truhla" },
+    { slug: "settings", family: "ui", aliases: "settings ozubene kolo nastaveni" },
+    /* --- srdce --- */
+    { slug: "heart", family: "hearts", aliases: "heart srdce" },
+    { slug: "gold-heart", family: "hearts", aliases: "gold heart zlate srdce" },
+    /* --- systém --- */
+    { slug: "linux", family: "system", aliases: "linux tux" },
+    { slug: "java-edition", family: "system", aliases: "java edition minecraft" },
+    { slug: "server-ping", family: "system", aliases: "server ping signal" },
+    { slug: "loading", family: "system", aliases: "loading nacitani" }
+  ].map(item => ({ ...item, file: `icons/${item.slug}.png` }));
+
+  const STUDIO_TABS = ["look", "icons"];
+
+  window.MinekubeLauncherApi = {
+    translate,
+    announce,
+    prefersReduced,
+    fxOn,
+    motionQuery,
+    STUDIO_TABS,
+    WALLPAPERS,
+    ICONS,
+    ICON_FAMILIES,
+    DEFAULT_WALLPAPER: "lobby",
+    DEFAULT_ICON: "play"
+  };
 
   initFxToggle();
   initDownloadButtons();

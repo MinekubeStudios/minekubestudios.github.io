@@ -4435,7 +4435,9 @@ legend {
 @keyframes lineEnergy { 50% { filter: url(#hudGlow) brightness(1.35); } }
 @keyframes chartAreaReveal { to { opacity: 1; } }
 @keyframes chartPointShow { to { opacity: 1; } }
-@keyframes chartPointPulse { 0% { r: 4; opacity: 1; } 100% { r: 14; opacity: 0; } }
+/* SVG geometrie `r` chce v CSS jednotku — bez „px" je animace
+   neplatná a tečka v HUD grafu jen bliká bez zvětšení. */
+@keyframes chartPointPulse { 0% { r: 4px; opacity: 1; } 100% { r: 14px; opacity: 0; } }
 @keyframes metricLoad { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes metricPulse { 50% { filter: brightness(1.45); } }
 @keyframes hudFloat { 0%,100% { transform: translateY(0) rotate(-.4deg); } 50% { transform: translateY(-10px) rotate(.4deg); } }
