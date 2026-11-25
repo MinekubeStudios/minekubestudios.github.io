@@ -515,9 +515,24 @@
      (downloadButtonImpactV2). Třída zůstane o kousek déle, aby se
      dojezd neuřízl, a pak se uklidí i explozivní vrstva. */
 
-  const PULSE_MS = 1280;
-  const BURST_MS = 1500;
+  const PULSE_MS = 1180;
+  const BURST_MS = 1420;
   const pulseTimers = new WeakMap();
+
+  /* Osm vrstev, každá jeden prvek. Ne víc — každý prvek navíc je
+     další kompoziční vrstva a další práce pro prohlížeč. Dvanáct
+     jisker a osm fragmentů je uvnitř svých prvků jako výseče
+     gradientu, takže stojí jednu animaci, ne dvacet. */
+  const BURST_LAYERS = [
+    "lp-burst-glow",      /* měkká hmota pod rámem */
+    "lp-burst-sparks",    /* dvanáct jisker do plného kruhu */
+    "lp-burst-fragments", /* osm odštěpků */
+    "lp-burst-ring",      /* tenká linka letící do stran */
+    "lp-burst-shell-2",   /* druhá slupka, o chlup později */
+    "lp-burst-shell",     /* fialová slupka, hlavní nosič energie */
+    "lp-burst-edge",      /* záblesk na hraně, okamžik dopadu */
+    "lp-burst-sheen"      /* mini hover linka */
+  ];
 
   function buildBurst(button) {
     const burst = document.createElement("div");
@@ -530,11 +545,19 @@
     burst.style.left = rect.left + rect.width / 2 + "px";
     burst.style.top = rect.top + rect.height / 2 + "px";
 
-    /* Rám výbuchu má stejný tvar jako tlačítko, takže potřebuje
-       jeho přesné rozměry. Načítají se z tlačítka, ne z konstant —
-       kdyby se tlačítko někdy roztáhlo, pulz se roztáhne s ním. */
+    /* Rámy mají stejný tvar jako tlačítko, takže potřebují jeho
+       přesné rozměry. Čtou se z tlačítka, ne z konstant — kdyby se
+       tlačítko někdy roztáhlo, pulz se roztáhne s ním. */
     burst.style.setProperty("--burst-w", rect.width + "px");
     burst.style.setProperty("--burst-h", rect.height + "px");
+
+    const frag = document.createDocumentFragment();
+    BURST_LAYERS.forEach(name => {
+      const layer = document.createElement("span");
+      layer.className = name;
+      frag.appendChild(layer);
+    });
+    burst.appendChild(frag);
 
     return burst;
   }
@@ -542,15 +565,25 @@
   function playDownloadAnimation(button) {
     if (!button) return;
 
+    /* Prosvětlovací překryv. Dřív to byl animovaný filter
+       brightness() na tlačítku — dnes bílá vrstva s animovanou
+       opacity, která jde na kompozitor. Vytváří se jednou a pak
+       se jen znovu použije. */
+    let flash = button.querySelector(".lp-btn-flash");
+    if (!flash) {
+      flash = document.createElement("span");
+      flash.className = "lp-btn-flash";
+      flash.setAttribute("aria-hidden", "true");
+      button.appendChild(flash);
+    }
+
     button.classList.remove("is-pulse");
     /* Vynutí restart animace, aniž by cokoli měřilo layout. */
     void button.offsetWidth;
     button.classList.add("is-pulse");
 
     /* Předchozí vrstvu uklidit — jinak by ve stránce zůstala viset. */
-    const previous = document.body.querySelector(
-      ":scope > .lp-pulse-burst"
-    );
+    const previous = document.body.querySelector(":scope > .lp-pulse-burst");
     if (previous) previous.remove();
 
     document.body.appendChild(buildBurst(button));
@@ -563,9 +596,7 @@
     pulseTimers.set(button, [
       window.setTimeout(() => button.classList.remove("is-pulse"), PULSE_MS + 60),
       window.setTimeout(() => {
-        const burst = document.body.querySelector(
-          ":scope > .lp-pulse-burst"
-        );
+        const burst = document.body.querySelector(":scope > .lp-pulse-burst");
         if (burst) burst.remove();
       }, BURST_MS)
     ]);
