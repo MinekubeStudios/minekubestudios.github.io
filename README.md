@@ -1,75 +1,63 @@
-# Minekube Studios // Web (v12 — vizuální studio: tapety a ikony)
+# Minekube Studios // Web (v13 — launcher na tapetách z archivu, bez studia)
+
+## v13 — **stránka Launcheru znovu: tapety z archivu, pixelové ikony, bez studia**
+
+Sekce `#studio` je pryč i se svými soubory (`launcher/studio.js`,
+`launcher/launcher.css`, `launcher/launcher-mc.css`). Stránka stojí na
+jednom novém stylu a na skutečné grafice z archivů `WebBackgroundsV1–V3`
+a `WebIcons`.
+
+1. **Tapety dostaly hlavní roli** — `launcher/wallpapers/atmo/` má 14
+   ztmavených dlaždic (Lobby, Lobby · slunce, Pouštní chrám, Karmínový les,
+   Kaktusový kaňon, Pevnost, Zkažená citadela, Podzemní sluj, Java Edition,
+   PC bundle, Tux, Windows, Tux a Windows, Hlavní kulisa). Prolínají se
+   v pruzích mezi sekcemi přes `--bg` a `background-image`, hero má vlastní
+   `hero-backdrop.webp` (59 kB). Originály měly 1,3–13 MB, proto se do
+   stránky nedostaly; staré `wallpapers/hero/` + `wallpapers/thumb/`
+   (2 MB) jsou smazané, protože je nikdo nepoužíval.
+2. **Ikony jsou jednotné** — 52 ze 53 PNG v `launcher/icons/` má plátno
+   192×192 (dřív se míchaly poměry 256×179, 165×256, 320×180…). Šest
+   nových glyfů (pickaxe, anvil, bucket, torch, bell, ender-chest) a
+   `windows.png` doplňují archiv; wordmark `java-edition.png` 512×107
+   zůstal v původním poměru, protože se používá jako logo v okně
+   launcheru, ne jako glyf v mřížce.
+3. **Jeden styl místo tří** — `launcher/lpx.css` (~68 kB, scoped na
+   `.lpx`) drží celou stránku včetně světlého motivu, `forced-colors`,
+   tisku a redukce pohybu; `launcher/launcher-pulse.css` nese explozi
+   tlačítka (`.lp-pulse-burst*` + `.lpx-download.is-pulse*`). Smazané
+   `launcher.css` a `launcher-mc.css` už nic nenačítá.
+4. **Stahování beze změny pravidel** — tlačítko bere instalátor z GitHub
+   Releases, hlásí „Stahování zahájeno“ (nikdy „hotovo“), macOS a Linux
+   jsou „V plánu“. Vzhled `.download-ultimate` zůstal ve sdíleném
+   `styles.css`, `lpx.css` k němu přidává jen spinner, přelití a překryv.
+5. **Patička a navigace sedí s hlavičkou webu** — lepivá navigace sekcí
+   startuje pod plovoucí hlavičkou (`--lpx-nav-top`), kotvy mají
+   `scroll-margin-top`, patička je 13 px a v světlém motivu má
+   dostatečný kontrast (`#7a5f71`).
+6. **Přístupnost** — skip link (`.lpx-skip`) se ukáže až při fokusu,
+   taby prohlídky a carousel jdou z klávesnice, přepínač efektů si volbu
+   pamatuje, `aria-label` má i tlačítko „Znovu zkontrolovat verzi“.
+
+### Opravené chyby (v13)
+
+* **Prohlídka rozhraní nereagovala na klik ani šipky** — `launcher.js`
+  hledal staré `.lp-panel[role="tabpanel"]`, ale panely se jmenují
+  `.lpx-panel`; taby se přepínaly jen vizuálně.
+* **Carousel se zasekl na nule** — krok se počítal ze šířky dlaždice;
+  když nebyla změřená (skrytá sekce, bez layoutu), posun byl 0 px.
+  Nově se v tom případě skočí o kus tracku (min. 1 px).
+* **33 ikon mělo jiný poměr, než uvádělo HTML** — v mřížkách se
+  deformovaly; srovnáno na čtvercové plátno s průhledným okrajem.
+* **Chyběl překlad `lp.toast.retryFailed`** v češtině (a doplněn i do
+  angličtiny a slovenštiny), takže druhá neúspěšná kontrola verze
+  hlásila syrový klíč.
+* **Aura stahovacího tlačítka byla oříznutá** — `lpx.css` dával
+  `.lpx-download` i `overflow: hidden`, což uřízlo rám a svit
+  z `styles.css` (inset −9 px). Overflow teď má jen `.lpx-btn`.
+* **Obsah pásů mohl podlézt tapetu** — `.lpx-band > .lpx-wrap` má
+  vlastní vrstvu `z-index: 1` nad gradientem (`-1`) i tapetou (`-2`).
 
 ## v12 — **vizuální studio launcheru: 14 tapet z archivu a 46 ikon**
-
-Nová sekce `#studio` na stránce Launcheru nasazuje obrázky, které
-dosud ležely jen v archivech `WebBackgroundsV1–V3.zip` a `WebIcons.zip`.
-Vlevo je ovládání, vpravo **opravdové zkušební okno launcheru**, na
-kterém je každá volba hned vidět.
-
-1. **Tapety** (`launcher/wallpapers/`) — 14 skutečných tapet z archivů
-   (Lobby, Lobby · slunce, Pouštní chrám, Karmínový les, Kaktusový kaňon,
-   Pevnost, Zkažená citadela, Podzemní sluj, Java Edition, PC bundle,
-   Tux, Windows, Tux a Windows, Hlavní kulisa) ve dvou velikostech:
-   `hero/` 1600 px pro okno (23–258 kB na soubor, dohromady ~1,9 MB)
-   a `thumb/` 640 px pro mřížku (7–44 kB na dlaždici). Originály měly
-   1,3–13 MB, takže se do stránky nevešly. Poslední dvě dlaždice jsou
-   **čistý gradient** a **žádná tapeta**, vedle nich **vlastní obrázek**
-   (přetažení nebo výběr z disku, zmenšení na 1600 px přes plátno,
-   limit 12 MB, jemná zpráva, když se do paměti nevejde).
-2. **Ikony** (`launcher/icons/`) — všech 35 souborů z `WebIcons.zip`
-   (emblém, srdce, štíty, šipky, přepínače, myš, Linux, Java…) plus
-   **dvanáct nových pixelových glyphů**, které v archivu chyběly
-   (play, pause, home, chest, bookshelf, settings, trash, edit, plus,
-   folder, star, download) — nakreslené ve stylu vanilla Minecraftu
-   a uložené jako indexované PNG (~4–12 kB). Mřížka umí **hledání**
-   (česká i anglická jména, aliasy), **rodiny** (Emblémy / Rozhraní /
-   Srdce / Systém), počítadlo a prázdný stav.
-3. **Zkušební okno** — tapeta, avatar s vybranou ikonou (pixelově
-   ostrá), karta instance s tlačítkem Hrát, dlaždice z ikony
-   s posuvníkem velikosti 32–96 px a jménem hráče. Volby se ukládají
-   do `localStorage` (`minekube:launcher-wallpaper`, `-icon`, `-tiles`,
-   `-size`) a jdou vrátit jedním tlačítkem. Ikona se dá stáhnout jako PNG.
-4. **Architektura** — data (tapety, ikony) bydlí v `launcher/launcher.js`,
-   chování v novém `launcher/studio.js`, které s launcher.js sdílí jeden
-   uzávěr přes `window.MinekubeLauncherApi` (překlady, toasty, stav
-   efektů). Styl je v `launcher-mc.css` (sekce 23), uzavřený
-   v `[data-studio]`, se světlým motivem, nucenými barvami, tiskem
-   a redukcí pohybu.
-5. **Přístupnost a výkon** — tapeta je skutečný radio button (Tab,
-   šipky, čtečka), taby mají `role="tablist"` s obsluhou šipek/Home/End,
-   mřížka je `<label>` + radio, stav nese `role="status"`. Tapeta se
-   podává přes `srcset` (640/1600), náhledy mají `loading="lazy"`,
-   velký soubor se načte jen při skutečném výběru.
-6. **Překlady** — 111 nových klíčů `std.*` ve všech třech jazycích
-   (CS / EN / SK), celkem **345 klíčů** na jazyk. Poprvé se překládá
-   i `placeholder` (`data-i18n-placeholder` v `app.js`).
-
-### Opravené chyby (v12)
-
-* **Testy launcheru byly rozbité** — `tools/launcher_page_test.mjs`
-  hledal `<script src="launcher.js">` bez cache-bustingu `?v=`, takže
-  v jsdom zůstaly nenačtené skripty a **16 z 18 testů padalo**. Testy
-  teď verzi odřezávají, pokrývají aktuální stránku (19 scénářů)
-  a všechny procházejí.
-* **Dvojí stažení** — tři nezávislé click listenery spouštěly
-  `onDownloadClick` dvakrát (pulz → dvě stahování). Zůstal jeden
-  delegovaný listener s 350ms pojistkou proti dvojkliku a ignoruje
-  Ctrl/⌘/Shift/Alt klik.
-* **Tlačítko zůstalo viset na „Stahování zahájeno"** — re-render po
-  9 s byl naplánovaný jen u skutečného stahování. Teď ho plánuje
-  `renderAll` pro každou cestu.
-* **Popisek hlavního tlačítka se nepřekládal** — statický `data-i18n`
-  přebíjel dynamický text při přepnutí jazyka; atribut se teď odstraní.
-* **Karty v sekci Stažení** ukazovaly „Zkusit znovu" i po úspěšném
-  načtení (stav se nikdy nevrátil k původnímu popisku).
-* **Odkaz „GitHub Releases"** přepsal zdroj z obsahu repa adresou
-  repozitáře; přepisuje se jen adresa, která opravdu vede na `/releases`.
-* **Překlad `footer.community2.aria`** v `app.js` chyběl ve všech
-  třech jazycích, takže Game Jolt odkaz neměl české přístupné jméno.
-* **`placeholder` se nikdy nepřekládal** — přidán `data-i18n-placeholder`.
-* **`wordmark-sm.png`** měl v HTML `width/height` otočené (380×473
-  místo 380×214), takže splash v CTA posouval layout.
 
 ## v11 — **apple rytmus na celém webu a 3D kostka Minekube**
 
@@ -678,9 +666,10 @@ Původní popis šestého kola: blok v `site/styles.css` se jmenoval
 | `modpack-repo/` | **Obsah samostatného repozitáře s modpacky** (`packs/`, `manifest.json`, `tools/`, `.github/workflows/`, `docs/`) — nahrává ho `tools/create-modpack-repo.sh` |
 | `tools/create-modpack-repo.sh` | Založí `MinekubeStudios/modpacky` a nahraje do něj `modpack-repo/` |
 | `launcher/releases.js` | **Vydání launcheru z repozitáře `MinekubeStudios/MinekubeLauncher`** — GitHub Releases API → obsah repozitáře → statická záloha, cache v `localStorage`, událost `minekube:launcher-releases`, veřejné API `window.MinekubeLauncherReleases` |
-| `launcher/launcher.css` | Styly sekce ke stažení: sprite ikon, čipy platforem, stavy tlačítka, karty Windows / macOS / Linux |
+| `launcher/lpx.css` | Celý nový design stránky Launcheru (scoped `.lpx`): hero, pásy s tapetami, karty, prohlídka, platformy, FAQ, patička |
+| `launcher/launcher-pulse.css` | Exploze a přelití stahovacího tlačítka (`.lp-pulse-burst*`, `.lpx-download.is-pulse*`) |
 | `tools/releases_test.mjs` | Test napojení na repozitář (jsdom): manifest, záložní GitHub API, demo i stav bez sítě |
-| `tools/launcher_page_test.mjs` | Test stránky Launcher (jsdom): stažení z GitHubu, platformy v plánu, záložní adresa, jazyky |
+| `tools/launcher_page_test.mjs` | Test stránky Launcher (jsdom, 20 scénářů): stahování z GitHubu, platformy v plánu, záložní adresa, jazyky, prohlídka, carousel, tapety a ikony |
 | `assets/favicon.svg` | Favicon z brand znaku |
 
 ## Sekce stránky
@@ -742,10 +731,12 @@ Navíc test napojení modpacků na repozitář s vydáními (`tools/releases_tes
 node tools/releases_test.mjs
 ```
 
-A test stránky Launcher (`tools/launcher_page_test.mjs`, 6 scénářů —
-instalátor nalezený v repozitáři a jeho stažení, macOS a Linux „v plánu“,
-návštěvník z macOS, nedostupné GitHub API a záložní adresa, přepínání
-jazyků, odkazy na repozitář):
+A test stránky Launcher (`tools/launcher_page_test.mjs`, 20 scénářů —
+instalátor z GitHubu a jeho otisk, Linux „v plánu“, návštěvník z macOS,
+nedostupné API a záložní adresa, chybový stav s novým pokusem, tři jazyky,
+překlady klíčů i dynamických textů, prohlídka z klávesnice, carousel,
+přepínač efektů, tapety a ikony, sémantika, obrázky, světlý motiv,
+tisk a redukce pohybu):
 
 ```bash
 node tools/launcher_page_test.mjs

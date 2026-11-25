@@ -195,7 +195,7 @@
 
   /* ===================== PRVKY NA STRÁNCE ===================== */
 
-  const heroButton = document.querySelector(".lp-hero [data-launcher-download]");
+  const heroButton = document.querySelector(".lpx-hero [data-launcher-download]");
   const heroLabel = heroButton?.querySelector("[data-os-label]") ?? null;
   const heroSub = document.querySelector("[data-os-sub]");
   const versionNodes = [...document.querySelectorAll("[data-launcher-version]")];
@@ -872,8 +872,8 @@
 
   /* ===================== PROHLÍDKA ROZHRANÍ ===================== */
 
-  const tourTabs = [...document.querySelectorAll(".lp-tabs [role='tab']")];
-  const tourPanels = [...document.querySelectorAll(".lp-panel[role='tabpanel']")];
+  const tourTabs = [...document.querySelectorAll(".lpx-tabs [role='tab']")];
+  const tourPanels = [...document.querySelectorAll(".lpx-panel[role='tabpanel']")];
 
   function selectTour(tab, { focus = false } = {}) {
     if (!tab) return;
@@ -894,7 +894,7 @@
     tab.addEventListener("click", () => selectTour(tab));
   });
 
-  const tourList = document.querySelector(".lp-tabs");
+  const tourList = document.querySelector(".lpx-tabs");
   const tabPill = tourList?.querySelector("[data-tab-pill]") ?? null;
 
   function syncTabPill() {
@@ -1226,7 +1226,7 @@
       { passive: true }
     );
 
-    document.querySelectorAll(".lp-btn--spark").forEach(button => {
+    document.querySelectorAll(".lpx-btn--spark, .lp-btn--spark").forEach(button => {
       button.addEventListener("click", event => {
         if (!fxOn()) return;
         const rect = button.getBoundingClientRect();
@@ -1287,7 +1287,7 @@
   /* ---------- Ripple v tlačítkách ---------- */
 
   function initRipples() {
-    const buttons = [...document.querySelectorAll(".lp-btn")];
+    const buttons = [...document.querySelectorAll(".lpx-btn")];
     if (!buttons.length) return;
 
     const spawn = (button, x, y) => {
@@ -1409,7 +1409,7 @@
   /* ---------- Nekonečný pás ---------- */
 
   function initMarquee() {
-    const track = document.querySelector(".lp-marquee__track");
+    const track = document.querySelector("[data-marquee]");
     if (!track || track.dataset.cloned === "true") return;
     const originals = [...track.children];
     if (!originals.length) return;
@@ -1444,7 +1444,7 @@
   }
 
   function initScrollUi() {
-    const nav = document.querySelector(".lp-nav");
+    const nav = document.querySelector(".lpx-nav");
     const links = [...document.querySelectorAll("[data-nav-link]")];
     const targets = links
       .map(link => {
@@ -1485,7 +1485,7 @@
         if (top <= line) activeIndex = index;
       });
       if (activeIndex === -1 && tops.length) activeIndex = 0;
-      const list = nav?.querySelector(".lp-nav__list");
+      const list = nav?.querySelector(".lpx-nav__list");
       targets.forEach(({ link }, index) => {
         const active = index === activeIndex;
         const wasActive = link.classList.contains("is-active");
@@ -1540,7 +1540,7 @@
      výhradní otevírání pro prohlížeče bez podpory atributu `name`. */
 
   function initFaq() {
-    const items = [...document.querySelectorAll(".lp-faq__item")];
+    const items = [...document.querySelectorAll(".lpx-faq__item")];
     if (!items.length) return;
     if ("name" in HTMLDetailsElement.prototype) return;
 
@@ -1633,7 +1633,7 @@
   function initDownloadIdlePause() {
     if (!("IntersectionObserver" in window)) return;
 
-    const buttons = document.querySelectorAll(".lp-dlbtn");
+    const buttons = document.querySelectorAll(".lpx-download");
     if (!buttons.length) return;
 
     const watcher = new IntersectionObserver(
@@ -1719,11 +1719,18 @@
     const label = button?.querySelector("[data-mc-motion-label]");
     if (!button) return;
 
+    const icon = button.querySelector("img");
+
     const sync = () => {
       const on = !prefersReduced() && document.querySelector(".launcher-page")?.getAttribute("data-fx-state") !== "off";
       button.setAttribute("aria-pressed", String(on));
       if (label) {
         label.textContent = translate(on ? "lp.mc.motion.on" : "lp.mc.motion.off", on ? "Animace zapnuté" : "Animace vypnuté");
+      }
+      /* Ikona přepínače jde s textem: zapnuto = toggle-on, vypnuto = toggle-off. */
+      if (icon) {
+        const next = on ? "icons/toggle-on.png" : "icons/toggle-off.png";
+        if (!icon.src.endsWith(next)) icon.src = next;
       }
     };
 
@@ -1731,6 +1738,12 @@
       const fxToggle = document.querySelector("[data-fx-toggle]");
       if (fxToggle) fxToggle.click();
       sync();
+    });
+
+    /* Přepínač Efekty v liště sekcí mění stejný stav — dvě tlačítka
+       musí ukazovat totéž, jinak jedno z nich lže. */
+    document.querySelector("[data-fx-toggle]")?.addEventListener("click", () => {
+      window.requestAnimationFrame(sync);
     });
 
     document.addEventListener("minekube:language", sync);
@@ -1779,10 +1792,14 @@
     if (!track) return;
 
     const step = () => {
-      const slide = track.querySelector(".lp-mc-slide");
-      if (!slide) return track.clientWidth;
+      const slide = track.querySelector(".lpx-slide");
       const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-      return slide.getBoundingClientRect().width + gap;
+      const width = slide ? slide.getBoundingClientRect().width : 0;
+      /* Šířka dlaždice může být 0 (skrytá sekce, ještě nevykresleno,
+         testovací prostředí bez layoutu). Posun o nulu by carousel
+         „zasekl", proto v tom případě skočíme o kus tracku. */
+      if (width > 1) return width + gap;
+      return Math.max(1, Math.round(track.clientWidth * 0.92));
     };
 
     const sync = () => {
@@ -1823,7 +1840,11 @@
   function initMcDig() {
     document.querySelectorAll("[data-mc-dig]").forEach(button => {
       button.addEventListener("click", () => {
-        const target = document.querySelector("[data-mc-hero]")?.nextElementSibling;
+        /* Hero je první sekce; „ponoř se hloub" skočí na sekci za
+           rychlými fakty — tam začíná skutečný obsah. */
+        const target =
+          document.getElementById("platformy-prehled") ||
+          document.querySelector("[data-mc-hero]")?.nextElementSibling;
         if (!target) return;
         const reduce = prefersReduced();
         target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
@@ -1831,101 +1852,16 @@
     });
   }
 
-  /* ===================== VIZUÁLNÍ STUDIO (v12) =====================
-     Data tapet a ikon bydlí tady, protože je stránka potřebuje i bez
-     zbytku studia (náhledy v hero) a protože se sem dostane dřív než
-     studio.js. Vykreslování a stav drží studio.js ve stejném uzávěru.
-
-     Tapety pocházejí z WebBackgrounds V1–V3, ikony z WebIcons + dvanáct
-     nových pixelových glyphů, které v archivu chyběly. Nic se nenačítá
-     samo: náhledy jsou lazy, velké soubory až při skutečném výběru. */
-
-  const WALLPAPERS = [
-    { slug: "lobby", label: "std.wp.lobby", hero: "wallpapers/hero/lobby.webp", thumb: "wallpapers/thumb/lobby.webp", tint: "168, 128, 220" },
-    { slug: "lobby-s", label: "std.wp.lobby-s", hero: "wallpapers/hero/lobby-s.webp", thumb: "wallpapers/thumb/lobby-s.webp", tint: "244, 162, 96" },
-    { slug: "desert-temple", label: "std.wp.desert-temple", hero: "wallpapers/hero/desert-temple.webp", thumb: "wallpapers/thumb/desert-temple.webp", tint: "236, 186, 92" },
-    { slug: "crimson-forest", label: "std.wp.crimson-forest", hero: "wallpapers/hero/crimson-forest.webp", thumb: "wallpapers/thumb/crimson-forest.webp", tint: "226, 90, 60" },
-    { slug: "cacti-canyon", label: "std.wp.cacti-canyon", hero: "wallpapers/hero/cacti-canyon.webp", thumb: "wallpapers/thumb/cacti-canyon.webp", tint: "240, 148, 88" },
-    { slug: "stronghold", label: "std.wp.stronghold", hero: "wallpapers/hero/stronghold.webp", thumb: "wallpapers/thumb/stronghold.webp", tint: "108, 186, 170" },
-    { slug: "blighted-citadel", label: "std.wp.blighted-citadel", hero: "wallpapers/hero/blighted-citadel.webp", thumb: "wallpapers/thumb/blighted-citadel.webp", tint: "152, 120, 240" },
-    { slug: "subdungeon", label: "std.wp.subdungeon", hero: "wallpapers/hero/subdungeon.webp", thumb: "wallpapers/thumb/subdungeon.webp", tint: "120, 200, 140" },
-    { slug: "java-edition", label: "std.wp.java-edition", hero: "wallpapers/hero/java-edition.webp", thumb: "wallpapers/thumb/java-edition.webp", tint: "128, 196, 232" },
-    { slug: "pc-bundle", label: "std.wp.pc-bundle", hero: "wallpapers/hero/pc-bundle.webp", thumb: "wallpapers/thumb/pc-bundle.webp", tint: "146, 200, 110" },
-    { slug: "tux", label: "std.wp.tux", hero: "wallpapers/hero/tux.webp", thumb: "wallpapers/thumb/tux.webp", tint: "128, 178, 240" },
-    { slug: "windows", label: "std.wp.windows", hero: "wallpapers/hero/windows.webp", thumb: "wallpapers/thumb/windows.webp", tint: "120, 168, 255" },
-    { slug: "tux-windows", label: "std.wp.tux-windows", hero: "wallpapers/hero/tux-windows.webp", thumb: "wallpapers/thumb/tux-windows.webp", tint: "120, 220, 190" },
-    { slug: "main-backdrop", label: "std.wp.main-backdrop", hero: "wallpapers/hero/main-backdrop.webp", thumb: "wallpapers/thumb/main-backdrop.webp", tint: "176, 150, 180" }
-  ];
-
-  const ICON_FAMILIES = ["emblems", "ui", "hearts", "system"];
-
-  const ICONS = [
-    /* --- emblémy z WebIcons --- */
-    { slug: "armor-full", family: "emblems", aliases: "armor brneni" },
-    { slug: "heart-full", family: "emblems", aliases: "heart srdce" },
-    { slug: "emerald-shield", family: "emblems", aliases: "emerald shield stit" },
-    { slug: "protection", family: "emblems", aliases: "protection ochrana" },
-    { slug: "swarm-resistance", family: "emblems", aliases: "swarm resistance odolnost" },
-    { slug: "shared-pain", family: "emblems", aliases: "shared pain bolest" },
-    { slug: "fire-focus", family: "emblems", aliases: "fire ohen focus" },
-    { slug: "lightning-focus", family: "emblems", aliases: "lightning blesk" },
-    { slug: "infinity", family: "emblems", aliases: "infinity nekonecno" },
-    { slug: "life-boost", family: "emblems", aliases: "life boost zivot" },
-    { slug: "blindness", family: "emblems", aliases: "blindness slepota" },
-    { slug: "flee", family: "emblems", aliases: "flee utek" },
-    { slug: "raid-omen", family: "emblems", aliases: "raid omen znameni" },
-    { slug: "trial-omen", family: "emblems", aliases: "trial omen znameni" },
-    { slug: "ender-pearl", family: "emblems", aliases: "ender pearl perla" },
-    /* --- rozhraní: archiv + nové glyphy --- */
-    { slug: "arrow-left", family: "ui", aliases: "arrow left sipka zpet" },
-    { slug: "arrow-left-lit", family: "ui", aliases: "arrow left sipka highlighted" },
-    { slug: "arrow-right", family: "ui", aliases: "arrow right sipka vpred" },
-    { slug: "arrow-right-lit", family: "ui", aliases: "arrow right sipka highlighted" },
-    { slug: "cancel", family: "ui", aliases: "cancel krizek zrusit" },
-    { slug: "confirm", family: "ui", aliases: "confirm fajfka potvrdit" },
-    { slug: "lock", family: "ui", aliases: "lock zamek" },
-    { slug: "locked", family: "ui", aliases: "locked zamek ikona" },
-    { slug: "search", family: "ui", aliases: "search hledani lupa" },
-    { slug: "mouse", family: "ui", aliases: "mouse mys" },
-    { slug: "mouse-right", family: "ui", aliases: "mouse right mys prave" },
-    { slug: "toggle-off", family: "ui", aliases: "toggle off prepinac" },
-    { slug: "toggle-on", family: "ui", aliases: "toggle on prepinac" },
-    { slug: "play", family: "ui", aliases: "play hrat start" },
-    { slug: "pause", family: "ui", aliases: "pause pauza" },
-    { slug: "home", family: "ui", aliases: "home dum domov" },
-    { slug: "trash", family: "ui", aliases: "trash kos smazat" },
-    { slug: "edit", family: "ui", aliases: "edit tuzka upravit" },
-    { slug: "plus", family: "ui", aliases: "plus pridat" },
-    { slug: "folder", family: "ui", aliases: "folder slozka" },
-    { slug: "star", family: "ui", aliases: "star hvezda oblibene" },
-    { slug: "download", family: "ui", aliases: "download stahnout" },
-    { slug: "bookshelf", family: "ui", aliases: "bookshelf knihovna" },
-    { slug: "chest", family: "ui", aliases: "chest truhla" },
-    { slug: "settings", family: "ui", aliases: "settings ozubene kolo nastaveni" },
-    /* --- srdce --- */
-    { slug: "heart", family: "hearts", aliases: "heart srdce" },
-    { slug: "gold-heart", family: "hearts", aliases: "gold heart zlate srdce" },
-    /* --- systém --- */
-    { slug: "linux", family: "system", aliases: "linux tux" },
-    { slug: "java-edition", family: "system", aliases: "java edition minecraft" },
-    { slug: "server-ping", family: "system", aliases: "server ping signal" },
-    { slug: "loading", family: "system", aliases: "loading nacitani" }
-  ].map(item => ({ ...item, file: `icons/${item.slug}.png` }));
-
-  const STUDIO_TABS = ["look", "icons"];
+  /* ===================== VEŘEJNÉ ROZHRANÍ PRO TESTY =====================
+     Stránka nemá žádnou galerii ani studio — API drží jen to, co
+     potřebují testy a co by mohlo využít jiné rozšíření. */
 
   window.MinekubeLauncherApi = {
     translate,
     announce,
     prefersReduced,
     fxOn,
-    motionQuery,
-    STUDIO_TABS,
-    WALLPAPERS,
-    ICONS,
-    ICON_FAMILIES,
-    DEFAULT_WALLPAPER: "lobby",
-    DEFAULT_ICON: "play"
+    motionQuery
   };
 
   initFxToggle();

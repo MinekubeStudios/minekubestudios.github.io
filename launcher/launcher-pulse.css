@@ -1,0 +1,726 @@
+/* =============================================================
+   MINEKUBE STUDIOS // LAUNCHER — PULZ TLAČÍTKA STÁHNUTÍ
+   -------------------------------------------------------------
+   Vnější exploze, kterou skládá launcher.js při kliknutí na
+   stahovací tlačítko (.lp-pulse-burst). Zbytek vizuálu pulzu
+   (svatozář, rám, plasma, ikona) bydlí v lpx.css, protože patří
+   ke stránce; tenhle soubor drží jen vrstvy, které vznikají za
+   běhu a musí být mimo tlačítko, aby je neorezal overflow.
+
+   Pravidlo, které se tu drží: animuje se jen transform a opacity,
+   blur je statický a namalovaný jednou. Díky tomu pulz běží na
+   kompozitoru i na slabém notebooku.
+   ============================================================= */
+
+.lp-pulse-burst {
+  position: fixed;
+  z-index: 12000;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  /* POZOR: `contain: paint` by ořezal děti na nulový box — rodič
+     má width:0;height:0 a contain: paint řeže potomky podle jeho
+     hranic. Vrstva proto containment NEMÁ; ořez tu nedělá nic
+     užitečného a jen by zabil celou explozi. Stejný důvod, proč
+     tu není overflow: hidden. */
+}
+
+.lp-pulse-burst *,
+.lp-pulse-burst::before,
+.lp-pulse-burst::after {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  backface-visibility: hidden;
+}
+
+.lp-pulse-burst .lp-burst-edge {
+  width: var(--burst-w, 256px);
+  height: var(--burst-h, 54px);
+  margin: calc(var(--burst-h, 54px) / -2) 0 0 calc(var(--burst-w, 256px) / -2);
+  padding: 1.5px;
+  border-radius: 13px;
+  background: linear-gradient(105deg,
+    #fff,
+    #fffae0 30%,
+    #ffec9e 54%,
+    #fff);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  /* Statický stín — namalovaný jednou, neanimovaný. */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.85),
+    0 0 24px rgba(255, 232, 150, 0.55);
+  opacity: 0;
+  animation: lpEdge 1.15s cubic-bezier(0.1, 0.85, 0.2, 1) forwards;
+}
+
+.lp-pulse-burst .lp-burst-shell {
+  width: var(--burst-w, 256px);
+  height: var(--burst-h, 54px);
+  margin: calc(var(--burst-h, 54px) / -2) 0 0 calc(var(--burst-w, 256px) / -2);
+  padding: 2px;
+  border-radius: 13px;
+  background: linear-gradient(105deg,
+    #fff0aa,
+    #ffb04c 18%,
+    #ff5ca8 40%,
+    #d654ff 60%,
+    #8c68ff 80%,
+    #d654ff);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  box-shadow: 0 0 12px rgba(226, 130, 255, 0.7),
+    0 0 30px rgba(196, 72, 255, 0.45);
+  opacity: 0;
+  animation: lpShell 1.9s cubic-bezier(0.06, 0.75, 0.12, 1) 60ms forwards;
+}
+
+.lp-pulse-burst .lp-burst-shell-2 {
+  width: var(--burst-w, 256px);
+  height: var(--burst-h, 54px);
+  margin: calc(var(--burst-h, 54px) / -2) 0 0 calc(var(--burst-w, 256px) / -2);
+  padding: 1.5px;
+  border-radius: 13px;
+  background: linear-gradient(105deg,
+    rgba(135, 255, 189, 0.75),
+    rgba(105, 255, 166, 0.7) 20%,
+    rgba(255, 212, 71, 0.8) 48%,
+    rgba(255, 123, 28, 0.85) 70%,
+    rgba(213, 73, 255, 0.8));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  box-shadow: 0 0 16px rgba(105, 255, 166, 0.6),
+    0 0 40px rgba(213, 73, 255, 0.35);
+  opacity: 0;
+  animation: lpShell2 2.15s cubic-bezier(0.06, 0.72, 0.12, 1) 200ms forwards;
+}
+
+.lp-pulse-burst .lp-burst-glow {
+  width: var(--burst-w, 256px);
+  height: var(--burst-h, 54px);
+  margin: calc(var(--burst-h, 54px) / -2) 0 0 calc(var(--burst-w, 256px) / -2);
+  border-radius: 50%;
+  /* Střed je záměrně PRŮHLEDNÝ. Záře leží nad tlačítkem
+     (z-index 12000) a kdyby byla uprostřed neprůhledná, prosvítala
+     by přes popisek a srážela jeho kontrast. Hmota patří na okraje,
+     střed nechává text na pokoji. */
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 252, 226, 0.18) 0%,
+    rgba(255, 240, 180, 0.3) 34%,
+    rgba(255, 170, 60, 0.34) 58%,
+    rgba(196, 72, 255, 0.16) 78%,
+    transparent 92%
+  );
+  filter: blur(22px);
+  opacity: 0;
+  animation: lpGlow 1.8s cubic-bezier(0.08, 0.72, 0.16, 1) forwards;
+}
+
+.lp-pulse-burst .lp-burst-ring {
+  width: 120px;
+  height: 120px;
+  margin: -60px 0 0 -60px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 240, 160, 0.95);
+  box-shadow: 0 0 14px rgba(255, 220, 110, 0.8),
+    0 0 34px rgba(255, 130, 40, 0.5);
+  opacity: 0;
+  animation: lpRing 1.95s cubic-bezier(0.06, 0.78, 0.12, 1) 60ms forwards;
+}
+
+.lp-pulse-burst .lp-burst-sparks {
+  width: 300px;
+  height: 300px;
+  margin: -150px 0 0 -150px;
+  border-radius: 50%;
+  /* Teplá jiskra, ne bílý škrábanec: barvy jdou z tlačítka. */
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 248, 214, 0.9) 0deg 1.3deg,
+    rgba(255, 186, 74, 0.55) 1.3deg 2.1deg,
+    transparent 2.1deg 30deg
+  );
+  /* Vyhasínání: jiskra je nejjasnější hned u tlačítka a do stran
+     mizí. Krátký dosah = jiskra, ne čára přes celý nadpis. */
+  /* PRSTENEC, ne výseč. Výseč z conic-gradientu je radiální linka
+     od středu — přes celý nadpis vypadá jako škrábanec. Úzká
+     prstencová maska z ní udělá krátký zářez, tedy jiskru. */
+  -webkit-mask-image: radial-gradient(
+    circle,
+    transparent 0 31%,
+    #000 36% 44%,
+    transparent 49%
+  );
+  mask-image: radial-gradient(
+    circle,
+    transparent 0 31%,
+    #000 36% 44%,
+    transparent 49%
+  );
+  opacity: 0;
+  animation: lpSparks 1.75s cubic-bezier(0.08, 0.72, 0.16, 1) forwards;
+}
+
+.lp-pulse-burst .lp-burst-fragments {
+  width: 300px;
+  height: 300px;
+  margin: -150px 0 0 -150px;
+  border-radius: 50%;
+  /* Osm úzkých odštěpků. Úzké proto, že široká výseč vypadá
+     jako kus dortu, ne jako jiskra, která odlétla. */
+  background: repeating-conic-gradient(
+    from 22.5deg,
+    rgba(255, 253, 240, 0.9) 0deg 1.1deg,
+    transparent 1.1deg 45deg
+  );
+  /* Maska drží odštěpky daleko od tlačítka — vycházejí až od
+     okraje, ne ze středu. Vnitřek je prázdný. */
+  /* Taktéž prstenec: odštěpky vycházejí až za okrajem tlačítka
+     a jsou krátké. Plná výseč by byla klín přes půl obrazovky. */
+  -webkit-mask-image: radial-gradient(
+    circle,
+    transparent 0 58%,
+    #000 64% 72%,
+    transparent 79%
+  );
+  mask-image: radial-gradient(
+    circle,
+    transparent 0 58%,
+    #000 64% 72%,
+    transparent 79%
+  );
+  opacity: 0;
+  animation: lpFragments 1.85s cubic-bezier(0.08, 0.7, 0.16, 1) 90ms forwards;
+}
+
+.lp-pulse-burst .lp-burst-sheen {
+  width: var(--burst-w, 256px);
+  height: var(--burst-h, 54px);
+  margin: calc(var(--burst-h, 54px) / -2) 0 0 calc(var(--burst-w, 256px) / -2);
+  border-radius: 13px;
+  overflow: hidden;
+  opacity: 0;
+  animation: lpSheenVisible 0.95s linear 90ms forwards;
+  -webkit-mask-image: linear-gradient(#000 0 0);
+  mask-image: linear-gradient(#000 0 0);
+}
+
+.lp-pulse-burst .lp-burst-sheen::after {
+  content: "";
+  position: absolute;
+  inset: -60% -40%;
+  left: -40%;
+  top: -60%;
+  width: 180%;
+  height: 220%;
+  background: linear-gradient(
+    100deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.55) 49.4%,
+    rgba(255, 255, 255, 0.92) 50%,
+    rgba(255, 255, 255, 0.55) 50.6%,
+    transparent 60%
+  );
+  transform: translate3d(-130%, 0, 0) rotate(6deg);
+  animation: lpSheenSweep 0.95s cubic-bezier(0.3, 0.05, 0.2, 1) 90ms forwards;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse {
+  animation: lpBtnImpact 1.75s cubic-bezier(0.14, 0.86, 0.18, 1) both;
+  will-change: transform;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse .lp-btn-flash {
+  position: absolute;
+  inset: 0;
+  /* z-index 4 = pod popiskem (ten má 7). Překryv prosvětluje
+     podklad, ale nesmí přebarvit podložku pod textem — jinak
+     z ní udělá šedý flek a podložka ztratí smysl. */
+  z-index: 4;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 246, 210, 0.5) 42%,
+    rgba(255, 255, 255, 0) 78%
+  );
+  pointer-events: none;
+  opacity: 0;
+  animation: lpFlash 1.1s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse::before {
+  z-index: -3;
+  animation: lpAura 1.6s cubic-bezier(0.08, 0.72, 0.16, 1) both;
+  will-change: transform, opacity;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse::after {
+  animation: lpBorder 1.75s cubic-bezier(0.08, 0.76, 0.16, 1) both;
+  will-change: transform, opacity;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse .download-fx {
+  animation: lpSurface 1.75s cubic-bezier(0.12, 0.82, 0.16, 1) both;
+  will-change: opacity;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse .download-plasma {
+  animation: lpPlasma 1.55s cubic-bezier(0.08, 0.72, 0.16, 1) both;
+  will-change: transform, opacity;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse .download-sweep,
+.button[data-download].download-ultimate.lpx-download.is-pulse .download-pulse-line {
+  display: none;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse .download-icon {
+  animation: lpIconBox 1.6s cubic-bezier(0.12, 0.84, 0.18, 1) both;
+  will-change: transform;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse .download-icon-orbit {
+  opacity: 1;
+  animation: lpIconOrbit 1.5s cubic-bezier(0.12, 0.84, 0.18, 1) both;
+  will-change: transform, opacity;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse .download-icon svg {
+  animation: lpArrow 1.55s cubic-bezier(0.12, 0.84, 0.18, 1) both;
+  will-change: transform;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse .download-label,
+.button[data-download].download-ultimate.lpx-download.is-pulse:hover .download-label,
+.button[data-download].download-ultimate.lpx-download.is-pulse:focus-visible .download-label {
+  color: #241005;
+  /* Halo stačí jemné. Silné bílé halo (0 0 6px při 0.92) text
+     opticky vybledne — tmavá výplň se v něm ztratí a nápis vypadá
+     jako duch. Tohle je jen tolik, aby písmena nepřilnula k podkladu. */
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85),
+    0 0 4px rgba(255, 255, 255, 0.5),
+    0 0 10px rgba(255, 246, 214, 0.4);
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse .download-label,
+.button[data-download].download-ultimate.lpx-download.is-pulse:hover .download-label,
+.button[data-download].download-ultimate.lpx-download.is-pulse:focus-visible .download-label {
+  color: #241005;
+  /* Halo je záměrně hustší než v klidu. Pulz prosvětluje plochu
+     kolem textu a vnější záře přes něj částečně prosvítá — halo
+     drží tmavý text oddělený od světlého okolí po celou dobu. */
+  text-shadow:
+    0 0 2px rgba(255, 255, 250, 1),
+    0 0 5px rgba(255, 253, 240, 0.98),
+    0 0 9px rgba(255, 250, 226, 0.92),
+    0 0 15px rgba(255, 246, 210, 0.82),
+    0 0 24px rgba(255, 240, 190, 0.6),
+    0 0 34px rgba(255, 232, 170, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse .download-particles {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+.button[data-download].download-ultimate.lpx-download.is-pulse,
+  .button[data-download].download-ultimate.lpx-download.is-pulse::before,
+  .button[data-download].download-ultimate.lpx-download.is-pulse::after,
+  .button[data-download].download-ultimate.lpx-download.is-pulse .download-fx,
+  .button[data-download].download-ultimate.lpx-download.is-pulse .download-plasma,
+  .button[data-download].download-ultimate.lpx-download.is-pulse .download-sweep,
+  .button[data-download].download-ultimate.lpx-download.is-pulse .download-pulse-line,
+  .button[data-download].download-ultimate.lpx-download.is-pulse .download-icon,
+  .button[data-download].download-ultimate.lpx-download.is-pulse .download-icon-orbit,
+  .button[data-download].download-ultimate.lpx-download.is-pulse .download-icon svg,
+  .button[data-download].download-ultimate.lpx-download.is-pulse .lp-btn-flash {
+    animation: none;
+  }
+.button[data-download].download-ultimate.lpx-download.is-pulse {
+    filter: brightness(1.3) saturate(1.2);
+  }
+.lp-pulse-burst {
+    display: block;
+  }
+.lp-pulse-burst .lp-burst-edge,
+  .lp-pulse-burst .lp-burst-shell,
+  .lp-pulse-burst .lp-burst-shell-2 {
+    animation: none;
+    opacity: 1;
+  }
+.lp-pulse-burst .lp-burst-edge {
+    transform: scale(1.06);
+  }
+.lp-pulse-burst .lp-burst-shell {
+    transform: scale(1.24);
+  }
+.lp-pulse-burst .lp-burst-shell-2 {
+    transform: scale(1.46);
+    opacity: 0.6;
+  }
+.lp-pulse-burst .lp-burst-glow,
+  .lp-pulse-burst .lp-burst-sparks,
+  .lp-pulse-burst .lp-burst-fragments,
+  .lp-pulse-burst .lp-burst-ring,
+  .lp-pulse-burst .lp-burst-sheen {
+    display: none;
+  }
+}
+
+.lpx-download[data-idle-paused="true"] .download-particles i,
+.lpx-download[data-idle-paused="true"] .download-sweep,
+.lpx-download[data-idle-paused="true"] .download-icon-orbit,
+.lpx-download[data-idle-paused="true"] .download-fx,
+.lpx-download[data-idle-paused="true"] .download-plasma,
+.lpx-download[data-idle-paused="true"] .download-pulse-line,
+.lpx-download[data-idle-paused="true"]::before,
+.lpx-download[data-idle-paused="true"]::after {
+  animation-play-state: paused !important;
+}
+
+.button[data-download].download-ultimate.lpx-download,
+.button[data-download].download-ultimate.lpx-download .download-label {
+  color: #2a1204;
+  text-shadow: 0 1px 0 rgba(255, 246, 214, 0.7);
+}
+
+.button[data-download].download-ultimate.lpx-download .download-label {
+  font-weight: 800;
+}
+
+.button[data-download].download-ultimate.lpx-download .download-icon {
+  color: #2a1204;
+}
+
+.button[data-download].download-ultimate.lpx-download:hover,
+.button[data-download].download-ultimate.lpx-download:focus-visible,
+.button[data-download].download-ultimate.lpx-download.is-pointer-active,
+.button[data-download].download-ultimate.lpx-download:hover .download-label,
+.button[data-download].download-ultimate.lpx-download:focus-visible .download-label,
+.button[data-download].download-ultimate.lpx-download.is-pointer-active .download-label,
+.button[data-download].download-ultimate.lpx-download:hover .download-icon,
+.button[data-download].download-ultimate.lpx-download:focus-visible .download-icon {
+  color: #1c0b02;
+}
+
+.button[data-download].download-ultimate.lpx-download:hover .download-label,
+.button[data-download].download-ultimate.lpx-download:focus-visible .download-label,
+.button[data-download].download-ultimate.lpx-download.is-pointer-active .download-label {
+  color: #2a1204;
+  animation: none;
+}
+
+@keyframes lpArrow {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  22% {
+    transform: translate3d(0, -3px, 0);
+  }
+  46% {
+    transform: translate3d(0, 2px, 0);
+  }
+  70% {
+    transform: translate3d(0, -1px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes lpAura {
+  0% {
+    opacity: 0.8;
+    transform: translate3d(0, 0, 0) scale(0.97);
+  }
+  20% {
+    opacity: 1;
+    transform: translate3d(0, -1px, 0) scale(1.2);
+  }
+  52% {
+    opacity: 0.9;
+    transform: translate3d(0, -2px, 0) scale(1.42);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -3px, 0) scale(1.72);
+  }
+}
+
+@keyframes lpBorder {
+  0% {
+    opacity: 0.8;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  16% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1.018);
+  }
+  46% {
+    opacity: 0.95;
+    transform: translate3d(0, 0, 0) scale(0.996);
+  }
+  78% {
+    opacity: 0.85;
+    transform: translate3d(0, 0, 0) scale(1.004);
+  }
+  100% {
+    opacity: 0.78;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes lpBtnImpact {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+  }
+  9% {
+    transform: translate3d(0, 3px, 0) scale(0.955, 0.9);
+  }
+  24% {
+    transform: translate3d(0, -8px, 0) scale(1.06, 1.1);
+  }
+  44% {
+    transform: translate3d(0, 2px, 0) scale(0.985, 0.97);
+  }
+  66% {
+    transform: translate3d(0, -2px, 0) scale(1.012, 1.022);
+  }
+  84% {
+    transform: translate3d(0, 1px, 0) scale(0.996, 0.994);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes lpEdge {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  30% {
+    opacity: 0.9;
+    transform: translate3d(0, 0, 0) scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(1.15);
+  }
+}
+
+@keyframes lpFlash {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.78;
+  }
+  38% {
+    opacity: 0.34;
+  }
+  70% {
+    opacity: 0.08;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes lpFragments {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.3) rotate(0deg);
+  }
+  16% {
+    opacity: 0.95;
+  }
+  70% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(1.7) rotate(-14deg);
+  }
+}
+
+@keyframes lpGlow {
+  0% {
+    opacity: 0.95;
+    transform: translate3d(0, 0, 0) scale(0.95);
+  }
+  32% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(2.0, 2.6);
+  }
+}
+
+@keyframes lpIconBox {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  20% {
+    transform: translate3d(0, 0, 0) scale(1.16);
+  }
+  52% {
+    transform: translate3d(0, 0, 0) scale(0.97);
+  }
+  76% {
+    transform: translate3d(0, 0, 0) scale(1.04);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes lpIconOrbit {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.6) rotate(0deg);
+  }
+  22% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(1.5) rotate(150deg);
+  }
+}
+
+@keyframes lpPlasma {
+  0% {
+    opacity: 0.8;
+    transform: translate3d(0, 0, 0) scale(1.02) rotate(0deg);
+  }
+  22% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1.32) rotate(4deg);
+  }
+  56% {
+    opacity: 0.9;
+    transform: translate3d(0, 0, 0) scale(1.16) rotate(-2deg);
+  }
+  100% {
+    opacity: 0.72;
+    transform: translate3d(0, 0, 0) scale(1.04) rotate(0deg);
+  }
+}
+
+@keyframes lpRing {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.18);
+  }
+  14% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(1.9);
+  }
+}
+
+@keyframes lpSheenSweep {
+  0% {
+    transform: translate3d(-130%, 0, 0) rotate(6deg);
+  }
+  100% {
+    transform: translate3d(130%, 0, 0) rotate(6deg);
+  }
+}
+
+@keyframes lpSheenVisible {
+  0%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes lpShell {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  12% {
+    opacity: 1;
+  }
+  38% {
+    opacity: 0.9;
+    transform: translate3d(0, -2px, 0) scale(1.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0) scale(2.1);
+  }
+}
+
+@keyframes lpShell2 {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  14% {
+    opacity: 0.92;
+  }
+  46% {
+    opacity: 0.7;
+    transform: translate3d(0, -5px, 0) scale(1.72);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0) scale(2.9);
+  }
+}
+
+@keyframes lpSparks {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.15) rotate(0deg);
+  }
+  12% {
+    opacity: 1;
+  }
+  48% {
+    opacity: 0.85;
+    transform: translate3d(0, 0, 0) scale(0.92) rotate(10deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(2.0) rotate(11deg);
+  }
+}
+
+@keyframes lpSurface {
+  0% {
+    opacity: 1;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
