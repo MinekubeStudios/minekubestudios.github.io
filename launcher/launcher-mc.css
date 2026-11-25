@@ -1598,167 +1598,130 @@
    prosvětlení bez pohybu.
    ============================================================= */
 
-/* ---------- 24a · Nabití energie — vrstvy ----------
+/* ---------- 24a · Gamma burst — vrstvy ----------
 
-   Pulz se skládá ze čtyř nezávislých světelných stop, které se
-   sejdou v jednom okamžiku:
+   Rázový pulz: tlačítko se nejdřív stáhne (jako nádech před
+   úderem) a vzápětí exploduje — vyšlehne dvanáct světelných
+   paprsků do všech stran a popisek se rozsvítí.
 
-   1. .lp-dlbtn__trace  — paprsek, který oběhne po obrysu tlačítka
-   2. .lp-dlbtn__spark  — čtyři jiskry, které přiletí ke středu
-   3. samotné tlačítko  — jednou vyšlehne (jas + halo)
-   4. .download-label   — popisek se na okamžik rozsvítí
+   Proč takhle:
+   - Paprsky jsou vlastní prvky .lp-dlbtn__ray, ne pseudo-elementy.
+     ::before a ::after už zabírá energetický rám ze styles.css.
+   - Vrstva paprsků .lp-dlbtn__rays má overflow: hidden, takže
+     světlo neuteče mimo tlačítko a nepřekáží okolnímu layoutu.
+   - Animuje se jen scale a opacity — žádné přerastrování textu
+     a žádný layout shift.
+   - Celé je to aria-hidden a pointer-events: none.
 
-   Proč zrovna takhle:
-   - Paprsek je SVG obdélník s pathLength=1000 a animovaným
-     stroke-dashoffset. Obyčejný conic-gradient s animovanou custom
-     property se v některých prohlížečích nevykreslí vůbec.
-   - Animuje se jen stroke-dashoffset a opacity. Obrys se NErotuje,
-     takže nemůže přetéct mimo tlačítko (což se u rotovaného
-     obdélníku dělo).
-   - Vrstvy mají vlastní prvky, protože ::before a ::after už
-     zabírá energetický rám ze styles.css.
+   Paprsek = tenký pruh s transform-origin vlevo, otočený o svůj
+   úhel a roztažený scaleX. Díky tomu jich dvanáct stojí jeden
+   prvek a žádný obrázek. */
 
-   Vše je aria-hidden a pointer-events: none — čistě vizuální. */
+/* Paprsky musí vyletět VEN z tlačítka. Jenže jakmile tlačítko
+   dostane `filter` (rozsvícení při úderu), prohlížeč z něj udělá
+   samostatnou vrstvu a všechno, co přesahuje jeho obrys, ořízne —
+   paprsky pak zůstanou uvězněné uvnitř a efekt zmizí.
 
-.lp-dlbtn__trace {
+   Proto je vrstva paprsků v DOM poslední a má vlastní kontext výš
+   než tlačítko: `position: absolute` + `inset: 0` ji sice drží na
+   tlačítku, ale díky `z-index` a `will-change` se neúčastní
+   filtrované vrstvy. Ořez zajišťuje jen samotný `overflow` tlačítka,
+   který je `visible`. */
+/* Obal kolem tlačítka existuje jen proto, aby vrstva paprsků mohla
+   ležet VEDLE tlačítka, ne v něm. `filter` na tlačítku (rozsvícení
+   při úderu) totiž vytvoří samostatnou vrstvu a všechno, co přesahuje
+   jeho obrys, ořeže — paprsky by zůstaly uvězněné uvnitř a efekt
+   by zmizel. Obal je proto jen neutrální positioning kontext. */
+.lp-dlbtn-shell {
+  position: relative;
+  display: inline-flex;
+  isolation: isolate;
+}
+
+.lp-dlbtn-shell > .lp-dlbtn {
+  position: relative;
+  z-index: 2;
+}
+
+.lp-dlbtn__rays {
   position: absolute;
   inset: 0;
-  z-index: 7;
+  /* POD tlačítkem, ne nad ním. Paprsky vycházejí ze středu, takže
+     nad tlačítkem by přes něj přejížděly a zesvětlily podklad pod
+     textem — kontrast popisku pak spadl na 4,2:1. Pod tlačítkem
+     vyčnívají ven stejně dobře a text zůstane nedotčený. */
+  z-index: 1;
   border-radius: inherit;
-  overflow: hidden;
+  overflow: visible;
   pointer-events: none;
   opacity: 0;
 }
 
-.lp-dlbtn__trace svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.lp-dlbtn__trace rect {
-  fill: none;
-  stroke: #fffdf0;
-  stroke-width: 4;
-  stroke-linecap: round;
-  /* 150 px světla, zbytek obvodu tvoří mezera, kterou paprsek
-     dohání — díky tomu je vidět jen krátká stopa. */
-  stroke-dasharray: 150 1000;
-  stroke-dashoffset: 0;
-  filter: drop-shadow(0 0 5px rgba(255, 250, 220, 0.95))
-    drop-shadow(0 0 12px rgba(255, 196, 60, 0.8));
-}
-
-.lp-dlbtn__spark {
+.lp-dlbtn__ray {
   position: absolute;
   left: 50%;
   top: 50%;
-  z-index: 6;
-  width: 4px;
-  height: 4px;
-  margin: -2px 0 0 -2px;
-  border-radius: 50%;
-  background: #fff8d8;
-  box-shadow: 0 0 8px rgba(255, 246, 200, 0.95),
-    0 0 16px rgba(255, 180, 40, 0.7);
+  width: 18px;
+  height: 14px;
+  margin: -7px 0 0 -9px;
+  border-radius: 7px;
+  transform-origin: 0 50%;
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #ffffff 34%,
+    #fffbd0 55%,
+    #ffdd6a 76%,
+    rgba(255, 180, 50, 0.35) 92%,
+    transparent 100%
+  );
+  box-shadow: 0 0 16px rgba(255, 248, 200, 1),
+    0 0 34px rgba(255, 200, 70, 0.85), 0 0 60px rgba(255, 160, 40, 0.45);
   opacity: 0;
-  pointer-events: none;
+  will-change: transform, opacity;
 }
 
 /* ---------- 24b · Samotný pulz ---------- */
 
-.lp-dlbtn.is-pulse .lp-dlbtn__trace {
-  animation: lpTraceFade 1.35s ease-out both;
+/* :has() vybere obal podle stavu tlačítka — paprsky jsou jeho
+   sourozenec, takže na ně nejde dosáhnout z tlačítka přímo.
+   Prohlížeče bez :has() pulz jen nezobrazí paprsky; tlačítko
+   samotné se rozsvítí dál. */
+.lp-dlbtn-shell:has(> .lp-dlbtn.is-pulse) .lp-dlbtn__rays {
+  animation: lpRaysFade 900ms ease-out both;
 }
 
-.lp-dlbtn.is-pulse .lp-dlbtn__trace rect {
-  animation: lpTraceRun 1.15s ease-out both;
+.lp-dlbtn-shell:has(> .lp-dlbtn.is-pulse) .lp-dlbtn__ray {
+  animation: lpRayBurst 900ms cubic-bezier(0.1, 0.8, 0.25, 1) both;
 }
 
-.lp-dlbtn.is-pulse .lp-dlbtn__spark {
-  animation: lpSparkTravel 900ms cubic-bezier(0.4, 0, 0.2, 1) both,
-    lpSparkFade 900ms linear both;
-}
-
-/* Každá jiskra startuje z jiného místa a jiného času, aby přilet
-   nebyly v jednom zástupu. */
-.lp-dlbtn.is-pulse .lp-dlbtn__spark--a {
-  --spark-x: 16px;
-  --spark-y: -16px;
-  animation-delay: 0ms, 0ms;
-}
-
-.lp-dlbtn.is-pulse .lp-dlbtn__spark--b {
-  --spark-x: -18px;
-  --spark-y: -10px;
-  animation-delay: 60ms, 60ms;
-}
-
-.lp-dlbtn.is-pulse .lp-dlbtn__spark--c {
-  --spark-x: 22px;
-  --spark-y: 12px;
-  animation-delay: 110ms, 110ms;
-}
-
-.lp-dlbtn.is-pulse .lp-dlbtn__spark--d {
-  --spark-x: -14px;
-  --spark-y: 18px;
-  animation-delay: 150ms, 150ms;
-}
-
-/* Tlačítko samo jednou vyšlehne. Čtyři třídy + stavová třída, aby se
-   pravidlo dostalo přes klidovou downloadFusionIdle ze styles.css. */
+/* Tlačítko: stáhne se a pak udeří. Šest tříd, aby se pravidlo
+   dostalo přes klidovou downloadFusionIdle ze styles.css. */
 .button[data-download].download-ultimate.lp-dlbtn.is-pulse {
-  animation: lpChargeBloom 1.4s cubic-bezier(0.22, 0.61, 0.24, 1) both;
+  animation: lpGammaBurst 900ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
 
-/* Rozsvícení popisku — uživatel si vyžádal tuhle část. */
+/* Rozsvícení popisku — uživatel si ho vyžádal. */
 .button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-label {
-  animation: lpLabelFlash 1.2s ease-out both;
+  animation: lpLabelFlash 900ms ease-out both;
 }
 
-@keyframes lpTraceFade {
+/* Během výbuchu je kolem tlačítka hodně světla — i přes něj musí
+   popisek zůstat tmavý. Bílý text ani prosvětlený podklad
+   nepřipadají v úvahu, kontrast by spadl pod 4,5:1. */
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-label,
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-icon {
+  color: #1a0a01;
+}
+
+@keyframes lpRaysFade {
   0% {
     opacity: 0;
   }
-  10% {
+  8% {
     opacity: 1;
   }
-  76% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes lpTraceRun {
-  0% {
-    stroke-dashoffset: 0;
-  }
-  100% {
-    stroke-dashoffset: -1000;
-  }
-}
-
-@keyframes lpSparkTravel {
-  from {
-    transform: translate(var(--spark-x), var(--spark-y)) scale(0.5);
-  }
-  to {
-    transform: translate(0, 0) scale(1.1);
-  }
-}
-
-@keyframes lpSparkFade {
-  0% {
-    opacity: 0;
-  }
-  12% {
-    opacity: 1;
-  }
-  70% {
+  62% {
     opacity: 1;
   }
   100% {
@@ -1766,20 +1729,63 @@
   }
 }
 
-@keyframes lpChargeBloom {
+@keyframes lpRayBurst {
   0% {
+    opacity: 0;
+    transform: rotate(var(--ray-angle, 0deg)) translateX(0) scaleX(0);
+    height: 14px;
+  }
+  14% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: rotate(var(--ray-angle, 0deg)) translateX(40px) scaleX(11);
+    height: 22px;
+  }
+  38% {
+    opacity: 1;
+    height: 10px;
+  }
+  62% {
+    opacity: 1;
+    height: 6px;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--ray-angle, 0deg)) translateX(440px) scaleX(3.4);
+    height: 2px;
+  }
+}
+
+@keyframes lpGammaBurst {
+  0% {
+    scale: 1;
     filter: brightness(1);
-    box-shadow: 0 0 0 0 rgba(255, 214, 67, 0);
   }
-  55% {
-    filter: brightness(1.24) saturate(1.2);
-    box-shadow: 0 0 0 1px rgba(255, 240, 190, 0.5),
-      0 0 26px rgba(255, 220, 90, 0.62), 0 0 54px rgba(255, 150, 40, 0.34),
-      0 0 96px rgba(255, 110, 30, 0.16);
+  /* Stažení před úderem — bez něj výbuch nemá z čeho vycházet. */
+  16% {
+    scale: 0.93;
+    filter: brightness(1.22) saturate(1.3);
+  }
+  /* Samotný úder. */
+  34% {
+    scale: 1.19;
+    /* Jas záměrně níž než dřív — při 1,95 podklad zbělal a tmavý
+       text na něm ztratil kontrast. Sílu úderu nese rozkmit
+       a paprsky, ne vybělení tlačítka. */
+    filter: brightness(1.34) saturate(1.5);
+  }
+  60% {
+    scale: 1.015;
+    filter: brightness(1.12);
+  }
+  78% {
+    scale: 1.028;
   }
   100% {
+    scale: 1;
     filter: brightness(1);
-    box-shadow: 0 0 0 0 rgba(255, 214, 67, 0);
   }
 }
 
@@ -1788,25 +1794,25 @@
   100% {
     text-shadow: 0 1px 0 rgba(255, 246, 214, 0.7);
   }
-  45% {
-    text-shadow: 0 1px 0 rgba(255, 252, 232, 0.95),
-      0 0 14px rgba(255, 248, 210, 0.9), 0 0 26px rgba(255, 196, 64, 0.7);
+  34% {
+    text-shadow: 0 1px 0 rgba(255, 252, 232, 0.98),
+      0 0 16px rgba(255, 248, 210, 0.95), 0 0 30px rgba(255, 196, 64, 0.8);
   }
 }
 
 /* ---------- 24b-1 · Redukce pohybu ----------
 
-   Bez pohybu zůstane jen prosvětlení a rozsvícený popisek — pořád je
-   poznat, že klik proběhl, ale nic neobíhá ani nepřilétá. */
+   Bez pohybu zůstane jen prosvětlení a rozsvícený popisek — pořád
+   je poznat, že klik proběhl, ale nic neexploduje. */
 
 @media (prefers-reduced-motion: reduce) {
   .button[data-download].download-ultimate.lp-dlbtn.is-pulse {
     animation: none;
-    filter: brightness(1.1) saturate(1.14);
+    filter: brightness(1.45) saturate(1.3);
   }
 
-  .lp-dlbtn.is-pulse .lp-dlbtn__trace,
-  .lp-dlbtn.is-pulse .lp-dlbtn__spark {
+  .lp-dlbtn-shell .lp-dlbtn__rays,
+  .lp-dlbtn-shell .lp-dlbtn__ray {
     display: none;
   }
 

@@ -17,7 +17,7 @@
 <link href="../design-plus.css" rel="stylesheet"/>
 <link href="launcher.css?v=20261124-7" rel="stylesheet"/>
 <link href="../apple.css?v=20261124-1" rel="stylesheet"/>
-<link href="launcher-mc.css?v=20261125-1" rel="stylesheet"/>
+<link href="launcher-mc.css?v=20261125-2" rel="stylesheet"/>
 <script>
 /* Motiv a jazyk se čtou dřív, než se stránka vykreslí — žádné bliknutí při startu. */
 (function () {
@@ -248,12 +248,7 @@
 <h1 class="lp-title" data-i18n="lp.hero.title" id="launcherTitle">Tvůj Minecraft.<br><em>Tvůj launcher.</em></h1>
 <p class="lp-lead" data-i18n="lp.hero.lead">Knihovna instancí, modpacky z Modrinthu a správa Javy v jednom okně. Bez reklam, bez telemetrie, s češtinou v základu. Zdarma pro Windows.</p>
 <div class="lp-actions">
-<button aria-describedby="lpDownloadHint" class="button button-primary download-ultimate lp-dlbtn" data-download="launcher" data-launcher-download data-os="windows" data-state="loading" type="button">
-<span aria-hidden="true" class="lp-dlbtn__trace"><svg viewBox="0 0 300 54" preserveAspectRatio="none" focusable="false"><rect x="2" y="2" width="296" height="50" rx="12" ry="12" pathLength="1000"></rect></svg></span>
-<span aria-hidden="true" class="lp-dlbtn__spark lp-dlbtn__spark--a"></span>
-<span aria-hidden="true" class="lp-dlbtn__spark lp-dlbtn__spark--b"></span>
-<span aria-hidden="true" class="lp-dlbtn__spark lp-dlbtn__spark--c"></span>
-<span aria-hidden="true" class="lp-dlbtn__spark lp-dlbtn__spark--d"></span>
+<span class="lp-dlbtn-shell"><button aria-describedby="lpDownloadHint" class="button button-primary download-ultimate lp-dlbtn" data-download="launcher" data-launcher-download data-os="windows" data-state="loading" type="button">
 <span aria-hidden="true" class="download-fx">
 <span class="download-plasma"></span>
 <span class="download-matrix"></span>
@@ -267,6 +262,20 @@
 <span aria-hidden="true" class="download-icon"><span class="download-icon-orbit"></span><svg viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg></span>
 <span aria-hidden="true" class="download-hover-back"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
 </button>
+<span aria-hidden="true" class="lp-dlbtn__rays">
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:0deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:30deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:60deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:90deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:120deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:150deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:180deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:210deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:240deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:270deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:300deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:330deg"></span>
+</span></span>
 <a class="lp-btn lp-btn--ghost" data-scroll href="#funkce">
 <svg aria-hidden="true" class="lp-icon-solid" viewBox="0 0 24 24"><use href="#lp-play"></use></svg>
 <span class="lp-btn__label" data-i18n="lp.hero.secondary">Prohlédnout funkce</span>
@@ -855,12 +864,7 @@
 </div>
 </div>
 <div class="lp-platform__actions">
-<button class="button button-primary download-ultimate lp-dlbtn" data-download="launcher" data-launcher-download data-os="windows" data-state="loading" type="button">
-<span aria-hidden="true" class="lp-dlbtn__trace"><svg viewBox="0 0 300 54" preserveAspectRatio="none" focusable="false"><rect x="2" y="2" width="296" height="50" rx="12" ry="12" pathLength="1000"></rect></svg></span>
-<span aria-hidden="true" class="lp-dlbtn__spark lp-dlbtn__spark--a"></span>
-<span aria-hidden="true" class="lp-dlbtn__spark lp-dlbtn__spark--b"></span>
-<span aria-hidden="true" class="lp-dlbtn__spark lp-dlbtn__spark--c"></span>
-<span aria-hidden="true" class="lp-dlbtn__spark lp-dlbtn__spark--d"></span>
+<span class="lp-dlbtn-shell"><button class="button button-primary download-ultimate lp-dlbtn" data-download="launcher" data-launcher-download data-os="windows" data-state="loading" type="button">
 <span aria-hidden="true" class="download-fx">
 <span class="download-plasma"></span>
 <span class="download-matrix"></span>
@@ -874,6 +878,20 @@
 <span aria-hidden="true" class="download-icon"><span class="download-icon-orbit"></span><svg viewBox="0 0 24 24"><path d="M12 4v10"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg></span>
 <span aria-hidden="true" class="download-hover-back"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
 </button>
+<span aria-hidden="true" class="lp-dlbtn__rays">
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:0deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:30deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:60deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:90deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:120deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:150deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:180deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:210deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:240deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:270deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:300deg"></span>
+<span aria-hidden="true" class="lp-dlbtn__ray" style="--ray-angle:330deg"></span>
+</span></span>
 <p aria-live="polite" class="lp-start-note" data-launcher-start-note hidden>
 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.3L19 6.5"></path></svg>
 <span data-i18n="lp.dl.started.note" data-launcher-start-text>Stahování zahájeno — průběh a dokončení hlásí tvůj prohlížeč.</span>
@@ -1157,7 +1175,7 @@
 <script src="i18n.js?v=20261124-7"></script>
 <script src="../app.js"></script>
 <script src="releases.js?v=20261124-2"></script>
-<script src="launcher.js?v=20261125-1"></script>
+<script src="launcher.js?v=20261125-2"></script>
 <script src="../design-plus.js"></script>
 <script src="../apple.js?v=20261029-1"></script>
 </body>
