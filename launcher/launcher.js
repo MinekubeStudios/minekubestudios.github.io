@@ -124,7 +124,28 @@
     return `${algorithm.toLowerCase()}:${value.slice(0, 12)}…${value.slice(-8)}`;
   }
 
+  /* Stahování nesmí navigovat hlavní dokument.
+
+     Předchozí verze klikala na <a download> s URL z GitHubu. Když
+     prohlížeč soubor nevyhodnotí jako stahování (jiný origin,
+     chybějící Content-Disposition, sandbox, starší prohlížeč),
+     začne navigovat — a navigace přeruší všechno, co na stránce
+     běží, včetně pulzu.
+
+     Zkoušel jsem iframe a je to horší: když cílová adresa selže
+     (404, offline, blokovaný origin), chybová stránka se propíše
+     do hlavního dokumentu a celá stránka spadne na chrome-error.
+     Proto zpátky <a>, ale s ošetřením:
+
+     1. Klik se spustí až po pulzu (DOWNLOAD_DELAY_MS), takže
+        odezva proběhne dřív, než cokoli jiného.
+     2. `download` atribut + `rel=noopener` drží stahování mimo
+        dokument tam, kde to prohlížeč umí.
+     3. Pojistka: když se stránka přesto přenačte, pulz se po
+        načtení přehraje znovu (viz markPulse / replayPulseIfPending). */
   function startDownload(file) {
+    if (!file || !file.url) return;
+
     const link = document.createElement("a");
     link.href = file.url;
     link.rel = "noopener noreferrer";
@@ -515,8 +536,12 @@
      (downloadButtonImpactV2). Třída zůstane o kousek déle, aby se
      dojezd neuřízl, a pak se uklidí i explozivní vrstva. */
 
-  const PULSE_MS = 1180;
-  const BURST_MS = 1420;
+  /* Jak dlouho počkat, než se rozjede stahování. Pulz se tím
+     nepřeruší navigací a stahování přitom nepůsobí zpožděně. */
+  const DOWNLOAD_DELAY_MS = 220;
+
+  const PULSE_MS = 1900;
+  const BURST_MS = 2400;
   const pulseTimers = new WeakMap();
 
   /* Osm vrstev, každá jeden prvek. Ne víc — každý prvek navíc je
@@ -618,17 +643,68 @@
        pulz nedostanou, skutečné stažení ano. */
     playDownloadAnimation(button);
 
+    /* Stahování se odkládá za pulz.
+
+       startDownload klikne na <a download>, a to umí v některých
+       prohlížečích spustit navigaci. Navigace stránku přeruší
+       a pulz se nikdy nepřehraje — uživatel vidí, že se „nic
+       nestalo". Proto se soubor začne stahovat až ve chvíli, kdy
+       pulz dohraje. 220 ms je dost na to, aby prohlížeč vrstvu
+       vykreslil, a zároveň tak málo, že stahování nepůsobí
+       zpožděně. */
     const asset = source.asset(os);
     if (status.state === "ready" && asset) {
-      runDownload(button, os, asset);
+      window.setTimeout(() => runDownload(button, os, asset), DOWNLOAD_DELAY_MS);
       return;
     }
 
-    retryThenDownload(button);
+    window.setTimeout(() => retryThenDownload(button), DOWNLOAD_DELAY_MS);
   }
 
+  /* ---------- Pulz přežije i přenačtení stránky ----------
+
+     Pojistka pro případ, kdy prohlížeč stahování vyhodnotí jako
+     navigaci a stránku přenačte. Před klikem se zapíše značka;
+     po načtení se pulz znovu přehraje, takže uživatel odezvu
+     uvidí, i když se dokument mezitím vyměnil.
+
+     Značka má krátkou platnost (3 s), aby se pulz nepřehral při
+     běžném obnovení stránky o minutu později. Úložiště je
+     v try/catch — v soukromém režimu může být zakázané. */
+  const PULSE_MARK_KEY = "minekube:launcher-pulse-at";
+  const PULSE_MARK_TTL = 3000;
+
+  function markPulse() {
+    try {
+      window.sessionStorage.setItem(PULSE_MARK_KEY, String(Date.now()));
+    } catch (error) {
+      /* Úložiště není k dispozici — pojistka se prostě nepoužije. */
+    }
+  }
+
+  function replayPulseIfPending() {
+    let at = 0;
+    try {
+      at = Number(window.sessionStorage.getItem(PULSE_MARK_KEY)) || 0;
+      window.sessionStorage.removeItem(PULSE_MARK_KEY);
+    } catch (error) {
+      return;
+    }
+    if (!at || Date.now() - at > PULSE_MARK_TTL) return;
+
+    const button = downloadButtons[0];
+    if (!button) return;
+    /* Až po prvním vykreslení, aby vrstva měla odkud měřit. */
+    window.requestAnimationFrame(() => playDownloadAnimation(button));
+  }
+
+  replayPulseIfPending();
+
   downloadButtons.forEach(button => {
-    button.addEventListener("click", () => onDownloadClick(button));
+    button.addEventListener("click", () => {
+      markPulse();
+      onDownloadClick(button);
+    });
   });
 
   retryButton?.addEventListener("click", () => {
