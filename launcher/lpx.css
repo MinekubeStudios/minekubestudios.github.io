@@ -235,20 +235,65 @@
 }
 
 .lpx-title {
-  font-size: clamp(2.6rem, 5.6vw, 4.4rem);
+  /* Zlom je řízený <br>, takže každý řádek musí sednout na šířku sám.
+     „Launcher Of The Future." měří v Space Grotesku 11,22 em (váha 700
+     + letter-spacing −0,02em), takže strop je 8,2 % šířky kontejneru:
+     11,22 × 0,082 ≈ 0,92 → 92 % a zbytek je rezerva na zaokrouhlení.
+     Měříme kontejner (.lpx-hero__copy), ne okno — ve dvousloupcovém
+     hero je nejužší místo sloupec s textem, ne celá stránka. */
+  /* Fallback pro prohlížeče bez container queries (Chrome < 105,
+     Safari < 16, Firefox < 110) — jeden sloupec. 7,4vw vychází
+     z toho, že text (11,22 em) musí sednout do šířky okna bez
+     okrajů: i na 280px tak zbyde rezerva. Řádek s cqi ho přepíše. */
+  font-size: clamp(1.75rem, 7.4vw, 3.95rem);
+  font-size: clamp(1.75rem, 8.2cqi, 4.1rem);
+  /* 20ch = 12,75 em (znak „0" je 0,638 em), název potřebuje 11,64 em —
+     rezerva 9 % je zbytečně těsná, stačí 22ch. */
+  max-width: 22ch;
+  text-wrap: balance;
 }
 
 .lpx-head h2,
 .lpx-cta h2 {
-  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+  /* Nadpis sekce musí zůstat jasně menší než hero titulek — jinak
+     spolu soupeří a stránka ztratí rytmus. */
+  font-size: clamp(1.5rem, 3.2vw, 2.55rem);
 }
 
+/* Dvousloupcový hero (nad 1080px) je pro titulek nejužší místo —
+   sloupec má jen 492–595px. Prohlížeče bez container queries dostanou
+   pevný strop, se kterým se text vejde i do nejužšího sloupce;
+   prohlížeče s cqi tenhle řádek stejně přepíšou přesnějším výpočtem. */
+@media (min-width: 1081px) {
+  .lpx-title {
+    font-size: clamp(2rem, 2.9vw, 2.5rem);
+    font-size: clamp(2.1rem, 8.2cqi, 4.1rem);
+  }
+}
+
+/* Hero text: čtyři skutečné odstavce, ne <br><br>. Čtečka mezi nimi
+   udělá pauzu a text zůstane oddělitelný i bez CSS. */
 .lpx-lead {
-  max-width: 46ch;
+  max-width: 44ch;
   margin-top: 18px;
   color: var(--lpx-muted);
-  font-size: clamp(0.98rem, 1.2vw, 1.08rem);
-  line-height: 1.65;
+  font-size: clamp(0.96rem, 1.15vw, 1.05rem);
+  line-height: 1.62;
+}
+
+.lpx-lead p {
+  margin: 0;
+}
+
+.lpx-lead p + p {
+  margin-top: 0.66em;
+}
+
+/* Poslední věta nese hlavní slib — musí být vidět na první pohled. */
+.lpx-lead p.lpx-lead__claim {
+  margin-top: 1.05em;
+  color: var(--lpx-text);
+  font-weight: 700;
 }
 
 /* Malý „tag" nad nadpisem s pixelovou ikonou. */
@@ -600,17 +645,33 @@
   opacity: 0.85;
 }
 
+/* Hero potřebuje víc šířky než ostatní sekce — nadpis a mockup se
+   jinak mačkají. Ostatní sekce si drží 1200px rytmus. */
+@media (min-width: 1320px) {
+  .lpx-hero > .lpx-wrap {
+    width: min(1400px, calc(100% - (var(--lpx-gutter) * 2)));
+  }
+}
+
 .lpx-hero__copy {
   display: grid;
   justify-items: start;
+  /* Titulek se měří podle TOHOTO sloupce, ne podle okna — ve dvou
+     sloupcích je nejužší místo právě tady, v jednom zase celá šířka. */
+  container-type: inline-size;
+  container-name: lpxhero;
 }
 
 .lpx-hero__grid {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
-  gap: clamp(28px, 4vw, 56px);
+  /* Titulek je teď delší (11,22 em místo 7,07 em), takže textový
+     sloupec potřebuje víc místa než mockup. 1,22 : 1 drží nadpis
+     výrazně větší než nadpisy sekcí i na 1081px. Pod 1081px se
+     stejně láme do jednoho sloupce. */
+  grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 64px);
   align-items: center;
 }
 
@@ -643,8 +704,9 @@
   letter-spacing: 0.1em;
 }
 
+/* Stín titulu. Šířku řeší první definice — dvě pravidla se stejnou
+   specificitou se navzájem přebíjela a 18ch vyhrálo nad 20ch. */
 .lpx-title {
-  max-width: 18ch;
   text-shadow: 0 18px 46px rgba(0, 0, 0, 0.55);
 }
 
@@ -2056,10 +2118,6 @@ html:not(.lp-js) .lpx [data-reveal] {
 
   .lpx-hero__visual {
     order: 2;
-  }
-
-  .lpx-title {
-    max-width: 22ch;
   }
 
   .lpx-cards {

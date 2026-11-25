@@ -684,6 +684,143 @@ test("JS neodkazuje na prvky, které na stránce nejsou", async () => {
   assert.deepEqual(page.errors, []);
 });
 
+test("Hero má nový text jako skutečné odstavce, ne <br><br>", async () => {
+  const page = await buildPage("repoOnly");
+  const { document, window } = page;
+
+  const title = document.getElementById("lpxTitle");
+  const lead = document.querySelector(".lpx-lead");
+  assert.ok(title && lead, "hero má titulek i text");
+
+  /* Čtyři odstavce = čtyři pauzy pro čtečku. <br><br> by text slepilo
+     do jedné dlouhé věty, proto se to hlídá. */
+  const paragraphs = [...lead.querySelectorAll("p")];
+  assert.equal(paragraphs.length, 4, "text hero má čtyři odstavce");
+  paragraphs.forEach(p => {
+    assert.ok(p.textContent.trim().length > 10, `prázdný odstavec: ${p.textContent}`);
+    assert.equal(p.querySelectorAll("br").length, 0, "odstavce nesmí používat <br>");
+  });
+  assert.ok(lead.querySelector(".lpx-lead__claim"), "poslední slib má vlastní zvýraznění");
+
+  /* Titulek: dva řádky, druhý zvýrazněný. */
+  assert.equal(title.querySelectorAll("em").length, 1);
+  assert.ok(title.innerHTML.includes("<br>"), "titulek má řízený zlom");
+
+  /* Ve všech jazycích stejná struktura a žádný syrový klíč. */
+  const expected = {
+    cs: ["Launcher budoucnosti.", "Tvůj Minecraft."],
+    en: ["Launcher Of The Future.", "Your Minecraft."],
+    sk: ["Launcher budúcnosti.", "Tvoj Minecraft."]
+  };
+  for (const [lang, lines] of Object.entries(expected)) {
+    window.eval(`applyLanguage("${lang}")`);
+    await tick(window);
+    const parts = title.innerHTML.replace(/<br>/g, "|").replace(/<\/?em>/g, "").trim().split("|").map(x => x.trim());
+    assert.deepEqual(parts, lines, `${lang}: titulek`);
+    const ps = [...lead.querySelectorAll("p")].map(p => p.textContent.trim());
+    assert.equal(ps.length, 4, `${lang}: čtyři odstavce`);
+    ps.forEach((text, index) => {
+      assert.ok(text.length > 5, `${lang}: odstavec ${index + 1} je prázdný`);
+      assert.ok(!text.includes("<"), `${lang}: v textu zůstala značka`);
+    });
+  }
+  window.eval(`applyLanguage("cs")`);
+  await tick(window);
+  assert.deepEqual(page.errors, []);
+});
+
+test("Titulek hero se vejde na jeden řádek na mobilu i na desktopu", () => {
+  const css = readFileSync(ROOT + "launcher/lpx.css", "utf8");
+  const block = css.match(/\.lpx-title\s*\{[^}]*\}/);
+  assert.ok(block, "chybí pravidlo .lpx-title");
+
+  /* Zlom v titulku řídí <br>, takže každý řádek musí na šířku sednout sám.
+     „Launcher Of The Future." měří v Space Grotesku (700, letter-spacing
+     −0,02em) 11,215 em. Měří se kontejner `.lpx-hero__copy`, protože ve
+     dvousloupcovém hero je nejužší místo tam — odtud jednotka cqi. */
+  const EM = 11.215;
+  const size = block[0].match(/font-size:\s*clamp\(([^,]+),\s*([\d.]+)cqi,\s*([^)]+)\)/);
+  assert.ok(size, ".lpx-title nemá tekutý font-size v jednotkách cqi (container query)");
+
+  const minRem = parseFloat(size[1]);
+  const cqi = parseFloat(size[2]) / 100;
+  const maxRem = parseFloat(size[3]);
+
+  /* Prohlížeče bez container queries dostanou dva fallbacky: základní
+     v jednom sloupci a zpevněný strop v media query nad 1080px. I ty
+     musí titulek udržet na jednom řádku. */
+  const fallback = block[0]
+    .split("\n")
+    .map(line => line.match(/font-size:\s*clamp\(([^,]+),\s*([\d.]+)vw,\s*([^)]+)\)/))
+    .filter(Boolean)
+    .map(m => ({ min: parseFloat(m[1]), k: parseFloat(m[2]) / 100, max: parseFloat(m[3]) }));
+  assert.ok(fallback.length >= 1, ".lpx-title nemá vw fallback pro starší prohlížeče");
+
+  const twoCol = css.match(/@media \(min-width: 1081px\)\s*\{[^}]*\.lpx-title\s*\{[^}]*\}/);
+  assert.ok(twoCol, "chybí fallback pro dvousloupcový hero (media min-width: 1081px)");
+  const wide = twoCol[0].match(/font-size:\s*clamp\(([^,]+),\s*([\d.]+)vw,\s*([^)]+)\)/);
+  assert.ok(wide, "dvousloupcový fallback nemá vw clamp");
+  const wideFallback = { min: parseFloat(wide[1]), k: parseFloat(wide[2]) / 100, max: parseFloat(wide[3]) };
+
+  /* Šířka sloupce s textem. Do 1080px je hero jednosloupcový, nad ním
+     dvousloupcový (1,22 : 1) a od 1320px je hero grid širší (1400px)
+     než zbytek stránky. */
+  const containerWidth = vw => {
+    const gutter = Math.min(Math.max(20, 0.042 * vw), 56);
+    if (vw <= 1080) return Math.min(1200, vw - 2 * gutter);
+    const wrap = Math.min(vw >= 1320 ? 1400 : 1200, vw - 2 * gutter);
+    const gap = Math.min(Math.max(28, 0.04 * vw), 64);
+    return ((wrap - gap) * 1.22) / 2.22;
+  };
+
+  const fits = (vw, px, cw, note) => {
+    assert.ok(
+      EM * px <= cw + 0.5,
+      `titulek přeteče na ${vw}px${note}: text ${Math.round(EM * px)}px > sloupec ${Math.round(cw)}px`
+    );
+  };
+
+  /* Pod 360px se nadpis na jeden řádek nevejde, aniž by byl menší než
+     nadpisy sekcí — tam má přednost hierarchie a text se zalomí. Od
+     360px (nejmenší běžný telefon) musí sedět na jeden řádek. */
+  for (let vw = 360; vw <= 2200; vw += 2) {
+    const cw = containerWidth(vw);
+
+    // 1) cesta s container queries
+    fits(vw, Math.max(minRem * 16, Math.min(cqi * cw, maxRem * 16)), cw, " (cqi)");
+
+    // 2) fallback bez container queries
+    const fb = vw <= 1080 ? fallback[fallback.length - 1] : wideFallback;
+    fits(vw, Math.max(fb.min * 16, Math.min(fb.k * vw, fb.max * 16)), cw, " (vw fallback)");
+  }
+});
+
+test("Hero titulek je výrazně větší než nadpisy sekcí", () => {
+  const css = readFileSync(ROOT + "launcher/lpx.css", "utf8");
+  const h1 = css.match(/\.lpx-title\s*\{[^}]*font-size:\s*clamp\(([^,]+),\s*([\d.]+)cqi,\s*([^)]+)\)/);
+  const h2Match = [...css.matchAll(/\.lpx-(?:head|cta) h2[^{]*\{[^}]*font-size:\s*clamp\(([^,]+),\s*([\d.]+)vw,\s*([^)]+)\)/g)];
+  assert.ok(h1, "chybí cqi font-size titulku");
+  assert.ok(h2Match.length, "chybí font-size nadpisů sekcí");
+  const h2 = h2Match[0];
+
+  const px = (m, vw) => Math.max(parseFloat(m[1]) * 16, Math.min((parseFloat(m[2]) / 100) * vw, parseFloat(m[3]) * 16));
+
+  /* Dvousloupcový hero (od 1081px) je nejtěsnější — tam se titulku
+     zužuje sloupec, takže musí zůstat jasně nad h2. */
+  for (const vw of [1081, 1200, 1280, 1440, 1600, 1920]) {
+    const gutter = Math.min(Math.max(20, 0.042 * vw), 56);
+    const wrap = Math.min(vw >= 1320 ? 1400 : 1200, vw - 2 * gutter);
+    const gap = Math.min(Math.max(28, 0.04 * vw), 64);
+    const col = ((wrap - gap) * 1.22) / 2.22;
+    const title = Math.max(parseFloat(h1[1]) * 16, Math.min((parseFloat(h1[2]) / 100) * col, parseFloat(h1[3]) * 16));
+    const section = px(h2, vw);
+    assert.ok(
+      title >= section * 1.15,
+      `hierarchie se ztrácí na ${vw}px: titulek ${title.toFixed(1)}px vs sekce ${section.toFixed(1)}px`
+    );
+  }
+});
+
 test("Stránka je sémantická a bez duplicitních ID", async () => {
   const dom = new JSDOM(HTML);
   const { document } = dom.window;

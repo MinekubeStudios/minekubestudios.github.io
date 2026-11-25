@@ -1345,6 +1345,9 @@ function closeKofiGate() {
   if (!kofiGate) return;
   kofiGate.classList.remove("is-active", "is-navigating");
   kofiGate.setAttribute("aria-hidden", "true");
+  // `inert` je nutné i pro klávesnici: samotné visibility:hidden v některých
+  // prohlížečích nezabrání fokusu na tlačítko Zrušit uvnitř portálu.
+  kofiGate.inert = true;
   document.body.classList.remove("kofi-gate-open");
   kofiGateBusy = false;
 }
@@ -1385,6 +1388,7 @@ function openKofiGate(origin, clientX = 0, clientY = 0) {
   if (kofiGateHost) kofiGateHost.textContent = url.replace(/^https?:\/\//, "");
 
   document.body.classList.add("kofi-gate-open");
+  kofiGate.inert = false;
   kofiGate.setAttribute("aria-hidden", "false");
   kofiGate.classList.remove("is-active", "is-navigating");
   // Dva snímky + reflow zajistí, že se všechny keyframy přehrají znovu.

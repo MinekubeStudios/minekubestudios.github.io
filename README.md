@@ -1,4 +1,76 @@
-# Minekube Studios // Web (v15 — launcher bez Tří kroků a carouselu)
+# Minekube Studios // Web (v16 — nový hero text a hloubkový audit chyb)
+
+## v16 — **nový hero text, titulkový nadpis na dva řádky a audit celého webu**
+
+Hero dostal nový text. Oba řádky jsou velký nadpis (dřív byl velký jen
+první), takže „Launcher Of The Future." a „Your Minecraft." nesou stejnou
+váhu. Překlady (cs/sk) jsou vlastní, ne doslovné:
+
+* cs — „Launcher budoucnosti." / „Tvůj Minecraft."
+* sk — „Launcher budúcnosti." / „Tvoj Minecraft."
+* en — „Launcher Of The Future." / „Your Minecraft."
+
+Odstavec pod nadpisem se **rozdělil na čtyři skutečné `<p>`** (úvod,
+komu je launcher určený, „no ads, no telemetry, no subscriptions",
+„Free forever for everyone!"). Dřív to byl jeden odstavec s `<br><br>`,
+což čtečka přečte jako jednu dlouhou větu bez pauz. Poslední věta je
+vlastní zvýrazněný odstavec `.lpx-lead__claim`.
+
+### Opravené chyby (v16)
+
+* **Titulek hero přetékal — na mobilu i na desktopu.** Nový anglický
+  nadpis „Launcher Of The Future." měří v Space Grotesku (váha 700,
+  letter-spacing −0,02em) **11,22 em**, staré „Tvůj Minecraft." jen
+  7,07 em — nárůst o 59 %. Původní `clamp(2.35rem, 4.9vw, 3.95rem)`
+  tak nechal 438–735px textu v 240–595px prostoru: na mobilu se lámal
+  do tří řádků, ve dvousloupcovém hero na desktopu přetékal o 140px
+  a rozbíjel layout. Opraveno **container query** — titulek se měří
+  podle sloupce s textem (`container-type: inline-size`), ne podle
+  okna: `clamp(1.3rem, 8.2cqi, 3.95rem)`. Ověřeno na 280–2200px, text
+  drží 92 % šířky sloupce. Pro prohlížeče bez container queries
+  (Chrome < 105, Safari < 16, Firefox < 110) je připravený dvojitý
+  `vw` fallback — jeden pro jeden sloupec, druhý přes media query pro
+  dvousloupcový hero. Hlídá to test, který propočítá obě cesty.
+* **`.lpx-title` měl duplicitní `max-width: 18ch`** ve druhém bloku se
+  stejným selektorem — tiše přebíjel nových 20ch. Druhý blok teď řeší
+  jen `text-shadow`. Strop je 22ch (rezerva 9 % místo 3 %).
+* **`.kofi-gate` mohl chytit fokus, i když je skrytý** — `visibility:
+  hidden` sice portál nevykreslí, ale tlačítko „Zrušit" zůstávalo
+  v a11y stromu pod `aria-hidden="true"`. Doplněn `inert` v HTML i při
+  přepínání v `app.js`.
+* **Homepage: `role="region"` na skrytém manifestu** — prázdný landmark
+  bez jména. Odebráno (kontejner zůstal `inert`).
+* **Homepage: `aria-label` na `div` bez role** u `.studio-facts` —
+  doplněno `role="group"`.
+* **Homepage: boolean atributy se zápisem `checked="checked"` a
+  `hidden=""`** — sjednoceno na `checked` / `hidden`.
+* **24 ikon pod ohybem se stahovalo eager** — doplněn `loading="lazy"`
+  od sekce Funkce níž. Hero si drží eager (leží nad ohybem).
+* **Hero tapeta se načítala pozdě** — `preload` pro
+  `wallpapers/hero-backdrop.webp` (LCP prvek).
+* **Zastaralé cache-busting verze** — `lpx.css`, `launcher.js` a
+  `i18n.js` měly v odkazu stará čísla, takže prohlížeč mohl servírovat
+  předchozí verzi.
+
+* **Hero titulek byl jen o 4 % větší než nadpisy sekcí.** Po zvětšení
+  textu z 7,07 na 11,22 em se h1 a h2 potkaly na 48,8 px vs 46,4 px —
+  stránka ztratila typografickou hierarchii a nadpisy sekcí vypadaly
+  stejně důležité jako hlavní titulek. Textový sloupec hero se rozšířil
+  (grid 1,22 : 1, nad 1320px má hero 1400px, ostatní sekce zůstávají na
+  1200px) a nadpisy sekcí mírně zmenšily na
+  `clamp(1.5rem, 3.2vw, 2.55rem)`. Poměr h1 : h2 je teď 1,17–2,35
+  podle šířky — hlídá to vlastní test.
+* **`max-width: 20ch` byl o 3 % těsný.** Znak „0" je v Space Grotesku
+  0,638 em, takže 20ch = 12,75 em proti 11,64 em textu. Zvednuto na
+  22ch.
+
+### Ověřeno, ne opraveno
+
+* 27 použitých ikon je optimalizovaných; ztrátová kvantizace na PNG8
+  ukládá 39 %, ale je **vidět** (PSNR 26–38 dB při reálné velikosti),
+  takže se **nepoužila**. Bezztrátová komprese ušetří jen 1,4 %.
+* Kontrasty v obou motivech: titulek 18,4:1 (tmavý) / 17,0:1 (světlý),
+  zlaté `em` 14,8:1 / 4,6:1, lead 10,8:1 / 6,7:1 — vše nad AA.
 
 ## v15 — **stránka Launcheru bez „Tří kroků“ a carouselu, tapety zůstaly**
 
