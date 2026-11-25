@@ -59,7 +59,7 @@
 
 <!-- ===================== HEADER ===================== -->
 <!-- ===================== KO-FI GATE // CELOSTRÁNKOVÝ PŘECHOD ===================== -->
-<div aria-atomic="false" aria-hidden="true" aria-live="polite" class="kofi-gate" id="kofiGate" role="status">
+<div aria-atomic="false" aria-hidden="true" aria-live="polite" class="kofi-gate" id="kofiGate" inert role="status">
 <span aria-hidden="true" class="kofi-gate-panel kofi-gate-panel-left"></span>
 <span aria-hidden="true" class="kofi-gate-panel kofi-gate-panel-right"></span>
 <span aria-hidden="true" class="kofi-gate-grid"></span>
@@ -279,7 +279,7 @@
 <div class="cube-pill__panel-inner">
 <div class="cube-pill__panel-body">
 <div aria-label="Barva kostky" class="cube-swatches" data-i18n-aria="cube.color.aria" role="radiogroup">
-<input checked="checked" class="cube-swatch-input" id="cubeColorGold" name="cubeColor" type="radio" value="gold"/>
+<input checked class="cube-swatch-input" id="cubeColorGold" name="cubeColor" type="radio" value="gold"/>
 <label class="cube-swatch" for="cubeColorGold" style="--sw-a:#ffd84f; --sw-b:#ef6500;">
 <span aria-hidden="true" class="cube-swatch__dot"></span>
 <span class="cube-swatch__name" data-i18n="cube.color.gold">Zlatá</span>
@@ -355,11 +355,11 @@
 <div class="cube-pill__panel-inner">
 <div class="cube-pill__panel-body">
 <label class="cube-switch">
-<input checked="checked" class="cube-switch__input" data-cube-spin="" role="switch" type="checkbox"/>
+<input checked class="cube-switch__input" data-cube-spin="" role="switch" type="checkbox"/>
 <span aria-hidden="true" class="cube-switch__track"><span class="cube-switch__thumb"></span></span>
 <span class="cube-switch__label" data-i18n="cube.spin.label">Automatická rotace</span>
 </label>
-<p class="cube-note" data-cube-spin-note="" data-i18n="cube.spin.note" hidden="">Systém má vypnuté animace, kostka se proto sama neotáčí. Tažením ji otočíš i tak.</p>
+<p class="cube-note" data-cube-spin-note="" data-i18n="cube.spin.note" hidden>Systém má vypnuté animace, kostka se proto sama neotáčí. Tažením ji otočíš i tak.</p>
 </div>
 </div>
 </div>
@@ -495,7 +495,7 @@
 </div>
 
 <!-- ========== ROZBALITELNÉ: CELÉ INFORMACE A CÍL PROJEKTU ========== -->
-<div aria-hidden="true" class="about-manifest" id="aboutManifest" inert role="region">
+<div aria-hidden="true" class="about-manifest" id="aboutManifest" inert>
 <div class="about-manifest-inner">
 <span class="section-kicker about-manifest-kicker" data-i18n="about.manifestKicker">POSLÁNÍ PROJEKTU</span>
 <h3 data-i18n="about.manifestTitle">Celý cíl projektu v kostce</h3>
@@ -611,7 +611,7 @@
 <span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 3.5 7v5c0 5.2 3.6 8 8.5 9.5 4.9-1.5 8.5-4.3 8.5-9.5V7L12 3Z"></path></svg><i class="lbl" data-i18n="studio.value3">CZ/SK komunita</i></span>
 <span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Z"></path><path d="M9 9V6a3 3 0 0 1 6 0v3"></path></svg><i class="lbl" data-i18n="studio.value4">Store bez paywallu</i></span>
 </div>
-<div aria-label="Fakta o studiu" class="studio-facts" data-i18n-aria="studio.factsAria">
+<div aria-label="Fakta o studiu" class="studio-facts" data-i18n-aria="studio.factsAria" role="group">
 <div><strong>CZ/SK</strong><span data-i18n="studio.fact1">domov studia</span></div>
 <div><strong data-i18n="studio.fact2Value">0 KČ</strong><span data-i18n="studio.fact2">ceník pro komunitu</span></div>
 <div><strong>4</strong><span data-i18n="studio.fact3">pilíře ekosystému</span></div>
