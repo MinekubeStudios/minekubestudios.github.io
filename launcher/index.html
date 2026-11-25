@@ -275,10 +275,6 @@
 </ul>
 
 <div class="lpx-hero__cta">
-<button class="lpx-dig" data-mc-dig type="button">
-<span data-i18n="lp.mc.dig">Ponoř se hloub</span>
-<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 4v14"></path><path d="m6 12 6 6 6-6"></path></svg>
-</button>
 <button aria-pressed="true" class="lpx-motion" data-fx-toggle data-mc-motion data-i18n-title="lp.fx.aria" type="button">
 <img alt="" aria-hidden="true" decoding="async" height="18" src="icons/toggle-on.png" width="18"/>
 <span data-i18n="lp.mc.motion.on" data-mc-motion-label>Animace zapnuté</span>
@@ -331,39 +327,6 @@
 </div>
 </section>
 
-<!-- ===================== TŘI KROKY ===================== -->
-<section aria-labelledby="lpxHowTitle" class="lpx-band lpx-band--steps" id="jak-to-funguje">
-<div aria-hidden="true" class="lpx-band__bg" style="--bg:url('wallpapers/atmo/desert-temple.webp')"></div>
-<div class="lpx-wrap">
-<header class="lpx-head">
-<p class="lpx-tag" data-reveal><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/pickaxe.png" width="16"/><span data-i18n="lp.mc.how.tag">Jak to funguje</span></p>
-<h2 data-i18n="lp.mc.how.title" data-reveal id="lpxHowTitle" style="--d:60ms">Tři kroky <em>ke hře.</em></h2>
-<p class="lpx-head__lead" data-i18n="lp.mc.how.lead" data-reveal style="--d:120ms">Od instalace po první blok. Nic mezitím neřešíš — launcher si Javu, verzi i mody obstará sám.</p>
-</header>
-
-<ol class="lpx-steps">
-<li class="lpx-step" data-reveal>
-<span aria-hidden="true" class="lpx-step__num">1</span>
-<img alt="" aria-hidden="true" class="lpx-step__icon" decoding="async" height="52" src="icons/download.png" width="52"/>
-<h3 data-i18n="lp.mc.how.s1.t">Nainstaluj launcher</h3>
-<p data-i18n="lp.mc.how.s1.p">Stáhni instalátor pro Windows přímo z GitHubu. Žádná registrace, žádná platba, žádné reklamní okno.</p>
-</li>
-<li class="lpx-step" data-reveal style="--d:110ms">
-<span aria-hidden="true" class="lpx-step__num">2</span>
-<img alt="" aria-hidden="true" class="lpx-step__icon" decoding="async" height="52" src="icons/pickaxe.png" width="52"/>
-<h3 data-i18n="lp.mc.how.s2.t">Přines si svět</h3>
-<p data-i18n="lp.mc.how.s2.p">Vytvoř instanci, naimportuj <code>.mrpack</code> z Modrinthu, nebo přenes <code>.zip</code> z Prismu a MultiMC. Ikonu si launcher vezme s sebou.</p>
-</li>
-<li class="lpx-step" data-reveal style="--d:220ms">
-<span aria-hidden="true" class="lpx-step__num">3</span>
-<img alt="" aria-hidden="true" class="lpx-step__icon" decoding="async" height="52" src="icons/play.png" width="52"/>
-<h3 data-i18n="lp.mc.how.s3.t">Hraj</h3>
-<p data-i18n="lp.mc.how.s3.p">Stiskni hrát. Launcher sám stáhne správnou Javu i chybějící mody a spustí hru — bez ručního nastavování.</p>
-</li>
-</ol>
-</div>
-</section>
-
 <!-- ===================== BĚŽÍCÍ PÁS ===================== -->
 <div aria-hidden="true" class="lpx-marquee">
 <div class="lpx-marquee__track" data-marquee>
@@ -379,7 +342,8 @@
 </div>
 
 <!-- ===================== FUNKCE ===================== -->
-<section aria-labelledby="lpxFeaturesTitle" class="lpx-section" id="funkce">
+<section aria-labelledby="lpxFeaturesTitle" class="lpx-section lpx-section--atmo" id="funkce">
+<div aria-hidden="true" class="lpx-band__bg" style="--bg:url('wallpapers/atmo/crimson-forest.webp')"></div>
 <div class="lpx-wrap">
 <header class="lpx-head">
 <p class="lpx-tag" data-reveal><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/bookshelf.png" width="16"/><span data-i18n="lp.feat.tag">Co launcher umí</span></p>
@@ -458,7 +422,8 @@
 </section>
 
 <!-- ===================== PROHLÍDKA ROZHRANÍ ===================== -->
-<section aria-labelledby="lpxTourTitle" class="lpx-section lpx-section--tour" id="prohlidka">
+<section aria-labelledby="lpxTourTitle" class="lpx-section lpx-section--tour lpx-section--atmo" id="prohlidka">
+<div aria-hidden="true" class="lpx-band__bg" style="--bg:url('wallpapers/atmo/subdungeon.webp')"></div>
 <div class="lpx-wrap">
 <header class="lpx-head">
 <p class="lpx-tag" data-reveal><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/chest.png" width="16"/><span data-i18n="lp.tour.tag">Prohlídka rozhraní</span></p>
@@ -512,58 +477,6 @@
 </ul>
 </div>
 </div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- ===================== CAROUSEL ===================== -->
-<section aria-labelledby="lpxCarouselTitle" class="lpx-band lpx-band--carousel" id="co-najdes">
-<div aria-hidden="true" class="lpx-band__bg" style="--bg:url('wallpapers/atmo/crimson-forest.webp')"></div>
-<div class="lpx-wrap">
-<header class="lpx-head">
-<p class="lpx-tag" data-reveal><img alt="" aria-hidden="true" decoding="async" height="16" src="icons/mouse.png" width="16"/><span data-i18n="lp.mc.car.tag">Co v launcheru najdeš</span></p>
-<h2 data-i18n="lp.mc.car.title" data-reveal id="lpxCarouselTitle" style="--d:60ms">Projeď si <em>záložky.</em></h2>
-<p class="lpx-head__lead" data-i18n="lp.mc.car.lead" data-reveal style="--d:120ms">Šest míst, kam se v launcheru nejčastěji vracíš. Šipkami se posouváš, kolečkem myši taky.</p>
-</header>
-
-<div class="lpx-carousel" data-mc-carousel>
-<div aria-label="Záložky launcheru" class="lpx-carousel__track" data-i18n-aria="lp.carousel.aria" data-mc-track tabindex="0">
-<article class="lpx-slide">
-<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/chest.png" width="40"/>
-<h3 data-i18n="lp.mc.car.1.t">Knihovna</h3>
-<p data-i18n="lp.mc.car.1.p">Instance, skupiny a hledání. Každá instance má vlastní profil, ikonu a mody.</p>
-</article>
-<article class="lpx-slide">
-<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/ender-chest.png" width="40"/>
-<h3 data-i18n="lp.mc.car.2.t">Modpacky</h3>
-<p data-i18n="lp.mc.car.2.p">Modrinth katalog i soubory z disku. Mody se stahují paralelně a sdílí se mezi instancemi.</p>
-</article>
-<article class="lpx-slide">
-<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/bucket.png" width="40"/>
-<h3 data-i18n="lp.mc.car.3.t">Java</h3>
-<p data-i18n="lp.mc.car.3.p">Víc instalací vedle sebe, každá verze hry si vezme tu svou. Uložiště jde uklidit jedním tlačítkem.</p>
-</article>
-<article class="lpx-slide">
-<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/bell.png" width="40"/>
-<h3 data-i18n="lp.mc.car.4.t">Vizuál</h3>
-<p data-i18n="lp.mc.car.4.p">Záře, pozadí, profil pohybu a úvodní obrazovka. Efekty jdou vypnout jedním přepínačem.</p>
-</article>
-<article class="lpx-slide">
-<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/lightning-focus.png" width="40"/>
-<h3 data-i18n="lp.mc.car.5.t">Výkon</h3>
-<p data-i18n="lp.mc.car.5.p">Rychlé načítání, pozastavení na pozadí a kvalita renderu skinu. Všechno popsané, nic skryté.</p>
-</article>
-<article class="lpx-slide">
-<img alt="" aria-hidden="true" class="lpx-slide__icon" decoding="async" height="40" src="icons/lock.png" width="40"/>
-<h3 data-i18n="lp.mc.car.6.t">Soukromí</h3>
-<p data-i18n="lp.mc.car.6.p">Žádná telemetrie, anonymní identita a ochrana proti Log4Shell. Většina je zapnutá natrvalo.</p>
-</article>
-</div>
-<div class="lpx-carousel__nav">
-<button aria-label="Předchozí záložka" class="lpx-carousel__btn" data-i18n-aria="lp.carousel.prev" data-mc-prev type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m14.5 5.5-7 6.5 7 6.5"></path></svg></button>
-<img alt="" aria-hidden="true" class="lpx-carousel__mark" decoding="async" height="24" src="icons/mouse.png" width="24"/>
-<button aria-label="Další záložka" class="lpx-carousel__btn" data-i18n-aria="lp.carousel.next" data-mc-next type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9.5 5.5 7 6.5-7 6.5"></path></svg></button>
 </div>
 </div>
 </div>
