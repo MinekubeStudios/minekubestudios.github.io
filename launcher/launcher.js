@@ -497,11 +497,47 @@
      Opakované kliknutí pulz restartuje. Bez vynucení reflow by
      prohlížeč animaci podruhé nepřehrál. */
 
-  /* Pulz (gamma burst) trvá 900 ms — tlačítko se stáhne, exploduje
-     a zase se ustálí. Třída musí zůstat o kousek déle, aby se
-     dojezd neuřízl a tlačítko nezůstalo rozsvícené. */
-  const PULSE_MS = 900;
+  /* ---------- Pulz: rázová exploze ----------
+
+     Dvě složky, obě napsané pro tenhle konkrétní tlačítkový design:
+
+     1. Vnitřní — tlačítko rozehraje svoje vlastní energetické vrstvy
+        (svatozář, rám, povrch, plasma, sweep, pulsní linku, ikonu
+        s oběžnicí a šipkou). Řídí to CSS přes .is-pulse.
+
+     2. Vnější — nad tlačítkem vylétne .lp-pulse-burst:
+        position: fixed, z-index 10050, tedy mimo tlačítko. Proto
+        ji neoreže ani filter, ani overflow tlačítka. Vrstva drží
+        prstence, jiskry a fragmenty, které roznáší barvy tlačítka
+        (oranžová → zelená → fialová) do okolí.
+
+     Délka je 1,28 s podle nejdelší vnitřní animace
+     (downloadButtonImpactV2). Třída zůstane o kousek déle, aby se
+     dojezd neuřízl, a pak se uklidí i explozivní vrstva. */
+
+  const PULSE_MS = 1280;
+  const BURST_MS = 1500;
   const pulseTimers = new WeakMap();
+
+  function buildBurst(button) {
+    const burst = document.createElement("div");
+    burst.className = "lp-pulse-burst";
+    burst.setAttribute("aria-hidden", "true");
+
+    /* Střed výbuchu = střed tlačítka. Vrstva je fixed, takže
+       souřadnice jsou viewportové, ne dokumentové. */
+    const rect = button.getBoundingClientRect();
+    burst.style.left = rect.left + rect.width / 2 + "px";
+    burst.style.top = rect.top + rect.height / 2 + "px";
+
+    /* Rám výbuchu má stejný tvar jako tlačítko, takže potřebuje
+       jeho přesné rozměry. Načítají se z tlačítka, ne z konstant —
+       kdyby se tlačítko někdy roztáhlo, pulz se roztáhne s ním. */
+    burst.style.setProperty("--burst-w", rect.width + "px");
+    burst.style.setProperty("--burst-h", rect.height + "px");
+
+    return burst;
+  }
 
   function playDownloadAnimation(button) {
     if (!button) return;
@@ -511,11 +547,28 @@
     void button.offsetWidth;
     button.classList.add("is-pulse");
 
-    window.clearTimeout(pulseTimers.get(button));
-    pulseTimers.set(
-      button,
-      window.setTimeout(() => button.classList.remove("is-pulse"), PULSE_MS + 60)
+    /* Předchozí vrstvu uklidit — jinak by ve stránce zůstala viset. */
+    const previous = document.body.querySelector(
+      ":scope > .lp-pulse-burst"
     );
+    if (previous) previous.remove();
+
+    document.body.appendChild(buildBurst(button));
+
+    /* Předchozí timery zrušit — jinak by druhý klik nechal
+       doběhnout úklid z toho prvního a třída by zmizela uprostřed. */
+    const pending = pulseTimers.get(button);
+    if (pending) pending.forEach(window.clearTimeout);
+
+    pulseTimers.set(button, [
+      window.setTimeout(() => button.classList.remove("is-pulse"), PULSE_MS + 60),
+      window.setTimeout(() => {
+        const burst = document.body.querySelector(
+          ":scope > .lp-pulse-burst"
+        );
+        if (burst) burst.remove();
+      }, BURST_MS)
+    ]);
   }
 
   function onDownloadClick(button) {
