@@ -487,23 +487,32 @@
 
   /* ---------- Pulz stahovacího tlačítka ----------
 
-     Stejná odezva jako na Modpackách: třída .download-animating
-     spustí hotový pulz ze styles.css (downloadButtonImpactUltimate
-     0,98 s a jeho dozvuky). Žádná vlastní animace — jeden puls,
-     jedno chování napříč celým webem.
+     Jeden plynulý nádech a výdech: tlačítko se měkce rozepne přes
+     vlastnost scale (1 → 1,045 → 1) a přes něj přejede pruh světla.
+     Trvá 1,15 s a běží VŽDY — je to odezva na akci, ne dekorace,
+     takže ji vypínač efektů ani uložený stav „off" nevypíná.
+     Jen prefers-reduced-motion pulz zklidní na prosté prosvětlení
+     (řeší CSS v 24b-1).
 
-     Třída se sype po 1500 ms, tedy s rezervou po nejdelší dozvuk
-     (animace samotná končí dřív). Opakované kliknutí puls restartuje;
-     bez vynucení reflow by se animace nepřehrála znovu. */
+     Opakované kliknutí pulz restartuje. Bez vynucení reflow by
+     prohlížeč animaci podruhé nepřehrál. */
 
-  const DOWNLOAD_FLASH_MS = 1500;
+  const PULSE_MS = 1150;
+  const pulseTimers = new WeakMap();
 
   function playDownloadAnimation(button) {
     if (!button) return;
-    button.classList.remove("download-animating");
+
+    button.classList.remove("is-pulse");
+    /* Vynutí restart animace, aniž by cokoli měřilo layout. */
     void button.offsetWidth;
-    button.classList.add("download-animating");
-    window.setTimeout(() => button.classList.remove("download-animating"), DOWNLOAD_FLASH_MS);
+    button.classList.add("is-pulse");
+
+    window.clearTimeout(pulseTimers.get(button));
+    pulseTimers.set(
+      button,
+      window.setTimeout(() => button.classList.remove("is-pulse"), PULSE_MS + 60)
+    );
   }
 
   function onDownloadClick(button) {
@@ -1373,6 +1382,32 @@
 
   /* ---------- Pauza efektů na pozadí ---------- */
 
+  /* ---------- Klid dekorací mimo obrazovku ----------
+
+     Hvězdy a jiskry tlačítka Stáhnout jsou hezké jen tehdy, když je
+     tlačítko vidět. Když se odscrolluje pryč, nastavíme atribut, na
+     který CSS váže animation-play-state: paused (sekce 24b-1b).
+     Šetří to práci grafické karty na dlouhé stránce a nemění vzhled.
+     Pulz to neovlivní — ten startuje klikem na viditelné tlačítko. */
+
+  function initDownloadIdlePause() {
+    if (!("IntersectionObserver" in window)) return;
+
+    const buttons = document.querySelectorAll(".lp-dlbtn");
+    if (!buttons.length) return;
+
+    const watcher = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          entry.target.dataset.idlePaused = entry.isIntersecting ? "false" : "true";
+        });
+      },
+      { rootMargin: "80px" }
+    );
+
+    buttons.forEach(button => watcher.observe(button));
+  }
+
   function initVisibilityPause() {
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) painter.wake();
@@ -1569,6 +1604,7 @@
   initCopyChecksum();
   initSkipLink();
   initVisibilityPause();
+  initDownloadIdlePause();
   initMcParallax();
   initMcMotionToggle();
   initMcSwitch();
