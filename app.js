@@ -52,23 +52,23 @@ const I18N = {
     "nav.server": "Server",
     "nav.launcher": "Launcher",
     "nav.community": "Komunita",
-    "nav.server.aria": "Komunitní server — právě ho připravujeme",
+    "nav.server.aria": "Server, komunitní server ve vývoji — právě ho připravujeme",
     "nav.store": "Store",
     "theme.aria": "Přepnout motiv",
-    "lang.aria": "Přepnout jazyk stránky",
+    "lang.aria": "Přepnout jazyk stránky, aktuálně {code}",
     "lang.menu.title": "Jazyk stránky",
     "menu.aria": "Otevřít menu",
     "cta.modpacks.kicker": "VSTOUPIT DO KATALOGU",
     "cta.modpacks.title": "Procházet modpacky",
     "cta.github.kicker": "ZDROJOVÝ KÓD",
     "cta.github.title": "Minekube na GitHubu",
-    "cta.github.aria": "Zdrojové kódy Minekube Studios na GitHubu",
+    "cta.github.aria": "Zdrojový kód, Minekube na GitHubu — Minekube Studios",
     "kofi.label": "Podpořit projekt",
     "kofi.gate.title": "Otevírám ko-fi.com",
     "kofi.gate.status": "Připojuji k podpoře komunity",
     "kofi.gate.cancel": "Zrušit",
     "transition.label": "Načítám stránku",
-    "kofi.aria": "Podpořit Minekube Studios na Ko-fi",
+    "kofi.aria": "KO-FI, podpořit projekt na Ko-fi, Minekube Studios. Podpořit projekt.",
     "intro.title1": "Minecraft budoucnosti.",
     "intro.title2": "Otevřený úplně všem.",
     "intro.lead": "Minekube Studios je nezávislé československé studio, které staví <strong>výkonné modpacky</strong>, komunitní Minecraft server, Store a moderní open-source projekty do jednoho ekosystému. Nové technologie hraní tvoříme společně s komunitou — bez paywallu a zcela zdarma.",
@@ -242,23 +242,23 @@ const I18N = {
     "nav.server": "Server",
     "nav.launcher": "Launcher",
     "nav.community": "Community",
-    "nav.server.aria": "Community server — we are preparing it right now",
+    "nav.server.aria": "Server, community server in development — we are preparing it right now",
     "nav.store": "Store",
     "theme.aria": "Toggle theme",
-    "lang.aria": "Switch page language",
+    "lang.aria": "Switch page language, currently {code}",
     "lang.menu.title": "Page language",
     "menu.aria": "Open menu",
     "cta.modpacks.kicker": "ENTER THE CATALOG",
     "cta.modpacks.title": "Browse modpacks",
     "cta.github.kicker": "SOURCE CODE",
     "cta.github.title": "Minekube on GitHub",
-    "cta.github.aria": "Minekube Studios source code on GitHub",
+    "cta.github.aria": "Source code, Minekube on GitHub — Minekube Studios",
     "kofi.label": "Support the project",
     "kofi.gate.title": "Opening ko-fi.com",
     "kofi.gate.status": "Connecting to community support",
     "kofi.gate.cancel": "Cancel",
     "transition.label": "Loading page",
-    "kofi.aria": "Support Minekube Studios on Ko-fi",
+    "kofi.aria": "KO-FI, support the project on Ko-fi, Minekube Studios. Support the project.",
     "intro.title1": "The future of Minecraft.",
     "intro.title2": "Open to absolutely everyone.",
     "intro.lead": "Minekube Studios is an independent Czech-Slovak studio that builds <strong>high-performance modpacks</strong>, a community Minecraft server, a Store and modern open-source projects into a single ecosystem. We shape new ways of playing together with the community — no paywall, completely free.",
@@ -432,23 +432,23 @@ const I18N = {
     "nav.server": "Server",
     "nav.launcher": "Launcher",
     "nav.community": "Komunita",
-    "nav.server.aria": "Komunitný server — práve ho pripravujeme",
+    "nav.server.aria": "Server, komunitný server vo vývoji — práve ho pripravujeme",
     "nav.store": "Store",
     "theme.aria": "Prepnúť motív",
-    "lang.aria": "Prepnúť jazyk stránky",
+    "lang.aria": "Prepnúť jazyk stránky, aktuálne {code}",
     "lang.menu.title": "Jazyk stránky",
     "menu.aria": "Otvoriť menu",
     "cta.modpacks.kicker": "VSTÚPIŤ DO KATALÓGU",
     "cta.modpacks.title": "Prechádzať modpacky",
     "cta.github.kicker": "ZDROJOVÝ KÓD",
     "cta.github.title": "Minekube na Githube",
-    "cta.github.aria": "Zdrojové kódy Minekube Studios na GitHube",
+    "cta.github.aria": "Zdrojový kód, Minekube na GitHube — Minekube Studios",
     "kofi.label": "Podporiť projekt",
     "kofi.gate.title": "Otváram ko-fi.com",
     "kofi.gate.status": "Pripojujem k podpore komunity",
     "kofi.gate.cancel": "Zrušiť",
     "transition.label": "Načítavam stránku",
-    "kofi.aria": "Podporiť Minekube Studios na Ko-fi",
+    "kofi.aria": "KO-FI, podporiť projekt na Ko-fi, Minekube Studios. Podporiť projekt.",
     "intro.title1": "Minecraft budúcnosti.",
     "intro.title2": "Otvorený úplne všetkým.",
     "intro.lead": "Minekube Studios je nezávislé česko-slovenské štúdio, ktoré stavia <strong>výkonné modpacky</strong>, komunitný Minecraft server, Store a moderné open-source projekty do jedného ekosystému. Nové technológie hrania tvoríme spoločne s komunitou — bez paywallu a úplne zadarmo.",
@@ -654,16 +654,34 @@ function applyLanguage(lang, { notify = false } = {}) {
       : escapeHtml(value);
   });
 
+  /* Kód jazyka se musí aktualizovat DŘÍV, než ho přečte aria-label
+     níž — jinak by tlačítko hlásilo starý jazyk (např. „CZ", když je
+     vidět „EN") a přístupné jméno by neodpovídalo obrazovce. */
+  const langCode = document.getElementById("langCode");
+  if (langCode) langCode.textContent = meta.code;
+
   document.querySelectorAll("[data-i18n-aria]").forEach(element => {
-    element.setAttribute("aria-label", t(element.dataset.i18nAria));
+    /* Viditelný text se musí objevit i v přístupném jménu (WCAG 2.5.3,
+       „label in name") — jinak se hlasové ovládání a axe rozcházejí
+       s tím, co uživatel na obrazovce vidí. U přepínače jazyka je to
+       zkratka „CZ"/„EN"/„SK" z prvku .lang-code, u ostatních prvků
+       zůstane text beze změny. */
+    const visible = element.querySelector(".lang-code")?.textContent.trim();
+    element.setAttribute(
+      "aria-label",
+      t(element.dataset.i18nAria).replace("{code}", visible || "")
+    );
   });
 
   document.querySelectorAll("[data-i18n-title]").forEach(element => {
-    element.setAttribute("title", t(element.dataset.i18nTitle));
+    element.setAttribute(
+      "title",
+      t(element.dataset.i18nTitle).replace(
+        "{code}",
+        element.querySelector(".lang-code")?.textContent.trim() || ""
+      )
+    );
   });
-
-  const langCode = document.getElementById("langCode");
-  if (langCode) langCode.textContent = meta.code;
 
   document.querySelectorAll("#langMenu [data-lang]").forEach(button => {
     const active = button.dataset.lang === currentLang;
@@ -736,15 +754,29 @@ function renderLabelLetters() {
     const text = element.textContent.trim();
     element.textContent = "";
 
-    [...text].forEach((char, index) => {
+    /* Mezera se NEvkládá jako samostatný span. Každé písmeno je
+       display:block, takže by z něj byl prázdný řádek, který nese
+       jen šířku — a nástroje pro čtení viditelného textu (axe,
+       hlasové ovládání) ho zahodí. Slova by se slepila do
+       „supporttheproject" a tlačítko by se podle viditelného
+       popisku nedalo najít. Místo toho se mezera přilepí na
+       začátek následujícího písmene: vizuálně stejné, ale text
+       zůstane jedním souvislým slovním celkem. */
+    const chars = [...text];
+    let pendingSpace = false;
+    let index = 0;
+
+    chars.forEach(char => {
+      if (char === " ") {
+        pendingSpace = true;
+        return;
+      }
+
       const letter = document.createElement("span");
       letter.style.setProperty("--i", index);
-      if (char === " ") {
-        letter.classList.add("is-space");
-        letter.textContent = "\u00A0";
-      } else {
-        letter.textContent = char;
-      }
+      index += 1;
+      letter.textContent = pendingSpace ? "\u00A0" + char : char;
+      pendingSpace = false;
       element.appendChild(letter);
     });
   });

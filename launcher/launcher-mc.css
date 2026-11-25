@@ -1598,100 +1598,222 @@
    prosvětlení bez pohybu.
    ============================================================= */
 
-/* ---------- 24a · Pruh světla ---------- */
+/* ---------- 24a · Nabití energie — vrstvy ----------
 
-/* Vlastní prvek, ne ::after — ten už zabírá energetický rám
-   ze styles.css a nesmí o něj přijít. Ořez zaoblených rohů
-   obstará border-radius na tlačítku přes overflow: clip. */
-.lp-dlbtn__sheen {
+   Pulz se skládá ze čtyř nezávislých světelných stop, které se
+   sejdou v jednom okamžiku:
+
+   1. .lp-dlbtn__trace  — paprsek, který oběhne po obrysu tlačítka
+   2. .lp-dlbtn__spark  — čtyři jiskry, které přiletí ke středu
+   3. samotné tlačítko  — jednou vyšlehne (jas + halo)
+   4. .download-label   — popisek se na okamžik rozsvítí
+
+   Proč zrovna takhle:
+   - Paprsek je SVG obdélník s pathLength=1000 a animovaným
+     stroke-dashoffset. Obyčejný conic-gradient s animovanou custom
+     property se v některých prohlížečích nevykreslí vůbec.
+   - Animuje se jen stroke-dashoffset a opacity. Obrys se NErotuje,
+     takže nemůže přetéct mimo tlačítko (což se u rotovaného
+     obdélníku dělo).
+   - Vrstvy mají vlastní prvky, protože ::before a ::after už
+     zabírá energetický rám ze styles.css.
+
+   Vše je aria-hidden a pointer-events: none — čistě vizuální. */
+
+.lp-dlbtn__trace {
   position: absolute;
   inset: 0;
-  z-index: 6;
+  z-index: 7;
   border-radius: inherit;
-  background: linear-gradient(
-    100deg,
-    transparent 20%,
-    rgba(255, 255, 255, 0.42) 45%,
-    rgba(255, 248, 220, 0.66) 54%,
-    transparent 80%
-  );
+  overflow: hidden;
+  pointer-events: none;
   opacity: 0;
-  transform: translateX(-70%);
+}
+
+.lp-dlbtn__trace svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.lp-dlbtn__trace rect {
+  fill: none;
+  stroke: #fffdf0;
+  stroke-width: 4;
+  stroke-linecap: round;
+  /* 150 px světla, zbytek obvodu tvoří mezera, kterou paprsek
+     dohání — díky tomu je vidět jen krátká stopa. */
+  stroke-dasharray: 150 1000;
+  stroke-dashoffset: 0;
+  filter: drop-shadow(0 0 5px rgba(255, 250, 220, 0.95))
+    drop-shadow(0 0 12px rgba(255, 196, 60, 0.8));
+}
+
+.lp-dlbtn__spark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 6;
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  border-radius: 50%;
+  background: #fff8d8;
+  box-shadow: 0 0 8px rgba(255, 246, 200, 0.95),
+    0 0 16px rgba(255, 180, 40, 0.7);
+  opacity: 0;
   pointer-events: none;
 }
 
 /* ---------- 24b · Samotný pulz ---------- */
 
-.lp-dlbtn.is-pulse .lp-dlbtn__sheen {
-  animation: lpPulseSheen 1.15s cubic-bezier(0.3, 0.5, 0.3, 1) both;
+.lp-dlbtn.is-pulse .lp-dlbtn__trace {
+  animation: lpTraceFade 1.35s ease-out both;
 }
 
-/* Tlačítko se nadechne. Čtyři třídy + stavová třída, aby se pravidlo
-   dostalo přes klidovou downloadFusionIdle i hover pole ze styles.css.
-   `animation: none` je tu důležité — jinak by klidová animace dál
-   animovala box-shadow a pulz by nebyl vidět. */
+.lp-dlbtn.is-pulse .lp-dlbtn__trace rect {
+  animation: lpTraceRun 1.15s ease-out both;
+}
+
+.lp-dlbtn.is-pulse .lp-dlbtn__spark {
+  animation: lpSparkTravel 900ms cubic-bezier(0.4, 0, 0.2, 1) both,
+    lpSparkFade 900ms linear both;
+}
+
+/* Každá jiskra startuje z jiného místa a jiného času, aby přilet
+   nebyly v jednom zástupu. */
+.lp-dlbtn.is-pulse .lp-dlbtn__spark--a {
+  --spark-x: 16px;
+  --spark-y: -16px;
+  animation-delay: 0ms, 0ms;
+}
+
+.lp-dlbtn.is-pulse .lp-dlbtn__spark--b {
+  --spark-x: -18px;
+  --spark-y: -10px;
+  animation-delay: 60ms, 60ms;
+}
+
+.lp-dlbtn.is-pulse .lp-dlbtn__spark--c {
+  --spark-x: 22px;
+  --spark-y: 12px;
+  animation-delay: 110ms, 110ms;
+}
+
+.lp-dlbtn.is-pulse .lp-dlbtn__spark--d {
+  --spark-x: -14px;
+  --spark-y: 18px;
+  animation-delay: 150ms, 150ms;
+}
+
+/* Tlačítko samo jednou vyšlehne. Čtyři třídy + stavová třída, aby se
+   pravidlo dostalo přes klidovou downloadFusionIdle ze styles.css. */
 .button[data-download].download-ultimate.lp-dlbtn.is-pulse {
-  animation: lpPulseBreath 1.15s cubic-bezier(0.22, 0.61, 0.24, 1) both;
-  filter: brightness(1.1) saturate(1.14);
-  box-shadow:
-    0 0 0 1px rgba(255, 236, 178, 0.42),
-    0 0 26px rgba(255, 196, 64, 0.42),
-    0 0 48px rgba(255, 130, 40, 0.2);
+  animation: lpChargeBloom 1.4s cubic-bezier(0.22, 0.61, 0.24, 1) both;
 }
 
-@keyframes lpPulseBreath {
-  0% {
-    scale: 1;
-  }
-  /* Nádech — pomalý rozjezd, aby to nebylo „bum". */
-  38% {
-    scale: 1.038;
-  }
-  /* Vrchol — tady se drží nejdéle, tady je pulz nejvíc cítit. */
-  54% {
-    scale: 1.045;
-  }
-  /* Výdech — delší než nádech, měkký dojezd do klidu. */
-  80% {
-    scale: 0.999;
-  }
-  100% {
-    scale: 1;
-  }
+/* Rozsvícení popisku — uživatel si vyžádal tuhle část. */
+.button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-label {
+  animation: lpLabelFlash 1.2s ease-out both;
 }
 
-@keyframes lpPulseSheen {
+@keyframes lpTraceFade {
   0% {
     opacity: 0;
-    transform: translateX(-70%);
   }
-  16% {
-    opacity: 0.85;
+  10% {
+    opacity: 1;
   }
-  60% {
-    opacity: 0.5;
+  76% {
+    opacity: 1;
   }
   100% {
     opacity: 0;
-    transform: translateX(70%);
+  }
+}
+
+@keyframes lpTraceRun {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -1000;
+  }
+}
+
+@keyframes lpSparkTravel {
+  from {
+    transform: translate(var(--spark-x), var(--spark-y)) scale(0.5);
+  }
+  to {
+    transform: translate(0, 0) scale(1.1);
+  }
+}
+
+@keyframes lpSparkFade {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes lpChargeBloom {
+  0% {
+    filter: brightness(1);
+    box-shadow: 0 0 0 0 rgba(255, 214, 67, 0);
+  }
+  55% {
+    filter: brightness(1.24) saturate(1.2);
+    box-shadow: 0 0 0 1px rgba(255, 240, 190, 0.5),
+      0 0 26px rgba(255, 220, 90, 0.62), 0 0 54px rgba(255, 150, 40, 0.34),
+      0 0 96px rgba(255, 110, 30, 0.16);
+  }
+  100% {
+    filter: brightness(1);
+    box-shadow: 0 0 0 0 rgba(255, 214, 67, 0);
+  }
+}
+
+@keyframes lpLabelFlash {
+  0%,
+  100% {
+    text-shadow: 0 1px 0 rgba(255, 246, 214, 0.7);
+  }
+  45% {
+    text-shadow: 0 1px 0 rgba(255, 252, 232, 0.95),
+      0 0 14px rgba(255, 248, 210, 0.9), 0 0 26px rgba(255, 196, 64, 0.7);
   }
 }
 
 /* ---------- 24b-1 · Redukce pohybu ----------
 
-   Bez animací zůstane jen prosvětlení a jemný pruh světla — pořád
-   je poznat, že klik proběhl, ale nic se nehýbe. */
+   Bez pohybu zůstane jen prosvětlení a rozsvícený popisek — pořád je
+   poznat, že klik proběhl, ale nic neobíhá ani nepřilétá. */
 
 @media (prefers-reduced-motion: reduce) {
   .button[data-download].download-ultimate.lp-dlbtn.is-pulse {
     animation: none;
-    scale: 1;
+    filter: brightness(1.1) saturate(1.14);
   }
 
-  .lp-dlbtn.is-pulse .lp-dlbtn__sheen {
+  .lp-dlbtn.is-pulse .lp-dlbtn__trace,
+  .lp-dlbtn.is-pulse .lp-dlbtn__spark {
+    display: none;
+  }
+
+  .button[data-download].download-ultimate.lp-dlbtn.is-pulse .download-label {
     animation: none;
-    opacity: 0.3;
-    transform: none;
+    text-shadow: 0 1px 0 rgba(255, 252, 232, 0.95),
+      0 0 14px rgba(255, 248, 210, 0.9);
   }
 }
 

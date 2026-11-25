@@ -497,7 +497,10 @@
      Opakované kliknutí pulz restartuje. Bez vynucení reflow by
      prohlížeč animaci podruhé nepřehrál. */
 
-  const PULSE_MS = 1150;
+  /* Nejdelší vrstva pulzu je rozkvět tlačítka (lpChargeBloom, 1,4 s).
+     Třída musí zůstat o kousek déle, jinak by se animace uřízla
+     uprostřed a tlačítko by zůstalo rozsvícené. */
+  const PULSE_MS = 1400;
   const pulseTimers = new WeakMap();
 
   function playDownloadAnimation(button) {
