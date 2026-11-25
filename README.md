@@ -1,42 +1,49 @@
-# Minekube Studios // Web (v18 — launcher se vyvíjí na vlastní doméně)
+# Minekube Studios // Web (v18 — připravené nasazení launcheru na vlastní doménu)
 
-## v18 — **stránka launcheru se přesunula, tady zůstalo přesměrování**
+## v18 — **launcher má připravené nasazení na vlastní doménu**
 
-Launcher má od v17 vlastní doménu `minekubelauncher.github.io`. Aby
-nevznikly dvě rozešlé verze, je `launcher/` v tomhle repu **jen
-přesměrovávací stránka** (3,8 kB) — celá stránka se vyvíjí v novém
-repu `minekubelauncher/minekubelauncher.github.io`.
+Stránka launcheru **zůstává v `launcher/`** a funguje na
+`https://minekubestudios.github.io/launcher/` jako dřív — tam se
+vyvíjí. Přibyla ale možnost nasadit ji na **`minekubelauncher.github.io`**
+jako samostatný web. Připravené je to celé, chybí jen založit repozitář.
 
-Přesměrování je trojí, aby se nezaseklo nikde:
+### `launcher-deploy/`
 
-| Vrstva | Co dělá |
+| Soubor | Co dělá |
 |---|---|
-| `<meta http-equiv="refresh">` | funguje i bez JavaScriptu |
-| `window.location.replace()` | záloha tam, kde meta refresh blokují |
-| `<a class="button">` | ruční odkaz, kdyby selhalo obojí |
+| `build.sh` | sestaví `launcher-site.tar.gz` z `launcher/` |
+| `JAK-NASADIT.md` | tři způsoby nasazení |
+| `README.md` | zkrácený přehled |
 
-`replace` místo `assign` schválně — jinak by tlačítko Zpět vrátilo na
-mezistránku, která hned zase přesměruje. `canonical` + `noindex, follow`
-drží vyhledávače na jedné verzi.
+`build.sh` vezme celou stránku ze `launcher/`, přidá GitHub Actions
+workflow pro Pages, `.nojekyll` a testy s cestami přepsanými do rootu
+nového repa. Tarball je build artefakt (1,6 MB) a je v `.gitignore`.
 
-### Uklizeno
+### Ověřeno
 
-- `launcher/` zhubl z **2,3 MB na 624 kB** — zůstaly jen čtyři assety
-  pro redirect (logo, favicon, apple ikona).
-- `tools/launcher_page_test.mjs` (1024 řádků, 24 testů) **odešel do
-  nového repa** — testuje stránku, která tam teď žije.
-- Místo něj je `tools/launcher_redirect_test.mjs` (6 testů): hlídá
-  cílovou adresu ve všech třech vrstvách, canonical/noindex, rozbité
-  relativní cesty a hlavně to, že se do `launcher/` nevrátily staré
-  soubory.
+- `build.sh` → 97 položek, 1,6 MB
+- rozbalený balíček **projde 24/24 testy**
+- `launcher/` v hlavním repu zůstává plná stránka — 781 řádků,
+  53 ikon, 14 tapet, **24/24 testů**, otevřená v jsdom bez chyb
+
+### Odkazy
+
+Hlavička, patička i modpacky míří na launcher **absolutně** na
+`https://minekubelauncher.github.io/`. Launcher odkazuje zpět na
+`https://minekubestudios.github.io/`. `/launcher/` je odebrán
+z `PAGE_TRANSITION_PATHS` — cross-origin odkaz by přechodový závoj
+stejně odmítl.
 
 ### Co musíš udělat
 
-Nový repo `minekubelauncher/minekubelauncher.github.io` **ještě
-neexistuje** — dokud ho nezaložíš, odkazy na launcher jsou 404.
-Připravený je v `/tmp/launcher-site` (89 souborů, 2,3 MB) včetně
-workflow pro GitHub Actions a `deploy.sh`, který repo založí, pushne
-obsah a zapne Pages na jeden příkaz.
+1. Založit repo **`minekubelauncher/minekubelauncher.github.io`**
+   — můj token nemá oprávnění `CreateRepository`.
+2. Spustit `launcher-deploy/build.sh` a podle `JAK-NASADIT.md`
+   obsah nahrát.
+
+Aby adresa byla přesně `minekubelauncher.github.io`, musí se účet
+jmenovat `minekubelauncher` — ten zatím neexistuje. Alternativy
+(i varianta „nechat launcher v hlavním repu") jsou v návodu.
 
 ## v17 — **launcher má vlastní doménu `minekubelauncher.github.io`**
 
