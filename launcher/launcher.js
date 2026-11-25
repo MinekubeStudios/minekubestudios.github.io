@@ -388,7 +388,10 @@
           ? translate("lp.hint.planned", "{os} is planned — only the Windows build is available for now.")
               .replace("{os}", platformName(visitorOS))
           : "";
-      hintNode.textContent = [label, sub, plannedHint].filter(Boolean).join(" — ") + (file ? `. ${file}` : "");
+      /* Stavový řádek pod tlačítkem je pryč, takže popis souboru
+         i velikost čtečka dostane tudy — jinak by se ztratily. */
+      hintNode.textContent =
+        [label, sub, plannedHint].filter(Boolean).join(" — ") + (file ? `. ${file}` : "");
     }
   }
 
@@ -1042,7 +1045,13 @@
         if (running) return;
         running = true;
         last = 0;
-        window.requestAnimationFrame(tick);
+        /* Kdyby prohlížeč rAF neměl (nebo ho blokoval), nesmí to
+           shodit inicializaci přepínače efektů — jen se nekreslí. */
+        try {
+          window.requestAnimationFrame(tick);
+        } catch {
+          running = false;
+        }
       }
     };
   })();
@@ -1256,7 +1265,11 @@
           /* soukromý režim — jen si to nepamatujeme */
         }
       }
-      if (on) painter.wake();
+      try {
+        if (on) painter.wake();
+      } catch {
+        /* animace se nespustila — stav přepínače to nezmění */
+      }
     };
 
     let on = effectsDefault();
@@ -1268,7 +1281,11 @@
       /* ignorujeme */
     }
 
-    apply(on, false);
+    try {
+      apply(on, false);
+    } catch {
+      /* i když se efekty nepodaří nastartovat, tlačítko musí fungovat */
+    }
     button.disabled = false;
 
     button.addEventListener("click", () => {
@@ -1441,97 +1458,6 @@
         target.focus({ preventScroll: true });
       });
     });
-  }
-
-  function initScrollUi() {
-    const nav = document.querySelector(".lpx-nav");
-    const links = [...document.querySelectorAll("[data-nav-link]")];
-    const targets = links
-      .map(link => {
-        const section = document.querySelector(link.getAttribute("href") || "");
-        return section ? { section, link } : null;
-      })
-      .filter(Boolean);
-    if (!nav && !targets.length) return;
-
-    let navTop = 0;
-    let tops = [];
-    let ticking = false;
-
-    const documentTop = element => {
-      let y = 0;
-      let node = element;
-      while (node) {
-        y += node.offsetTop || 0;
-        node = node.offsetParent;
-      }
-      return y;
-    };
-
-    const measure = () => {
-      navTop = nav ? documentTop(nav) : 0;
-      tops = targets.map(({ section }) => documentTop(section));
-      update();
-    };
-
-    function update() {
-      ticking = false;
-      const y = window.scrollY;
-      if (nav) nav.classList.toggle("is-stuck", y > Math.max(0, navTop - 140));
-      if (!targets.length) return;
-      const line = y + window.innerHeight * 0.34;
-      let activeIndex = -1;
-      tops.forEach((top, index) => {
-        if (top <= line) activeIndex = index;
-      });
-      if (activeIndex === -1 && tops.length) activeIndex = 0;
-      const list = nav?.querySelector(".lpx-nav__list");
-      targets.forEach(({ link }, index) => {
-        const active = index === activeIndex;
-        const wasActive = link.classList.contains("is-active");
-        link.classList.toggle("is-active", active);
-        if (active) link.setAttribute("aria-current", "true");
-        else link.removeAttribute("aria-current");
-
-        /* Na úzkém displeji se seznam posouvá — aktivní položka musí být
-           celá vidět. Posouváme jen samotný seznam, ne stránku. */
-        if (active && !wasActive && list && list.scrollWidth > list.clientWidth + 4) {
-          const pad = 14;
-          const start = link.offsetLeft;
-          const end = start + link.offsetWidth;
-          let left = list.scrollLeft;
-          if (start - pad < left) left = start - pad;
-          else if (end + pad > left + list.clientWidth) left = end + pad - list.clientWidth;
-          if (left !== list.scrollLeft) {
-            try {
-              list.scrollTo({ left: Math.max(0, left), behavior: prefersReduced() ? "auto" : "smooth" });
-            } catch {
-              list.scrollLeft = Math.max(0, left);
-            }
-          }
-        }
-      });
-    }
-
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      window.requestAnimationFrame(update);
-    };
-
-    let resizeTimer = 0;
-    const onResize = () => {
-      window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(measure, 140);
-    };
-
-    measure();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize, { passive: true });
-    document.addEventListener("minekube:language", () => window.setTimeout(measure, 0));
-    if (document.fonts && typeof document.fonts.ready === "object") {
-      document.fonts.ready.then(measure).catch(() => {});
-    }
   }
 
   /* ---------- FAQ akordeon ----------
@@ -1750,39 +1676,6 @@
     sync();
   }
 
-  function initMcSwitch() {
-    const root = document.querySelector("[data-mc-switch]");
-    if (!root) return;
-    const tabs = [...root.querySelectorAll("[data-mc-switch-btn]")];
-    const panes = [...document.querySelectorAll("[data-mc-pane]")];
-    if (!tabs.length || !panes.length) return;
-
-    const select = (tab, { focus = false } = {}) => {
-      const target = tab.getAttribute("aria-controls");
-      tabs.forEach(item => {
-        const active = item === tab;
-        item.setAttribute("aria-selected", String(active));
-        item.tabIndex = active ? 0 : -1;
-      });
-      panes.forEach(pane => { pane.hidden = pane.id !== target; });
-      if (focus) tab.focus({ preventScroll: true });
-    };
-
-    tabs.forEach(tab => tab.addEventListener("click", () => select(tab)));
-    root.addEventListener("keydown", event => {
-      const index = tabs.indexOf(document.activeElement);
-      if (index === -1) return;
-      let next = null;
-      if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % tabs.length;
-      else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index - 1 + tabs.length) % tabs.length;
-      else if (event.key === "Home") next = 0;
-      else if (event.key === "End") next = tabs.length - 1;
-      if (next === null) return;
-      event.preventDefault();
-      select(tabs[next], { focus: true });
-    });
-  }
-
   function initMcCarousel() {
     const root = document.querySelector("[data-mc-carousel]");
     if (!root) return;
@@ -1840,10 +1733,11 @@
   function initMcDig() {
     document.querySelectorAll("[data-mc-dig]").forEach(button => {
       button.addEventListener("click", () => {
-        /* Hero je první sekce; „ponoř se hloub" skočí na sekci za
-           rychlými fakty — tam začíná skutečný obsah. */
+        /* „Ponoř se hloub" skočí na první obsahovou sekci pod hero.
+           Dřív mířil na pás platforem, ten je pryč — teď je to
+           „Tři kroky ke hře", nebo cokoli, co za hero přijde. */
         const target =
-          document.getElementById("platformy-prehled") ||
+          document.getElementById("jak-to-funguje") ||
           document.querySelector("[data-mc-hero]")?.nextElementSibling;
         if (!target) return;
         const reduce = prefersReduced();
@@ -1872,7 +1766,6 @@
   initTilt();
   initMarquee();
   initSmoothScroll();
-  initScrollUi();
   initFaq();
   initCopyChecksum();
   initSkipLink();
@@ -1880,7 +1773,6 @@
   initDownloadIdlePause();
   initMcParallax();
   initMcMotionToggle();
-  initMcSwitch();
   initMcCarousel();
   initMcDig();
 

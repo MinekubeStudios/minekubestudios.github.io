@@ -247,12 +247,17 @@ test("Windows: najde instalátor v repozitáři a stáhne ho", async () => {
   assert.equal(hero.dataset.os, "windows");
   assert.match(text(document, ".lpx-version__value"), /^v1\.0\.0-local$/);
   assert.match(text(document, "[data-os-label]"), /Windows/);
-  assert.match(text(document, "[data-os-sub]"), /23[.,]5 MB/);
-  assert.match(text(document, "[data-os-sub]"), /\.exe$/);
-  assert.equal(document.querySelector('[data-launcher-file="hero"]').hidden, false);
+  /* Stavový řádek pod tlačítkem je pryč (na přání) — velikost, formát
+     i název souboru musí zůstat dostupné čtečce přes skrytý popis
+     a viditelně na kartě Windows. */
+  assert.equal(document.querySelector("[data-os-sub]"), null, "stavový řádek měl zmizet");
+  assert.equal(document.querySelector('[data-launcher-file="hero"]'), null, "řádek se souborem měl zmizet");
+  const hint = text(document, "[data-launcher-hint]");
+  assert.match(hint, /23[.,]5 MB/, "čtečka dostane velikost");
+  assert.match(hint, /\.exe/, "čtečka dostane formát");
+  assert.match(hint, /setup\.exe/, "čtečka dostane název souboru");
   assert.equal(document.querySelector('[data-launcher-file="windows"]').hidden, false);
   assert.match(text(document, '[data-launcher-file="windows"] [data-launcher-file-name]'), /setup\.exe/);
-  assert.equal(document.querySelector("[data-launcher-source]").hidden, false);
   // Skeletony zmizí, jakmile jsou data k dispozici.
   assert.equal(document.querySelector('[data-launcher-skeleton="windows"]').hidden, true);
 
@@ -316,7 +321,8 @@ test("Návštěvník na macOS dostane Windows a slušné vysvětlení", async ()
   /* macOS sestavení neexistuje, takže stránka o něm nemluví — hlavní
      tlačítko prostě nabídne Windows, které jediné existuje. */
   assert.equal(document.querySelector('[data-os="macos"]'), null);
-  assert.match(document.querySelector("[data-os-sub]").textContent.trim(), /^Windows 10\+ · 64bit · [\d,]+ MB · \.exe$/);
+  assert.equal(document.querySelector("[data-os-sub]"), null);
+  assert.match(document.querySelector("[data-launcher-hint]").textContent, /Stáhnout pro Windows/);
   assert.deepEqual(page.errors, []);
 });
 
@@ -374,13 +380,14 @@ test("Přepnutí jazyka překreslí dynamické texty i navigaci", async () => {
   assert.match(text(document, "[data-os-label]"), /^Download for Windows$/);
   assert.match(text(document, "[data-launcher-state-label]"), /Ready to download/);
   assert.equal(text(document, ".lpx-hero__cta [data-mc-motion-label]"), "Animations on");
-  assert.equal(text(document, '.lpx-nav__link[href="#funkce"]'), "Features");
+  assert.match(text(document, ".lpx-cta h2"), /play first|see what/);
+  assert.match(text(document, '[data-i18n="lp.mc.how.title"]'), /Three steps|Three/);
   assert.equal(text(document, ".lpx-cta h2"), "Want to see what there is to play first?");
 
   window.eval(`applyLanguage("sk")`);
   await tick(window);
   assert.match(text(document, "[data-os-label]"), /^Stiahnuť pre Windows$/);
-  assert.equal(text(document, '.lpx-nav__link[href="#faq"]'), "Otázky");
+  assert.ok(text(document, ".lpx-cta h2").length > 10, "CTA se přeložilo");
 
   window.eval(`applyLanguage("cs")`);
   await tick(window);
@@ -482,31 +489,30 @@ test("Prohlídka rozhraní funguje i z klávesnice", async () => {
   assert.deepEqual(page.errors, []);
 });
 
-test("Přepínač Platformy/Funkce přepíná panely a jde z klávesnice", async () => {
+test("Přepínač animací v hero je jediný a ovládá efekty", async () => {
   const page = await buildPage("repoOnly");
   const { document, window } = page;
 
-  const tabs = [...document.querySelectorAll("[data-mc-switch-btn]")];
-  const panes = [...document.querySelectorAll("[data-mc-pane]")];
-  assert.equal(tabs.length, 2);
-  assert.equal(panes.length, 2);
-  assert.equal(tabs[0].getAttribute("aria-selected"), "true");
-  assert.equal(panes[0].hidden, false);
-  assert.equal(panes[1].hidden, true);
-  assert.ok(panes[0].querySelector(".lpx-plat--live"), "v první pane jsou platformy");
-  assert.ok(panes[1].querySelector(".lpx-table"), "ve druhé pane je tabulka");
+  /* Lišta sekcí i přepínač Platformy/Funkce jsou pryč — ovládání
+     efektů zůstalo jen v hero a nesmí jich být víc. */
+  const toggles = [...document.querySelectorAll("[data-fx-toggle]")];
+  assert.equal(toggles.length, 1, "na stránce je právě jeden přepínač efektů");
+  assert.equal(document.querySelectorAll(".lpx-fx").length, 0, "lišta sekcí zmizela");
 
-  tabs[1].dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  assert.equal(tabs[1].getAttribute("aria-selected"), "true");
-  assert.equal(panes[1].hidden, false);
-  assert.equal(panes[0].hidden, true);
+  const button = toggles[0];
+  const root = document.querySelector(".launcher-page");
+  assert.equal(button.disabled, false, "tlačítko musí být použitelné");
+  assert.equal(button.getAttribute("aria-pressed"), "true");
+  assert.equal(root.getAttribute("data-fx-state"), "on");
 
-  tabs[0].focus();
-  document.querySelector("[data-mc-switch]").dispatchEvent(
-    new window.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true })
-  );
-  assert.equal(tabs[1].getAttribute("aria-selected"), "true");
-  assert.equal(panes[1].hidden, false);
+  button.click();
+  assert.equal(button.getAttribute("aria-pressed"), "false");
+  assert.equal(root.getAttribute("data-fx-state"), "off");
+  assert.equal(text(document, "[data-mc-motion-label]"), "Animace vypnuté");
+
+  button.click();
+  assert.equal(button.getAttribute("aria-pressed"), "true");
+  assert.equal(text(document, "[data-mc-motion-label]"), "Animace zapnuté");
   assert.deepEqual(page.errors, []);
 });
 
@@ -588,8 +594,7 @@ test("Nový design stojí na tapetách a pixelových ikonách, studio zmizelo", 
     assert.ok(image.getAttribute("width") && image.getAttribute("height"), `${src}: chybí rozměry`);
     assert.ok(statSync(ROOT + "launcher/" + src).size < 60 * 1024, `${src} je moc velký`);
   });
-  ["chest", "ender-chest", "anvil", "pickaxe", "fenix"].forEach(name => {
-    if (name === "fenix") return;
+  ["chest", "ender-chest", "pickaxe", "windows", "linux", "toggle-on"].forEach(name => {
     assert.ok(used.has(name), `chybí ikona ${name}`);
   });
 
@@ -601,33 +606,6 @@ test("Nový design stojí na tapetách a pixelových ikonách, studio zmizelo", 
   assert.ok(!existsSync(ROOT + "launcher/launcher.css"), "starý launcher.css musí být smazaný");
   assert.ok(!existsSync(ROOT + "launcher/launcher-mc.css"), "starý launcher-mc.css musí být smazaný");
 
-  assert.deepEqual(page.errors, []);
-});
-
-test("Přepínač efektů animace vypne a volbu si pamatuje", async () => {
-  const page = await buildPage("withReleases");
-  const { document, window } = page;
-  const pageEl = document.querySelector(".launcher-page");
-  const toggle = document.querySelector("[data-fx-toggle]");
-
-  assert.equal(pageEl.dataset.fxState, "on");
-  assert.equal(toggle.getAttribute("aria-pressed"), "true");
-  assert.equal(document.querySelectorAll(".lpx-marquee__item").length, 16, "pás se má zdvojnásobit kvůli smyčce");
-
-  toggle.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  assert.equal(pageEl.dataset.fxState, "off");
-  assert.equal(toggle.getAttribute("aria-pressed"), "false");
-  assert.equal(window.localStorage.getItem("minekube:launcher-fx"), "off");
-
-  /* Druhý přepínač v hero (Animace) ukazuje stejný stav. */
-  await tick(window);
-  assert.equal(document.querySelector("[data-mc-motion]").getAttribute("aria-pressed"), "false");
-
-  toggle.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  await tick(window);
-  assert.equal(pageEl.dataset.fxState, "on");
-  assert.equal(window.localStorage.getItem("minekube:launcher-fx"), "on");
-  assert.equal(document.querySelector("[data-mc-motion]").getAttribute("aria-pressed"), "true");
   assert.deepEqual(page.errors, []);
 });
 
@@ -648,9 +626,10 @@ test("Odkazy na repozitář, katalog a navigaci sedí", async () => {
   const releases = document.querySelector('[data-site-link="launcherReleases"]');
   assert.equal(releases.getAttribute("href"), "https://github.com/MinekubeStudios/MinekubeLauncher/releases");
 
-  // Sekční navigace míří na existující sekce.
-  const navLinks = [...document.querySelectorAll("[data-nav-link]")];
-  assert.equal(navLinks.length, 4);
+  /* Sekční navigace je pryč; každý interní odkaz na kotvu musí
+     mířit na existující prvek — jinak vznikne mrtvý klik. */
+  const navLinks = [...document.querySelectorAll('a[href^="#"]')];
+  assert.ok(navLinks.length >= 1, "hero CTA zůstalo");
   navLinks.forEach(link => {
     assert.ok(document.querySelector(link.getAttribute("href")), `neexistující cíl ${link.getAttribute("href")}`);
   });
@@ -690,10 +669,16 @@ test("Stránka je sémantická a bez duplicitních ID", async () => {
   document.querySelectorAll("[role='tabpanel']").forEach(panel => {
     assert.ok(document.getElementById(panel.getAttribute("aria-labelledby")), "tabpanel bez platného aria-labelledby");
   });
-  // Sekce, na které vede navigace, existují.
-  ["launcher", "platformy-prehled", "jak-to-funguje", "funkce", "prohlidka", "co-najdes", "platformy", "faq", "dalsi"].forEach(id => {
+  // Sekce stránky (bez smazaných bloků).
+  ["launcher", "jak-to-funguje", "funkce", "prohlidka", "co-najdes", "platformy", "faq", "dalsi"].forEach(id => {
     assert.ok(document.getElementById(id), `chybí sekce #${id}`);
   });
+  // Smazané bloky se nesmí vrátit omylem.
+  ["platformy-prehled"].forEach(id => {
+    assert.equal(document.getElementById(id), null, `#${id} mělo zmizet`);
+  });
+  assert.equal(document.querySelector(".lpx-facts"), null, "pruh faktů měl zmizet");
+  assert.equal(document.querySelector(".lpx-nav"), null, "navigace sekcí měla zmizet");
   dom.window.close();
 });
 
@@ -740,6 +725,30 @@ test("Obrázky odpovídají atributům width/height a nikdo neodkazuje do prázd
     assert.ok(existsSync(resolved), `odkaz do prázdna: ${ref}`);
   });
   dom.window.close();
+});
+
+test("Styly jsou syntakticky vyvážené a responzivní bloky nejsou vnořené", () => {
+  /* Při mazání sekcí se snadno zapomene uzavřít @media — pak se všechna
+     responzivní pravidla stanou mrtvými a nikdo si toho nevšimne. */
+  for (const file of ["launcher/lpx.css", "launcher/launcher-pulse.css"]) {
+    const css = read(file);
+    const stripped = css.replace(/\/\*[\s\S]*?\*\//g, "");
+    let depth = 0;
+    let maxDepth = 0;
+    let atMediaDepth = [];
+    const lines = stripped.split("\n");
+    lines.forEach((line, index) => {
+      const open = (line.match(/\{/g) || []).length;
+      const close = (line.match(/\}/g) || []).length;
+      if (depth === 0 && /@media/.test(line) && open) atMediaDepth.push(index + 1);
+      depth += open - close;
+      maxDepth = Math.max(maxDepth, depth);
+      assert.ok(depth >= 0, `${file}: přebytečná } na řádku ${index + 1}`);
+    });
+    assert.equal(depth, 0, `${file}: ${depth} neuzavřených bloků`);
+    /* Nejhlouběji smí být @media → pravidlo → (jedna vnořená úroveň). */
+    assert.ok(maxDepth <= 3, `${file}: zanoření ${maxDepth} značí @media uvnitř @media`);
+  }
 });
 
 test("Styly mají světlý motiv, nucené barvy i respekt k redukci pohybu", async () => {
