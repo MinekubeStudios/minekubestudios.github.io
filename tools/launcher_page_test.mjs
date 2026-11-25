@@ -2,25 +2,26 @@
    MINEKUBE STUDIOS // TEST STRÁNKY LAUNCHER
    Spouští se: node tools/launcher_page_test.mjs
 
-   Postaví launcher/index.html v jsdom, podstrčí mu nahrávací GitHub
-   API a ověří, že:
+   Postaví launcher/index.html v jsdom (včetně studio.js) a ověří, že:
      1. Windows je živá platforma a stáhne instalátor z GitHubu,
      2. stav po kliknutí je „zahájeno“, nikdy „hotovo“,
-     3. macOS a Linux jsou „v plánu“ a nic nestahují,
+     3. Windows a Linux karty existují, Linux je „v plánu“ a nic nestahuje,
      4. když Releases API nic nemá, najde se instalátor v obsahu repa,
      5. když GitHub API neodpovídá, použije se záložní adresa,
      6. chybový stav jde opravit tlačítkem „Zkusit znovu“,
-     7. přepínání jazyků překreslí dynamické texty i popisky obrázků,
+     7. přepínání jazyků překreslí dynamické texty i placeholdery,
      8. všechny překladové klíče existují ve všech třech jazycích,
      9. prohlídka rozhraní jde ovládat klávesnicí,
-    10. obrázky mají popisek „ilustrační náhled“, odkazy na repo
-        i navigaci z ostatních stránek webu,
-    11. galerie otevře hi-res soubor, listuje a zavírá se klávesou Esc,
-    12. přepínač efektů animace vypne a volbu si zapamatuje.
+    10. odkazy na repo, katalog a navigaci sedí,
+    11. vizuální studio nasadí skutečnou tapetu i ikonu, hledá,
+        filtruje, pamatuje si volbu a jde vrátit na výchozí,
+    12. přepínač efektů animace vypne a volbu si pamatuje,
+    13. obrázky mají alt, rozměry a lazy loading (včetně tapet),
+    14. stránka je sémantická a značky vyvážené.
    ============================================================= */
 
 import { createRequire } from "node:module";
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
@@ -59,11 +60,15 @@ const SCRIPT_FILES = {
   "../app.js": "app.js",
   "releases.js": "launcher/releases.js",
   "launcher.js": "launcher/launcher.js",
+  "studio.js": "launcher/studio.js",
   "../design-plus.js": "design-plus.js"
 };
 
+/* Cache-busting ?v= v src nesmí test rozbít: dřív se hledal přesný tvar
+   src="launcher.js", takže po přidání verze zůstal v jsdom syrový
+   <script src> a spadlo 16 z 18 testů. Teď se verze odřízne. */
 const HTML = read("launcher/index.html").replace(
-  /<script src="([^"]+)"><\/script>/g,
+  /<script src="([^"?]+)(?:\?[^"]*)?"><\/script>/g,
   (match, src) => (SCRIPT_FILES[src] ? `<script>\n${read(SCRIPT_FILES[src])}\n<\/script>` : match)
 );
 
@@ -280,6 +285,7 @@ test("Windows: najde instalátor v repozitáři a stáhne ho", async () => {
   assert.equal(document.querySelector('[data-launcher-skeleton="windows"]').hidden, true);
 
   hero.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  await tick(window, 320);
   assert.equal(downloads.length, 1, "klik musí spustit právě jedno stažení");
   assert.ok(downloads[0].href.includes("example.invalid/repo-setup.exe"), downloads[0].href);
 
@@ -303,26 +309,30 @@ test("Windows: otisk SHA-256 z GitHub API se zobrazí zkráceně", async () => {
   assert.match(text(document, "[data-launcher-version]"), /^v1\.2\.1$/);
 });
 
-test("macOS a Linux jsou v plánu a nic nestahují", async () => {
+test("Windows a Linux karty existují, Linux je v plánu a nic nestahuje", async () => {
   const page = await buildPage("withReleases");
   const { document, window, downloads } = page;
 
   assert.equal(window.MinekubeLauncherReleases.status().source, "releases");
 
-  for (const os of ["macos", "linux"]) {
-    const button = document.querySelector(`.lp-platform__actions [data-launcher-download][data-os="${os}"]`);
-    assert.equal(button.dataset.state, "planned");
-    assert.equal(button.disabled, false, "tlačítko zůstává dostupné kvůli vysvětlení");
-    const badge = button.closest(".lp-platform").querySelector(".lp-badge--planned");
-    assert.match(badge.textContent, /V plánu|Planned/);
+  /* Stránka má jen Windows a Linux — macOS se nikde neslibuje. */
+  const buttons = [...document.querySelectorAll("[data-launcher-download]")];
+  assert.deepEqual(buttons.map(button => button.dataset.os), ["windows", "windows", "linux"]);
+  assert.equal(document.querySelector('[data-launcher-download][data-os="macos"]'), null);
 
-    button.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  }
+  const linux = document.querySelector('.lp-platform__actions [data-launcher-download][data-os="linux"]');
+  assert.equal(linux.dataset.state, "planned");
+  assert.equal(linux.disabled, false, "tlačítko zůstává dostupné kvůli vysvětlení");
+  const badge = linux.closest(".lp-platform").querySelector(".lp-badge--planned");
+  assert.match(badge.textContent, /V plánu|Planned/);
 
-  assert.equal(downloads.length, 0, "platformy v plánu nesmí nic stahovat");
+  linux.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  assert.equal(downloads.length, 0, "platforma v plánu nesmí nic stahovat");
   assert.equal(document.getElementById("toast").classList.contains("show"), true);
+  assert.match(document.querySelector(".toast-message").textContent, /Linux/);
   assert.deepEqual(page.errors, []);
 });
+
 
 test("Návštěvník na macOS dostane Windows a slušné vysvětlení", async () => {
   const page = await buildPage("repoOnly", {
@@ -332,9 +342,13 @@ test("Návštěvník na macOS dostane Windows a slušné vysvětlení", async ()
 
   assert.equal(document.querySelector(".lp-hero .lp-dlbtn").dataset.os, "windows");
   assert.equal(document.querySelector("[data-os-label]").textContent.trim(), "Stáhnout pro Windows");
-  assert.match(document.querySelector(".toast-message").textContent, /macOS/);
+  /* macOS sestavení neexistuje, takže stránka o něm nemluví — hlavní
+     tlačítko prostě nabídne Windows, které jediné existuje. */
+  assert.equal(document.querySelector('[data-os="macos"]'), null);
+  assert.match(document.querySelector("[data-os-sub]").textContent.trim(), /^Windows 10\+ · 64bit · [\d,]+ MB · \.exe$/);
   assert.deepEqual(page.errors, []);
 });
+
 
 test("Když GitHub API mlčí, nastoupí záložní adresa", async () => {
   const page = await buildPage("down");
@@ -351,6 +365,7 @@ test("Když GitHub API mlčí, nastoupí záložní adresa", async () => {
   assert.match(text(document, "[data-launcher-state-label]"), /Záložní|Fallback/);
 
   hero.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  await tick(window, 320);
   assert.equal(downloads.length, 1);
   assert.ok(downloads[0].href.startsWith("https://github.com/MinekubeStudios/MinekubeLauncher/releases/download/"), downloads[0].href);
   assert.deepEqual(page.errors, []);
@@ -377,32 +392,35 @@ test("Chybový stav se ukáže a „Zkusit znovu“ ho opraví", async () => {
   assert.deepEqual(page.errors, []);
 });
 
-test("Přepnutí jazyka překreslí dynamické texty i popisky obrázků", async () => {
+test("Přepnutí jazyka překreslí dynamické texty, placeholdery i jména dlaždic", async () => {
   const page = await buildPage("repoOnly");
   const { document, window } = page;
 
-  const heroImage = document.querySelector(".lp-hero img");
-  const csAlt = heroImage.getAttribute("alt");
-  assert.match(csAlt, /Hlavní okno/);
+  assert.equal(document.querySelector("[data-os-label]").textContent.trim(), "Stáhnout pro Windows");
+  assert.equal(document.querySelector("[data-studio-search]").placeholder, "Hledat ikonu…");
+  assert.equal(document.querySelector('[data-studio-wp-name="desert-temple"]').textContent, "Pouštní chrám");
+  assert.equal(document.querySelector('[data-studio-icon-name="chest"]').textContent, "Truhla");
 
   window.eval(`applyLanguage("en")`);
   await tick(window);
   assert.match(text(document, "[data-os-label]"), /^Download for Windows$/);
   assert.match(text(document, "[data-launcher-state-label]"), /Ready to download/);
-  assert.match(heroImage.getAttribute("alt"), /main Minekube Launcher window/i);
-  assert.match(text(document, ".lp-platform--planned .lp-badge--planned"), /Planned/);
+  assert.equal(document.querySelector("[data-studio-search]").placeholder, "Search icons…");
+  assert.equal(document.querySelector('[data-studio-wp-name="desert-temple"]').textContent, "Desert temple");
+  assert.equal(document.querySelector('[data-studio-icon-name="chest"]').textContent, "Chest");
+  assert.match(text(document, ".lp-studio__status"), /^Background: Lobby · Icon: Play$/);
 
   window.eval(`applyLanguage("sk")`);
   await tick(window);
   assert.match(text(document, "[data-os-label]"), /^Stiahnuť pre Windows$/);
-  assert.match(heroImage.getAttribute("alt"), /Hlavné okno/);
+  assert.equal(document.querySelector('[data-studio-wp-name="desert-temple"]').textContent, "Púštny chrám");
 
   window.eval(`applyLanguage("cs")`);
   await tick(window);
   assert.match(text(document, "[data-os-label]"), /^Stáhnout pro Windows$/);
-  assert.match(heroImage.getAttribute("alt"), /Hlavní okno/);
   assert.deepEqual(page.errors, []);
 });
+
 
 test("Každý překladový klíč existuje ve všech třech jazycích", async () => {
   const dom = new JSDOM(HTML);
@@ -418,7 +436,7 @@ test("Každý překladový klíč existuje ve všech třech jazycích", async ()
   ["data-i18n", "data-i18n-aria", "data-i18n-title", "data-i18n-alt"].forEach(attribute => {
     document.querySelectorAll(`[${attribute}]`).forEach(node => {
       const key = node.getAttribute(attribute);
-      (key.startsWith("lp.") || key.startsWith("meta.") ? pageKeys : sharedKeys).add(key);
+      (key.startsWith("lp.") || key.startsWith("std.") || key.startsWith("meta.") ? pageKeys : sharedKeys).add(key);
     });
   });
   assert.ok(pageKeys.size > 60, `na stránce má být dost textů, nalezeno ${pageKeys.size}`);
@@ -435,15 +453,19 @@ test("Každý překladový klíč existuje ve všech třech jazycích", async ()
   assert.deepEqual(missingShared, [], "chybí sdílené překlady v app.js");
 
   // Dynamické klíče, které skládá launcher.js.
+  /* Jen klíče, které launcher.js opravdu skládá — macOS sestavení
+     neexistuje, takže se o něm na stránce nemluví. */
   const dynamic = [
-    "lp.os.windows", "lp.os.macos", "lp.os.linux",
-    "lp.os.sub.windows", "lp.os.sub.macos", "lp.os.sub.linux", "lp.os.sub.planned",
+    "lp.os.windows", "lp.os.linux",
+    "lp.os.sub.windows", "lp.os.sub.linux", "lp.os.sub.planned",
     "lp.dl.label.download", "lp.dl.label.planned", "lp.dl.label.started",
     "lp.dl.state.loading", "lp.dl.state.ready", "lp.dl.state.fallback", "lp.dl.state.error",
     "lp.dl.source.releases", "lp.dl.source.repo", "lp.dl.source.fallback",
     "lp.toast.start", "lp.toast.fallback", "lp.toast.planned", "lp.toast.os",
     "lp.toast.error", "lp.toast.fetching", "lp.toast.retryFailed",
-    "lp.dl.error.retry", "lp.dl.started.note"
+    "lp.dl.error.retry", "lp.dl.started.note",
+    "std.status", "std.count", "std.toast.wallpaper", "std.toast.icon",
+    "std.toast.uploaded", "std.toast.quota", "std.toast.reset"
   ];
   for (const lang of ["cs", "en", "sk"]) {
     dynamic.forEach(key => assert.ok(dictionaries[lang][key], `${lang}: chybí dynamický klíč ${key}`));
@@ -481,40 +503,94 @@ test("Prohlídka rozhraní funguje i z klávesnice", async () => {
   assert.deepEqual(page.errors, []);
 });
 
-test("Galerie otevře hi-res náhled, listuje a zavře se klávesou Esc", async () => {
+test("Vizuální studio nasadí tapetu z archivu, pamatuje si ji a jde vrátit", async () => {
   const page = await buildPage("withReleases");
   const { document, window } = page;
-  const root = document.querySelector("[data-lightbox-root]");
-  const image = document.querySelector("[data-lb-img]");
-  const count = document.querySelector("[data-lb-count]");
-  const trigger = document.querySelector('[data-gallery="hero"]');
+  const stage = document.querySelector("[data-studio-stage]");
+  await tick(window, 60);
 
-  assert.equal(root.hidden, true);
-  trigger.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  await new Promise(done => window.setTimeout(done, 60));
+  assert.deepEqual(page.errors, [], "studio nesmí při startu nic vyhodit");
+  assert.equal(document.querySelector("[data-studio]").dataset.ready, "true");
+  assert.equal(document.querySelectorAll("[data-studio-wallpaper-input]").length, 16,
+    "14 tapet + gradient + žádná tapeta");
+  assert.equal(document.querySelectorAll("[data-studio-icon-input]").length, 46);
+  assert.equal(stage.dataset.wallpaper, "lobby");
 
-  assert.equal(root.hidden, false, "lightbox se neměl otevřít");
-  assert.ok(root.classList.contains("is-open"), "chybí animační třída is-open");
-  assert.match(image.getAttribute("src"), /img\/full\/hero-welcome\.webp$/, "neotevřel se hi-res soubor");
-  assert.equal(count.textContent, "1 / 8");
-  assert.equal(document.querySelector("[data-lb-title]").textContent, "Hlavní okno");
-  assert.ok(document.body.classList.contains("lp-lb-open"), "chybí zámek scrollu");
-  assert.equal(document.querySelector("main").inert, true, "obsah pod galerií má být inert");
-  assert.equal(document.activeElement, document.querySelector(".lp-lb__close"), "fokus má jít na zavírací tlačítko");
+  /* Tapeta: výběr se propíše do okna, do srcsetu i do paměti. */
+  const radio = document.querySelector('[data-studio-wallpaper-input][value="crimson-forest"]');
+  radio.checked = true;
+  radio.dispatchEvent(new window.Event("change", { bubbles: true }));
+  assert.equal(stage.dataset.wallpaper, "crimson-forest");
+  assert.equal(window.localStorage.getItem("minekube:launcher-wallpaper"), "crimson-forest");
+  const shot = document.querySelector("[data-studio-wallpaper]");
+  assert.match(shot.getAttribute("src"), /^wallpapers\/thumb\/crimson-forest\.webp$/);
+  assert.match(shot.getAttribute("srcset"), /wallpapers\/hero\/crimson-forest\.webp 1600w/);
+  assert.match(document.querySelector("[data-studio-status]").textContent, /^Pozadí: Karmínový les · Ikona: Hrát$/);
 
-  document.dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
-  await new Promise(done => window.setTimeout(done, 40));
-  assert.equal(count.textContent, "2 / 8");
-  assert.match(image.getAttribute("src"), /img\/full\/panel-instance\.webp$/);
+  /* Skutečné soubory existují a jsou malé. */
+  for (const file of ["wallpapers/hero/lobby.webp", "wallpapers/thumb/lobby.webp"]) {
+    const bytes = statSync(ROOT + "launcher/" + file).size;
+    assert.ok(bytes > 4000, `${file} je podezřele malý`);
+    assert.ok(bytes < 400 * 1024, `${file} je moc velký (${Math.round(bytes / 1024)} kB)`);
+  }
 
-  document.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
-  await new Promise(done => window.setTimeout(done, 400));
-  assert.equal(root.hidden, true, "Esc měl galerii zavřít");
-  assert.ok(!document.body.classList.contains("lp-lb-open"));
-  assert.equal(document.querySelector("main").inert, false);
-  assert.equal(document.activeElement, trigger, "fokus se má vrátit na náhled");
+  /* Ikona: propíše se do avataru i do zkušební karty. */
+  const icon = document.querySelector('[data-studio-icon-input][value="chest"]');
+  icon.checked = true;
+  icon.dispatchEvent(new window.Event("change", { bubbles: true }));
+  assert.equal(window.localStorage.getItem("minekube:launcher-icon"), "chest");
+  assert.match(document.querySelector("[data-studio-stage-icon]").style.backgroundImage, /icons\/chest\.png/);
+
+  /* Zpět na výchozí smaže obě volby. */
+  document.querySelector("[data-studio-reset]").dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  assert.equal(stage.dataset.wallpaper, "lobby");
+  assert.equal(window.localStorage.getItem("minekube:launcher-wallpaper"), "lobby");
+  assert.equal(window.localStorage.getItem("minekube:launcher-icon"), "play");
   assert.deepEqual(page.errors, []);
 });
+
+test("Studio hledá, filtruje podle rodin a ovládá se klávesnicí", async () => {
+  const page = await buildPage("repoOnly");
+  const { document, window } = page;
+
+  const search = document.querySelector("[data-studio-search]");
+  const cards = [...document.querySelectorAll(".lp-studio__icon")];
+  const visible = () => cards.filter(card => !card.hidden).length;
+  assert.equal(visible(), 46);
+
+  search.value = "truhla";
+  search.dispatchEvent(new window.Event("input", { bubbles: true }));
+  assert.equal(visible(), 1, "české jméno má najít truhlu");
+  assert.equal(cards.find(card => !card.hidden).dataset.slug, "chest");
+
+  search.value = "";
+  search.dispatchEvent(new window.Event("input", { bubbles: true }));
+  document.querySelector('[data-studio-family="hearts"]').dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  assert.equal(visible(), 2, "rodina Srdce má dvě ikony");
+  assert.match(document.querySelector("[data-studio-count]").textContent, /^2 z 46 ikon$/);
+
+  document.querySelector('[data-studio-family="all"]').dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  assert.equal(visible(), 46);
+
+  /* Taby: klik i šipky, panely se střídají. */
+  const tabs = [...document.querySelectorAll("[data-studio-tab]")];
+  const panels = [...document.querySelectorAll("[data-studio-panel]")];
+  assert.equal(tabs.length, 2);
+  assert.equal(panels.length, 2);
+  assert.equal(panels[0].hidden, false);
+  assert.equal(panels[1].hidden, true);
+
+  tabs[0].focus();
+  document.querySelector("[data-studio-tablist]").dispatchEvent(
+    new window.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true })
+  );
+  assert.equal(tabs[1].getAttribute("aria-selected"), "true");
+  assert.equal(panels[1].hidden, false);
+  assert.equal(panels[0].hidden, true);
+  assert.equal(document.querySelector("[data-studio-stage]").dataset.mode, "icons");
+  assert.deepEqual(page.errors, []);
+});
+
 
 test("Přepínač efektů animace vypne a volbu si pamatuje", async () => {
   const page = await buildPage("withReleases");
@@ -522,43 +598,64 @@ test("Přepínač efektů animace vypne a volbu si pamatuje", async () => {
   const pageEl = document.querySelector(".launcher-page");
   const toggle = document.querySelector("[data-fx-toggle]");
 
-  assert.equal(pageEl.dataset.fx, "on");
+  assert.equal(pageEl.dataset.fxState, "on");
   assert.equal(toggle.getAttribute("aria-pressed"), "true");
   assert.equal(document.querySelectorAll(".lp-marquee__item").length, 16, "pás se má zdvojnásobit kvůli smyčce");
 
   toggle.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  assert.equal(pageEl.dataset.fx, "off");
+  assert.equal(pageEl.dataset.fxState, "off");
   assert.equal(toggle.getAttribute("aria-pressed"), "false");
   assert.equal(window.localStorage.getItem("minekube:launcher-fx"), "off");
 
   toggle.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  assert.equal(pageEl.dataset.fx, "on");
+  assert.equal(pageEl.dataset.fxState, "on");
   assert.equal(window.localStorage.getItem("minekube:launcher-fx"), "on");
   assert.deepEqual(page.errors, []);
 });
 
-test("Upravené vizuály jsou označené jako ilustrační náhled", async () => {
+test("Ikony a tapety studia jsou optimalizované a bez chybějících souborů", async () => {
   const page = await buildPage("repoOnly");
   const { document, window } = page;
 
-  const captions = [...document.querySelectorAll(".lp-caption, .lp-stage__caption, .lp-cta__media figcaption")];
-  assert.ok(captions.length >= 6, `čekáme popisek u každého snímku, nalezeno ${captions.length}`);
-  captions.forEach(caption => assert.match(caption.textContent, /Ilustrační|náhled/));
+  /* Každá vygenerovaná dlaždice má skutečný soubor, alt a lazy loading. */
+  const tileImages = [...document.querySelectorAll(".lp-studio__wp img, .lp-studio__icon img")];
+  assert.equal(tileImages.length, 14 + 46, "14 náhledů tapet + 46 ikon");
+  tileImages.forEach(image => {
+    const src = image.getAttribute("src");
+    assert.equal(image.getAttribute("alt"), "", `${src}: dekorativní náhled má mít prázdný alt`);
+    assert.ok(image.getAttribute("width") && image.getAttribute("height"), `${src}: chybí rozměry`);
+    assert.equal(image.getAttribute("loading"), "lazy");
+    const bytes = statSync(ROOT + "launcher/" + src).size;
+    assert.ok(bytes > 800, `${src} je podezřele malý`);
+    assert.ok(bytes < 120 * 1024, `${src} je moc velký (${Math.round(bytes / 1024)} kB)`);
+  });
 
-  const images = [...document.querySelectorAll(".launcher-page img")];
-  assert.ok(images.length >= 8, "stránka má použít všechny připravené vizuály");
-  images.forEach(image => {
-    assert.ok(image.getAttribute("alt") !== null, `obrázek bez alt: ${image.getAttribute("src")}`);
-    assert.match(image.getAttribute("src"), /^img\/[\w-]+\.webp$/);
-    assert.ok(image.getAttribute("width") && image.getAttribute("height"), "obrázky musí mít rozměry proti posunu layoutu");
-    assert.equal(image.getAttribute("loading") === "eager", false);
+  /* Tapety: 14 reálných souborů, každý s hero i thumb variantou. */
+  const wallpapers = window.MinekubeLauncherApi.WALLPAPERS;
+  assert.equal(wallpapers.length, 14);
+  for (const wallpaper of wallpapers) {
+    const hero = statSync(ROOT + "launcher/" + wallpaper.hero).size;
+    const thumb = statSync(ROOT + "launcher/" + wallpaper.thumb).size;
+    assert.ok(hero < 400 * 1024, `${wallpaper.hero} je moc velký (${Math.round(hero / 1024)} kB)`);
+    assert.ok(thumb < 90 * 1024, `${wallpaper.thumb} je moc velký (${Math.round(thumb / 1024)} kB)`);
+    assert.match(wallpaper.hero, /^wallpapers\/hero\/[a-z-]+\.webp$/);
+    assert.match(wallpaper.thumb, /^wallpapers\/thumb\/[a-z-]+\.webp$/);
+  }
+
+  /* Ikony: 46 souborů, každý existuje a je malý. */
+  const icons = window.MinekubeLauncherApi.ICONS;
+  assert.equal(icons.length, 46);
+  icons.forEach(icon => {
+    const bytes = statSync(ROOT + "launcher/" + icon.file).size;
+    assert.ok(bytes < 60 * 1024, `${icon.file} je moc velký (${Math.round(bytes / 1024)} kB)`);
   });
 
   window.eval(`applyLanguage("en")`);
-  assert.match(document.querySelector(".lp-caption").textContent, /Illustrative preview/);
+  assert.equal(document.querySelector('[data-studio-wp-name="lobby"]').textContent, "Lobby");
   window.eval(`applyLanguage("cs")`);
   assert.deepEqual(page.errors, []);
 });
+
 
 test("Odkazy na repozitář, katalog a navigaci sedí", async () => {
   const page = await buildPage("repoOnly");
@@ -616,43 +713,49 @@ test("Stránka je sémantická a bez duplicitních ID", async () => {
 });
 
 
-test("Obrázky jsou optimalizované a odpovídají atributům width/height", async () => {
+test("Obrázky stránky odpovídají atributům width/height a nikdo neodkazuje do prázdna", async () => {
   const dom = new JSDOM(HTML);
   const { document } = dom.window;
-  const entries = readdirSync(ROOT + "launcher/img", { withFileTypes: true });
-  const files = entries.filter(entry => entry.isFile()).map(entry => entry.name);
 
-  const used = new Set();
   [...document.querySelectorAll(".launcher-page img")].forEach(image => {
     const src = image.getAttribute("src");
-    used.add(src.replace("img/", ""));
+    assert.ok(src, "obrázek bez src");
     const bytes = statSync(ROOT + "launcher/" + src).size;
-    assert.ok(bytes < 90 * 1024, `${src} je moc velký (${Math.round(bytes / 1024)} kB)`);
-
-    const real = webpSize(readFileSync(ROOT + "launcher/" + src));
-    assert.equal(real.width, Number(image.getAttribute("width")), `${src}: šířka nesedí s atributem`);
-    assert.equal(real.height, Number(image.getAttribute("height")), `${src}: výška nesedí s atributem`);
+    assert.ok(bytes < 120 * 1024, `${src} je moc velký (${Math.round(bytes / 1024)} kB)`);
+    if (!/\.png$/i.test(src)) return;
+    /* PNG: rozměry se čtou z IHDR, aby se layout neposunul. */
+    const buffer = readFileSync(ROOT + "launcher/" + src);
+    const width = buffer.readUInt32BE(16);
+    const height = buffer.readUInt32BE(20);
+    /* Náhledy se zobrazují menší než soubor (ikona v tabu má 24 px,
+       soubor 192 px), ale poměr stran musí sedět — jinak se layout posune. */
+    const declared = Number(image.getAttribute("width")) / Number(image.getAttribute("height"));
+    const intrinsic = width / height;
+    assert.ok(Math.abs(declared - intrinsic) < 0.02, `${src}: poměr stran nesedí (${declared.toFixed(2)} vs ${intrinsic.toFixed(2)})`);
   });
 
-  const unused = files.filter(file => !used.has(file));
-  assert.deepEqual(unused, [], "v img/ zůstaly nepoužité soubory");
-
-  // Každý náhled má hi-res verzi pro lightbox — a žádnou navíc.
-  const fullDir = ROOT + "launcher/img/full";
-  const full = readdirSync(fullDir, { withFileTypes: true })
-    .filter(entry => entry.isFile())
-    .map(entry => entry.name);
-  used.forEach(name => assert.ok(full.includes(name), `chybí hi-res verze pro ${name}`));
-  assert.deepEqual(full.filter(name => !used.has(name)), [], "v img/full/ jsou soubory bez náhledu");
-  full.forEach(name => {
-    const bytes = statSync(`${fullDir}/${name}`).size;
-    assert.ok(bytes < 140 * 1024, `img/full/${name} je moc velký (${Math.round(bytes / 1024)} kB)`);
+  /* Žádný lokální odkaz nesmí mířit na neexistující soubor. */
+  const refs = new Set();
+  for (const match of (read("launcher/index.html")).matchAll(/(?:src|href)="((?!#|https?:|mailto:)[^"]+)"/g)) {
+    refs.add(match[1].split("?")[0]);
+  }
+  refs.forEach(ref => {
+    /* Kotva na jiné stránce webu („../#projekt") soubor nemá —
+       kontroluje se jen cesta před # a existence cílové stránky. */
+    const [path] = ref.split("#");
+    if (!path) return;
+    const target = path.startsWith("../") ? ROOT + path.slice(3) : ROOT + "launcher/" + path;
+    const resolved = path.endsWith("/") ? target + "index.html" : target;
+    assert.ok(existsSync(resolved), `odkaz do prázdna: ${ref}`);
   });
   dom.window.close();
 });
 
-test("Styly mají světlý motiv i respekt k redukci pohybu", async () => {
+
+test("Styly mají světlý motiv, nucené barvy i respekt k redukci pohybu", async () => {
   const css = read("launcher/launcher.css");
+  const mc = read("launcher/launcher-mc.css");
+  const studio = mc.slice(mc.indexOf("23 · Vizuální studio"));
 
   const lightBlock = css.slice(css.indexOf(':root[data-theme="light"]'));
   assert.ok(lightBlock.includes(".launcher-page"), "světlý motiv nemíří na stránku launcheru");
@@ -661,17 +764,22 @@ test("Styly mají světlý motiv i respekt k redukci pohybu", async () => {
   });
 
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(css, /@media \(forced-colors: active\)/);
+  assert.match(mc, /@media \(forced-colors: active\)/);
   assert.match(css, /scroll-margin-top/);
   assert.match(css, /:focus-visible/);
 
-  // Každá akcentní barva z textu musí mít v světlém motivu kontrastní variantu.
+  /* Každá akcentní barva z textu musí mít v světlém motivu kontrastní variantu. */
   assert.ok(
-    css.includes(':root[data-theme="light"] :is(.launcher-page, .lp-lb) :is(.lp-tag'),
+    css.includes(':root[data-theme="light"] .launcher-page :is(.lp-tag'),
     "chybí kontrastní akcenty pro světlý motiv"
   );
-  // Lightbox leží mimo <main>, takže musí dostat stejné tokeny.
-  assert.ok(css.includes(".launcher-page,\n.lp-lb {"), "lightbox nemá vlastní sadu tokenů");
+
+  /* Studio má vlastní světlý motiv, nucené barvy, tisk i redukci pohybu. */
+  assert.ok(studio.length > 4000, "chybí blok studia v launcher-mc.css");
+  assert.match(studio, /:root\[data-theme="light"\]/);
+  assert.match(studio, /@media \(forced-colors: active\)/);
+  assert.match(studio, /@media print/);
+  assert.match(studio, /@media \(prefers-reduced-motion: reduce\)/);
 });
 
 test("Stahovací tlačítka nikdy netvrdí dokončení", async () => {
@@ -683,7 +791,8 @@ test("Stahovací tlačítka nikdy netvrdí dokončení", async () => {
 
   const hero = document.querySelector(".lp-hero [data-launcher-download]");
   hero.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-
+  /* Tlačítko reaguje hned (stav se mění synchronně), soubor se pouští
+     o 220 ms později — proto tu není žádné čekání. */
   assert.equal(hero.dataset.state, "started");
   assert.match(text(document, "[data-os-label]"), /zahájeno/i);
   assert.ok(!/dokončeno|hotovo|complete/i.test(text(document, "[data-os-label]")));

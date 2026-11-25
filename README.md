@@ -1,4 +1,75 @@
-# Minekube Studios // Web (v11 — apple rytmus a 3D kostka)
+# Minekube Studios // Web (v12 — vizuální studio: tapety a ikony)
+
+## v12 — **vizuální studio launcheru: 14 tapet z archivu a 46 ikon**
+
+Nová sekce `#studio` na stránce Launcheru nasazuje obrázky, které
+dosud ležely jen v archivech `WebBackgroundsV1–V3.zip` a `WebIcons.zip`.
+Vlevo je ovládání, vpravo **opravdové zkušební okno launcheru**, na
+kterém je každá volba hned vidět.
+
+1. **Tapety** (`launcher/wallpapers/`) — 14 skutečných tapet z archivů
+   (Lobby, Lobby · slunce, Pouštní chrám, Karmínový les, Kaktusový kaňon,
+   Pevnost, Zkažená citadela, Podzemní sluj, Java Edition, PC bundle,
+   Tux, Windows, Tux a Windows, Hlavní kulisa) ve dvou velikostech:
+   `hero/` 1600 px pro okno (23–258 kB na soubor, dohromady ~1,9 MB)
+   a `thumb/` 640 px pro mřížku (7–44 kB na dlaždici). Originály měly
+   1,3–13 MB, takže se do stránky nevešly. Poslední dvě dlaždice jsou
+   **čistý gradient** a **žádná tapeta**, vedle nich **vlastní obrázek**
+   (přetažení nebo výběr z disku, zmenšení na 1600 px přes plátno,
+   limit 12 MB, jemná zpráva, když se do paměti nevejde).
+2. **Ikony** (`launcher/icons/`) — všech 35 souborů z `WebIcons.zip`
+   (emblém, srdce, štíty, šipky, přepínače, myš, Linux, Java…) plus
+   **dvanáct nových pixelových glyphů**, které v archivu chyběly
+   (play, pause, home, chest, bookshelf, settings, trash, edit, plus,
+   folder, star, download) — nakreslené ve stylu vanilla Minecraftu
+   a uložené jako indexované PNG (~4–12 kB). Mřížka umí **hledání**
+   (česká i anglická jména, aliasy), **rodiny** (Emblémy / Rozhraní /
+   Srdce / Systém), počítadlo a prázdný stav.
+3. **Zkušební okno** — tapeta, avatar s vybranou ikonou (pixelově
+   ostrá), karta instance s tlačítkem Hrát, dlaždice z ikony
+   s posuvníkem velikosti 32–96 px a jménem hráče. Volby se ukládají
+   do `localStorage` (`minekube:launcher-wallpaper`, `-icon`, `-tiles`,
+   `-size`) a jdou vrátit jedním tlačítkem. Ikona se dá stáhnout jako PNG.
+4. **Architektura** — data (tapety, ikony) bydlí v `launcher/launcher.js`,
+   chování v novém `launcher/studio.js`, které s launcher.js sdílí jeden
+   uzávěr přes `window.MinekubeLauncherApi` (překlady, toasty, stav
+   efektů). Styl je v `launcher-mc.css` (sekce 23), uzavřený
+   v `[data-studio]`, se světlým motivem, nucenými barvami, tiskem
+   a redukcí pohybu.
+5. **Přístupnost a výkon** — tapeta je skutečný radio button (Tab,
+   šipky, čtečka), taby mají `role="tablist"` s obsluhou šipek/Home/End,
+   mřížka je `<label>` + radio, stav nese `role="status"`. Tapeta se
+   podává přes `srcset` (640/1600), náhledy mají `loading="lazy"`,
+   velký soubor se načte jen při skutečném výběru.
+6. **Překlady** — 111 nových klíčů `std.*` ve všech třech jazycích
+   (CS / EN / SK), celkem **345 klíčů** na jazyk. Poprvé se překládá
+   i `placeholder` (`data-i18n-placeholder` v `app.js`).
+
+### Opravené chyby (v12)
+
+* **Testy launcheru byly rozbité** — `tools/launcher_page_test.mjs`
+  hledal `<script src="launcher.js">` bez cache-bustingu `?v=`, takže
+  v jsdom zůstaly nenačtené skripty a **16 z 18 testů padalo**. Testy
+  teď verzi odřezávají, pokrývají aktuální stránku (19 scénářů)
+  a všechny procházejí.
+* **Dvojí stažení** — tři nezávislé click listenery spouštěly
+  `onDownloadClick` dvakrát (pulz → dvě stahování). Zůstal jeden
+  delegovaný listener s 350ms pojistkou proti dvojkliku a ignoruje
+  Ctrl/⌘/Shift/Alt klik.
+* **Tlačítko zůstalo viset na „Stahování zahájeno"** — re-render po
+  9 s byl naplánovaný jen u skutečného stahování. Teď ho plánuje
+  `renderAll` pro každou cestu.
+* **Popisek hlavního tlačítka se nepřekládal** — statický `data-i18n`
+  přebíjel dynamický text při přepnutí jazyka; atribut se teď odstraní.
+* **Karty v sekci Stažení** ukazovaly „Zkusit znovu" i po úspěšném
+  načtení (stav se nikdy nevrátil k původnímu popisku).
+* **Odkaz „GitHub Releases"** přepsal zdroj z obsahu repa adresou
+  repozitáře; přepisuje se jen adresa, která opravdu vede na `/releases`.
+* **Překlad `footer.community2.aria`** v `app.js` chyběl ve všech
+  třech jazycích, takže Game Jolt odkaz neměl české přístupné jméno.
+* **`placeholder` se nikdy nepřekládal** — přidán `data-i18n-placeholder`.
+* **`wordmark-sm.png`** měl v HTML `width/height` otočené (380×473
+  místo 380×214), takže splash v CTA posouval layout.
 
 ## v11 — **apple rytmus na celém webu a 3D kostka Minekube**
 

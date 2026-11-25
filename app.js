@@ -203,6 +203,9 @@ const I18N = {
     "footer.community1": "Discord",
     "footer.community2": "Game Jolt",
     "footer.community3": "GitHub",
+    "footer.community1.aria": "Discord Minekube Studios",
+    "footer.community2.aria": "Minekube Ultra Performance na Game Jolt",
+    "footer.community3.aria": "Minekube Studios na GitHubu",
     "footer.discord.aria": "Discord — doplň vlastní odkaz",
     "footer.github.aria": "GitHub — doplň vlastní odkaz",
     "footer.copyright": "Minekube Studios. Demo web.",
@@ -393,6 +396,9 @@ const I18N = {
     "footer.community1": "Discord",
     "footer.community2": "Game Jolt",
     "footer.community3": "GitHub",
+    "footer.community1.aria": "Minekube Studios on Discord",
+    "footer.community2.aria": "Minekube Ultra Performance on Game Jolt",
+    "footer.community3.aria": "Minekube Studios on GitHub",
     "footer.discord.aria": "Discord — add your own link",
     "footer.github.aria": "GitHub — add your own link",
     "footer.copyright": "Minekube Studios. Demo website.",
@@ -583,6 +589,9 @@ const I18N = {
     "footer.community1": "Discord",
     "footer.community2": "Game Jolt",
     "footer.community3": "GitHub",
+    "footer.community1.aria": "Discord Minekube Studios",
+    "footer.community2.aria": "Minekube Ultra Performance na Game Jolt",
+    "footer.community3.aria": "Minekube Studios na GitHube",
     "footer.discord.aria": "Discord — doplň vlastný odkaz",
     "footer.github.aria": "GitHub — doplň vlastný odkaz",
     "footer.copyright": "Minekube Studios. Demo web.",
@@ -652,6 +661,14 @@ function applyLanguage(lang, { notify = false } = {}) {
     element.innerHTML = /<\s*(br|strong|em|code)\s*\/?\s*>/.test(value)
       ? sanitizeMarkup(value)
       : escapeHtml(value);
+  });
+
+  /* Placeholder je taky viditelný text — bez tohohle zůstal
+     v jazyce, ve kterém se stránka načetla (třeba „Search icons…"
+     na české stránce). Bere se stejná sada značek jako u data-i18n,
+     protože placeholder žádné HTML neumí. */
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
+    element.setAttribute("placeholder", t(element.dataset.i18nPlaceholder));
   });
 
   /* Kód jazyka se musí aktualizovat DŘÍV, než ho přečte aria-label
