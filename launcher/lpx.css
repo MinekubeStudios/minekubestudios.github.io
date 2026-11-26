@@ -2480,27 +2480,29 @@ html:not(.lp-js) .lpx [data-reveal] {
 
    Tloušťku rámečku určuje `padding` elementu: maska je složená
    z celého border boxu a jeho content boxu (XOR), takže vidět
-   zůstane právě ten paddingový pruh. 1 px byl na běžném displeji
-   i na mobilu skoro neviditelný — 2 px v klidu a 3 px na hoveru
-   drží stejný gradient, ale linka je konečně čitelná. */
+   zůstane právě ten paddingový pruh. 1 px i 2 px byly na běžném
+   displeji i na mobilu pořád jen vlasová linka — 3 px v klidu
+   a 5 px na hoveru už drží jako plnohodnotný rám, a přesto sedí
+   na stejný plynoucí gradient. Celočíselné hodnoty (ne 3,5 px)
+   zůstávají ostré i na 1× displeji. */
 .button[data-download].download-ultimate.lpx-download::after {
   inset: -1px;
-  padding: 2px;
-  opacity: 0.72;
+  padding: 3px;
+  opacity: 0.82;
   filter:
-    drop-shadow(0 0 2px rgba(255, 214, 130, 0.55))
-    drop-shadow(0 0 7px rgba(255, 150, 40, 0.26));
+    drop-shadow(0 0 3px rgba(255, 214, 130, 0.60))
+    drop-shadow(0 0 9px rgba(255, 150, 40, 0.30));
 }
 
 .button[data-download].download-ultimate.lpx-download:hover::after,
 .button[data-download].download-ultimate.lpx-download:focus-visible::after,
 .button[data-download].download-ultimate.lpx-download.is-pointer-active::after {
   opacity: 1;
-  padding: 3px;
+  padding: 5px;
   filter:
-    drop-shadow(0 0 7px rgba(255, 216, 77, 0.60))
-    drop-shadow(0 0 13px rgba(255, 171, 31, 0.34))
-    drop-shadow(0 0 12px rgba(232, 65, 255, 0.26));
+    drop-shadow(0 0 8px rgba(255, 216, 77, 0.65))
+    drop-shadow(0 0 16px rgba(255, 171, 31, 0.38))
+    drop-shadow(0 0 14px rgba(232, 65, 255, 0.28));
 }
 
 /* Ikona vpravo absolutně, aby mohl být popisek vycentrovaný na střed
