@@ -953,9 +953,35 @@ test("Styly mají světlý motiv, nucené barvy i respekt k redukci pohybu", asy
   assert.match(css, /scroll-margin-top/);
   assert.match(css, /:focus-visible/);
 
-  /* Tapety jsou jen náznak: vrstva má nízkou opacitu a přes ni gradient. */
-  assert.match(css, /\.lpx-band__bg\s*\{[\s\S]*?opacity:\s*0\.(1|2|3)/, "tapeta pásu musí být ztlumená");
-  assert.match(css, /\.lpx-hero__backdrop\s*\{[\s\S]*?opacity:\s*0\.(2|3|4)/, "hero tapeta musí být ztlumená");
+  /* Tapety jsou vidět (vysoká opacita), ale rozostřené — blur drží
+     obsah čitelný a tapeta nesoupeří s textem. Přes ně jde jen lehký
+     závoj, ne těžký scrim. */
+  assert.match(css, /\.lpx-band__bg\s*\{[\s\S]*?opacity:\s*0\.(5|6|7)/, "tapeta pásu musí být vidět");
+  assert.match(css, /\.lpx-band__bg\s*\{[\s\S]*?filter:\s*blur\(/, "tapeta pásu musí být rozostřená");
+  assert.match(css, /\.lpx-hero__backdrop\s*\{[\s\S]*?opacity:\s*0\.(7|8|9)/, "hero tapeta musí být vidět");
+  assert.match(css, /\.lpx-hero__backdrop\s*\{[\s\S]*?filter:\s*blur\(/, "hero tapeta musí být rozostřená");
+
+  /* Celostránková tapeta pod obsahem: sticky vrstva s blur, aby pozadí
+     prosvítalo i mezi pásy. */
+  const wall = css.match(/\.lpx-wall\s*\{([\s\S]*?)\}/);
+  assert.ok(wall, "chybí celostránková tapeta .lpx-wall");
+  assert.match(wall[1], /wallpapers\/hero-backdrop\.webp/, "celostránková tapeta musí být tapeta launcheru");
+  assert.match(wall[1], /filter:\s*blur\(/, "celostránková tapeta musí být rozostřená");
+  assert.match(wall[1], /position:\s*sticky/, "celostránková tapeta se musí držet okna");
+  assert.match(wall[1], /z-index:\s*-\d/, "celostránková tapeta musí ležet pod obsahem");
+  assert.match(read("launcher/index.html"), /class="lpx-wall"/, "HTML nemá vrstvu celostránkové tapety");
+
+  /* Obsahové sekce mají přes tapetu jen lehký závoj a sklo karet si
+     nese vlastní tmavý podklad — jinak by tapeta prosakovala do textu. */
+  const veil = css.match(/\.lpx-section:not\(\.lpx-section--atmo\)::before\s*\{([\s\S]*?)\}/);
+  assert.ok(veil, "chybí závoj nad tapetou v obsahových sekcích");
+  assert.match(veil[1], /rgba\(10, 5, 9, 0\.(3|4)/, "závoj musí být jen lehký, ne plný scrim");
+  assert.match(css, /--lpx-glass-base:/, "chybí token tmavého podkladu skla");
+  const glass = css.match(/\n\.lpx-card,\n\.lpx-panel,[\s\S]*?background-color:\s*var\(--lpx-glass-base\)/);
+  assert.ok(glass, "sklo karet musí mít vlastní tmavý podklad");
+
+  /* Světlý motiv tapety nešedne — násobí se na papír. */
+  assert.match(css, /mix-blend-mode:\s*multiply/, "světlý motiv musí tapetu násobit, ne šednout");
 
   /* Pulz animuje jen transform a opacity — žádná animace filtru. */
   assert.ok(!/animation:[^;]*filter/.test(pulse), "pulz nesmí animovat filter");
