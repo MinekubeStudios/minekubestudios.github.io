@@ -1077,20 +1077,20 @@ test("Tlačítko má vycentrovaný popisek, mini rámeček a čistý pulz", () =
   assert.ok(iconHover, "chybí hover pravidlo ikony");
   assert.ok(!/translateY\(-50%\)/.test(iconHover[1]), "hover nesmí vrátit translateY(-50%)");
 
-  /* Mini rámeček: stejný gradient jako hover, jen tlumený. Tloušťku
+  /* Rámeček: stejný gradient jako hover, jen tlumenější. Tloušťku
      určuje padding (maska XOR mezi border boxem a content boxem) —
-     1 px byl na displeji i na mobilu neviditelný, takže v klidu
-     musí být aspoň 2 px a na hoveru tlustší. */
+     1–2 px byly na displeji i na mobilu jen vlasová linka, takže
+     v klidu musí být aspoň 3 px a na hoveru výrazně tlustší. */
   const ring = css.match(/\.download-ultimate\.lpx-download::after\s*\{([^}]*)\}/);
   assert.ok(ring, "chybí klidový rámeček");
   const ringPad = Number((ring[1].match(/padding:\s*([\d.]+)px/) || [])[1]);
-  assert.ok(ringPad >= 2, `klidový rámeček musí mít aspoň 2 px (má ${ringPad})`);
-  assert.match(ring[1], /opacity:\s*0\.72/, "klidový rámeček musí být tlumený, ale čitelný");
+  assert.ok(ringPad >= 3, `klidový rámeček musí mít aspoň 3 px (má ${ringPad})`);
+  assert.match(ring[1], /opacity:\s*0\.82/, "klidový rámeček musí být tlumený, ale čitelný");
 
   const ringHover = css.match(/\.download-ultimate\.lpx-download:hover::after[^{]*\{([^}]*)\}/);
   assert.ok(ringHover, "chybí hover rámeček");
   const hoverPad = Number((ringHover[1].match(/padding:\s*([\d.]+)px/) || [])[1]);
-  assert.ok(hoverPad > ringPad, `hover rámeček musí být tlustší než klidový (${hoverPad} vs ${ringPad})`);
+  assert.ok(hoverPad >= ringPad + 2, `hover rámeček musí být znatelně tlustší než klidový (${hoverPad} vs ${ringPad})`);
   assert.match(ringHover[1], /opacity:\s*1/, "hover rámeček musí být plný");
   assert.match(css, /\.download-ultimate\.lpx-download\s+\.download-fx\s*\{[^}]*inset:\s*-1px/);
 
