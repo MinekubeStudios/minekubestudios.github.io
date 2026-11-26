@@ -66,6 +66,10 @@
   --lpx-shadow-card: 0 20px 46px -30px rgba(0, 0, 0, 0.9);
   --lpx-glow-gold: 0 18px 48px -18px rgba(252, 146, 0, 0.6);
 
+  /* Sklo karet sedí nad tapetou, takže potřebuje vlastní tmavý podklad
+     (samotný bílý závoj by propustil barvy tapety do textu). */
+  --lpx-glass-base: rgba(9, 4, 8, 0.62);
+
   --lpx-font-body: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --lpx-font-chunky: "Baloo 2", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --lpx-font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -215,6 +219,42 @@
   -webkit-mask-image: radial-gradient(78% 60% at 50% 0%, #000 0%, transparent 74%);
   mask-image: radial-gradient(78% 60% at 50% 0%, #000 0%, transparent 74%);
   opacity: 0.5;
+}
+
+/* Rozostřená tapeta přes CELOU stránku. Je to sticky vrstva vysoká
+   jako okno se záporným marginem, takže nezabírá místo v layoutu a při
+   scrollování zůstává na místě — a protože sedí pod obsahem (z-index
+   -3, nad pozadím .lpx), prosvítá všude, kde sekce nemají vlastní
+   tapetu. Je záměrně rozostřená (blur) a mírně ztmavená, aby přes ni
+   text zůstal čitelný; barvy zůstávají minekube (zlatá, magenta,
+   fialová) díky nádechům v ::after. */
+.lpx-wall {
+  position: sticky;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  margin-bottom: -100vh;
+  margin-bottom: -100svh;
+  z-index: -3;
+  pointer-events: none;
+  background: url("wallpapers/hero-backdrop.webp") center / cover no-repeat;
+  filter: blur(38px) saturate(1.45) brightness(1.12) contrast(1.04);
+  transform: scale(1.16);
+}
+
+/* Nádech a ztmavení nad tapetou. Gradient je i rozostřený, což je
+   v pořádku — je to jen měkký závoj, ne obrázek. */
+.lpx-wall::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(58% 42% at 80% 6%, rgba(252, 0, 96, 0.20), transparent 70%),
+    radial-gradient(50% 40% at 12% 12%, rgba(252, 192, 0, 0.22), transparent 72%),
+    radial-gradient(62% 46% at 46% 102%, rgba(150, 48, 200, 0.18), transparent 74%),
+    linear-gradient(180deg, rgba(10, 5, 9, 0.16) 0%, rgba(10, 5, 9, 0.3) 46%, rgba(10, 5, 9, 0.44) 100%);
 }
 
 /* Titulky: chunky Baloo pro nadpisy, Space Grotesk pro labely. */
@@ -591,13 +631,16 @@
   pointer-events: none;
 }
 
-/* Tapeta Lobby, předpečená: ztmavená a rozostřená. Přes ni jdou
-   dva gradienty, takže text vlevo má vždy tmavé pozadí. */
+/* Tapeta Lobby. Necháváme ji vidět, jen přes blur; dva gradienty nad
+   ní kryjí hlavně textový sloupec vlevo, zbytek zůstává barevný. */
 .lpx-hero__backdrop {
   position: absolute;
-  inset: -8% -4%;
+  inset: -16% -12%;
   background: url("wallpapers/hero-backdrop.webp") center / cover no-repeat;
-  opacity: 0.42;
+  opacity: 0.95;
+  /* Tapeta je vidět, ale rozostřená — ostrá fotka by soupeřila
+     s titulkem. Okraje přesahují rám, aby blur neředil hrany. */
+  filter: blur(24px) saturate(1.4) brightness(1.06) contrast(1.05);
   will-change: transform;
   transform: translate3d(0, 0, 0);
 }
@@ -615,8 +658,8 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(10, 5, 9, 0.86) 0%, rgba(10, 5, 9, 0.62) 42%, rgba(10, 5, 9, 0.94) 88%, var(--lpx-bg) 100%),
-    linear-gradient(94deg, rgba(10, 5, 9, 0.96) 0%, rgba(10, 5, 9, 0.72) 46%, rgba(10, 5, 9, 0.34) 100%);
+    linear-gradient(180deg, rgba(10, 5, 9, 0.44) 0%, rgba(10, 5, 9, 0.05) 38%, rgba(10, 5, 9, 0.52) 88%, var(--lpx-bg) 100%),
+    linear-gradient(94deg, rgba(10, 5, 9, 0.84) 0%, rgba(10, 5, 9, 0.46) 40%, rgba(10, 5, 9, 0.04) 72%);
 }
 
 .lpx-hero__sparks {
@@ -1149,6 +1192,22 @@
   background: rgba(255, 255, 255, 0.015);
 }
 
+/* Sekce bez vlastní tapety nechávají prosvítat tapetu celostránkovou.
+   Přes ni jde měkký závoj: tapeta zůstává vidět, ale sklo karet,
+   formulářů a seznamů má dost tmavý podklad na čitelný text. */
+.lpx-section:not(.lpx-section--atmo) {
+  isolation: isolate;
+}
+
+.lpx-section:not(.lpx-section--atmo)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(10, 5, 9, 0.42) 0%, rgba(10, 5, 9, 0.3) 44%, rgba(10, 5, 9, 0.44) 100%);
+}
+
 /* ---------- 08 · Pásy s tapetou ---------- */
 
 .lpx-band {
@@ -1159,17 +1218,19 @@
   overflow: hidden;
 }
 
-/* Tapeta pásu. Přijde z inline proměnné --bg, je předpečená
-   (ztmavená + rozostřená), takže ji stačí ztlumit a překrýt. */
+/* Tapeta pásu. Přijde z inline proměnné --bg. Necháváme ji VIDĚT
+   (vysoká opacita + projasnění), ale přes blur, aby zůstala atmosférou
+   a nepřebila text. Přesah -7 % drží rozostřené okraje mimo rám. */
 .lpx-band__bg {
   position: absolute;
-  inset: 0;
+  /* Přesah, aby rozostřená tapeta nedělala měkké okraje na hranách pásu. */
+  inset: -7%;
   z-index: -2;
   background-image: var(--bg, none);
   background-position: center;
   background-size: cover;
-  opacity: 0.34;
-  filter: saturate(0.85);
+  opacity: 0.8;
+  filter: blur(18px) saturate(1.35) brightness(1.18) contrast(1.03);
 }
 
 /* Obsah pásu leží nad tapetou i gradientem — statický obsah se sice
@@ -1201,17 +1262,17 @@
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(180deg, var(--lpx-bg) 0%, rgba(10, 5, 9, 0.76) 22%, rgba(10, 5, 9, 0.82) 68%, var(--lpx-bg) 100%);
+    linear-gradient(180deg, var(--lpx-bg) 0%, rgba(10, 5, 9, 0.16) 22%, rgba(10, 5, 9, 0.3) 68%, var(--lpx-bg) 100%);
 }
 
 /* Světlý motiv: tapeta nesmí ztmavit text. */
 :root[data-theme="light"] .lpx-section--atmo::before {
   background:
-    linear-gradient(180deg, #fffaf3 0%, rgba(255, 250, 243, 0.9) 22%, rgba(255, 250, 243, 0.92) 68%, #fffaf3 100%);
+    linear-gradient(180deg, #fffaf3 0%, rgba(255, 250, 243, 0.58) 22%, rgba(255, 250, 243, 0.64) 68%, #fffaf3 100%);
 }
 
 :root[data-theme="light"] .lpx-section--atmo .lpx-band__bg {
-  opacity: 0.18;
+  opacity: 0.46;
 }
 
 .lpx-band::before {
@@ -1221,19 +1282,19 @@
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(180deg, var(--lpx-bg) 0%, rgba(10, 5, 9, 0.72) 18%, rgba(10, 5, 9, 0.78) 62%, var(--lpx-bg) 100%);
+    linear-gradient(180deg, var(--lpx-bg) 0%, rgba(10, 5, 9, 0.14) 18%, rgba(10, 5, 9, 0.26) 62%, var(--lpx-bg) 100%);
 }
 
 /* Každý pás má vlastní nádech, aby se tapety neopakovaly stejně. */
 .lpx-band--cta .lpx-band__bg {
-  opacity: 0.38;
+  opacity: 0.86;
   background-position: center 34%;
 }
 
 .lpx-band--cta::before {
   background:
-    radial-gradient(70% 90% at 50% 0%, rgba(252, 0, 96, 0.16), transparent 68%),
-    linear-gradient(180deg, var(--lpx-bg) 0%, rgba(10, 5, 9, 0.74) 24%, rgba(10, 5, 9, 0.9) 100%);
+    radial-gradient(70% 90% at 50% 0%, rgba(252, 0, 96, 0.22), transparent 68%),
+    linear-gradient(180deg, var(--lpx-bg) 0%, rgba(10, 5, 9, 0.18) 24%, rgba(10, 5, 9, 0.42) 100%);
 }
 
 /* ---------- 11 · Běžící pás ---------- */
@@ -2161,6 +2222,13 @@ html:not(.lp-js) .lpx [data-reveal] {
 }
 
 @media (max-width: 720px) {
+  /* Na mobilu leží text přes celou šířku, takže vodorovný gradient
+     nestačí. Tapeta zůstává vidět, ale ztlumí se svisle. */
+  .lpx-hero__grid-mask {
+    background:
+      linear-gradient(180deg, rgba(10, 5, 9, 0.58) 0%, rgba(10, 5, 9, 0.3) 32%, rgba(10, 5, 9, 0.56) 76%, var(--lpx-bg) 100%);
+  }
+
   .lpx-cards {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2237,6 +2305,20 @@ html:not(.lp-js) .lpx [data-reveal] {
   }
 }
 
+/* Sklo nad tapetou: bílý závoj zůstává, ale pod ním je tmavý (ve
+   světlém motivu světlý) podklad, aby se tapeta nepropisovala do textu.
+   Cíleně jen velké obsahové plochy — odznaky a tlačítka mají vlastní
+   plné pozadí. */
+.lpx-card,
+.lpx-panel,
+.lpx-tabs,
+.lpx-platform,
+.lpx-dl__side,
+.lpx-faq__item,
+.lpx-faq__item[open] {
+  background-color: var(--lpx-glass-base);
+}
+
 /* ---------- 20 · Světlý motiv, nucené barvy, tisk, klid ---------- */
 
 :root[data-theme="light"] .lpx {
@@ -2258,6 +2340,7 @@ html:not(.lp-js) .lpx [data-reveal] {
   --lpx-shadow-window: 0 36px 74px -30px rgba(92, 33, 63, 0.4), 0 10px 30px -14px rgba(92, 33, 63, 0.22);
   --lpx-shadow-card: 0 18px 40px -30px rgba(92, 33, 63, 0.5);
   --lpx-focus: #7a4a00;
+  --lpx-glass-base: rgba(255, 250, 242, 0.72);
 }
 
 :root[data-theme="light"] .lpx::before {
@@ -2275,22 +2358,48 @@ html:not(.lp-js) .lpx [data-reveal] {
 
 /* Ve světlém motivu by tapeta pod bílým pásem vypadala špinavě —
    ztlumíme ji víc a překryv obrátíme. */
+:root[data-theme="light"] .lpx-wall {
+  filter: blur(34px) saturate(1.2) brightness(1.04);
+  opacity: 0.7;
+}
+
+:root[data-theme="light"] .lpx-wall::after {
+  background:
+    radial-gradient(58% 42% at 80% 6%, rgba(252, 0, 96, 0.12), transparent 70%),
+    radial-gradient(50% 40% at 12% 12%, rgba(252, 170, 0, 0.18), transparent 72%),
+    linear-gradient(180deg, rgba(255, 250, 242, 0.5) 0%, rgba(255, 250, 242, 0.6) 100%);
+}
+
+:root[data-theme="light"] .lpx-section:not(.lpx-section--atmo)::before {
+  background: linear-gradient(180deg, rgba(255, 250, 242, 0.74) 0%, rgba(255, 250, 242, 0.62) 44%, rgba(255, 250, 242, 0.76) 100%);
+}
+
 :root[data-theme="light"] .lpx-band__bg {
-  opacity: 0.16;
+  /* Světlý motiv: tapeta se násobí, takže zůstane barevná jako papír
+     a přitom nezešedne. */
+  opacity: 0.58;
+  mix-blend-mode: multiply;
 }
 
 :root[data-theme="light"] .lpx-band::before {
-  background: linear-gradient(180deg, #fffaf2 0%, rgba(255, 250, 242, 0.86) 24%, rgba(255, 250, 242, 0.92) 66%, #fffaf2 100%);
+  background: linear-gradient(180deg, #fffaf2 0%, rgba(255, 250, 242, 0.42) 24%, rgba(255, 250, 242, 0.52) 66%, #fffaf2 100%);
 }
 
 :root[data-theme="light"] .lpx-hero__backdrop {
-  opacity: 0.3;
+  opacity: 0.62;
+  filter: blur(26px) saturate(1.2) brightness(1.06);
 }
 
 :root[data-theme="light"] .lpx-hero__grid-mask {
   background:
-    linear-gradient(180deg, rgba(255, 250, 242, 0.9) 0%, rgba(255, 250, 242, 0.74) 44%, rgba(255, 250, 242, 0.96) 88%, #fffaf2 100%),
-    linear-gradient(94deg, rgba(255, 250, 242, 0.97) 0%, rgba(255, 250, 242, 0.8) 48%, rgba(255, 250, 242, 0.42) 100%);
+    linear-gradient(180deg, rgba(255, 250, 242, 0.62) 0%, rgba(255, 250, 242, 0.32) 44%, rgba(255, 250, 242, 0.72) 88%, #fffaf2 100%),
+    linear-gradient(94deg, rgba(255, 250, 242, 0.82) 0%, rgba(255, 250, 242, 0.46) 48%, rgba(255, 250, 242, 0.1) 100%);
+}
+
+@media (max-width: 720px) {
+  :root[data-theme="light"] .lpx-hero__grid-mask {
+    background: linear-gradient(180deg, rgba(255, 250, 242, 0.7) 0%, rgba(255, 250, 242, 0.42) 32%, rgba(255, 250, 242, 0.76) 76%, #fffaf2 100%);
+  }
 }
 
 :root[data-theme="light"] .lpx-title {
@@ -2332,6 +2441,7 @@ html:not(.lp-js) .lpx [data-reveal] {
 }
 
 @media (forced-colors: active) {
+  .lpx-wall,
   .lpx-band__bg,
   .lpx-hero__backdrop,
   .lpx-hero__aura,
@@ -2362,6 +2472,7 @@ html:not(.lp-js) .lpx [data-reveal] {
 }
 
 @media print {
+  .lpx-wall,
   .lpx-hero__scene,
   .lpx-dust,
   .lpx-band__bg,

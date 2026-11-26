@@ -18,7 +18,7 @@
 <!-- Hero tapeta je největší prvek nad ohybem (LCP) — preload ji
      stáhne dřív, než ji CSS vyžádá. -->
 <link as="image" href="wallpapers/hero-backdrop.webp" rel="preload" type="image/webp"/>
-<link href="lpx.css?v=20261126-3" rel="stylesheet"/>
+<link href="lpx.css?v=20261126-4" rel="stylesheet"/>
 <link href="apple-launcher.css?v=20261125-1" rel="stylesheet"/>
 <link href="launcher-pulse.css?v=20261126-1" rel="stylesheet"/>
 <script>
@@ -225,10 +225,14 @@
 </header>
 
 <main class="launcher-page lpx" id="top" tabindex="-1">
+<!-- Rozostřená tapeta přes celou stránku: leží pod obsahem,
+     takže jsou tapety vidět i mezi pásy, ale nikdy nesoupeří s textem. -->
+<div aria-hidden="true" class="lpx-wall"></div>
 <!-- ===================== HERO =====================
-     Tapeta z archivu leží celá přes hero jako jemná atmosféra
-     (předpečená, ztmavená a rozostřená). Přes ni jde gradient,
-     takže text zůstává čitelný a fotka nikdy nesoupeří s obsahem. -->
+     Tapeta z archivu leží celá přes hero a je záměrně VIDĚT —
+     jen rozostřená (blur v CSS), aby zůstala atmosférou a nesoupeřila
+     s titulkem. Přes ni jde lehký gradient, který kryje jen textový
+     sloupec, takže tapeta zůstává barevná. -->
 <section aria-labelledby="lpxTitle" class="lpx-hero" data-mc-hero id="launcher">
 <div aria-hidden="true" class="lpx-hero__scene" data-mc-scene>
 <div class="lpx-hero__backdrop" data-mc-depth="0.06"></div>
