@@ -1,0 +1,447 @@
+/* =============================================================
+   MINEKUBE STUDIOS // LAUNCHER — APPLE POHYB (v1)
+   -------------------------------------------------------------
+   Načítá se ÚPLNĚ NAKONEC (za lpx.css i launcher-pulse.css), takže
+   v kaskádě vyhrává nad starými pravidly stejné specificity.
+
+   Dva režimy, které přepíná jediné tlačítko v hero:
+
+     :root[data-motion-mode="apple"]  (VÝCHOZÍ)
+        Nový, klidný pohyb ve stylu apple.com — dlouhé expo
+        křivky, jen transform/opacity, odhalování při scrollu,
+        jemný parallax produktu, mikrointerakce tlačítek. Staré
+        dekorativní animace (prach, exploze, plasma, plovoucí
+        štítky) jsou potlačené. Tapety zůstávají atmosférické.
+
+     :root[data-motion-mode="legacy"]  (uživatel kliknul „vypnout“)
+        Nová vrstva se vypne a nastoupí PŮVODNÍ animace (řídí je
+        launcher.js přes data-fx-state="on"). Všechna pozadí jsou
+        OSTRA — žádný blur — a ve vysokém rozlišení (wallpapers/hd).
+
+   Zásady: animuje se jen transform a opacity; blur je statický;
+   prefers-reduced-motion vše zklidní, ale obsah je vždy vidět.
+   ============================================================= */
+
+/* ---------- 01 · Tokeny nové vrstvy ---------- */
+
+:root {
+  --ap-ease: cubic-bezier(0.16, 1, 0.3, 1);        /* expo-out, podpis Apple */
+  --ap-ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ap-rise: 30px;
+  --ap-dur: 0.95s;
+  --ap-dur-fast: 0.42s;
+}
+
+/* =============================================================
+   02 · NOVÁ VRSTVA — aktivní jen v režimu apple
+   ============================================================= */
+
+/* ---------- Odhalování při scrollu ----------
+   Nový rytmus pro stávající [data-reveal] prvky: delší expo křivka,
+   větší zdvih a jemné zmenšení. Pozorovatel (IntersectionObserver
+   s pojistkou proti rychlému skoku) už drží launcher.js — tady jen
+   přepisujeme kaskádu, takže vyšší specificita vyhraje nad starým
+   `.lpx [data-reveal]` i nad `[data-fx-state="off"] … transition:none`. */
+
+:root[data-motion-mode="apple"] .lpx [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, var(--ap-rise), 0) scale(0.985);
+  transition:
+    opacity var(--ap-dur) var(--ap-ease) var(--d, 0ms),
+    transform var(--ap-dur) var(--ap-ease) var(--d, 0ms);
+  will-change: opacity, transform;
+}
+
+:root[data-motion-mode="apple"] .lpx [data-reveal].is-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  will-change: auto;
+}
+
+/* ---------- Hero — choreografie při načtení ----------
+   Skrytí je podmíněné .ap-js (přidá apple-motion.js). Bez JS zůstane
+   hero rovnou vidět; s JS se nástřel spustí hned po prvním snímku. */
+
+html.ap-js:root[data-motion-mode="apple"] .lpx-hero .lpx-eyebrow,
+html.ap-js:root[data-motion-mode="apple"] .lpx-hero .lpx-title,
+html.ap-js:root[data-motion-mode="apple"] .lpx-hero .lpx-lead,
+html.ap-js:root[data-motion-mode="apple"] .lpx-hero .lpx-actions,
+html.ap-js:root[data-motion-mode="apple"] .lpx-hero .lpx-trust,
+html.ap-js:root[data-motion-mode="apple"] .lpx-hero .lpx-hero__cta {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+}
+
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-eyebrow,
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-title,
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-lead,
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-actions,
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-trust,
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-hero__cta {
+  animation: apHeroRise 1s var(--ap-ease) forwards;
+}
+
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-eyebrow { animation-delay: 0.05s; }
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-title   { animation-delay: 0.14s; }
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-lead    { animation-delay: 0.26s; }
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-actions { animation-delay: 0.38s; }
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-trust   { animation-delay: 0.5s; }
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-hero__cta { animation-delay: 0.6s; }
+
+@keyframes apHeroRise {
+  from { opacity: 0; transform: translate3d(0, 26px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* Produkt (okno launcheru) se usadí z 96 % na 100 % a pokračuje
+   jemným scroll-parallaxem, který počítá apple-motion.js. */
+html.ap-js:root[data-motion-mode="apple"] .lpx-hero .lpx-window {
+  opacity: 0;
+  transform: translate3d(0, calc(34px + var(--ap-py, 0px)), 0) scale(0.96);
+}
+
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-ready .lpx-window {
+  animation: apWindowSettle 1.25s var(--ap-ease) 0.32s forwards;
+}
+
+@keyframes apWindowSettle {
+  from { opacity: 0; transform: translate3d(0, 34px, 0) scale(0.96); }
+  to   { opacity: 1; transform: translate3d(0, var(--ap-py, 0px), 0) scale(calc(1 - var(--ap-ps, 0))); }
+}
+
+/* Po doběhnutí nástřelu drží produkt scroll-parallax bez animace. */
+:root[data-motion-mode="apple"] .lpx-hero.is-ap-settled .lpx-window {
+  animation: none;
+  opacity: 1;
+  transform: translate3d(0, var(--ap-py, 0px), 0) scale(calc(1 - var(--ap-ps, 0)));
+  transition: transform 0.2s linear;
+}
+
+/* Tapeta hero se při scrollu posouvá pomaleji než obsah (hloubka). */
+:root[data-motion-mode="apple"] .lpx-hero__backdrop {
+  transform: translate3d(0, var(--ap-bg-y, 0px), 0) scale(1.04);
+}
+
+/* ---------- Mikrointerakce tlačítek a karet ---------- */
+
+:root[data-motion-mode="apple"] .lpx-btn {
+  transition:
+    transform var(--ap-dur-fast) var(--ap-ease),
+    box-shadow var(--ap-dur-fast) var(--ap-ease),
+    border-color 0.25s ease,
+    background-color 0.25s ease;
+}
+
+:root[data-motion-mode="apple"] .lpx-btn:hover {
+  transform: translate3d(0, -3px, 0);
+}
+
+:root[data-motion-mode="apple"] .lpx-btn:active {
+  transform: translate3d(0, -1px, 0) scale(0.98);
+  transition-duration: 0.12s;
+}
+
+/* Světlo sledující kurzor na kartách a platformách (jemné, Apple). */
+:root[data-motion-mode="apple"] .lpx-card,
+:root[data-motion-mode="apple"] .lpx-platform,
+:root[data-motion-mode="apple"] .lpx-faq__item {
+  transition:
+    transform var(--ap-dur-fast) var(--ap-ease),
+    box-shadow var(--ap-dur-fast) var(--ap-ease),
+    border-color 0.25s ease;
+}
+
+:root[data-motion-mode="apple"] .lpx-card:hover,
+:root[data-motion-mode="apple"] .lpx-platform:hover {
+  transform: translate3d(0, -4px, 0);
+  border-color: var(--lpx-line-gold);
+}
+
+/* ---------- Stahovací tlačítko — klidný Apple povrch ---------- */
+
+/* Staré „energetické“ vrstvy (plasma, matrix, sweep, částice, oběžnice)
+   jsou v apple režimu potlačené; zůstává čistý gradient + jemný lesk. */
+:root[data-motion-mode="apple"] .lpx-download .download-plasma,
+:root[data-motion-mode="apple"] .lpx-download .download-matrix,
+:root[data-motion-mode="apple"] .lpx-download .download-sweep,
+:root[data-motion-mode="apple"] .lpx-download .download-pulse-line,
+:root[data-motion-mode="apple"] .lpx-download .download-particles,
+:root[data-motion-mode="apple"] .lpx-download .download-icon-orbit {
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+:root[data-motion-mode="apple"] .lpx-download {
+  animation: none !important;
+  transition:
+    transform var(--ap-dur-fast) var(--ap-ease),
+    box-shadow var(--ap-dur-fast) var(--ap-ease),
+    filter var(--ap-dur-fast) var(--ap-ease);
+}
+
+:root[data-motion-mode="apple"] .lpx-download:hover,
+:root[data-motion-mode="apple"] .lpx-download:focus-visible {
+  transform: translate3d(0, -2px, 0);
+  filter: brightness(1.05);
+}
+
+:root[data-motion-mode="apple"] .lpx-download:active {
+  transform: translate3d(0, 0, 0) scale(0.975);
+  transition-duration: 0.1s;
+}
+
+/* Klidný povrch: aura (::before) jen náznak, rámeček (::after) drží
+   gradient bez proudění, popisek ani šipka nesignalizují. */
+:root[data-motion-mode="apple"] .lpx-download::before {
+  animation: none !important;
+  opacity: 0.16 !important;
+}
+
+:root[data-motion-mode="apple"] .lpx-download::after {
+  animation: none !important;
+}
+
+:root[data-motion-mode="apple"] .lpx-download .download-label,
+:root[data-motion-mode="apple"] .lpx-download .download-icon svg {
+  animation: none !important;
+}
+
+/* Odezva na klik v apple režimu: měkké nadechnutí + přelet světla.
+   Třída .is-ap-press ji spouští (launcher.js), žádná exploze.
+   Flash má vlastní overflow:hidden, takže světlo zůstává uvnitř
+   zaobleného tlačítka (samotný button má overflow:visible). */
+:root[data-motion-mode="apple"] .lpx-download .lp-btn-flash {
+  display: none;
+}
+
+/* !important + vyšší specificita (0,4,0) musí přebít základní
+   `animation: none !important` (0,3,0), jinak by se odezva nespustila. */
+:root[data-motion-mode="apple"] .lpx-download.is-ap-press {
+  animation: apPress 0.62s var(--ap-ease) forwards !important;
+}
+
+:root[data-motion-mode="apple"] .lpx-download.is-ap-press .lp-btn-flash {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+:root[data-motion-mode="apple"] .lpx-download.is-ap-press .lp-btn-flash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 32%, rgba(255, 255, 255, 0.55) 50%, transparent 68%);
+  transform: translateX(-130%);
+  animation: apSheen 0.62s var(--ap-ease-soft) forwards;
+}
+
+@keyframes apPress {
+  0%   { transform: scale(1); }
+  32%  { transform: scale(1.035); }
+  100% { transform: scale(1); }
+}
+
+@keyframes apSheen {
+  from { transform: translateX(-130%); }
+  to   { transform: translateX(130%); }
+}
+
+/* ---------- Plovoucí štítky a CTA ikony — jemný život ---------- */
+
+:root[data-motion-mode="apple"] .lpx-sticker {
+  animation: apFloat 7s ease-in-out infinite !important;
+}
+
+:root[data-motion-mode="apple"] .lpx-sticker--open {
+  animation-delay: -3.2s !important;
+}
+
+:root[data-motion-mode="apple"] .lpx-cta__icon {
+  animation: apFloat 8s ease-in-out infinite !important;
+}
+
+:root[data-motion-mode="apple"] .lpx-cta__icon--b { animation-delay: -2.4s !important; }
+:root[data-motion-mode="apple"] .lpx-cta__icon--c { animation-delay: -4.8s !important; }
+
+@keyframes apFloat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -8px, 0); }
+}
+
+/* ---------- Běžící pás — pomalý, elegantní drift ---------- */
+
+:root[data-motion-mode="apple"] .lpx-marquee__track {
+  animation: apMarquee 64s linear infinite !important;
+}
+
+:root[data-motion-mode="apple"] .lpx-marquee:hover .lpx-marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes apMarquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Apple vrstva animuje jen transform/opacity — sdílený scroll-reveal
+   (patička) proto běží bez blur i v apple režimu. */
+:root[data-motion-mode="apple"] .scroll-reveal {
+  filter: none !important;
+}
+
+/* ---------- Hlavička — plynulé zhutnění při scrollu ---------- */
+
+:root[data-motion-mode="apple"] .site-header {
+  transition:
+    background 0.5s var(--ap-ease-soft),
+    box-shadow 0.5s var(--ap-ease-soft),
+    border-color 0.5s var(--ap-ease-soft);
+}
+
+/* =============================================================
+   03 · LEGACY REŽIM — ostrá pozadí ve vysokém rozlišení
+   -------------------------------------------------------------
+   Uživatel kliknul „Animace vypnuté“ → nová vrstva mlčí, staré
+   animace běží (data-fx-state="on") a VŠECHNA tapetová pozadí
+   jsou ostrá (žádný blur) a v HD rozlišení. !important přebije
+   atmosférická pravidla lpx.css v tmavém i světlém motivu.
+   ============================================================= */
+
+/* Celostránková tapeta. */
+:root[data-motion-mode="legacy"] .lpx-wall {
+  filter: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  background-image: url("wallpapers/hd/hero-backdrop.webp") !important;
+}
+
+/* Hero tapeta — ostrá HD. Malý přesah (-3 %) kryje starý scroll-parallax
+   (launcher.js mu dává inline transform), aby nevznikaly holé okraje;
+   blur pryč, pohyb původní vrstvy zůstává. */
+:root[data-motion-mode="legacy"] .lpx-hero__backdrop {
+  filter: none !important;
+  inset: -3% !important;
+  opacity: 1 !important;
+  background-image: url("wallpapers/hd/hero-backdrop.webp") !important;
+}
+
+/* Pásy a atmosférické sekce — HD zdroj přes --bg-hd. */
+:root[data-motion-mode="legacy"] .lpx-band__bg {
+  filter: none !important;
+  inset: 0 !important;
+  opacity: 0.92 !important;
+  mix-blend-mode: normal !important;
+  background-image: var(--bg-hd, var(--bg)) !important;
+}
+
+/* Závoje nad ostrou tapetou: o chlup silnější, aby text zůstal
+   čitelný, ale tapeta je pořád krásně vidět (ne plný scrim). */
+:root[data-motion-mode="legacy"] .lpx-hero__grid-mask {
+  background:
+    linear-gradient(180deg, rgba(10, 5, 9, 0.5) 0%, rgba(10, 5, 9, 0.16) 40%, rgba(10, 5, 9, 0.56) 90%, var(--lpx-bg) 100%),
+    linear-gradient(94deg, rgba(10, 5, 9, 0.82) 0%, rgba(10, 5, 9, 0.5) 42%, rgba(10, 5, 9, 0.12) 74%) !important;
+}
+
+:root[data-motion-mode="legacy"] .lpx-band::before,
+:root[data-motion-mode="legacy"] .lpx-section--atmo::before {
+  background: linear-gradient(180deg, var(--lpx-bg) 0%, rgba(10, 5, 9, 0.34) 20%, rgba(10, 5, 9, 0.42) 64%, var(--lpx-bg) 100%) !important;
+}
+
+:root[data-motion-mode="legacy"] .lpx-wall::after {
+  background:
+    radial-gradient(58% 42% at 80% 6%, rgba(252, 0, 96, 0.12), transparent 70%),
+    radial-gradient(50% 40% at 12% 12%, rgba(252, 192, 0, 0.14), transparent 72%),
+    linear-gradient(180deg, rgba(10, 5, 9, 0.3) 0%, rgba(10, 5, 9, 0.42) 46%, rgba(10, 5, 9, 0.54) 100%) !important;
+}
+
+/* Štítky nad hero: žádné mléčné sklo — tapeta za nimi zůstává ostrá. */
+:root[data-motion-mode="legacy"] .lpx-sticker {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Sdílený scroll-reveal (patička) chodí s blur(5px) — v legacy musí
+   být obsah ostrý; starý posun + opacity zůstávají. */
+:root[data-motion-mode="legacy"] .scroll-reveal {
+  filter: none !important;
+}
+
+/* Světlý motiv v legacy: tapeta ostrá, závoj papírový a lehký. */
+:root[data-motion-mode="legacy"][data-theme="light"] .lpx-wall {
+  opacity: 0.9 !important;
+}
+
+:root[data-motion-mode="legacy"][data-theme="light"] .lpx-wall::after {
+  background: linear-gradient(180deg, rgba(255, 250, 242, 0.56) 0%, rgba(255, 250, 242, 0.66) 100%) !important;
+}
+
+:root[data-motion-mode="legacy"][data-theme="light"] .lpx-hero__backdrop {
+  opacity: 0.85 !important;
+}
+
+:root[data-motion-mode="legacy"][data-theme="light"] .lpx-band__bg {
+  opacity: 0.8 !important;
+}
+
+:root[data-motion-mode="legacy"][data-theme="light"] .lpx-hero__grid-mask {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 242, 0.66) 0%, rgba(255, 250, 242, 0.36) 44%, rgba(255, 250, 242, 0.74) 90%, #fffaf2 100%),
+    linear-gradient(94deg, rgba(255, 250, 242, 0.84) 0%, rgba(255, 250, 242, 0.5) 48%, rgba(255, 250, 242, 0.14) 100%) !important;
+}
+
+:root[data-motion-mode="legacy"][data-theme="light"] .lpx-band::before,
+:root[data-motion-mode="legacy"][data-theme="light"] .lpx-section--atmo::before {
+  background: linear-gradient(180deg, #fffaf2 0%, rgba(255, 250, 242, 0.5) 24%, rgba(255, 250, 242, 0.58) 66%, #fffaf2 100%) !important;
+}
+
+/* =============================================================
+   04 · Redukce pohybu, nucené barvy, tisk
+   ============================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-motion-mode="apple"] .lpx [data-reveal],
+  :root[data-motion-mode="apple"] .lpx-hero .lpx-eyebrow,
+  :root[data-motion-mode="apple"] .lpx-hero .lpx-title,
+  :root[data-motion-mode="apple"] .lpx-hero .lpx-lead,
+  :root[data-motion-mode="apple"] .lpx-hero .lpx-actions,
+  :root[data-motion-mode="apple"] .lpx-hero .lpx-trust,
+  :root[data-motion-mode="apple"] .lpx-hero .lpx-hero__cta,
+  :root[data-motion-mode="apple"] .lpx-hero .lpx-window {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  :root[data-motion-mode="apple"] .lpx-sticker,
+  :root[data-motion-mode="apple"] .lpx-cta__icon,
+  :root[data-motion-mode="apple"] .lpx-marquee__track,
+  :root[data-motion-mode="apple"] .lpx-download.is-ap-press,
+  :root[data-motion-mode="apple"] .lpx-download.is-ap-press .lp-btn-flash,
+  :root[data-motion-mode="apple"] .lpx-download.is-ap-press .lp-btn-flash::before {
+    animation: none !important;
+  }
+
+  :root[data-motion-mode="apple"] .lpx-marquee__track { transform: none !important; }
+  :root[data-motion-mode="apple"] .lpx-hero__backdrop { transform: none !important; }
+}
+
+@media (forced-colors: active) {
+  :root[data-motion-mode="legacy"] .lpx-wall,
+  :root[data-motion-mode="legacy"] .lpx-hero__backdrop,
+  :root[data-motion-mode="legacy"] .lpx-band__bg {
+    display: none !important;
+  }
+}
+
+@media print {
+  .lpx [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}

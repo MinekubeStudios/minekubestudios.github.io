@@ -62,6 +62,7 @@ const SCRIPT_FILES = {
   "shared/app.js": "launcher/shared/app.js",
   "releases.js": "launcher/releases.js",
   "launcher.js": "launcher/launcher.js",
+  "apple-motion.js": "launcher/apple-motion.js",
   "shared/design-plus.js": "launcher/shared/design-plus.js"
 };
 
@@ -493,31 +494,136 @@ test("Prohlídka rozhraní funguje i z klávesnice", async () => {
   assert.deepEqual(page.errors, []);
 });
 
-test("Přepínač animací v hero je jediný a ovládá efekty", async () => {
+test("Přepínač animací v hero je jediný a přepíná apple/legacy režim", async () => {
   const page = await buildPage("repoOnly");
   const { document, window } = page;
 
   /* Lišta sekcí i přepínač Platformy/Funkce jsou pryč — ovládání
-     efektů zůstalo jen v hero a nesmí jich být víc. */
+     pohybu zůstalo jen v hero a nesmí jich být víc. */
   const toggles = [...document.querySelectorAll("[data-fx-toggle]")];
-  assert.equal(toggles.length, 1, "na stránce je právě jeden přepínač efektů");
+  assert.equal(toggles.length, 1, "na stránce je právě jeden přepínač pohybu");
   assert.equal(document.querySelectorAll(".lpx-fx").length, 0, "lišta sekcí zmizela");
 
   const button = toggles[0];
   const root = document.querySelector(".launcher-page");
+  const html = document.documentElement;
   assert.equal(button.disabled, false, "tlačítko musí být použitelné");
-  assert.equal(button.getAttribute("aria-pressed"), "true");
-  assert.equal(root.getAttribute("data-fx-state"), "on");
 
-  button.click();
-  assert.equal(button.getAttribute("aria-pressed"), "false");
+  /* VÝCHOZÍ = apple: nová vrstva, staré efekty potlačené (fx-state off). */
+  assert.equal(html.getAttribute("data-motion-mode"), "apple");
+  assert.equal(root.getAttribute("data-motion-mode"), "apple");
+  assert.equal(button.getAttribute("aria-pressed"), "true");
   assert.equal(root.getAttribute("data-fx-state"), "off");
-  assert.equal(text(document, "[data-mc-motion-label]"), "Animace vypnuté");
-
-  button.click();
-  assert.equal(button.getAttribute("aria-pressed"), "true");
   assert.equal(text(document, "[data-mc-motion-label]"), "Animace zapnuté");
+  assert.equal(window.MinekubeLauncherApi.getMotionMode(), "apple");
+  assert.ok(html.classList.contains("ap-js"), "apple-motion.js se načetl");
+
+  /* Klik → legacy: PŮVODNÍ animace (fx-state on) + ostrá pozadí. */
+  button.click();
+  assert.equal(html.getAttribute("data-motion-mode"), "legacy");
+  assert.equal(root.getAttribute("data-motion-mode"), "legacy");
+  assert.equal(button.getAttribute("aria-pressed"), "false");
+  assert.equal(root.getAttribute("data-fx-state"), "on");
+  assert.equal(text(document, "[data-mc-motion-label]"), "Animace vypnuté");
+  assert.equal(window.localStorage.getItem("minekube:launcher-motion"), "legacy");
+
+  /* Rychlý dvojklik zpět → apple, žádná rekurze ani zdvojený stav. */
+  button.click();
+  assert.equal(html.getAttribute("data-motion-mode"), "apple");
+  assert.equal(button.getAttribute("aria-pressed"), "true");
+  assert.equal(root.getAttribute("data-fx-state"), "off");
+  assert.equal(text(document, "[data-mc-motion-label]"), "Animace zapnuté");
+  assert.equal(window.localStorage.getItem("minekube:launcher-motion"), "apple");
   assert.deepEqual(page.errors, []);
+});
+
+test("Uložený legacy režim se obnoví při načtení stránky", async () => {
+  /* Představíme uloženou volbu dřív, než se skripty rozběhnou. */
+  const page = await buildPage("repoOnly");
+  const { document, window } = page;
+  window.localStorage.setItem("minekube:launcher-motion", "legacy");
+  window.MinekubeLauncherApi.setMotionMode("legacy");
+  assert.equal(document.documentElement.getAttribute("data-motion-mode"), "legacy");
+  assert.equal(document.querySelector(".launcher-page").getAttribute("data-fx-state"), "on");
+  assert.equal(text(document, "[data-mc-motion-label]"), "Animace vypnuté");
+  assert.deepEqual(page.errors, []);
+});
+
+test("Apple vrstva má vlastní nástřel hero a klidnou odezvu na klik", async () => {
+  const page = await buildPage("withReleases");
+  const { document, window } = page;
+
+  const hero = document.querySelector(".lpx-hero");
+  /* Nástřel běží přes dva rAF snímky — počkáme na ně. */
+  await tick(window, 80);
+  assert.ok(hero.classList.contains("is-ap-ready"), "hero nástřel se spustil");
+
+  const button = document.querySelector(".lpx-hero .lpx-download");
+  button.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  assert.ok(button.classList.contains("is-ap-press"), "apple klik = měkké nadechnutí");
+  assert.equal(button.classList.contains("is-pulse"), false, "žádná stará exploze");
+  assert.equal(document.querySelectorAll(".lp-pulse-burst").length, 0, "žádná explozivní vrstva");
+  assert.ok(button.querySelector(".lp-btn-flash"), "světelný přelet existuje");
+
+  /* Po doběhnutí se třída uklidí (680 ms). */
+  await tick(window, 760);
+  assert.equal(button.classList.contains("is-ap-press"), false, "odezva se uklidila");
+  assert.deepEqual(page.errors, []);
+});
+
+test("Apple-motion CSS: legacy = ostrá HD pozadí, apple = nová vrstva", () => {
+  const css = read("launcher/apple-motion.css");
+  const html = read("launcher/index.html");
+
+  /* Vrstva se načítá poslední, aby vyhrála v kaskádě. */
+  const links = [...html.matchAll(/<link href="([^"]+)" rel="stylesheet"\/>/g)].map(m => m[1]);
+  assert.equal(links[links.length - 1].split("?")[0], "apple-motion.css", "apple-motion.css musí být poslední stylesheet");
+
+  /* LEGACY: žádný blur na tapetách, HD zdroj. */
+  const legacyWall = css.match(/:root\[data-motion-mode="legacy"\] \.lpx-wall\s*\{([^}]*)\}/);
+  assert.ok(legacyWall, "chybí legacy pravidlo celostránkové tapety");
+  assert.match(legacyWall[1], /filter:\s*none !important/, "legacy tapeta nesmí být rozostřená");
+  assert.match(legacyWall[1], /wallpapers\/hd\/hero-backdrop\.webp/, "legacy tapeta musí být HD");
+
+  const legacyBackdrop = css.match(/:root\[data-motion-mode="legacy"\] \.lpx-hero__backdrop\s*\{([^}]*)\}/);
+  assert.ok(legacyBackdrop, "chybí legacy pravidlo hero tapety");
+  assert.match(legacyBackdrop[1], /filter:\s*none !important/, "legacy hero tapeta nesmí být rozostřená");
+  assert.match(legacyBackdrop[1], /wallpapers\/hd\/hero-backdrop\.webp/, "legacy hero tapeta musí být HD");
+
+  const legacyBand = css.match(/:root\[data-motion-mode="legacy"\] \.lpx-band__bg\s*\{([^}]*)\}/);
+  assert.ok(legacyBand, "chybí legacy pravidlo pásů");
+  assert.match(legacyBand[1], /filter:\s*none !important/, "legacy pásy nesmí být rozostřené");
+  assert.match(legacyBand[1], /var\(--bg-hd/, "legacy pásy musí brát HD zdroj");
+
+  /* HTML pásy nesou HD zdroj přes --bg-hd. */
+  const bands = [...html.matchAll(/class="lpx-band__bg" style="([^"]+)"/g)];
+  assert.equal(bands.length, 3, "tři atmosférické pásy");
+  bands.forEach(([, style]) => assert.match(style, /--bg-hd:url\('wallpapers\/hd\//, "pás musí mít HD zdroj"));
+
+  /* HD assety opravdu existují. */
+  for (const asset of ["hero-backdrop", "crimson-forest", "subdungeon", "lobby-s"]) {
+    assert.ok(existsSync(ROOT + `launcher/wallpapers/hd/${asset}.webp`), `chybí HD asset ${asset}`);
+  }
+
+  /* APPLE: nová odhalovací vrstva + potlačené staré dekorace. */
+  assert.match(css, /:root\[data-motion-mode="apple"\] \.lpx \[data-reveal\]/, "apple přepisuje odhalování");
+  assert.match(css, /:root\[data-motion-mode="apple"\] \.lpx-download \.download-plasma/, "apple potlačuje starou plasmatu");
+  assert.match(css, /@keyframes apHeroRise/, "chybí nástřel hero");
+  assert.match(css, /@keyframes apPress/, "chybí klidná odezva na klik");
+
+  /* Odezva na klik musí přebít základní `animation: none !important`
+     (jinak by ji !important umlčel bez ohledu na specificitu). */
+  const press = css.match(/:root\[data-motion-mode="apple"\] \.lpx-download\.is-ap-press\s*\{([^}]*)\}/);
+  assert.ok(press, "chybí pravidlo klidné odezvy");
+  assert.match(press[1], /animation:\s*apPress[^;]*!important/, "odezva musí mít !important, aby ji základní animation:none neumlel");
+
+  /* Přístupnost: redukce pohybu, nucené barvy, tisk. */
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(css, /@media \(forced-colors: active\)/);
+  assert.match(css, /@media print/);
+
+  /* Bez JS nesmí nic zůstat skryté. */
+  assert.match(css, /html\.ap-js:root\[data-motion-mode="apple"\] \.lpx-hero \.lpx-title/, "skrytí hero je podmíněné .ap-js");
 });
 
 test("Sekce „Tři kroky“ i carousel zmizely i se svou logikou", async () => {
@@ -916,7 +1022,7 @@ test("Obrázky odpovídají atributům width/height a nikdo neodkazuje do prázd
 test("Styly jsou syntakticky vyvážené a responzivní bloky nejsou vnořené", () => {
   /* Při mazání sekcí se snadno zapomene uzavřít @media — pak se všechna
      responzivní pravidla stanou mrtvými a nikdo si toho nevšimne. */
-  for (const file of ["launcher/lpx.css", "launcher/launcher-pulse.css"]) {
+  for (const file of ["launcher/lpx.css", "launcher/launcher-pulse.css", "launcher/apple-motion.css"]) {
     const css = read(file);
     const stripped = css.replace(/\/\*[\s\S]*?\*\//g, "");
     let depth = 0;
@@ -1078,9 +1184,13 @@ test("Každé stahovací tlačítko říká jen „Stáhnout pro …“", async 
   assert.deepEqual(page.errors, []);
 });
 
-test("Pulz se restartuje a uklidí i při kliknutí na dvě tlačítka", async () => {
+test("Legacy pulz se restartuje a uklidí i při kliknutí na dvě tlačítka", async () => {
   const page = await buildPage("withReleases");
   const { document, window } = page;
+
+  /* Původní explozivní pulz patří jen legacy režimu — přepneme. */
+  window.MinekubeLauncherApi.setMotionMode("legacy");
+  assert.equal(document.documentElement.getAttribute("data-motion-mode"), "legacy");
 
   const hero = document.querySelector(".lpx-hero .lpx-download");
   const card = document.querySelector(".lpx-platform .lpx-download");
