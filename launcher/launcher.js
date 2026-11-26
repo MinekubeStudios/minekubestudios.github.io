@@ -301,10 +301,12 @@
     }
   }
 
-  function heroLabelText(info) {
-    if (info.planned) {
-      return translate("lp.dl.label.planned", "{os} — planned").replace("{os}", platformName(currentOS));
-    }
+  /* Popisek hlavního tlačítka je vždycky „Stáhnout pro {OS}“.
+     Žádný jiný text sem nesmí prosáknout — ani „Stáhnout znovu“,
+     ani „Stahování zahájeno“, ani stav „v plánu“. Hlavní tlačítko
+     vždy míří na Windows (jediné vydané sestavení) a odezvu na klik
+     nese pulz + toast, ne přepsaný popisek. */
+  function heroLabelText() {
     return translate("lp.dl.label.download", "Download for {os}").replace("{os}", platformName(currentOS));
   }
 
@@ -330,7 +332,7 @@
        vrátit — app.js překlady přepisuje při každém přepnutí jazyka. */
     if (heroLabel) {
       heroLabel.removeAttribute("data-i18n");
-      heroLabel.textContent = heroLabelText(info, status);
+      heroLabel.textContent = heroLabelText();
     }
 
     /* Popis souboru pro čtečku (tlačítko má na něj aria-describedby).
@@ -339,7 +341,7 @@
     const heroDescription = info.planned || status.state !== "ready" ? "" : describeAsset(asset);
 
     if (hintNode) {
-      const label = heroLabelText(info, status);
+      const label = heroLabelText();
       const sub = info.planned
         ? translate("lp.os.sub.planned", "Build in progress")
         : status.state === "loading"
@@ -382,20 +384,12 @@
         setState(button, loading ? "loading" : failed || !available ? "error" : "idle");
         button.disabled = loading;
         button.setAttribute("aria-busy", String(loading));
-        /* Popisek karet drží statický překlad (data-i18n). Když ale
-           vydání chybí, musí tlačítko říct „Zkusit znovu" — a zase se
-           vrátit, jakmile se data načtou. Klíč si pamatujeme, aby se
-           překlad po přepnutí jazyka nepokazil. */
-        const label = button.querySelector("[data-i18n]");
-        if (!label) return;
-        label.dataset.i18nKey ??= label.getAttribute("data-i18n") || "";
-        if (failed || (!available && !loading)) {
-          label.removeAttribute("data-i18n");
-          label.textContent = translate("lp.dl.error.retry", "Try again");
-        } else if (label.dataset.i18nKey && !label.hasAttribute("data-i18n")) {
-          label.setAttribute("data-i18n", label.dataset.i18nKey);
-          label.textContent = translate(label.dataset.i18nKey, label.textContent);
-        }
+        /* Popisek karty zůstává statický a vždy znamená stažení.
+           Dřív se při chybě přepisoval na „Zkusit znovu" a po načtení
+           zase zpátky — uživatel tak na stahovacím tlačítku viděl
+           jiný text, než jaký dělá (a při přepnutí jazyka se mohl
+           rozejít s překladem). Chybu hlásí alert s vlastním tlačítkem
+           „Zkusit znovu", ne tenhle button. */
       });
   }
 
@@ -566,14 +560,22 @@
     "lp-burst-sheen"      /* mini hover linka */
   ];
 
-  function buildBurst(button) {
+  /* Aktuálně vykreslená exploze. Držíme si ji, aby úklid z jednoho
+     tlačítka nesmazal explozi jiného tlačítka — dřív se hledala přes
+     `document.body.querySelector` a při dvou kliknutích na různá
+     tlačítka během 2,4 s zmizela ta nová. */
+  let activeBurst = null;
+
+  function buildBurst(rect) {
     const burst = document.createElement("div");
     burst.className = "lp-pulse-burst";
     burst.setAttribute("aria-hidden", "true");
 
     /* Střed výbuchu = střed tlačítka. Vrstva je fixed, takže
-       souřadnice jsou viewportové, ne dokumentové. */
-    const rect = button.getBoundingClientRect();
+       souřadnice jsou viewportové, ne dokumentové. Rozměry se čtou
+       PŘED přidáním .is-pulse: animace lpBtnImpact začíná na
+       scale(1.02), takže měření až po přidání třídy posunulo střed
+       i rám exploze o dvě procenta mimo tlačítko. */
     burst.style.left = rect.left + rect.width / 2 + "px";
     burst.style.top = rect.top + rect.height / 2 + "px";
 
@@ -597,6 +599,20 @@
   function playDownloadAnimation(button) {
     if (!button) return;
 
+    /* Nejdřív uklidit předchozí běh. Kdyby se timery rušily až po
+       přidání třídy, stačil by rychlý druhý klik a starý úklid by
+       třídu smazal uprostřed nové animace. */
+    const pending = pulseTimers.get(button);
+    if (pending) {
+      pending.forEach(window.clearTimeout);
+      pulseTimers.delete(button);
+    }
+
+    if (activeBurst) {
+      activeBurst.remove();
+      activeBurst = null;
+    }
+
     /* Prosvětlovací překryv. Dřív to byl animovaný filter
        brightness() na tlačítku — dnes bílá vrstva s animovanou
        opacity, která jde na kompozitor. Vytváří se jednou a pak
@@ -609,27 +625,24 @@
       button.appendChild(flash);
     }
 
+    /* Měření proběhne ještě ve vizuálním stavu, který uživatel vidí
+       (včetně hover náklonu), ale bez pulzní animace. */
+    const rect = button.getBoundingClientRect();
+
     button.classList.remove("is-pulse");
     /* Vynutí restart animace, aniž by cokoli měřilo layout. */
     void button.offsetWidth;
     button.classList.add("is-pulse");
 
-    /* Předchozí vrstvu uklidit — jinak by ve stránce zůstala viset. */
-    const previous = document.body.querySelector(":scope > .lp-pulse-burst");
-    if (previous) previous.remove();
-
-    document.body.appendChild(buildBurst(button));
-
-    /* Předchozí timery zrušit — jinak by druhý klik nechal
-       doběhnout úklid z toho prvního a třída by zmizela uprostřed. */
-    const pending = pulseTimers.get(button);
-    if (pending) pending.forEach(window.clearTimeout);
+    const burst = buildBurst(rect);
+    activeBurst = burst;
+    document.body.appendChild(burst);
 
     pulseTimers.set(button, [
       window.setTimeout(() => button.classList.remove("is-pulse"), PULSE_MS + 60),
       window.setTimeout(() => {
-        const burst = document.body.querySelector(":scope > .lp-pulse-burst");
-        if (burst) burst.remove();
+        burst.remove();
+        if (activeBurst === burst) activeBurst = null;
       }, BURST_MS)
     ]);
   }

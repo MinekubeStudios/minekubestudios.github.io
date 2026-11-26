@@ -433,7 +433,7 @@ test("Každý překladový klíč existuje ve všech třech jazycích", async ()
   const dynamic = [
     "lp.os.windows", "lp.os.linux",
     "lp.os.sub.windows", "lp.os.sub.linux", "lp.os.sub.planned",
-    "lp.dl.label.download", "lp.dl.label.planned", "lp.dl.label.started",
+    "lp.dl.label.download",
     "lp.dl.state.loading", "lp.dl.state.ready", "lp.dl.state.fallback", "lp.dl.state.error",
     "lp.dl.source.releases", "lp.dl.source.repo", "lp.dl.source.fallback",
     "lp.toast.start", "lp.toast.fallback", "lp.toast.planned", "lp.toast.os",
@@ -982,6 +982,153 @@ test("Stahovací tlačítka nikdy netvrdí dokončení", async () => {
   assert.ok(!/dokončeno|hotovo|complete|again|znovu|zahájeno/i.test(text(document, "[data-os-label]")));
   assert.match(text(document, "[data-launcher-start-note]"), /prohlížeč/);
   assert.deepEqual(page.errors, []);
+});
+
+test("Každé stahovací tlačítko říká jen „Stáhnout pro …“", async () => {
+  const page = await buildPage("withReleases");
+  const { document, window } = page;
+
+  const labels = () =>
+    [...document.querySelectorAll(".download-ultimate .download-label")].map(node => node.textContent.trim());
+
+  /* Windows karta i hero míří na instalátor, takže obě musí nabízet
+     stažení — ne „Zkusit znovu“ ani „Stáhnout instalátor“. */
+  assert.deepEqual(labels(), ["Stáhnout pro Windows", "Stáhnout pro Windows"]);
+
+  const hero = document.querySelector(".lpx-hero .lpx-download");
+  hero.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  await tick(window, 400);
+  assert.deepEqual(labels(), ["Stáhnout pro Windows", "Stáhnout pro Windows"], "klik popisek nemění");
+
+  window.eval(`applyLanguage("en")`);
+  await tick(window);
+  assert.deepEqual(labels(), ["Download for Windows", "Download for Windows"]);
+
+  window.eval(`applyLanguage("sk")`);
+  await tick(window);
+  assert.deepEqual(labels(), ["Stiahnuť pre Windows", "Stiahnuť pre Windows"]);
+
+  window.eval(`applyLanguage("cs")`);
+  await tick(window);
+  assert.deepEqual(labels(), ["Stáhnout pro Windows", "Stáhnout pro Windows"]);
+
+  labels().forEach(label => {
+    assert.match(
+      label,
+      /^(Stáhnout pro Windows|Download for Windows|Stiahnuť pre Windows)$/,
+      `Na tlačítku se objevil jiný text: ${label}`
+    );
+  });
+  assert.deepEqual(page.errors, []);
+});
+
+test("Pulz se restartuje a uklidí i při kliknutí na dvě tlačítka", async () => {
+  const page = await buildPage("withReleases");
+  const { document, window } = page;
+
+  const hero = document.querySelector(".lpx-hero .lpx-download");
+  const card = document.querySelector(".lpx-platform .lpx-download");
+
+  hero.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  assert.ok(hero.classList.contains("is-pulse"), "klik musí spustit pulz");
+  assert.equal(document.querySelectorAll(".lp-pulse-burst").length, 1, "jedna explozivní vrstva");
+
+  /* Druhý klik na jiné tlačítko je přijat po 350ms pojistce proti
+     dvojkliku; exploze se nesmí vršit ani zmizet. */
+  await tick(window, 420);
+  card.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  assert.equal(document.querySelectorAll(".lp-pulse-burst").length, 1, "exploze se nevrší");
+  assert.ok(card.classList.contains("is-pulse"));
+
+  /* Hero pulz skončil (1,96 s od kliku), karta ještě běží. */
+  await tick(window, 1600);
+  assert.equal(hero.classList.contains("is-pulse"), false, "starý pulz se uklidil");
+  assert.equal(card.classList.contains("is-pulse"), true, "nový pulz běží dál");
+
+  /* Po 2,4 s od kliku zmizí i vnější vrstva. */
+  await tick(window, 900);
+  assert.equal(card.classList.contains("is-pulse"), false);
+  assert.equal(document.querySelectorAll(".lp-pulse-burst").length, 0, "po pulzu nezůstane vrstva");
+  assert.deepEqual(page.errors, []);
+});
+
+test("Tlačítko má vycentrovaný popisek, mini rámeček a čistý pulz", () => {
+  const css = read("launcher/lpx.css");
+  const pulse = read("launcher/launcher-pulse.css");
+  const js = read("launcher/launcher.js");
+  const i18n = read("launcher/i18n.js");
+
+  /* Prázdný spinner už není flex item — jinak ho gap: 9px posune. */
+  assert.match(
+    css,
+    /\.download-ultimate\.lpx-download\s+\.lp-btn__spinner\s*\{[^}]*display:\s*none/,
+    "spinner musí být mimo tok, dokud se nenačítá"
+  );
+
+  /* Ikona visí na inset-block + margin: auto — transform nesmí nést
+     translateY(-50%), které by ji posunulo o 14 px nahoru. */
+  const icon = css.match(/\.download-ultimate\.lpx-download\s+\.download-icon\s*\{([^}]*)\}/);
+  assert.ok(icon, "chybí pravidlo pro ikonu");
+  assert.match(icon[1], /inset-block:\s*0/, "ikona musí být centrovaná přes inset-block");
+  assert.match(icon[1], /margin:\s*auto 0/, "ikona musí být centrovaná přes margin");
+  assert.ok(!/translateY\(-50%\)/.test(icon[1]), "ikona nesmí zdědit translateY(-50%)");
+
+  const iconHover = css.match(/\.download-ultimate\.lpx-download:hover\s+\.download-icon[^{]*\{([^}]*)\}/);
+  assert.ok(iconHover, "chybí hover pravidlo ikony");
+  assert.ok(!/translateY\(-50%\)/.test(iconHover[1]), "hover nesmí vrátit translateY(-50%)");
+
+  /* Mini rámeček: stejný gradient jako hover, jen 1 px a tlumený.
+     Povrch sahá až do vnější hrany, aby přes 1px border neprosvítala
+     černá stránka. */
+  const ring = css.match(/\.download-ultimate\.lpx-download::after\s*\{([^}]*)\}/);
+  assert.ok(ring, "chybí klidový rámeček");
+  assert.match(ring[1], /padding:\s*1px/, "klidový rámeček musí být tenký 1 px");
+  assert.match(ring[1], /opacity:\s*0\.55/, "klidový rámeček musí být tlumený");
+  assert.match(css, /\.download-ultimate\.lpx-download\s+\.download-fx\s*\{[^}]*inset:\s*-1px/);
+
+  /* Povrch tlačítka je světlý gradient, takže popisek i ikona musí
+     zůstat tmavé (bílý text na zlaté/purpurové byl špatně čitelný).
+     Během pulzu se barva nesmí ztratit a nesmí existovat dvakrát. */
+  assert.match(pulse, /color:\s*#2a1204/, "klidový popisek musí být tmavý");
+  const pulseLabels = [...pulse.matchAll(/\.is-pulse[^{]*\.download-label[^{]*\{([^}]*)\}/g)].map(m => m[1]);
+  assert.equal(pulseLabels.length, 1, "popisek během pulzu má jediné pravidlo");
+  assert.match(pulseLabels[0], /color:\s*#241005/, "pulz nesmí popisek přebarvit do ztracena");
+  assert.match(pulse, /downloadFusionBorderIdle/, "gradient rámečku musí během pulzu téct dál");
+
+  /* Chybový stav ztmavne, takže popisek musí zbělat. */
+  assert.match(
+    pulse,
+    /data-state="error"\]\s+\.download-label[^{]*\{[^}]*color:\s*#fff8f3|data-state="error"\][^{]*\{[^}]*color:\s*#fff8f3/s,
+    "v chybovém stavu musí být popisek bílý"
+  );
+
+  /* Žádný jiný text: pseudo-element popisku a klíč „again“ jsou pryč. */
+  assert.match(css, /\.lpx-download\s+\.download-label::after\s*\{\s*content:\s*""/);
+  assert.ok(!/lp\.dl\.label\.again/.test(i18n), "v překladech nesmí zůstat „again“");
+  assert.ok(!/lp\.dl\.error\.retry/.test(js), "stahovací tlačítko nesmí sahat na text „Zkusit znovu“");
+  assert.ok(!/lp\.dl\.label\.planned/.test(js), "hero popisek nesmí mít stav „v plánu“");
+
+  /* Exploze se měří před přidáním třídy is-pulse (animace začíná
+     na scale 1.02) a uklízí se podle konkrétní vrstvy. */
+  assert.match(js, /const rect = button\.getBoundingClientRect\(\);[\s\S]{0,200}classList\.add\("is-pulse"\)/);
+  assert.match(js, /let activeBurst/);
+
+  /* Vrstvy exploze se centrují zápornými marginy. `translate: -50% -50%`
+     z lpx.css se k nim dřív přičetlo a výbuch vystřelil o půl tlačítka
+     vlevo nahoru. */
+  assert.match(
+    pulse,
+    /\.lp-pulse-burst \*[^{]*\{[^}]*translate:\s*none/,
+    "vrstvy exploze nesmí zdědit translate z lpx.css"
+  );
+
+  /* Chybový povrch musí přebít sdílené pravidlo (0,4,0) a nesmí
+     spoléhat na --pointer-x bez fallbacku (jinak je deklarace neplatná). */
+  assert.match(
+    css,
+    /\.button\[data-download\]\.download-ultimate\.lpx-download\[data-state="error"\] \.download-fx \{[^}]*var\(--pointer-x,\s*50%\)/s,
+    "chybový povrch musí mít vyšší specificitu i fallbacky proměnných"
+  );
 });
 
 test("Značky v HTML jsou vyvážené (žádný neuzavřený obal)", async () => {

@@ -2439,9 +2439,10 @@ html:not(.lp-js) .lpx [data-reveal] {
    -------------------------------------------------------------
    Vzhled samotného `.download-ultimate` bydlí ve styles.css, protože
    ho používá i katalog modpacků — tady zůstává jen to, co je vlastní
-   téhle stránce: spinner během zjišťování verze, přelití do zelena
-   po odpovědi a překryv pro pulz. Pulz (vnější exploze) je v
-   launcher-pulse.css, protože ho skládá launcher.js.
+   téhle stránce: přesné centrování popisku a ikony, mini rámeček
+   v klidovém stavu, spinner během zjišťování verze a překryv pro
+   pulz. Pulz (vnější exploze) je v launcher-pulse.css, protože ho
+   skládá launcher.js.
    ============================================================= */
 
 .button[data-download].download-ultimate.lpx-download {
@@ -2455,11 +2456,32 @@ html:not(.lp-js) .lpx [data-reveal] {
   outline: none;
 }
 
-/* Mini verze hoverového zářivého rámečku v klidovém stavu místo tmavé linky. */
-.button[data-download].download-ultimate.lpx-download::after {
-  opacity: 0.6;
-  padding: 1px;
+/* Popisek musí sedět přesně ve středu tlačítka, takže do flexu nesmí
+   mluvit žádný jiný prvek. Prázdný `.lp-btn__spinner` byl do téhle
+   chvíle běžný flex item (0 px široký, ale tlačítko má `gap: 9px`)
+   a posouval popisek o 4,5 px doprava. Mimo načítání je proto úplně
+   mimo tok — `display: none` mezeru zruší. */
+.button[data-download].download-ultimate.lpx-download .lp-btn__spinner {
+  display: none;
+}
+
+/* Tmavá linka v klidu nebyl rámeček, ale 1px průhledný `border`
+   tlačítka: `.download-fx` končil na padding boxu, takže přes něj
+   prosvítala stránka. Povrch teď vyplní celý border box a přes něj
+   leží gradientový rámeček — černá linka nemá kudy prosvítat. */
+.button[data-download].download-ultimate.lpx-download .download-fx {
   inset: -1px;
+  border-radius: inherit;
+}
+
+/* Mini verze hoverového zářivého rámečku v klidovém stavu. Stejný
+   gradient jako na hoveru, jen 1px tlustý, tlumený a s krátkým
+   svitem — žádná černá linka, ale ani plná záře. */
+.button[data-download].download-ultimate.lpx-download::after {
+  inset: -1px;
+  padding: 1px;
+  opacity: 0.55;
+  filter: drop-shadow(0 0 2px rgba(255, 190, 70, 0.42));
 }
 
 .button[data-download].download-ultimate.lpx-download:hover::after,
@@ -2467,15 +2489,32 @@ html:not(.lp-js) .lpx [data-reveal] {
 .button[data-download].download-ultimate.lpx-download.is-pointer-active::after {
   opacity: 1;
   padding: 1.5px;
+  filter:
+    drop-shadow(0 0 6px rgba(255, 216, 77, 0.50))
+    drop-shadow(0 0 10px rgba(255, 171, 31, 0.28))
+    drop-shadow(0 0 9px rgba(232, 65, 255, 0.22));
 }
 
-/* Ikona vpravo absolutně, aby byl popisek v tlačítku dokonale vycentrovaný.
-   Vertikální centrování přes inset-block + margin-block nekoliduje s transform v lpIconBox. */
+/* Ikona vpravo absolutně, aby mohl být popisek vycentrovaný na střed
+   tlačítka. Vertikálně ji drží `inset-block: 0` + `margin: auto 0`,
+   takže transform nesmí obsahovat `translateY(-50%)` — to zdědila
+   z dob, kdy visela na `top: 50%`, a posouvalo ji o 14 px nahoru.
+   Pulzní `lpIconBox` translateY nemá, takže ikona při kliknutí
+   cukla dolů a po pulzu zase nahoru. Tady zůstává jen vrstva Z. */
 .button[data-download].download-ultimate.lpx-download .download-icon {
   position: absolute;
   right: 14px;
   inset-block: 0;
   margin: auto 0;
+  transform: translateZ(26px);
+}
+
+/* Hover z styles.css nese `translateY(-50%)`; na téhle stránce se
+   nesmí vrátit, jinak ikona při najetí uskočí o 14 px nahoru. */
+.button[data-download].download-ultimate.lpx-download:hover .download-icon,
+.button[data-download].download-ultimate.lpx-download:focus-visible .download-icon,
+.button[data-download].download-ultimate.lpx-download.is-pointer-active .download-icon {
+  transform: translateZ(36px) scale(1.08);
 }
 
 .button[data-download].download-ultimate.lpx-download .download-label {
@@ -2484,6 +2523,18 @@ html:not(.lp-js) .lpx [data-reveal] {
   margin: 0 auto;
 }
 
+/* Žádný jiný text v tlačítku. Sdílený styles.css nechává na popisku
+   pseudo-element s natvrdo napsaným „PŘIPRAVUJI…" (z éry, kdy tlačítko
+   při stahování měnilo text). Na launcheru se nesmí objevit v žádném
+   stavu — popisek je pořád jen „Stáhnout pro …". */
+.lpx-download .download-label::after {
+  content: "";
+}
+
+/* Pulz vypíná přechody, aby ho základní pravidlo tlačítka nepřerušilo.
+   Samotný `.lpx-download.is-pulse` (dvě třídy) prohrával se
+   `.button[data-download].download-ultimate` (tři), takže se sem
+   `transition: none` vůbec nedostalo. */
 .button[data-download].download-ultimate.lpx-download.is-pulse {
   transition: none;
 }
@@ -2513,21 +2564,34 @@ html:not(.lp-js) .lpx [data-reveal] {
   width: 17px;
   height: 17px;
   margin: 0;
-  color: #2b1305;
+  /* Barvu dědí z tlačítka, aby spinner sedl do každého stavu
+     (klid, hover, chybový povrch). Napevno zapsaná barva by na
+     některém z nich zmizela. */
+  color: currentColor;
   transform: translateY(-50%);
 }
 
-/* „Stahování zahájeno" — tlačítko se na chvíli přelije do zelena. */
-.lpx-download[data-state="started"] .download-fx {
-  background:
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.5), transparent 26%),
-    linear-gradient(105deg, #d9ffe6 0%, #7bec9f 24%, #38c977 58%, #1a9d5e 100%);
-}
+/* Odezvu na klik nese pulz, toast a řádek „Stahování zahájeno“.
+   Tlačítko po kliknutí nemění barvu ani popisek — dřív se přelilo
+   do zelena, což v půlce pulzu vypadalo jako rozbitá animace
+   a popisek na zelené ploše ztrácel kontrast. */
 
-.lpx-download[data-state="error"] .download-fx {
+/* Chybový stav: povrch ztmavne do červena, aby bílý popisek zůstal
+   čitelný (původní světlý gradient #ff9f7f → #d8341f měl s bílým
+   textem kontrast pod 3:1).
+
+   POZOR na fallbacky: `--pointer-x`/`--pointer-y` nastavuje až JS
+   při pohybu myši. Bez fallbacku je celá deklarace neplatná (neznámá
+   proměnná = IACVT) a chybový povrch se nikdy nevykreslil — tlačítko
+   zůstalo zlaté a bílý popisek na něm zmizel. */
+/* Specificita: sdílené `.button[data-download].download-ultimate
+   .download-fx` má čtyři třídy (0,4,0), takže samotné
+   `.lpx-download[data-state="error"] .download-fx` (0,3,0) prohrálo
+   a chybový povrch se nikdy neukázal. Tohle je (0,6,0). */
+.button[data-download].download-ultimate.lpx-download[data-state="error"] .download-fx {
   background:
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.5), transparent 26%),
-    linear-gradient(105deg, #ffe2d6 0%, #ff9f7f 30%, #f4593a 66%, #d8341f 100%);
+    radial-gradient(circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(255, 255, 255, 0.28), transparent 26%),
+    linear-gradient(105deg, #4a0f06 0%, #6e1a09 32%, #8c2410 66%, #5a1207 100%);
 }
 
 /* Úzký displej: tlačítko jde přes celou šířku, ať se na něj dá trefit. */
