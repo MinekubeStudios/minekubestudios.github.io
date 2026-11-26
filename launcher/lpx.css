@@ -2444,7 +2444,7 @@ html:not(.lp-js) .lpx [data-reveal] {
    launcher-pulse.css, protože ho skládá launcher.js.
    ============================================================= */
 
-.lpx-download {
+.button[data-download].download-ultimate.lpx-download {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
@@ -2471,14 +2471,14 @@ html:not(.lp-js) .lpx [data-reveal] {
 
 /* Ikona vpravo absolutně, aby byl popisek v tlačítku dokonale vycentrovaný.
    Vertikální centrování přes inset-block + margin-block nekoliduje s transform v lpIconBox. */
-.lpx-download .download-icon {
+.button[data-download].download-ultimate.lpx-download .download-icon {
   position: absolute;
   right: 14px;
   inset-block: 0;
   margin: auto 0;
 }
 
-.lpx-download .download-label {
+.button[data-download].download-ultimate.lpx-download .download-label {
   display: inline-block;
   text-align: center;
   margin: 0 auto;
