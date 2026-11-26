@@ -2475,24 +2475,32 @@ html:not(.lp-js) .lpx [data-reveal] {
 }
 
 /* Mini verze hoverového zářivého rámečku v klidovém stavu. Stejný
-   gradient jako na hoveru, jen 1px tlustý, tlumený a s krátkým
-   svitem — žádná černá linka, ale ani plná záře. */
+   gradient jako na hoveru, jen tlumený a s krátkým svitem — žádná
+   černá linka, ale ani plná záře.
+
+   Tloušťku rámečku určuje `padding` elementu: maska je složená
+   z celého border boxu a jeho content boxu (XOR), takže vidět
+   zůstane právě ten paddingový pruh. 1 px byl na běžném displeji
+   i na mobilu skoro neviditelný — 2 px v klidu a 3 px na hoveru
+   drží stejný gradient, ale linka je konečně čitelná. */
 .button[data-download].download-ultimate.lpx-download::after {
   inset: -1px;
-  padding: 1px;
-  opacity: 0.55;
-  filter: drop-shadow(0 0 2px rgba(255, 190, 70, 0.42));
+  padding: 2px;
+  opacity: 0.72;
+  filter:
+    drop-shadow(0 0 2px rgba(255, 214, 130, 0.55))
+    drop-shadow(0 0 7px rgba(255, 150, 40, 0.26));
 }
 
 .button[data-download].download-ultimate.lpx-download:hover::after,
 .button[data-download].download-ultimate.lpx-download:focus-visible::after,
 .button[data-download].download-ultimate.lpx-download.is-pointer-active::after {
   opacity: 1;
-  padding: 1.5px;
+  padding: 3px;
   filter:
-    drop-shadow(0 0 6px rgba(255, 216, 77, 0.50))
-    drop-shadow(0 0 10px rgba(255, 171, 31, 0.28))
-    drop-shadow(0 0 9px rgba(232, 65, 255, 0.22));
+    drop-shadow(0 0 7px rgba(255, 216, 77, 0.60))
+    drop-shadow(0 0 13px rgba(255, 171, 31, 0.34))
+    drop-shadow(0 0 12px rgba(232, 65, 255, 0.26));
 }
 
 /* Ikona vpravo absolutně, aby mohl být popisek vycentrovaný na střed
