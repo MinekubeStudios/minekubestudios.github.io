@@ -28,14 +28,7 @@
       ? window.matchMedia("(prefers-reduced-motion: reduce)")
       : { matches: false };
 
-  const reducedDataQuery =
-    typeof window.matchMedia === "function"
-      ? window.matchMedia("(prefers-reduced-data: reduce)")
-      : { matches: false };
-  const saveData = Boolean(navigator.connection && navigator.connection.saveData);
-
   const prefersReduced = () => Boolean(motionQuery && motionQuery.matches);
-  const effectsDefault = () => !prefersReduced() && !reducedDataQuery.matches && !saveData;
 
   const translate = (key, fallback) => {
     const value = typeof t === "function" ? t(key) : key;
@@ -596,8 +589,43 @@
     return burst;
   }
 
+  /* Odezva v apple režimu: měkké nadechnutí + přelet světla, žádná
+     exploze. Třída .is-ap-press (apple-motion.css) se po doběhnutí
+     uklidí; opakovaný klik ji restartuje přes stejný WeakMap. */
+  const AP_PRESS_MS = 680;
+
+  function playApplePress(button) {
+    const pending = pulseTimers.get(button);
+    if (pending) {
+      pending.forEach(window.clearTimeout);
+      pulseTimers.delete(button);
+    }
+
+    let flash = button.querySelector(".lp-btn-flash");
+    if (!flash) {
+      flash = document.createElement("span");
+      flash.className = "lp-btn-flash";
+      flash.setAttribute("aria-hidden", "true");
+      button.appendChild(flash);
+    }
+
+    button.classList.remove("is-ap-press");
+    void button.offsetWidth;
+    button.classList.add("is-ap-press");
+
+    pulseTimers.set(button, [
+      window.setTimeout(() => button.classList.remove("is-ap-press"), AP_PRESS_MS)
+    ]);
+  }
+
   function playDownloadAnimation(button) {
     if (!button) return;
+
+    /* V apple režimu patří kliku nová klidná odezva, ne stará exploze. */
+    if (motionMode() !== "legacy") {
+      playApplePress(button);
+      return;
+    }
 
     /* Nejdřív uklidit předchozí běh. Kdyby se timery rušily až po
        přidání třídy, stačil by rychlý druhý klik a starý úklid by
@@ -957,14 +985,26 @@
   /* ===================== EFEKTY + GALERIE (v10) ===================== */
 
   const pageRoot = document.querySelector(".launcher-page");
-  const FX_KEY = "minekube:launcher-fx";
+  const MOTION_KEY = "minekube:launcher-motion";
   const finePointer = window.matchMedia
     ? window.matchMedia("(hover: hover) and (pointer: fine)")
     : { matches: false };
 
   document.documentElement.classList.add("lp-js");
 
-  const fxOn = () => !prefersReduced() && !document.hidden && pageRoot?.getAttribute("data-fx-state") !== "off";
+  /* ===================== REŽIM POHYBU (apple / legacy) =====================
+     „apple“  = výchozí: nová klidná vrstva (apple-motion.css/js),
+                staré dekorace potlačené, tapety atmosférické.
+     „legacy“ = uživatel kliknul „Animace vypnuté“: původní animace
+                (data-fx-state="on") + OSTRA HD pozadí bez blur.
+     Režim nese :root[data-motion-mode]; data-fx-state na .launcher-page
+     je zpětná kompatibilita pro stará CSS pravidla (legacy=on, apple=off). */
+
+  const motionMode = () =>
+    document.documentElement.getAttribute("data-motion-mode") === "legacy" ? "legacy" : "apple";
+
+  /* Staré efekty (prach, parallax, náklon, ripple) běží JEN v legacy. */
+  const fxOn = () => motionMode() === "legacy" && !prefersReduced() && !document.hidden;
 
   /* Jeden rAF cyklus pro obě plátna — žádné souběžné smyčky. */
   const painter = (() => {
@@ -1100,58 +1140,90 @@
 
   /* ---------- Jiskry pod kurzorem ---------- */
 
-  /* ---------- Přepínač efektů ---------- */
+  /* ---------- Přepínač režimu pohybu (jediné tlačítko) ----------
+     Dřív byla tlačítka dvě a hero volalo .click() na druhé — když
+     zůstalo jen jedno s oběma atributy, .click() volalo samo sebe
+     (rekurze). Teď je jediný posluchač a přepíná rovnou režim. */
 
-  function initFxToggle() {
-    const button = document.querySelector("[data-fx-toggle]");
-    if (!button) return;
+  function applyMotionMode(next, persist) {
+    const mode = next === "legacy" ? "legacy" : "apple";
+    const apple = mode === "apple";
 
-    const apply = (on, persist) => {
-      if (pageRoot) pageRoot.setAttribute("data-fx-state", on ? "on" : "off");
-      button.setAttribute("aria-pressed", String(on));
-      document.querySelectorAll("canvas[data-dust]").forEach(canvas => {
-        canvas.classList.toggle("is-active", on);
-      });
-      if (persist) {
-        try {
-          localStorage.setItem(FX_KEY, on ? "on" : "off");
-        } catch {
-          /* soukromý režim — jen si to nepamatujeme */
-        }
+    document.documentElement.setAttribute("data-motion-mode", mode);
+    if (pageRoot) {
+      pageRoot.setAttribute("data-motion-mode", mode);
+      pageRoot.setAttribute("data-fx-state", apple ? "off" : "on");
+    }
+
+    const button = document.querySelector("[data-mc-motion]");
+    if (button) {
+      button.setAttribute("aria-pressed", String(apple));
+      const label = button.querySelector("[data-mc-motion-label]");
+      if (label) {
+        label.textContent = translate(
+          apple ? "lp.mc.motion.on" : "lp.mc.motion.off",
+          apple ? "Animace zapnuté" : "Animace vypnuté"
+        );
       }
+      const icon = button.querySelector("img");
+      if (icon) {
+        const src = apple ? "icons/toggle-on.png" : "icons/toggle-off.png";
+        if (!icon.src.endsWith(src)) icon.src = src;
+      }
+    }
+
+    /* Prach patří jen legacy režimu. */
+    document.querySelectorAll("canvas[data-dust]").forEach(canvas => {
+      canvas.classList.toggle("is-active", !apple);
+    });
+
+    if (persist) {
       try {
-        if (on) painter.wake();
+        localStorage.setItem(MOTION_KEY, mode);
+      } catch {
+        /* soukromý režim — jen si to nepamatujeme */
+      }
+    }
+
+    if (!apple) {
+      try {
+        painter.wake();
       } catch {
         /* animace se nespustila — stav přepínače to nezmění */
       }
-    };
+    }
 
-    let on = effectsDefault();
+    document.dispatchEvent(new CustomEvent("minekube:motion-mode", { detail: { mode } }));
+  }
+
+  function initMotionMode() {
+    const button = document.querySelector("[data-mc-motion]");
+
+    /* Výchozí je VŽDY apple, pokud si uživatel dřív neuložil legacy. */
+    let initial = "apple";
     try {
-      const saved = localStorage.getItem(FX_KEY);
-      if (saved === "off") on = false;
-      if (saved === "on" && !prefersReduced()) on = true;
+      if (localStorage.getItem(MOTION_KEY) === "legacy") initial = "legacy";
     } catch {
       /* ignorujeme */
     }
 
     try {
-      apply(on, false);
+      applyMotionMode(initial, false);
     } catch {
-      /* i když se efekty nepodaří nastartovat, tlačítko musí fungovat */
+      /* i když se vrstva nepodaří nastartovat, tlačítko musí fungovat */
     }
+
+    if (!button) return;
     button.disabled = false;
 
     button.addEventListener("click", () => {
-      apply(button.getAttribute("aria-pressed") !== "true", true);
+      applyMotionMode(motionMode() === "apple" ? "legacy" : "apple", true);
     });
 
-    const syncMotion = () => {
-      if (prefersReduced()) apply(false, false);
-    };
-
+    /* Překlad i systémová redukce pohybu jen překreslí popisek/stav. */
+    document.addEventListener("minekube:language", () => applyMotionMode(motionMode(), false));
     if (typeof motionQuery.addEventListener === "function") {
-      motionQuery.addEventListener("change", syncMotion);
+      motionQuery.addEventListener("change", () => applyMotionMode(motionMode(), false));
     }
   }
 
@@ -1213,7 +1285,9 @@
       button.addEventListener(
         "pointermove",
         event => {
-          if (prefersReduced() || !finePointer.matches) return;
+          /* Magnet + náklon patří jen legacy režimu; apple má vlastní
+             klidné hover/active v apple-motion.css. */
+          if (motionMode() !== "legacy" || prefersReduced() || !finePointer.matches) return;
           const rect = button.getBoundingClientRect();
           const x = (event.clientX - rect.left) / rect.width;
           const y = (event.clientY - rect.top) / rect.height;
@@ -1489,42 +1563,6 @@
     request();
   }
 
-  function initMcMotionToggle() {
-    const button = document.querySelector("[data-mc-motion]");
-    const label = button?.querySelector("[data-mc-motion-label]");
-    if (!button) return;
-
-    const icon = button.querySelector("img");
-
-    const sync = () => {
-      const on = !prefersReduced() && document.querySelector(".launcher-page")?.getAttribute("data-fx-state") !== "off";
-      button.setAttribute("aria-pressed", String(on));
-      if (label) {
-        label.textContent = translate(on ? "lp.mc.motion.on" : "lp.mc.motion.off", on ? "Animace zapnuté" : "Animace vypnuté");
-      }
-      /* Ikona přepínače jde s textem: zapnuto = toggle-on, vypnuto = toggle-off. */
-      if (icon) {
-        const next = on ? "icons/toggle-on.png" : "icons/toggle-off.png";
-        if (!icon.src.endsWith(next)) icon.src = next;
-      }
-    };
-
-    button.addEventListener("click", () => {
-      const fxToggle = document.querySelector("[data-fx-toggle]");
-      if (fxToggle) fxToggle.click();
-      sync();
-    });
-
-    /* Přepínač Efekty v liště sekcí mění stejný stav — dvě tlačítka
-       musí ukazovat totéž, jinak jedno z nich lže. */
-    document.querySelector("[data-fx-toggle]")?.addEventListener("click", () => {
-      window.requestAnimationFrame(sync);
-    });
-
-    document.addEventListener("minekube:language", sync);
-    sync();
-  }
-
   /* ===================== VEŘEJNÉ ROZHRANÍ PRO TESTY =====================
      Stránka nemá žádnou galerii ani studio — API drží jen to, co
      potřebují testy a co by mohlo využít jiné rozšíření. */
@@ -1534,10 +1572,12 @@
     announce,
     prefersReduced,
     fxOn,
-    motionQuery
+    motionQuery,
+    getMotionMode: motionMode,
+    setMotionMode: next => applyMotionMode(next, true)
   };
 
-  initFxToggle();
+  initMotionMode();
   initDownloadButtons();
   initRipples();
   initDust();
@@ -1550,7 +1590,6 @@
   initVisibilityPause();
   initDownloadIdlePause();
   initMcParallax();
-  initMcMotionToggle();
 
 
   /* ===================== START ===================== */

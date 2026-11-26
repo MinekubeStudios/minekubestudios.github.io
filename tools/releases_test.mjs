@@ -45,7 +45,25 @@ if (!jsdomPath) {
   process.exit(1);
 }
 
-const { JSDOM, VirtualConsole } = require(jsdomPath);
+const { JSDOM, VirtualConsole, requestInterceptor } = require(jsdomPath);
+
+/* Sandbox nemá odchozí přístup na Google Fonts — externí stylesheet
+   by selhal a zanesl pageErrors chybou, která nesouvisí s chováním
+   stránky. Externí zdroje proto vrátíme jako prázdnou odpověď (žádná
+   chyba); lokální skripty, styly i obrázky se načítají normálně.
+   Fonty jsou pro testované chování nepodstatné. */
+const localOnlyResources = {
+  interceptors: [
+    requestInterceptor(request => {
+      const url = String(request.url);
+      if (/^https?:\/\//i.test(url) && !/^https?:\/\/(127\.0\.0\.1|localhost)(:|\/)/i.test(url)) {
+        const type = /\.css(\?|$)/i.test(url) ? "text/css" : "text/plain";
+        return new Response("", { headers: { "Content-Type": type } });
+      }
+      return undefined;
+    })
+  ]
+};
 
 /* ===================== FALEŠNÁ DATA ===================== */
 
@@ -143,7 +161,7 @@ async function openPage(fetchImpl, query = "") {
 
   const dom = await JSDOM.fromURL(`http://127.0.0.1:${port}/modpacky/index.html${query}`, {
     runScripts: "dangerously",
-    resources: "usable",
+    resources: localOnlyResources,
     pretendToBeVisual: true,
     virtualConsole,
     beforeParse(window) {
