@@ -157,98 +157,12 @@ html.ap-js:root[data-motion-mode="apple"] .lpx-hero .lpx-window {
   border-color: var(--lpx-line-gold);
 }
 
-/* ---------- Stahovací tlačítko — klidný Apple povrch ---------- */
-
-/* Staré „energetické“ vrstvy (plasma, matrix, sweep, částice, oběžnice)
-   jsou v apple režimu potlačené; zůstává čistý gradient + jemný lesk. */
-:root[data-motion-mode="apple"] .lpx-download .download-plasma,
-:root[data-motion-mode="apple"] .lpx-download .download-matrix,
-:root[data-motion-mode="apple"] .lpx-download .download-sweep,
-:root[data-motion-mode="apple"] .lpx-download .download-pulse-line,
-:root[data-motion-mode="apple"] .lpx-download .download-particles,
-:root[data-motion-mode="apple"] .lpx-download .download-icon-orbit {
-  animation: none !important;
-  opacity: 0 !important;
-}
-
-:root[data-motion-mode="apple"] .lpx-download {
-  animation: none !important;
-  transition:
-    transform var(--ap-dur-fast) var(--ap-ease),
-    box-shadow var(--ap-dur-fast) var(--ap-ease),
-    filter var(--ap-dur-fast) var(--ap-ease);
-}
-
-:root[data-motion-mode="apple"] .lpx-download:hover,
-:root[data-motion-mode="apple"] .lpx-download:focus-visible {
-  transform: translate3d(0, -2px, 0);
-  filter: brightness(1.05);
-}
-
-:root[data-motion-mode="apple"] .lpx-download:active {
-  transform: translate3d(0, 0, 0) scale(0.975);
-  transition-duration: 0.1s;
-}
-
-/* Klidný povrch: aura (::before) jen náznak, rámeček (::after) drží
-   gradient bez proudění, popisek ani šipka nesignalizují. */
-:root[data-motion-mode="apple"] .lpx-download::before {
-  animation: none !important;
-  opacity: 0.16 !important;
-}
-
-:root[data-motion-mode="apple"] .lpx-download::after {
-  animation: none !important;
-}
-
-:root[data-motion-mode="apple"] .lpx-download .download-label,
-:root[data-motion-mode="apple"] .lpx-download .download-icon svg {
-  animation: none !important;
-}
-
-/* Odezva na klik v apple režimu: měkké nadechnutí + přelet světla.
-   Třída .is-ap-press ji spouští (launcher.js), žádná exploze.
-   Flash má vlastní overflow:hidden, takže světlo zůstává uvnitř
-   zaobleného tlačítka (samotný button má overflow:visible). */
-:root[data-motion-mode="apple"] .lpx-download .lp-btn-flash {
-  display: none;
-}
-
-/* !important + vyšší specificita (0,4,0) musí přebít základní
-   `animation: none !important` (0,3,0), jinak by se odezva nespustila. */
-:root[data-motion-mode="apple"] .lpx-download.is-ap-press {
-  animation: apPress 0.62s var(--ap-ease) forwards !important;
-}
-
-:root[data-motion-mode="apple"] .lpx-download.is-ap-press .lp-btn-flash {
-  display: block;
-  position: absolute;
-  inset: 0;
-  z-index: 7;
-  border-radius: inherit;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-:root[data-motion-mode="apple"] .lpx-download.is-ap-press .lp-btn-flash::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 32%, rgba(255, 255, 255, 0.55) 50%, transparent 68%);
-  transform: translateX(-130%);
-  animation: apSheen 0.62s var(--ap-ease-soft) forwards;
-}
-
-@keyframes apPress {
-  0%   { transform: scale(1); }
-  32%  { transform: scale(1.035); }
-  100% { transform: scale(1); }
-}
-
-@keyframes apSheen {
-  from { transform: translateX(-130%); }
-  to   { transform: translateX(130%); }
-}
+/* ---------- Stahovací tlačítko ----------
+   ZÁMĚRNĚ BEZ ZÁSAHU. Stahovací tlačítko (.lpx-download / .download-ultimate)
+   musí zůstat VŽDY původní — v apple i legacy režimu. Jeho klidový dech,
+   plasma/matrix/sweep, hover magnet + náklon, rámeček i pulz/exploze po
+   kliknutí řídí výhradně lpx.css, styles.css a launcher-pulse.css.
+   Tahle vrstva na něj nesahá (žádné .lpx-download pravidlo zde být nesmí). */
 
 /* ---------- Plovoucí štítky a CTA ikony — jemný život ---------- */
 
@@ -419,10 +333,7 @@ html.ap-js:root[data-motion-mode="apple"] .lpx-hero .lpx-window {
 
   :root[data-motion-mode="apple"] .lpx-sticker,
   :root[data-motion-mode="apple"] .lpx-cta__icon,
-  :root[data-motion-mode="apple"] .lpx-marquee__track,
-  :root[data-motion-mode="apple"] .lpx-download.is-ap-press,
-  :root[data-motion-mode="apple"] .lpx-download.is-ap-press .lp-btn-flash,
-  :root[data-motion-mode="apple"] .lpx-download.is-ap-press .lp-btn-flash::before {
+  :root[data-motion-mode="apple"] .lpx-marquee__track {
     animation: none !important;
   }
 
