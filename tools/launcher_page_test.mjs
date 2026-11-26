@@ -549,7 +549,7 @@ test("Uložený legacy režim se obnoví při načtení stránky", async () => {
   assert.deepEqual(page.errors, []);
 });
 
-test("Apple vrstva má vlastní nástřel hero a klidnou odezvu na klik", async () => {
+test("Apple vrstva má nástřel hero; stahovací tlačítko zůstává VŽDY původní", async () => {
   const page = await buildPage("withReleases");
   const { document, window } = page;
 
@@ -558,16 +558,21 @@ test("Apple vrstva má vlastní nástřel hero a klidnou odezvu na klik", async 
   await tick(window, 80);
   assert.ok(hero.classList.contains("is-ap-ready"), "hero nástřel se spustil");
 
+  /* Stahovací tlačítko je VŽDY původní — i v apple režimu klik spustí
+     původní pulz + explozi, žádnou „apple“ variantu. */
+  assert.equal(document.documentElement.getAttribute("data-motion-mode"), "apple");
   const button = document.querySelector(".lpx-hero .lpx-download");
   button.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  assert.ok(button.classList.contains("is-ap-press"), "apple klik = měkké nadechnutí");
-  assert.equal(button.classList.contains("is-pulse"), false, "žádná stará exploze");
-  assert.equal(document.querySelectorAll(".lp-pulse-burst").length, 0, "žádná explozivní vrstva");
-  assert.ok(button.querySelector(".lp-btn-flash"), "světelný přelet existuje");
+  assert.ok(button.classList.contains("is-pulse"), "klik spustí původní pulz i v apple režimu");
+  assert.equal(button.classList.contains("is-ap-press"), false, "žádná apple varianta pulzu");
+  assert.equal(document.querySelectorAll(".lp-pulse-burst").length, 1, "původní explozivní vrstva");
+  assert.match(text(document, ".lpx-hero [data-os-label]"), /^Stáhnout pro Windows$/, "popisek se nemění");
 
-  /* Po doběhnutí se třída uklidí (680 ms). */
-  await tick(window, 760);
-  assert.equal(button.classList.contains("is-ap-press"), false, "odezva se uklidila");
+  /* Pulz se uklidí po ~1,96 s, exploze po 2,4 s — stejně jako dřív. */
+  await tick(window, 2050);
+  assert.equal(button.classList.contains("is-pulse"), false, "pulz se uklidil");
+  await tick(window, 450);
+  assert.equal(document.querySelectorAll(".lp-pulse-burst").length, 0, "exploze se uklidila");
   assert.deepEqual(page.errors, []);
 });
 
@@ -605,17 +610,18 @@ test("Apple-motion CSS: legacy = ostrá HD pozadí, apple = nová vrstva", () =>
     assert.ok(existsSync(ROOT + `launcher/wallpapers/hd/${asset}.webp`), `chybí HD asset ${asset}`);
   }
 
-  /* APPLE: nová odhalovací vrstva + potlačené staré dekorace. */
+  /* APPLE: nová odhalovací vrstva + nástřel hero. */
   assert.match(css, /:root\[data-motion-mode="apple"\] \.lpx \[data-reveal\]/, "apple přepisuje odhalování");
-  assert.match(css, /:root\[data-motion-mode="apple"\] \.lpx-download \.download-plasma/, "apple potlačuje starou plasmatu");
   assert.match(css, /@keyframes apHeroRise/, "chybí nástřel hero");
-  assert.match(css, /@keyframes apPress/, "chybí klidná odezva na klik");
 
-  /* Odezva na klik musí přebít základní `animation: none !important`
-     (jinak by ji !important umlčel bez ohledu na specificitu). */
-  const press = css.match(/:root\[data-motion-mode="apple"\] \.lpx-download\.is-ap-press\s*\{([^}]*)\}/);
-  assert.ok(press, "chybí pravidlo klidné odezvy");
-  assert.match(press[1], /animation:\s*apPress[^;]*!important/, "odezva musí mít !important, aby ji základní animation:none neumlel");
+  /* Stahovací tlačítko je VŽDY původní — apple vrstva na něj NESAHÁ.
+     Po odstranění komentářů zde nesmí být žádné .lpx-download /
+     .download-ultimate pravidlo ani apple varianta pulzu; button
+     řídí výhradně lpx.css, styles.css a launcher-pulse.css. */
+  const stripped = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  assert.ok(!stripped.includes(".lpx-download"), "apple-motion.css nesmí mít pravidlo pro .lpx-download");
+  assert.ok(!stripped.includes(".download-ultimate"), "apple-motion.css nesmí mít pravidlo pro .download-ultimate");
+  assert.ok(!/apPress|apSheen|is-ap-press/.test(stripped), "žádná apple varianta pulzu stahovacího tlačítka");
 
   /* Přístupnost: redukce pohybu, nucené barvy, tisk. */
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);

@@ -589,43 +589,10 @@
     return burst;
   }
 
-  /* Odezva v apple režimu: měkké nadechnutí + přelet světla, žádná
-     exploze. Třída .is-ap-press (apple-motion.css) se po doběhnutí
-     uklidí; opakovaný klik ji restartuje přes stejný WeakMap. */
-  const AP_PRESS_MS = 680;
-
-  function playApplePress(button) {
-    const pending = pulseTimers.get(button);
-    if (pending) {
-      pending.forEach(window.clearTimeout);
-      pulseTimers.delete(button);
-    }
-
-    let flash = button.querySelector(".lp-btn-flash");
-    if (!flash) {
-      flash = document.createElement("span");
-      flash.className = "lp-btn-flash";
-      flash.setAttribute("aria-hidden", "true");
-      button.appendChild(flash);
-    }
-
-    button.classList.remove("is-ap-press");
-    void button.offsetWidth;
-    button.classList.add("is-ap-press");
-
-    pulseTimers.set(button, [
-      window.setTimeout(() => button.classList.remove("is-ap-press"), AP_PRESS_MS)
-    ]);
-  }
-
+  /* Stahovací tlačítko je VŽDY původní — pulz/exploze po kliknutí běží
+     v apple i legacy režimu stejně (žádná „apple“ varianta). */
   function playDownloadAnimation(button) {
     if (!button) return;
-
-    /* V apple režimu patří kliku nová klidná odezva, ne stará exploze. */
-    if (motionMode() !== "legacy") {
-      playApplePress(button);
-      return;
-    }
 
     /* Nejdřív uklidit předchozí běh. Kdyby se timery rušily až po
        přidání třídy, stačil by rychlý druhý klik a starý úklid by
@@ -1285,9 +1252,9 @@
       button.addEventListener(
         "pointermove",
         event => {
-          /* Magnet + náklon patří jen legacy režimu; apple má vlastní
-             klidné hover/active v apple-motion.css. */
-          if (motionMode() !== "legacy" || prefersReduced() || !finePointer.matches) return;
+          /* Stahovací tlačítko je vždy původní: magnet + náklon běží
+             nezávisle na režimu pohybu (jen redukce pohybu / dotyk ne). */
+          if (prefersReduced() || !finePointer.matches) return;
           const rect = button.getBoundingClientRect();
           const x = (event.clientX - rect.left) / rect.width;
           const y = (event.clientY - rect.top) / rect.height;
