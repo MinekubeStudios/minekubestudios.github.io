@@ -745,10 +745,11 @@ test("Titulek hero se vejde na jeden řádek na mobilu i na desktopu", () => {
   assert.ok(block, "chybí pravidlo .lpx-title");
 
   /* Zlom v titulku řídí <br>, takže každý řádek musí na šířku sednout sám.
-     „Launcher Of The Future." měří v Space Grotesku (700, letter-spacing
-     −0,02em) 11,215 em. Měří se kontejner `.lpx-hero__copy`, protože ve
-     dvousloupcovém hero je nejužší místo tam — odtud jednotka cqi. */
-  const EM = 11.215;
+     „Launcher Of The Future." měří v Pixelify Sans (700, letter-spacing 0)
+     12,144 em — změřenо v Chromiu canvasem nad skutečným woff2. Měří se
+     kontejner `.lpx-hero__copy`, protože ve dvousloupcovém hero je
+     nejužší místo tam — odtud jednotka cqi. */
+  const EM = 12.144;
   const size = block[0].match(/font-size:\s*clamp\(([^,]+),\s*([\d.]+)cqi,\s*([^)]+)\)/);
   assert.ok(size, ".lpx-title nemá tekutý font-size v jednotkách cqi (container query)");
 
@@ -934,6 +935,35 @@ test("Styly jsou syntakticky vyvážené a responzivní bloky nejsou vnořené",
     /* Nejhlouběji smí být @media → pravidlo → (jedna vnořená úroveň). */
     assert.ok(maxDepth <= 3, `${file}: zanoření ${maxDepth} značí @media uvnitř @media`);
   }
+});
+
+test("Typografie jde ve stylu minecraft.net: pixely v nadpisech, Noto Sans v textu", () => {
+  const css = read("launcher/lpx.css");
+  const html = read("launcher/index.html");
+
+  /* minecraft.net míchá tři role: blocky display (Minecraft Ten), 8bit
+     labely (Mojangles) a Noto Sans na text. My je plníme volně
+     dostupnými náhradami, aby web neporušoval licenci Mojangu. */
+  assert.match(css, /--lpx-font-body:\s*"Noto Sans"/, "text nemá Noto Sans");
+  assert.match(css, /--lpx-font-chunky:\s*"Pixelify Sans"/, "nadpisy nemají pixelové písmo");
+  assert.match(css, /--lpx-font-label:\s*"Silkscreen"/, "labely nemají 8bit písmo");
+
+  /* Písma musí být na :root, protože hlavička leží mimo .lpx. */
+  const root = css.match(/:root\s*\{([\s\S]*?)\}/);
+  assert.ok(root && root[1].includes('--lpx-font-body'), "fonty nejsou na :root");
+  assert.match(css, /--plus-font-body:\s*var\(--lpx-font-body\)/, "sdílené komponenty si drží Inter");
+
+  /* Weby z Google Fonts musí být opravdu načtené, jinak prohlížeč
+     spadne na systémovou zásobu a pixelový styl zmizí. */
+  ["Noto+Sans", "Pixelify+Sans", "Silkscreen"].forEach(f => {
+    assert.ok(html.includes(`family=${f}`), `HTML nenačítá ${f}`);
+  });
+
+  /* Nadpis nesmí mít záporný tracking — u pixelového písma se slévá. */
+  const titles = css.match(/\.lpx-title,\n\.lpx-head h2,\n\.lpx-cta h2\s*\{([\s\S]*?)\}/);
+  assert.ok(titles, "chybí pravidlo nadpisů");
+  assert.match(titles[1], /font-family:\s*var\(--lpx-font-chunky\)/);
+  assert.match(titles[1], /letter-spacing:\s*0/);
 });
 
 test("Styly mají světlý motiv, nucené barvy i respekt k redukci pohybu", async () => {
