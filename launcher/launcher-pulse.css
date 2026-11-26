@@ -31,6 +31,11 @@
   position: absolute;
   left: 0;
   top: 0;
+  /* Vystředění jede přes záporné marginy níž (podle --burst-w/h).
+     `translate: -50% -50%` z lpx.css by ho zdvojilo a exploze by
+     vystřelila o půl tlačítka vlevo nahoru — přesně to vypadalo
+     jako rozbitá animace. */
+  translate: none;
   pointer-events: none;
   backface-visibility: hidden;
 }
@@ -216,6 +221,11 @@
   margin: calc(var(--burst-h, 54px) / -2) 0 0 calc(var(--burst-w, 256px) / -2);
   border-radius: 13px;
   overflow: hidden;
+  /* Světelný pruh kreslí až ::after. Základní pravidlo z lpx.css
+     dávalo samotnému prvku bílý gradient přes celé tlačítko a ten
+     ležel NAD popiskem (exploze má z-index 12000) — text se na půl
+     sekundy proměnil v šedý duch. */
+  background: none;
   opacity: 0;
   animation: lpSheenVisible 0.95s linear 90ms forwards;
   -webkit-mask-image: linear-gradient(#000 0 0);
@@ -273,14 +283,18 @@
 }
 
 .button[data-download].download-ultimate.lpx-download.is-pulse::after {
-  animation: lpBorder 1.75s cubic-bezier(0.08, 0.76, 0.16, 1) both;
+  /* Rám pulzuje (lpBorder) a zároveň mu dál teče gradient
+     (downloadFusionBorderIdle ze styles.css). Dřív pulz nahradil
+     všechny animace rámečku, takže se gradient v pulzu zastavil. */
+  animation:
+    lpBorder 1.75s cubic-bezier(0.08, 0.76, 0.16, 1) both,
+    downloadFusionBorderIdle 10.5s linear infinite;
   will-change: transform, opacity;
 }
 
-.button[data-download].download-ultimate.lpx-download.is-pulse .download-fx {
-  animation: lpSurface 1.75s cubic-bezier(0.12, 0.82, 0.16, 1) both;
-  will-change: opacity;
-}
+/* Povrch (.download-fx) si nechává svoji klidovou animaci
+   downloadFusionField — dřív ji pulz přepsal animací, která jen
+   držela opacity, a barevný tok se na 1,75 s zastavil. */
 
 .button[data-download].download-ultimate.lpx-download.is-pulse .download-plasma {
   animation: lpPlasma 1.55s cubic-bezier(0.08, 0.72, 0.16, 1) both;
@@ -308,33 +322,20 @@
   will-change: transform;
 }
 
+/* Popisek během pulzu zůstává tmavý — plocha tlačítka je světlý
+   zlatý/purpurový gradient, na kterém je tmavý text čitelný. Dřív tu
+   byla dvakrát stejná sada pravidel, takže se halo i barva mlátily;
+   teď je jedno a jen přidá hustší světlé halo, aby písmena nepřilnula
+   k prosvětlené ploše. */
 .button[data-download].download-ultimate.lpx-download.is-pulse .download-label,
 .button[data-download].download-ultimate.lpx-download.is-pulse:hover .download-label,
 .button[data-download].download-ultimate.lpx-download.is-pulse:focus-visible .download-label {
   color: #241005;
-  /* Halo stačí jemné. Silné bílé halo (0 0 6px při 0.92) text
-     opticky vybledne — tmavá výplň se v něm ztratí a nápis vypadá
-     jako duch. Tohle je jen tolik, aby písmena nepřilnula k podkladu. */
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.85),
-    0 0 4px rgba(255, 255, 255, 0.5),
-    0 0 10px rgba(255, 246, 214, 0.4);
-}
-
-.button[data-download].download-ultimate.lpx-download.is-pulse .download-label,
-.button[data-download].download-ultimate.lpx-download.is-pulse:hover .download-label,
-.button[data-download].download-ultimate.lpx-download.is-pulse:focus-visible .download-label {
-  color: #241005;
-  /* Halo je záměrně hustší než v klidu. Pulz prosvětluje plochu
-     kolem textu a vnější záře přes něj částečně prosvítá — halo
-     drží tmavý text oddělený od světlého okolí po celou dobu. */
   text-shadow:
     0 0 2px rgba(255, 255, 250, 1),
     0 0 5px rgba(255, 253, 240, 0.98),
     0 0 9px rgba(255, 250, 226, 0.92),
     0 0 15px rgba(255, 246, 210, 0.82),
-    0 0 24px rgba(255, 240, 190, 0.6),
-    0 0 34px rgba(255, 232, 170, 0.35),
     0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
@@ -346,7 +347,6 @@
 .button[data-download].download-ultimate.lpx-download.is-pulse,
   .button[data-download].download-ultimate.lpx-download.is-pulse::before,
   .button[data-download].download-ultimate.lpx-download.is-pulse::after,
-  .button[data-download].download-ultimate.lpx-download.is-pulse .download-fx,
   .button[data-download].download-ultimate.lpx-download.is-pulse .download-plasma,
   .button[data-download].download-ultimate.lpx-download.is-pulse .download-sweep,
   .button[data-download].download-ultimate.lpx-download.is-pulse .download-pulse-line,
@@ -398,6 +398,14 @@
   animation-play-state: paused !important;
 }
 
+/* ---------------------------------------------------------------
+   BARVY POPISKU A IKONY
+   Povrch tlačítka je světlý zlatý/purpurový gradient, takže popisek
+   i ikona musí být tmavé. Sdílený styles.css počítá s tmavým povrchem
+   a dává bílý text — tady ho přebíjíme stejně specifickým, ale
+   pozdějším pravidlem. (Bez tohohle bloku byl na světlé ploše bílý
+   text s tmavým stínem, což je hůř čitelné než tmavý text.)
+   --------------------------------------------------------------- */
 .button[data-download].download-ultimate.lpx-download,
 .button[data-download].download-ultimate.lpx-download .download-label {
   color: #2a1204;
@@ -415,11 +423,9 @@
 .button[data-download].download-ultimate.lpx-download:hover,
 .button[data-download].download-ultimate.lpx-download:focus-visible,
 .button[data-download].download-ultimate.lpx-download.is-pointer-active,
-.button[data-download].download-ultimate.lpx-download:hover .download-label,
-.button[data-download].download-ultimate.lpx-download:focus-visible .download-label,
-.button[data-download].download-ultimate.lpx-download.is-pointer-active .download-label,
 .button[data-download].download-ultimate.lpx-download:hover .download-icon,
-.button[data-download].download-ultimate.lpx-download:focus-visible .download-icon {
+.button[data-download].download-ultimate.lpx-download:focus-visible .download-icon,
+.button[data-download].download-ultimate.lpx-download.is-pointer-active .download-icon {
   color: #1c0b02;
 }
 
@@ -427,7 +433,20 @@
 .button[data-download].download-ultimate.lpx-download:focus-visible .download-label,
 .button[data-download].download-ultimate.lpx-download.is-pointer-active .download-label {
   color: #2a1204;
+  /* Hover v styles.css rozjede světélkový text-shadow, který na
+     světlé ploše text rozostří. Launcher si drží vlastní stín. */
+  text-shadow: 0 1px 0 rgba(255, 246, 214, 0.7);
   animation: none;
+}
+
+/* Chybový stav: povrch ztmavne (viz lpx.css), takže popisek i ikona
+   musí ztmavnout naopak do bíla — tmavý text na tmavě červené
+   nebyl čitelný. */
+.button[data-download].download-ultimate.lpx-download[data-state="error"],
+.button[data-download].download-ultimate.lpx-download[data-state="error"] .download-label,
+.button[data-download].download-ultimate.lpx-download[data-state="error"] .download-icon {
+  color: #fff8f3;
+  text-shadow: 0 1px 2px rgba(40, 4, 0, 0.55);
 }
 
 @keyframes lpArrow {
@@ -710,17 +729,5 @@
   100% {
     opacity: 0;
     transform: translate3d(0, 0, 0) scale(2.0) rotate(11deg);
-  }
-}
-
-@keyframes lpSurface {
-  0% {
-    opacity: 1;
-  }
-  18% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 1;
   }
 }
