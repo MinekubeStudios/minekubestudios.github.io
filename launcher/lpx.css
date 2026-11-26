@@ -49,8 +49,8 @@
   --lpx-line-strong: rgba(255, 255, 255, 0.17);
   --lpx-line-gold: rgba(252, 192, 0, 0.34);
   --lpx-text: #fdf6f1;
-  --lpx-muted: #cbb7c3;
-  --lpx-muted-2: #a2889a;
+  --lpx-muted: #d8c6d1;
+  --lpx-muted-2: #b59dab;
   --lpx-gold: #fcc000;
   --lpx-gold-soft: #ffd863;
   --lpx-orange: #fb7a12;
@@ -70,9 +70,6 @@
      (samotný bílý závoj by propustil barvy tapety do textu). */
   --lpx-glass-base: rgba(9, 4, 8, 0.62);
 
-  --lpx-font-body: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --lpx-font-chunky: "Baloo 2", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --lpx-font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
 
   --lpx-gutter: clamp(20px, 4.2vw, 56px);
   --lpx-max: 1200px;
@@ -84,6 +81,31 @@
 }
 
 /* ---------- 02 · Základ, typografie, pomůcky ---------- */
+
+/* Sdílené styly nastavují hlavičce Inter — launcher mluví Noto Sansem. */
+body,
+.site-header,
+.site-footer {
+  font-family: var(--lpx-font-body);
+}
+
+
+/* Písma ve stylu minecraft.net: Noto Sans na text, Pixelify Sans na
+   nadpisy (blocky pixely jako „Minecraft Ten“) a Silkscreen na drobné
+   verzálkové labely (obdoba „Mojangles“). Držíme je na :root, protože
+   hlavička leží mimo .lpx a sdílené styly jí nastavují Inter. */
+:root {
+  --lpx-font-body: "Noto Sans", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --lpx-font-chunky: "Pixelify Sans", "Baloo 2", ui-sans-serif, system-ui, sans-serif;
+  --lpx-font-display: "Pixelify Sans", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --lpx-font-label: "Silkscreen", "Pixelify Sans", ui-monospace, monospace;
+
+  /* Sdílené komponenty (hlavička, patička, tlačítka) si písmo berou
+     z design-plus.css — přepisujeme je stejnou cestou. */
+  --plus-font-body: var(--lpx-font-body);
+  --plus-font-display: var(--lpx-font-display);
+}
+
 
 .lpx,
 .lpx *,
@@ -257,14 +279,17 @@
     linear-gradient(180deg, rgba(10, 5, 9, 0.16) 0%, rgba(10, 5, 9, 0.3) 46%, rgba(10, 5, 9, 0.44) 100%);
 }
 
-/* Titulky: chunky Baloo pro nadpisy, Space Grotesk pro labely. */
+/* Titulky: Pixelify Sans (blocky pixely). Pixelové písmo nemá rád
+   záporný tracking — písmena se slévají, takže letter-spacing 0.
+   Řádkování je o chlup volnější než u Space Grotesku: pixelové glyfy
+   mají vyšší kresbu a s 1,04 se dotýkaly. */
 .lpx-title,
 .lpx-head h2,
 .lpx-cta h2 {
   font-family: var(--lpx-font-chunky);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.04;
+  letter-spacing: 0;
+  line-height: 1.08;
 }
 
 .lpx-title em,
@@ -276,20 +301,20 @@
 
 .lpx-title {
   /* Zlom je řízený <br>, takže každý řádek musí sednout na šířku sám.
-     „Launcher Of The Future." měří v Space Grotesku 11,22 em (váha 700
-     + letter-spacing −0,02em), takže strop je 8,2 % šířky kontejneru:
-     11,22 × 0,082 ≈ 0,92 → 92 % a zbytek je rezerva na zaokrouhlení.
+     „Launcher Of The Future." měří v Pixelify Sans (700, letter-spacing
+     0) 12,144 em, takže strop je 7,9 % šířky kontejneru:
+     12,144 × 0,079 ≈ 0,96 → 96 % a zbytek je rezerva na zaokrouhlení.
      Měříme kontejner (.lpx-hero__copy), ne okno — ve dvousloupcovém
      hero je nejužší místo sloupec s textem, ne celá stránka. */
   /* Fallback pro prohlížeče bez container queries (Chrome < 105,
-     Safari < 16, Firefox < 110) — jeden sloupec. 7,4vw vychází
-     z toho, že text (11,22 em) musí sednout do šířky okna bez
-     okrajů: i na 280px tak zbyde rezerva. Řádek s cqi ho přepíše. */
-  font-size: clamp(1.75rem, 7.4vw, 3.95rem);
-  font-size: clamp(1.75rem, 8.2cqi, 4.1rem);
-  /* 20ch = 12,75 em (znak „0" je 0,638 em), název potřebuje 11,64 em —
-     rezerva 9 % je zbytečně těsná, stačí 22ch. */
-  max-width: 22ch;
+     Safari < 16, Firefox < 110) — jeden sloupec. 7,2vw vychází
+     z toho, že text (12,144 em) musí sednout do šířky okna bez
+     okrajů: i na 360px tak zbyde rezerva. Řádek s cqi ho přepíše. */
+  font-size: clamp(1.6rem, 7.2vw, 3.9rem);
+  font-size: clamp(1.6rem, 7.9cqi, 3.9rem);
+  /* 13em = 12,144 em textu + 7 % rezerva (dřív 22ch, protože „0“
+     v Space Grotesku měřila 0,638 em; pixelové písmo má jiný ch). */
+  max-width: 13em;
   text-wrap: balance;
 }
 
@@ -307,7 +332,7 @@
 @media (min-width: 1081px) {
   .lpx-title {
     font-size: clamp(2rem, 2.9vw, 2.5rem);
-    font-size: clamp(2.1rem, 8.2cqi, 4.1rem);
+    font-size: clamp(2rem, 7.9cqi, 3.9rem);
   }
 }
 
@@ -347,10 +372,10 @@
   border-radius: 999px;
   background: rgba(252, 192, 0, 0.07);
   color: var(--lpx-gold-soft);
-  font-family: var(--lpx-font-display);
-  font-size: 0.7rem;
+  font-family: var(--lpx-font-label);
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -375,10 +400,10 @@
   border-radius: var(--lpx-radius-sm);
   background: var(--lpx-btn-bg);
   color: var(--lpx-btn-fg);
-  font-family: var(--lpx-font-display);
-  font-size: 0.92rem;
+  font-family: var(--lpx-font-body);
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   line-height: 1.2;
   text-align: center;
   transition:
@@ -725,10 +750,11 @@
   gap: 10px;
   margin-bottom: 18px;
   color: var(--lpx-gold-soft);
-  font-family: var(--lpx-font-display);
-  font-size: 0.74rem;
+  font-family: var(--lpx-font-label);
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  /* Silkscreen je sám široký — 0,16 em trackingu by ho rozsypalo. */
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -743,14 +769,24 @@
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.05);
   color: var(--lpx-muted);
-  font-size: 0.64rem;
-  letter-spacing: 0.1em;
+  font-family: var(--lpx-font-body);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
 }
 
 /* Stín titulu. Šířku řeší první definice — dvě pravidla se stejnou
-   specificitou se navzájem přebíjela a 18ch vyhrálo nad 20ch. */
+   specificitou se navzájem přebíjela a 18ch vyhrálo nad 20ch.
+   Tvrdý 3px dopad je minecraftovský (logo i web ho mají), měkký svit
+   drží odstup od tapety. */
 .lpx-title {
-  text-shadow: 0 18px 46px rgba(0, 0, 0, 0.55);
+  text-shadow:
+    0 3px 0 rgba(10, 5, 9, 0.55),
+    0 18px 46px rgba(0, 0, 0, 0.55);
+}
+
+.lpx-head h2,
+.lpx-cta h2 {
+  text-shadow: 0 2px 0 rgba(10, 5, 9, 0.42);
 }
 
 .lpx-actions {
@@ -2403,7 +2439,14 @@ html:not(.lp-js) .lpx [data-reveal] {
 }
 
 :root[data-theme="light"] .lpx-title {
-  text-shadow: 0 12px 30px rgba(92, 33, 63, 0.16);
+  text-shadow:
+    0 3px 0 rgba(255, 255, 255, 0.8),
+    0 14px 32px rgba(92, 33, 63, 0.18);
+}
+
+:root[data-theme="light"] .lpx-head h2,
+:root[data-theme="light"] .lpx-cta h2 {
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.75);
 }
 
 :root[data-theme="light"] .lpx-window__frame,
