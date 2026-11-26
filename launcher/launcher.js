@@ -301,19 +301,9 @@
     }
   }
 
-  function heroLabelText(info, status) {
+  function heroLabelText(info) {
     if (info.planned) {
       return translate("lp.dl.label.planned", "{os} — planned").replace("{os}", platformName(currentOS));
-    }
-    if (status.state === "loading") return translate("lp.dl.state.loading", "Checking…");
-    if (status.state === "error" || status.state === "empty") {
-      return translate("lp.dl.error.retry", "Try again");
-    }
-    if (Date.now() - startedAt < STARTED_HOLD_MS) {
-      return translate("lp.dl.label.started", "Download started");
-    }
-    if (startedAt) {
-      return translate("lp.dl.label.again", "Download again");
     }
     return translate("lp.dl.label.download", "Download for {os}").replace("{os}", platformName(currentOS));
   }

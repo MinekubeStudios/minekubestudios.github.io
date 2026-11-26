@@ -2446,6 +2446,44 @@ html:not(.lp-js) .lpx [data-reveal] {
 
 .lpx-download {
   flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-color: transparent;
+  outline: none;
+}
+
+/* Mini verze hoverového zářivého rámečku v klidovém stavu místo tmavé linky. */
+.button[data-download].download-ultimate.lpx-download::after {
+  opacity: 0.52;
+  padding: 1px;
+  inset: -1px;
+}
+
+.button[data-download].download-ultimate.lpx-download:hover::after,
+.button[data-download].download-ultimate.lpx-download:focus-visible::after,
+.button[data-download].download-ultimate.lpx-download.is-pointer-active::after {
+  opacity: 1;
+  padding: 1.5px;
+}
+
+/* Ikona vpravo absolutně, aby byl popisek v tlačítku dokonale vycentrovaný. */
+.lpx-download .download-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+}
+
+.lpx-download .download-label {
+  display: inline-block;
+  text-align: center;
+}
+
+.button[data-download].download-ultimate.lpx-download.is-pulse {
+  transition: none;
 }
 
 /* Šířky tlačítek: v hero širší, v kartě platformy se vejde do řádku. */

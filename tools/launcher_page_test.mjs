@@ -268,9 +268,9 @@ test("Windows: najde instalátor v repozitáři a stáhne ho", async () => {
   assert.equal(downloads.length, 1, "klik musí spustit právě jedno stažení");
   assert.ok(downloads[0].href.includes("example.invalid/repo-setup.exe"), downloads[0].href);
 
-  // Zahájeno — a nikdy „hotovo“: dokončení hlásí prohlížeč.
+  // Zahájeno — a nikdy „hotovo“: dokončení hlásí prohlížeč; text tlačítka zůstává vždy „Stáhnout pro Windows“.
   assert.equal(hero.dataset.state, "started");
-  assert.match(text(document, "[data-os-label]"), /Stahování zahájeno/);
+  assert.match(text(document, "[data-os-label]"), /^Stáhnout pro Windows$/);
   assert.notEqual(hero.dataset.state, "done");
   assert.equal(document.querySelector("[data-launcher-start-note]").hidden, false);
 
@@ -978,8 +978,8 @@ test("Stahovací tlačítka nikdy netvrdí dokončení", async () => {
   /* Tlačítko reaguje hned (stav se mění synchronně), soubor se pouští
      o 220 ms později — proto tu není žádné čekání. */
   assert.equal(hero.dataset.state, "started");
-  assert.match(text(document, "[data-os-label]"), /zahájeno/i);
-  assert.ok(!/dokončeno|hotovo|complete/i.test(text(document, "[data-os-label]")));
+  assert.match(text(document, "[data-os-label]"), /^Stáhnout pro Windows$/);
+  assert.ok(!/dokončeno|hotovo|complete|again|znovu|zahájeno/i.test(text(document, "[data-os-label]")));
   assert.match(text(document, "[data-launcher-start-note]"), /prohlížeč/);
   assert.deepEqual(page.errors, []);
 });
