@@ -2450,13 +2450,14 @@ html:not(.lp-js) .lpx [data-reveal] {
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding-inline: 44px;
   border-color: transparent;
   outline: none;
 }
 
 /* Mini verze hoverového zářivého rámečku v klidovém stavu místo tmavé linky. */
 .button[data-download].download-ultimate.lpx-download::after {
-  opacity: 0.52;
+  opacity: 0.6;
   padding: 1px;
   inset: -1px;
 }
@@ -2468,18 +2469,19 @@ html:not(.lp-js) .lpx [data-reveal] {
   padding: 1.5px;
 }
 
-/* Ikona vpravo absolutně, aby byl popisek v tlačítku dokonale vycentrovaný. */
+/* Ikona vpravo absolutně, aby byl popisek v tlačítku dokonale vycentrovaný.
+   Vertikální centrování přes inset-block + margin-block nekoliduje s transform v lpIconBox. */
 .lpx-download .download-icon {
   position: absolute;
   right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  margin: 0;
+  inset-block: 0;
+  margin: auto 0;
 }
 
 .lpx-download .download-label {
   display: inline-block;
   text-align: center;
+  margin: 0 auto;
 }
 
 .button[data-download].download-ultimate.lpx-download.is-pulse {
