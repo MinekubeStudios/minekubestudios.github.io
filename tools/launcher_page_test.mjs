@@ -1333,6 +1333,78 @@ test("Značky v HTML jsou vyvážené (žádný neuzavřený obal)", async () =>
   assert.deepEqual(stack, [], "neuzavřené značky");
 });
 
+test("První karta funkcí prezentuje lokální účet bez omezení a bez zbytků lp.library", async () => {
+  const html = read("launcher/index.html");
+  const i18n = read("launcher/i18n.js");
+  assert.ok(!/lp\.library\./.test(html), "index.html nesmí používat staré klíče lp.library.*");
+  assert.ok(!/lp\.library\./.test(i18n), "i18n.js nesmí nechávat osiřelé klíče lp.library.*");
+
+  const page = await buildPage("repoOnly");
+  const { document, window } = page;
+  const firstCard = document.querySelector("#funkce .lpx-cards .lpx-card");
+  assert.ok(firstCard, "chybí první karta funkcí");
+  assert.equal(firstCard.querySelector(".lpx-card__icon img")?.getAttribute("src"), "icons/armor-full.png");
+
+  for (const [lang, titleRe, b1Re, b2Re, b3Re] of [
+    ["cs", /^Lokální účet v základu$/, /^Bez Microsoft účtu/, /^Volitelně i Microsoft/, /^Žádné omezení/],
+    ["en", /^Local account by default$/, /^No Microsoft required/, /^Optional Microsoft login/, /^No restrictions/],
+    ["sk", /^Lokálny účet v základe$/, /^Bez Microsoft účtu/, /^Voliteľne aj Microsoft/, /^Žiadne obmedzenie/]
+  ]) {
+    window.eval(`applyLanguage("${lang}")`);
+    await tick(window);
+    assert.match(firstCard.querySelector("h3").textContent.trim(), titleRe, `${lang}: titulek karty`);
+    const body = firstCard.querySelector("p").textContent.trim();
+    assert.ok(body.length > 40 && !body.includes("<"), `${lang}: text karty`);
+    const bullets = [...firstCard.querySelectorAll(".lpx-bullets li")];
+    assert.equal(bullets.length, 3, `${lang}: tři odrážky`);
+    assert.match(bullets[0].textContent.trim(), b1Re, `${lang}: odrážka 1`);
+    assert.match(bullets[1].textContent.trim(), b2Re, `${lang}: odrážka 2`);
+    assert.match(bullets[2].textContent.trim(), b3Re, `${lang}: odrážka 3`);
+    bullets.forEach((li, idx) => {
+      assert.equal(li.querySelectorAll("strong").length, 1, `${lang}: odrážka ${idx + 1} má jedno zvýraznění`);
+    });
+  }
+
+  /* Statický HTML fallback musí odpovídat českému slovníku v i18n.js. */
+  const staticDom = new JSDOM(html);
+  const cs = window.MINEKUBE_PAGE_I18N.cs;
+  for (const node of staticDom.window.document.querySelectorAll("[data-i18n]")) {
+    const key = node.getAttribute("data-i18n");
+    if (!Object.prototype.hasOwnProperty.call(cs, key)) continue;
+    const expected = cs[key].replace(/\s+/g, " ").trim();
+    const actual = node.innerHTML.replace(/\s+/g, " ").trim();
+    assert.equal(actual, expected, `statický HTML fallback pro ${key} neodpovídá i18n.js (cs)`);
+  }
+  staticDom.window.close();
+  assert.deepEqual(page.errors, []);
+});
+
+test("Hover karet funkcí a platforem přebije odhalení při scrollu", () => {
+  const lpxCss = read("launcher/lpx.css");
+  const appleCss = read("launcher/apple-motion.css");
+
+  /* Legacy režim: .lpx [data-reveal].is-in má specificitu (0,3,0), takže
+     samotné .lpx-card:hover (0,2,0) bylo přebité a karta se nikdy nezvedla. */
+  assert.match(
+    lpxCss,
+    /\.lpx \.lpx-card\[data-reveal\]\.is-in:hover\s*\{[^}]*transform:\s*translateY\(-4px\)/,
+    "lpx.css: hover karty musí přebít transform: none z [data-reveal].is-in"
+  );
+
+  /* Apple režim: :root[data-motion-mode="apple"] .lpx [data-reveal].is-in má
+     (0,5,0) a dřív přebíjelo jak transition karet (0,3,0), tak hover (0,4,0). */
+  assert.match(
+    appleCss,
+    /:root\[data-motion-mode="apple"\] \.lpx \.lpx-card\[data-reveal\]/,
+    "apple-motion.css: karta s [data-reveal] musí zachovat reveal + border/shadow transition"
+  );
+  assert.match(
+    appleCss,
+    /:root\[data-motion-mode="apple"\] \.lpx \.lpx-card\.is-in:hover[\s\S]*?:root\[data-motion-mode="apple"\] \.lpx \.lpx-platform\.is-in:hover\s*\{[^}]*transform:\s*translate3d\(0,\s*-4px,\s*0\)/,
+    "apple-motion.css: hover karet i platforem musí mít vyšší specificitu než [data-reveal].is-in"
+  );
+});
+
 /* ===================== SPUŠTĚNÍ ===================== */
 
 let failed = 0;

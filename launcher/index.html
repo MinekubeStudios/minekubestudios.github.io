@@ -20,12 +20,12 @@
 <!-- Hero tapeta je největší prvek nad ohybem (LCP) — preload ji
      stáhne dřív, než ji CSS vyžádá. -->
 <link as="image" href="wallpapers/hero-backdrop.webp" rel="preload" type="image/webp"/>
-<link href="lpx.css?v=20261126-5" rel="stylesheet"/>
+<link href="lpx.css?v=20261127-1" rel="stylesheet"/>
 <link href="apple-launcher.css?v=20261125-1" rel="stylesheet"/>
 <link href="launcher-pulse.css?v=20261126-1" rel="stylesheet"/>
 <!-- Nová pohybová vrstva (apple) + ostrá HD pozadí pro legacy režim.
      Načítá se poslední, aby v kaskádě vyhrála nad starými pravidly. -->
-<link href="apple-motion.css?v=20261126-1" rel="stylesheet"/>
+<link href="apple-motion.css?v=20261127-1" rel="stylesheet"/>
 <script>
 /* Motiv, jazyk a režim pohybu se čtou dřív, než se stránka vykreslí —
    žádné bliknutí při startu. Režim „apple“ je výchozí; „legacy“ jen
@@ -356,7 +356,7 @@
 <span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/chest.png" width="18"/><span data-i18n="lp.marquee.3">Knihovna instancí</span></span>
 <span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/folder.png" width="18"/><span data-i18n="lp.marquee.4">Import z Prismu a MultiMC</span></span>
 <span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/heart.png" width="18"/><span data-i18n="lp.marquee.5">Lokální účet</span></span>
-<span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/bookshelf.png" width="18"/><span data-i18n="lp.marquee.6">Vizuální studio</span></span>
+<span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/bookshelf.png" width="18"/><span data-i18n="lp.marquee.6">Vlastní vzhled</span></span>
 <span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/infinity.png" width="18"/><span data-i18n="lp.marquee.7">33 jazyků, čeština 100 %</span></span>
 <span class="lpx-marquee__item"><img alt="" decoding="async" height="18" src="icons/gold-heart.png" width="18"/><span data-i18n="lp.marquee.8">Zdarma pro Windows</span></span>
 </div>
@@ -374,13 +374,13 @@
 
 <div class="lpx-cards">
 <article class="lpx-card" data-reveal>
-<span aria-hidden="true" class="lpx-card__icon"><img loading="lazy" alt="" decoding="async" height="48" src="icons/chest.png" width="48"/></span>
-<h3 data-i18n="lp.library.title">Knihovna, která drží pohromadě</h3>
-<p data-i18n="lp.library.text">Každá instance má vlastní profil, ikonu, verzi hry i načítací modul. Spustíš ji jedním kliknutím a nemusíš hledat, která verze Javy k ní patří.</p>
+<span aria-hidden="true" class="lpx-card__icon"><img loading="lazy" alt="" decoding="async" height="48" src="icons/armor-full.png" width="48"/></span>
+<h3 data-i18n="lp.account.title">Lokální účet v základu</h3>
+<p data-i18n="lp.account.text">Hraj rovnou bez nutnosti přihlášení Microsoft účtem — stačí si zvolit jméno. Lokální účet zůstává na tvém disku bez omezení a Microsoft účet je jen volitelný.</p>
 <ul class="lpx-bullets">
-<li data-i18n="lp.library.b1"><strong>Instance vedle sebe</strong> — vanilla, Fabric, Forge, NeoForge nebo Quilt.</li>
-<li data-i18n="lp.library.b2"><strong>Skupiny instancí</strong> — vlastní kolekce, hledání a přepínání pohledu na seznam.</li>
-<li data-i18n="lp.library.b3"><strong>Hrát naposledy</strong> — naposledy hrané světy nahoře na stránce Play.</li>
+<li data-i18n="lp.account.b1"><strong>Bez Microsoft účtu</strong> — stačí vlastní jméno, účet nic nikam neposílá.</li>
+<li data-i18n="lp.account.b2"><strong>Volitelně i Microsoft</strong> — oba typy účtů můžeš přidat a přepínat kdykoliv.</li>
+<li data-i18n="lp.account.b3"><strong>Žádné omezení</strong> — plné modpacky, mody, singleplayer, LAN i offline servery.</li>
 </ul>
 </article>
 
@@ -784,7 +784,7 @@
 
 <!-- Překlady stránky se načítají PŘED app.js, aby si je app.js převzala
      a fungoval jeden přepínač jazyka pro celý web. -->
-<script src="i18n.js?v=20261126-1"></script>
+<script src="i18n.js?v=20261127-1"></script>
 <script src="shared/app.js"></script>
 <script src="releases.js?v=20261124-2"></script>
 <script src="launcher.js?v=20261126-2"></script>
