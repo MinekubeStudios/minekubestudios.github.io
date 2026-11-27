@@ -1398,10 +1398,20 @@ body,
   transition: transform 0.3s var(--lpx-ease), border-color 0.24s ease, box-shadow 0.3s ease;
 }
 
-.lpx-card:hover {
+.lpx .lpx-card[data-reveal] {
+  transition:
+    opacity 0.7s var(--lpx-ease) var(--d, 0ms),
+    transform 0.7s var(--lpx-ease) var(--d, 0ms),
+    border-color 0.24s ease,
+    box-shadow 0.3s ease;
+}
+
+.lpx-card:hover,
+.lpx .lpx-card[data-reveal].is-in:hover {
   transform: translateY(-4px);
   border-color: var(--lpx-line-gold);
   box-shadow: 0 26px 52px -34px rgba(252, 146, 0, 0.6);
+  transition: transform 0.3s var(--lpx-ease), border-color 0.24s ease, box-shadow 0.3s ease;
 }
 
 .lpx-card__icon {

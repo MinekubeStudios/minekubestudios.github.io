@@ -142,19 +142,35 @@ html.ap-js:root[data-motion-mode="apple"] .lpx-hero .lpx-window {
 }
 
 /* Světlo sledující kurzor na kartách a platformách (jemné, Apple). */
-:root[data-motion-mode="apple"] .lpx-card,
-:root[data-motion-mode="apple"] .lpx-platform,
-:root[data-motion-mode="apple"] .lpx-faq__item {
+:root[data-motion-mode="apple"] .lpx .lpx-card[data-reveal],
+:root[data-motion-mode="apple"] .lpx .lpx-platform[data-reveal] {
+  transition:
+    opacity var(--ap-dur) var(--ap-ease) var(--d, 0ms),
+    transform var(--ap-dur) var(--ap-ease) var(--d, 0ms),
+    box-shadow var(--ap-dur-fast) var(--ap-ease),
+    border-color 0.25s ease;
+}
+
+:root[data-motion-mode="apple"] .lpx .lpx-card,
+:root[data-motion-mode="apple"] .lpx .lpx-platform,
+:root[data-motion-mode="apple"] .lpx .lpx-faq__item {
   transition:
     transform var(--ap-dur-fast) var(--ap-ease),
     box-shadow var(--ap-dur-fast) var(--ap-ease),
     border-color 0.25s ease;
 }
 
-:root[data-motion-mode="apple"] .lpx-card:hover,
-:root[data-motion-mode="apple"] .lpx-platform:hover {
+:root[data-motion-mode="apple"] .lpx .lpx-card:hover,
+:root[data-motion-mode="apple"] .lpx .lpx-card.is-in:hover,
+:root[data-motion-mode="apple"] .lpx .lpx-platform:hover,
+:root[data-motion-mode="apple"] .lpx .lpx-platform.is-in:hover {
   transform: translate3d(0, -4px, 0);
   border-color: var(--lpx-line-gold);
+  box-shadow: 0 26px 52px -34px rgba(252, 146, 0, 0.6);
+  transition:
+    transform var(--ap-dur-fast) var(--ap-ease),
+    box-shadow var(--ap-dur-fast) var(--ap-ease),
+    border-color 0.25s ease;
 }
 
 /* ---------- Stahovací tlačítko ----------
