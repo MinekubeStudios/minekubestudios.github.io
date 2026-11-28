@@ -925,6 +925,7 @@
       setTimeout(() => {
         revealPending = false;
         const limit = innerHeight * 0.92;
+        let remaining = false;
         revealNodes.forEach(node => {
           if (node.classList.contains("is-in")) return;
           const rect = node.getBoundingClientRect();
@@ -933,8 +934,14 @@
           if (rect.top < limit) {
             node.classList.add("is-in");
             revealObserver.unobserve(node);
+          } else {
+            remaining = true;
           }
         });
+        if (!remaining) {
+          removeEventListener("scroll", catchUp);
+          removeEventListener("resize", catchUp);
+        }
       }, 120);
     };
     addEventListener("scroll", catchUp, { passive: true });
