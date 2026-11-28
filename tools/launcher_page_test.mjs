@@ -1371,11 +1371,51 @@ test("První karta funkcí prezentuje lokální účet bez omezení a bez zbytk�
   for (const node of staticDom.window.document.querySelectorAll("[data-i18n]")) {
     const key = node.getAttribute("data-i18n");
     if (!Object.prototype.hasOwnProperty.call(cs, key)) continue;
-    const expected = cs[key].replace(/\s+/g, " ").trim();
+    const expected = cs[key].replace(/&/g, "&amp;").replace(/\s+/g, " ").trim();
     const actual = node.innerHTML.replace(/\s+/g, " ").trim();
     assert.equal(actual, expected, `statický HTML fallback pro ${key} neodpovídá i18n.js (cs)`);
   }
   staticDom.window.close();
+  assert.deepEqual(page.errors, []);
+});
+
+test("Druhá karta funkcí prezentuje soukromí a zabezpečení bez zbytků lp.import", async () => {
+  const html = read("launcher/index.html");
+  const i18n = read("launcher/i18n.js");
+  assert.ok(!/lp\.import\./.test(html), "index.html nesmí používat staré klíče lp.import.*");
+  assert.ok(!/lp\.import\./.test(i18n), "i18n.js nesmí nechávat osiřelé klíče lp.import.*");
+
+  const page = await buildPage("repoOnly");
+  const { document, window } = page;
+  const secondCard = document.querySelectorAll("#funkce .lpx-cards .lpx-card")[1];
+  assert.ok(secondCard, "chybí druhá karta funkcí");
+  assert.equal(secondCard.querySelector(".lpx-card__icon img")?.getAttribute("src"), "icons/protection.png");
+  assert.equal(secondCard.querySelector("h3").textContent.trim(), "Soukromí & Zabezpečení");
+
+  for (const [lang, titleRe, b1Re, b2Re, b3Re] of [
+    ["cs", /^Soukromí & Zabezpečení$/, /^Blokátor reklam a bez předplatného/, /^Ochrana proti sledování/, /^Data jen u tebe/],
+    ["en", /^Privacy & Security$/, /^Ad blocker & no subscriptions/, /^Tracking protection/, /^Your data stays yours/],
+    ["sk", /^Súkromie & Zabezpečenie$/, /^Blokátor reklám a bez predplatného/, /^Ochrana proti sledovaniu/, /^Dáta len u teba/]
+  ]) {
+    window.eval(`applyLanguage("${lang}")`);
+    await tick(window);
+    const titleText = secondCard.querySelector("h3").textContent.trim();
+    assert.match(titleText, titleRe, `${lang}: titulek druhé karty`);
+    assert.ok(!titleText.includes("&amp;"), `${lang}: titulek nesmí mít zdvojenou entitu`);
+    const body = secondCard.querySelector("p").textContent.trim();
+    assert.ok(body.length > 60 && !body.includes("<") && !body.includes("&amp;"), `${lang}: text druhé karty`);
+    const bullets = [...secondCard.querySelectorAll(".lpx-bullets li")];
+    assert.equal(bullets.length, 3, `${lang}: tři odrážky`);
+    assert.match(bullets[0].textContent.trim(), b1Re, `${lang}: odrážka 1`);
+    assert.match(bullets[1].textContent.trim(), b2Re, `${lang}: odrážka 2`);
+    assert.match(bullets[2].textContent.trim(), b3Re, `${lang}: odrážka 3`);
+    bullets.forEach((li, idx) => {
+      assert.equal(li.querySelectorAll("strong").length, 1, `${lang}: odrážka ${idx + 1} má jedno zvýraznění`);
+      assert.ok(!li.textContent.includes("&amp;"), `${lang}: odrážka ${idx + 1} bez entity`);
+    });
+  }
+  window.eval(`applyLanguage("cs")`);
+  await tick(window);
   assert.deepEqual(page.errors, []);
 });
 
